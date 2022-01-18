@@ -1,0 +1,746 @@
+@font-face {
+  font-family: 'icomoon';
+  src: url('~/assets/styles/fonts/icomoon/icomoon.eot?cbl7vx');
+  src: url('~/assets/styles/fonts/icomoon/icomoon.eot?cbl7vx#iefix') format('embedded-opentype'),
+  url('~/assets/styles/fonts/icomoon/icomoon.ttf?cbl7vx') format('truetype'),
+  url('~/assets/styles/fonts/icomoon/icomoon.woff?cbl7vx') format('woff'),
+  url('~/assets/styles/fonts/icomoon/icomoon.svg?cbl7vx#icomoon}') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+$icon-recover-password: "\e935";
+$about: "\e900";
+$add-admin: "\e901";
+$add-File: "\e902";
+$add-user: "\e903";
+$add: "\e904";
+$arrow---Left: "\e905";
+$arrow---right: "\e906";
+$arrow-back: "\e907";
+$arrow-down: "\e908";
+$arrow-forward: "\e909";
+$arrow-up: "\e90a";
+$ascending: "\e90b";
+$assign-admin: "\e90c";
+$assignment: "\e90d";
+$attach: "\e90e";
+$button-loading-path1: "\e90f";
+$button-loading-path2: "\e910";
+$calendar: "\e911";
+$camera: "\e912";
+$cam-off: "\e913";
+$change-type: "\e914";
+$chat: "\e915";
+$check: "\e916";
+$close: "\e917";
+$copy: "\e918";
+$default-sort: "\e919";
+$delete: "\e91a";
+$descending: "\e91b";
+$design: "\e91c";
+$download: "\e91d";
+$drag: "\e91e";
+$drop-down: "\e91f";
+$edit-Square: "\e920";
+$edit: "\e921";
+$emoji_happy: "\e922";
+$emoji_sad: "\e923";
+$error-toast: "\e924";
+$exit-fullscreen: "\e925";
+$expand-less: "\e926";
+$expand-more: "\e927";
+$export: "\e928";
+$file: "\e929";
+$folder-fill: "\e92a";
+$folder: "\e92b";
+$forward: "\e92c";
+$frame-34: "\e92d";
+$fullscreen: "\e92e";
+$go-room: "\e92f";
+$hand-raise: "\e930";
+$home: "\e931";
+$info: "\e932";
+$info-Circle: "\e933";
+$info-toast: "\e934";
+$link_black_24dp-1-1: "\e935";
+$list: "\e936";
+$lock: "\e937";
+$log-out: "\e938";
+$management: "\e939";
+$mic: "\e93a";
+$mic-off: "\e93b";
+$more: "\e93c";
+$mute: "\e93d";
+$notebook: "\e93e";
+$notification: "\e93f";
+$paper-Blank: "\e940";
+$participant: "\e941";
+$pause: "\e942";
+$pin: "\e943";
+$play: "\e944";
+$profile: "\e945";
+$rcan: "\e946";
+$record: "\e947";
+$refresh: "\e948";
+$remove-user: "\e949";
+$result-list: "\e94a";
+$result: "\e94b";
+$room: "\e94c";
+$search: "\e94d";
+$see-more: "\e94e";
+$send: "\e94f";
+$settings: "\e950";
+$share-link: "\e951";
+$share-screen: "\e952";
+$share: "\e953";
+$speaker: "\e954";
+$stop: "\e955";
+$success-toast: "\e956";
+$time-Square: "\e957";
+$unassign-admin: "\e958";
+$unlock: "\e959";
+$unmute: "\e95a";
+$upload: "\e95b";
+$user-groups: "\e95c";
+$view: "\e95d";
+$view-grid: "\e95e";
+$view-speaker: "\e95f";
+$view-thumbnail1: "\e960";
+$visibility_on: "\e961";
+$visibility_off: "\e962";
+$waiting-room: "\e963";
+$warning-toast: "\e964";
+
+
+[class^="icon-"], [class*=" icon-"] {
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  font-size: 20px !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-recover-password {
+  &:before {
+    content: $icon-recover-password;
+  }
+}
+.icon-about {
+  &:before {
+    content: $about;
+  }
+}
+
+.icon-add-admin {
+  &:before {
+    content: $add-admin;
+  }
+}
+
+.icon-add-File {
+  &:before {
+    content: $add-File;
+  }
+}
+
+.icon-add-user {
+  &:before {
+    content: $add-user;
+  }
+}
+
+.icon-add {
+  &:before {
+    content: $add;
+  }
+}
+
+.icon-arrow---Left {
+  &:before {
+    content: $arrow---Left;
+  }
+}
+
+.icon-arrow---right {
+  &:before {
+    content: $arrow---right;
+  }
+}
+
+.icon-arrow-back {
+  &:before {
+    content: $arrow-back;
+  }
+}
+
+.icon-arrow-down {
+  &:before {
+    content: $arrow-down;
+  }
+}
+
+.icon-arrow-forward {
+  &:before {
+    content: $arrow-forward;
+  }
+}
+
+.icon-arrow-up {
+  &:before {
+    content: $arrow-up;
+  }
+}
+
+.icon-ascending {
+  &:before {
+    content: $ascending;
+  }
+}
+
+.icon-assign-admin {
+  &:before {
+    content: $assign-admin;
+  }
+}
+
+.icon-assignment {
+  &:before {
+    content: $assignment;
+  }
+}
+
+.icon-attach {
+  &:before {
+    content: $attach;
+  }
+}
+
+.icon-button-loading .path1 {
+  &:before {
+    content: $button-loading-path1;
+    color: rgb(0, 0, 0);
+    opacity: 0.3;
+  }
+}
+
+.icon-button-loading .path2 {
+  &:before {
+    content: $button-loading-path2;
+    margin-left: -1em;
+    color: rgb(0, 0, 0);
+  }
+}
+
+.icon-calendar {
+  &:before {
+    content: $calendar;
+  }
+}
+
+.icon-camera {
+  &:before {
+    content: $camera;
+  }
+}
+
+.icon-camera-off {
+  &:before {
+    content: $cam-off;
+  }
+}
+
+.icon-change-type {
+  &:before {
+    content: $change-type;
+  }
+}
+
+.icon-chat {
+  &:before {
+    content: $chat;
+  }
+}
+
+.icon-check {
+  &:before {
+    content: $check;
+  }
+}
+
+.icon-close {
+  &:before {
+    content: $close;
+  }
+}
+
+.icon-copy {
+  &:before {
+    content: $copy;
+  }
+}
+
+.icon-default-sort {
+  &:before {
+    content: $default-sort;
+  }
+}
+
+.icon-delete {
+  &:before {
+    content: $delete;
+  }
+}
+
+.icon-descending {
+  &:before {
+    content: $descending;
+  }
+}
+
+.icon-design {
+  &:before {
+    content: $design;
+  }
+}
+
+.icon-download {
+  &:before {
+    content: $download;
+  }
+}
+
+.icon-drag {
+  &:before {
+    content: $drag;
+  }
+}
+
+.icon-drop-down {
+  &:before {
+    content: $drop-down;
+  }
+}
+
+.icon-edit-Square {
+  &:before {
+    content: $edit-Square;
+  }
+}
+
+.icon-edit {
+  &:before {
+    content: $edit;
+  }
+}
+
+.icon-emoji_happy {
+  &:before {
+    content: $emoji_happy;
+  }
+}
+
+.icon-emoji_sad {
+  &:before {
+    content: $emoji_sad;
+  }
+}
+
+.icon-error-toast {
+  &:before {
+    content: $error-toast;
+  }
+}
+
+.icon-exit-fullscreen {
+  &:before {
+    content: $exit-fullscreen;
+  }
+}
+
+.icon-expand-less {
+  &:before {
+    content: $expand-less;
+  }
+}
+
+.icon-expand-more {
+  &:before {
+    content: $expand-more;
+  }
+}
+
+.icon-export {
+  &:before {
+    content: $export;
+  }
+}
+
+.icon-file {
+  &:before {
+    content: $file;
+  }
+}
+
+.icon-folder-fill {
+  &:before {
+    content: $folder-fill;
+  }
+}
+
+.icon-folder {
+  &:before {
+    content: $folder;
+  }
+}
+
+.icon-forward {
+  &:before {
+    content: $forward;
+  }
+}
+
+.icon-frame-34 {
+  &:before {
+    content: $frame-34;
+  }
+}
+
+.icon-fullscreen {
+  &:before {
+    content: $fullscreen;
+  }
+}
+
+.icon-go-room {
+  &:before {
+    content: $go-room;
+  }
+}
+
+.icon-hand-raise {
+  &:before {
+    content: $hand-raise;
+  }
+}
+
+.icon-home {
+  &:before {
+    content: $home;
+  }
+}
+
+.icon-info {
+  &:before {
+    content: $info;
+  }
+}
+
+.icon-info-Circle {
+  &:before {
+    content: $info-Circle;
+  }
+}
+
+.icon-info-toast {
+  &:before {
+    content: $info-toast;
+  }
+}
+
+.icon-link_black_24dp-1-1 {
+  &:before {
+    content: $link_black_24dp-1-1;
+  }
+}
+
+.icon-list {
+  &:before {
+    content: $list;
+  }
+}
+
+.icon-lock {
+  &:before {
+    content: $lock;
+  }
+}
+
+.icon-log-out {
+  &:before {
+    content: $log-out;
+  }
+}
+
+.icon-management {
+  &:before {
+    content: $management;
+  }
+}
+
+.icon-mic {
+  &:before {
+    content: $mic;
+  }
+}
+
+.icon-mic-off {
+  &:before {
+    content: $mic-off;
+  }
+}
+
+.icon-more {
+  &:before {
+    content: $more;
+  }
+}
+
+.icon-mute {
+  &:before {
+    content: $mute;
+  }
+}
+
+.icon-notebook {
+  &:before {
+    content: $notebook;
+  }
+}
+
+.icon-notification {
+  &:before {
+    content: $notification;
+  }
+}
+
+.icon-paper-Blank {
+  &:before {
+    content: $paper-Blank;
+  }
+}
+
+.icon-participant {
+  &:before {
+    content: $participant;
+  }
+}
+
+.icon-pause {
+  &:before {
+    content: $pause;
+  }
+}
+
+.icon-pin {
+  &:before {
+    content: $pin;
+  }
+}
+
+.icon-play {
+  &:before {
+    content: $play;
+  }
+}
+
+.icon-profile {
+  &:before {
+    content: $profile;
+  }
+}
+
+.icon-rcan {
+  &:before {
+    content: $rcan;
+  }
+}
+
+.icon-record {
+  &:before {
+    content: $record;
+  }
+}
+
+.icon-refresh {
+  &:before {
+    content: $refresh;
+  }
+}
+
+.icon-remove-user {
+  &:before {
+    content: $remove-user;
+  }
+}
+
+.icon-result-list {
+  &:before {
+    content: $result-list;
+  }
+}
+
+.icon-result {
+  &:before {
+    content: $result;
+  }
+}
+
+.icon-room {
+  &:before {
+    content: $room;
+  }
+}
+
+.icon-search {
+  &:before {
+    content: $search;
+  }
+}
+
+.icon-see-more {
+  &:before {
+    content: $see-more;
+  }
+}
+
+.icon-send {
+  &:before {
+    content: $send;
+  }
+}
+
+.icon-settings {
+  &:before {
+    content: $settings;
+  }
+}
+
+.icon-share-link {
+  &:before {
+    content: $share-link;
+  }
+}
+
+.icon-share-screen {
+  &:before {
+    content: $share-screen;
+  }
+}
+
+.icon-share {
+  &:before {
+    content: $share;
+  }
+}
+
+.icon-speaker {
+  &:before {
+    content: $speaker;
+  }
+}
+
+.icon-stop {
+  &:before {
+    content: $stop;
+  }
+}
+
+.icon-success-toast {
+  &:before {
+    content: $success-toast;
+  }
+}
+
+.icon-time-Square {
+  &:before {
+    content: $time-Square;
+  }
+}
+
+.icon-unassign-admin {
+  &:before {
+    content: $unassign-admin;
+  }
+}
+
+.icon-unlock {
+  &:before {
+    content: $unlock;
+  }
+}
+
+.icon-unmute {
+  &:before {
+    content: $unmute;
+  }
+}
+
+.icon-upload {
+  &:before {
+    content: $upload;
+  }
+}
+
+.icon-user-groups {
+  &:before {
+    content: $user-groups;
+  }
+}
+
+.icon-view {
+  &:before {
+    content: $view;
+  }
+}
+
+.icon-view-grid {
+  &:before {
+    content: $view-grid;
+  }
+}
+
+.icon-view-speaker {
+  &:before {
+    content: $view-speaker;
+  }
+}
+
+.icon-view-thumbnail1 {
+  &:before {
+    content: $view-thumbnail1;
+  }
+}
+
+.icon-visibility_on {
+  &:before {
+    content: $visibility_on;
+  }
+}
+
+.icon-visibility_off {
+  &:before {
+    content: $visibility_off;
+  }
+}
+
+.icon-waiting-room {
+  &:before {
+    content: $waiting-room;
+  }
+}
+
+.icon-warning-toast {
+  &:before {
+    content: $warning-toast;
+  }
+}
+
+
+

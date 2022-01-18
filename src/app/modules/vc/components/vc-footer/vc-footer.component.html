@@ -1,0 +1,19 @@
+<div class="header d-flex align-items-center justify-content-between">
+  <div class="info">
+    <ng-button label="ترک رویداد"></ng-button>
+  </div>
+  <div class="actions">
+    <ng-button icon=""></ng-button>
+    <ng-button icon=""></ng-button>
+    <ng-button icon=""></ng-button>
+    <ng-button icon="" (click)="onClick($event,viewModes)"></ng-button>
+  </div>
+  <div class="toggler">
+    <ng-button icon="" (click)="onTogglerClick()"></ng-button>
+  </div>
+</div>
+<p-overlayPanel #viewModes>
+  <ng-template pTemplate>
+    Content
+  </ng-template>
+</p-overlayPanel>

@@ -1,0 +1,38 @@
+<div class="container-fluid py-3">
+  <div class="row">
+    <div class="col-10 mb-3">
+      <ng-auto-complete [suggestions]="filteredGroups" field="label"
+                        [placeholder]="'جستجوی نام گروه' | translate"
+                        [forceSelection]="true"
+                        [rtl]="fa"
+                        (onSelect)="onSelectGroup($event)"
+                        (completeMethod)="onSearchGroups($event)">
+      </ng-auto-complete>
+    </div>
+    <div class="col-2 mb-3">
+      <ng-dropdown
+        [(ngModel)]="selectedRole"
+        [options]="[{label:'asAdmin' | translate,value:'Admin'},{label:'asUser' | translate,value:'Viewer'}]">
+      </ng-dropdown>
+    </div>
+    <div class="col-12">
+      <ng-custom-table [rowData]="selectedGroups" [config]="config">
+        <ng-template let-item>
+          <tr>
+            <td>{{item.name}}</td>
+            <td>{{item.user_count}}</td>
+            <td>{{item.role}}</td>
+            <td (click)="removeGroup(item)">
+              <i class="icon-delete"></i>
+            </td>
+          </tr>
+        </ng-template>
+      </ng-custom-table>
+    </div>
+    <div class="col-12 pt-3 mt-3 text-left">
+      <ng-button (onClick)="onSubmit()" [label]="'ذخیره' | translate"
+                 [disabled]="selectedGroups.length === 0">
+      </ng-button>
+    </div>
+  </div>
+</div>

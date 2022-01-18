@@ -1,0 +1,33 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 mb-5">
+      <h4 class="main-title">{{'مدیریت اعضای گروه' | translate}}</h4>
+    </div>
+    <div class="col-8 col-lg-11 mb-4">
+      <ng-input-text inputSize="md" icon="search" [rtl]="fa" [placeholder]="'جستجوی ایمیل کاربر...' | translate"
+                     (onKeyup)="filterGroupUsers($event)"></ng-input-text>
+    </div>
+    <div class="col-4 col-lg-1 mb-4">
+      <ng-button iconPos="right" icon="icon-add" [full]="true" [label]="'افزودن' | translate"
+                 (click)="showAddUserModal()"></ng-button>
+    </div>
+    <div class="col-12">
+      <ng-custom-table *ngIf="groupUsers" [rowData]="groupUsers.items" [config]="groupUsersConfig">
+        <ng-template let-item>
+          <tr>
+            <td>{{item.first_name + ' ' + item.last_name}}</td>
+            <td>{{item.email}}</td>
+            <td>{{item.role}}</td>
+            <td>
+              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-delete"
+                         (click)="removeUser(item)" appearance="text" color="danger"></ng-button>
+            </td>
+          </tr>
+        </ng-template>
+      </ng-custom-table>
+    </div>
+  </div>
+</div>
+
+
+

@@ -1,0 +1,97 @@
+<div
+  [ngClass]="{
+    rtl: rtl,
+    ltr: !rtl,
+    'flex-column-reverse': labelPos == 'fix-top',
+    'align-items-center': labelPos == 'fix-side',
+    'align-items-end': labelPos == 'fix-top' && rtl,
+    'flex-row': labelPos == 'fix-side' && rtl,
+    'flex-row-reverse': labelPos == 'fix-side' && !rtl
+  }"
+  class="wrapper d-flex"
+>
+  <div
+    [ngClass]="{
+      'autocomplete-dd': dropdown,
+      'w-100': labelPos == 'fix-top',
+      'p-float-label': labelPos == 'float',
+      'p-input-icon-left': icon && iconPos == 'left',
+      'p-input-icon-right': icon && iconPos == 'right',
+      'p-inputtext-sm': inputSize == 'sm',
+      'p-inputtext-lg': inputSize == 'lg',
+      'p-input-filled': filled && value
+    }"
+    class="flex-grow-1"
+  >
+    <i *ngIf="icon" [ngClass]="icon"></i>
+    <p-autoComplete
+      [(ngModel)]="value"
+      [appendTo]="appendTo"
+      [autoHighlight]="autoHighlight"
+      [autofocus]="autofocus"
+      [baseZIndex]="200000"
+      [completeOnFocus]="completeOnFocus"
+      [dataKey]="dataKey"
+      [disabled]="disabled"
+      [dropdownMode]="dropdownMode"
+      [dropdown]="dropdown"
+      [emptyMessage]="emptyMessage"
+      [field]="field"
+      [forceSelection]="forceSelection"
+      [immutable]="immutable"
+      [inputId]="inputId"
+      [maxlength]="maxlength"
+      [minLength]="minlength"
+      [multiple]="multiple"
+      [ngAddon]="addon"
+      [ngClass]="{
+        'ng-invalid ng-dirty': ngControl ? isInvalid(ngControl.control) : false
+      }"
+      [placeholder]="placeholder"
+      [readonly]="readonly"
+      [scrollHeight]="scrollHeight"
+      [size]="size"
+      [suggestions]="suggestions"
+      [unique]="unique"
+      (completeMethod)="_completeMethod($event)"
+      (onAfterBtnClick)="emitter('onAfterBtnClick', $event)"
+      (onBeforeBtnClick)="emitter('onBeforeBtnClick', $event)"
+      (onBlur)="_onBlur()"
+      (onClear)="_onClear($event)"
+      (onDropdownClick)="_onDropdownClick($event)"
+      (onFocus)="emitter('onFocus', $event)"
+      (onHide)="emitter('onHide', $event)"
+      (onKeyUp)="_onKeyUp($event)"
+      (onSelect)="_onSelect($event)"
+      (onShow)="emitter('onShow', $event)"
+      (onUnselect)="_onUnselect($event)"
+    ></p-autoComplete>
+
+    <label *ngIf="label && labelPos == 'float'" [attr.for]="inputId">{{
+      label
+      }}</label>
+    <ng-container *ngFor="let error of errors | keyvalue">
+      <small
+        *ngIf="showError(error.key)"
+        [class.mt-4]="hint"
+        class="error p-invalid p-error"
+      >
+        {{ error.value }}
+      </small>
+    </ng-container>
+  </div>
+  <label
+    *ngIf="label && labelPos != 'float'"
+    [attr.for]="inputId"
+    [ngClass]="{
+      'mb-0': labelPos == 'fix-side',
+      'ml-4': rtl,
+      'mr-4': !rtl,
+      'text-muted': disabled
+    }"
+    [style.width.px]="labelWidth"
+  >{{ label }}</label
+  >
+</div>
+
+<small *ngIf="hint">{{ hint }}</small>

@@ -1,0 +1,16 @@
+<p-button
+  [badge]="badge"
+  [disabled]="disabled"
+  [iconPos]="iconPos"
+  [icon]="icon"
+  [label]="label"
+  [type]="type"
+  [loading]="loading"
+  badgeClass="p-badge-{{ badgeColor }}"
+  styleClass="p-button-{{ appearance }} p-button-{{ color }} p-button-{{
+    size
+  }} p-button-{{ rounded ? 'rounded' : '' }} p-button-{{
+    raised ? 'raised' : ''
+  }}"
+  (onClick)="_onClick($event)"
+></p-button>

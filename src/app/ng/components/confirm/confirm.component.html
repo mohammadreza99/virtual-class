@@ -1,0 +1,30 @@
+<p-confirmDialog
+  #cd
+  [baseZIndex]="200000"
+  [class.rtl]="options.rtl"
+  [closable]="options.closable"
+  [dismissableMask]="options.dismissableMask"
+  [position]="options.position"
+  [style]="{ width: options.width }"
+>
+  <ng-template pTemplate="footer">
+    <ng-button
+      (click)="cd.reject()"
+      *ngIf="options.rejectVisible"
+      [appearance]="options.rejectAppearance"
+      [color]="options.rejectColor"
+      [iconPos]="options.rtl ? 'right' : 'left'"
+      [icon]="options.rejectIcon"
+      [label]="options.rejectLabel"
+    ></ng-button>
+    <ng-button
+      (click)="cd.accept()"
+      *ngIf="options.acceptVisible"
+      [appearance]="options.acceptAppearance"
+      [color]="options.acceptColor"
+      [iconPos]="options.rtl ? 'right' : 'left'"
+      [icon]="options.acceptIcon"
+      [label]="options.acceptLabel"
+    ></ng-button>
+  </ng-template>
+</p-confirmDialog>

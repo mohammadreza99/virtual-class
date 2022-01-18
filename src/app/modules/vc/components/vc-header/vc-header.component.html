@@ -1,0 +1,21 @@
+<div class="header d-flex align-items-center justify-content-between">
+  <div class="info">
+    <ng-button label="" (click)="roomInfo.show($event)"></ng-button>
+  </div>
+  <div class="actions">
+    <ng-logo></ng-logo>
+    <ng-button icon=""></ng-button>
+    <ng-button icon="" (click)="viewModes.show($event)"></ng-button>
+  </div>
+</div>
+<p-overlayPanel #viewModes>
+  <ng-template pTemplate>
+    Content
+  </ng-template>
+</p-overlayPanel>
+
+<p-overlayPanel #roomInfo>
+  <ng-template pTemplate>
+    Content
+  </ng-template>
+</p-overlayPanel>

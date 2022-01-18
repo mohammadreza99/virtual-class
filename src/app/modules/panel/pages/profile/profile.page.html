@@ -1,0 +1,52 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 mb-4">
+      <h4 class="main-title">{{'تنظیمات حساب کاربری' | translate}}</h4>
+    </div>
+    <div class="col-12 mb-4">
+      <div class="profile d-flex align-items-center">
+        <div class="avatar rounded-circle p-3 text-light font-bold" [style.backgroundColor]="getColor()">
+          <span>{{currentUser.first_name[0].toUpperCase()}}.{{currentUser.last_name[0].toUpperCase()}}</span>
+        </div>
+        <div class="info mx-3">
+          <p class="h5">{{currentUser.first_name + ' ' + currentUser.last_name}}</p>
+          <small class="text-muted">{{currentUser.email}}</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 mb-5">
+      <div class="d-flex align-items-center justify-content-between py-2 border-top border-bottom">
+        <div class="title d-flex align-items-center">
+          <i class="icon-profile"></i>
+          <span class="mx-2">{{'اطلاعات کاربری' | translate}}</span>
+        </div>
+        <ng-button icon="icon-edit" (click)="updateProfile()"></ng-button>
+      </div>
+    </div>
+    <div class="col-12">
+      <form class="form-row" [formGroup]="form">
+        <div class="col-md-6 mb-5">
+          <ng-input-text formControlName="first_name" [rtl]="fa" label="نام" [readonly]="true"></ng-input-text>
+        </div>
+        <div class="col-md-6 mb-5">
+          <ng-input-text formControlName="last_name" [rtl]="fa" label="نام خانوادگی" [readonly]="true"></ng-input-text>
+        </div>
+        <div class="col-md-6 mb-5">
+          <ng-input-text formControlName="email" [rtl]="fa" label="ایمیل" [readonly]="true"></ng-input-text>
+        </div>
+        <div class="col-md-6 mb-5">
+          <ng-input-text formControlName="nick_name" [rtl]="fa" label="نام نمایشی" [readonly]="true"></ng-input-text>
+        </div>
+      </form>
+    </div>
+    <div class="col-12">
+      <div class="d-flex align-items-center justify-content-between py-2 border-top border-bottom">
+        <div class="title d-flex align-items-center">
+          <i class="icon-lock"></i>
+          <span class="mx-2">{{'رمز عبور حساب کاربری' | translate}}</span>
+        </div>
+        <ng-button icon="icon-edit" (click)="updatePassword()"></ng-button>
+      </div>
+    </div>
+  </div>
+</div>

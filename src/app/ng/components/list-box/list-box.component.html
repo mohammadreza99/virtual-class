@@ -1,0 +1,71 @@
+<div
+  [ngClass]="{
+    rtl: rtl,
+    ltr: !rtl,
+    'flex-column-reverse': labelPos == 'fix-top',
+    'align-items-center': labelPos == 'fix-side',
+    'align-items-end': labelPos == 'fix-top' && rtl,
+    'flex-row': labelPos == 'fix-side' && rtl,
+    'flex-row-reverse': labelPos == 'fix-side' && !rtl
+  }"
+  class="wrapper d-flex"
+>
+  <div
+    [ngClass]="{
+      'w-100': labelPos == 'fix-top',
+      'p-input-filled': filled
+    }"
+    class="flex-grow-1"
+  >
+    <p-listbox
+      (onAfterBtnClick)="emitter('onAfterBtnClick', $event)"
+      (onBeforeBtnClick)="emitter('onBeforeBtnClick', $event)"
+      (onChange)="_onChange($event)"
+      (onClick)="_onClick($event)"
+      (onDblClick)="_onDblClick($event)"
+      [(ngModel)]="value"
+      [attr.id]="inputId"
+      [checkbox]="checkbox"
+      [dataKey]="dataKey"
+      [disabled]="disabled"
+      [filterMatchMode]="filterMatchMode"
+      [filterPlaceHolder]="filterPlaceHolder"
+      [filterValue]="filterValue"
+      [filter]="filter"
+      [multiple]="multiple"
+      [ngAddon]="addon"
+      [ngClass]="{
+        'ng-invalid ng-dirty': ngControl ? isInvalid(ngControl.control) : false
+      }"
+      [optionDisabled]="optionDisabled"
+      [optionLabel]="optionLabel"
+      [optionValue]="optionValue"
+      [options]="options"
+      [readonly]="readonly"
+      [showToggleAll]="showToggleAll"
+    ></p-listbox>
+    <ng-container *ngFor="let error of errors | keyvalue">
+      <small
+        *ngIf="showError(error.key)"
+        [class.mt-4]="hint"
+        class="error p-invalid p-error"
+      >
+        {{ error.value }}
+      </small>
+    </ng-container>
+  </div>
+  <label
+    *ngIf="label && labelPos != 'float'"
+    [attr.for]="inputId"
+    [ngClass]="{
+      'mb-0': labelPos == 'fix-side',
+      'ml-4': rtl,
+      'mr-4': !rtl,
+      'text-muted': disabled
+    }"
+    [style.width.px]="labelWidth"
+    >{{ label }}</label
+  >
+</div>
+
+<small *ngIf="hint">{{ hint }}</small>

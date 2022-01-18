@@ -1,0 +1,91 @@
+$root: "p-inputNumber";
+$wrapper: "p-inputNumber ::ng-deep .p-inputnumber";
+$inputEl: "p-inputNumber ::ng-deep .p-inputtext";
+
+#{$root},
+#{$wrapper},
+#{$inputEl},
+small {
+  display: block;
+  width: 100%;
+}
+
+#{$wrapper} {
+  display: inline-flex;
+}
+
+.wrapper {
+  direction: ltr;
+
+  #{$root} {
+    &.has-before ::ng-deep .p-inputtext {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    &.has-after ::ng-deep .p-inputtext {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+
+  > div {
+    position: relative;
+
+    .error {
+      position: absolute;
+      top: 100%;
+    }
+  }
+
+  &.ltr {
+    > div {
+
+
+      .error {
+        left: 0;
+      }
+    }
+
+    #{$inputEl},
+    label,
+    .error,
+    ~ small {
+      direction: ltr;
+    }
+  }
+
+  &.rtl {
+    text-align: right;
+
+    > div {
+      &.p-float-label {
+        label {
+          right: 0.5rem;
+          left: auto;
+        }
+
+        &.p-input-icon-right {
+          label {
+            right: 2rem;
+          }
+        }
+      }
+
+      .error {
+        right: 0;
+      }
+
+      &.p-input-icon-right #{$inputEl} {
+        padding-right: 2rem;
+      }
+    }
+
+    #{$inputEl},
+    label,
+    .error,
+    ~ small {
+      direction: rtl;
+    }
+  }
+}

@@ -1,0 +1,326 @@
+@import "mixins";
+
+@mixin restoreFullAspectRatio() {
+  // reset default style (16:9 ratio) for ng-screen component in main-area
+  height: 100%;
+
+  .screen-wrapper {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
+}
+
+:host ::ng-deep {
+  .virtual-class-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    transition: all 180ms;
+    color: #f8f9fa;
+
+    .header, .footer {
+      background-color: #1f1f1f;
+      min-height: 70px;
+      max-height: 70px;
+      padding: 0 1rem;
+      transition: all 180ms;
+    }
+
+    .content {
+      flex: auto;
+      background: #35363D;
+      padding-bottom: 70px;
+      padding-top: 70px;
+
+      > div {
+        height: 100%;
+      }
+
+      .thumbnail-view {
+        .participants, .main-area {
+          padding: 1rem 0.5rem;
+        }
+
+        .main-area {
+          @include media-breakpoint-down(xl) {
+            min-height: 50vmax;
+          }
+        }
+
+        .participants {
+          width: 300px;
+
+          ng-screen:not(:last-child) {
+            margin-bottom: 1rem
+          }
+
+          @include media-breakpoint-down(xl) {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            ng-screen {
+              width: 100%;
+              @include media-breakpoint-up(sm) {
+                width: 50%;
+              }
+              @include media-breakpoint-up(md) {
+                width: 33.333333%
+              }
+            }
+          }
+        }
+      }
+
+      .thumbnail-view .main-area, .speaker-view {
+        position: relative;
+
+        ng-screen {
+          @include restoreFullAspectRatio();
+
+          &.teacher-screen-shared + .teacher-webcam-shared {
+            position: absolute;
+            width: 250px;
+            height: auto;
+            right: 0.5rem;
+            bottom: 1rem;
+
+            .screen-wrapper {
+              padding-bottom: 56.25%;
+            }
+          }
+
+          &.teacher-webcam-shared,
+          &.teacher-screen-shared, {
+            ~ .no-stream {
+              display: none
+            }
+          }
+        }
+      }
+
+      .grid-view {
+        display: grid;
+        grid-gap: 1rem;
+        grid-auto-flow: row;
+
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        grid-template-rows: 1fr;
+        align-items: center;
+
+        &.g-full {
+          grid-template-rows: repeat(auto-fill, 100%);
+
+          ng-screen {
+            width: 100%;
+            @include restoreFullAspectRatio();
+          }
+        }
+
+        &.g-one-fourth {
+
+        }
+
+        &.g-one-ninth {
+          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        }
+
+        &.g-one-sixteenth {
+          grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        }
+
+        &.g-one-twenty-fifth {
+
+        }
+      }
+    }
+
+    .footer {
+      .actions {
+        ng-button-async {
+          display: inline-block;
+          margin: 0 0.5rem;
+        }
+      }
+    }
+
+    ng-button {
+      &.active {
+        button.p-button-primary:enabled {
+          background-color: #5643C1;
+        }
+      }
+
+      button {
+        border-radius: 8px;
+        border-color: transparent;
+
+        &:focus {
+          box-shadow: none !important;
+        }
+
+        &.p-button-primary {
+          background-color: #40414A;
+
+          &:enabled:hover {
+            background-color: #5643C1;
+            border-color: #5643C1;
+          }
+        }
+
+      }
+    }
+
+    @include media-breakpoint-up(xl) {
+      .content {
+        //height: calc(100% + 140px);
+
+        .participants {
+          overflow: auto;
+        }
+      }
+    }
+    @include media-breakpoint-up(md) {
+      &:not(.rtl).sidebar-visible {
+        &, .header, .footer {
+          margin-left: 20rem;
+        }
+      }
+      &.rtl.sidebar-visible {
+        &, .header, .footer {
+          margin-right: 20rem;
+        }
+      }
+    }
+  }
+
+  .p-sidebar {
+    background-color: #40414A;
+
+    .p-sidebar-content {
+      height: 100%;
+      padding: 0;
+      color: #f8f9fa;
+    }
+
+    .p-sidebar-header {
+      display: none
+    }
+
+    .sidebar-header,
+    .sidebar-header .participants-count,
+    .sidebar-actions .item,
+    .sidebar-actions .item .label,
+    .sidebar-actions .item .checkbox,
+    .sidebar-actions .item .checkbox ng-switch .wrapper > div {
+      display: flex;
+      align-items: center;
+    }
+
+    .sidebar-actions .item,
+    .sidebar-header {
+      justify-content: space-between;
+    }
+
+    .sidebar-header {
+      background-color: #50585F;
+
+      .icon-close {
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+
+    p-accordion {
+      .p-accordion-header {
+        &.p-highlight {
+          .p-accordion-header-link {
+            background-color: #595a62 !important;
+            border-color: #595a62 !important
+          }
+        }
+
+        .p-accordion-header-link {
+          justify-content: space-between;
+          flex-direction: row-reverse;
+          background-color: #40414A !important;
+          border-color: #40414A #40414A #848484 #40414A !important;
+          transition: all .4s;
+          color: #f8f9fa !important;
+
+          &:focus {
+            box-shadow: none;
+          }
+
+          &:hover {
+            background-color: #595a62 !important;
+            border-color: #595a62 !important
+          }
+
+          .p-accordion-toggle-icon {
+            &:before {
+              content: "\e902";
+            }
+          }
+
+          &[aria-expanded="true"] {
+            .p-accordion-toggle-icon {
+              &:before {
+                content: "\e903";
+              }
+            }
+          }
+        }
+
+        .raise-hand-info {
+          &, .raise-hand-count {
+            display: flex;
+            align-items: center;
+          }
+
+          .raise-hand-count {
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background-color: #F5A31F;
+            border-radius: 50%;
+          }
+        }
+      }
+
+      .p-accordion-content {
+        background-color: #40414A;
+        border-color: #40414A;
+        color: #f8f9fa;
+        padding: 1.5rem 0.25rem;
+
+        ng-user-item:not(:last-of-type) {
+          display: block;
+          margin-bottom: 1rem;
+        }
+      }
+    }
+
+    .search-box {
+      input[type=text] {
+        background-color: #585A66;
+        border-color: #585A66;
+        border-radius: 8px;
+        color: #ffffff;
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+
+      i {
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 0;
+        transform: translateY(-50%);
+      }
+    }
+  }
+}

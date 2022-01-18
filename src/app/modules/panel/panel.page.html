@@ -1,0 +1,45 @@
+<div class="main-content {{getClasses()}}">
+  <navbar-menu
+    [menuType]="menuType"
+    [user]="currentUser"
+    [sidebarItems]="sidebarItems"
+    [sidebarVisible]="sidebarVisible"
+    [sidebarLock]="sidebarLock"
+    (sidebarVisibleChange)="onSidebarVisibleChange($event)"
+    (sidebarLockChange)="onSidebarLockChange($event)"
+  ></navbar-menu>
+  <main [ngClass]="{rtl: fa,'sidebar-open':sidebarVisible,'sidebar-lock':sidebarLock}">
+    <div class="sidebar p-4 d-none">
+      <div class="sidebar-toggler" (click)="toggleSidebar($event)"><span class="icon-arrow---Left"></span></div>
+      <ng-logo class="d-block text-center mb-4"></ng-logo>
+      <ul class="list-unstyled p-0">
+        <li class="rounded py-3 px-4 d-flex align-items-center">
+          <i class="icon-user-groups"></i>
+          <span>مدیریت کاربران</span>
+          <div class="submenu-wrapper">
+            <ul class="submenu list-unstyled p-0 rounded">
+              <li class="rounded py-3 px-4" routerLink="/user-list">
+                <span>کاربران</span>
+              </li>
+              <li class="rounded py-3 px-4" routerLink="/group-list">
+                <span>گروه ها</span>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="rounded py-3 px-4 d-flex align-items-center" routerLink="/room-list">
+          <i class="icon-camera"></i>
+          <span>مدیریت اتاق ها</span>
+        </li>
+        <li class="rounded py-3 px-4 d-flex align-items-center" routerLink="/profile">
+          <i class="icon-profile"></i>
+          <span>پروفایل</span>
+        </li>
+      </ul>
+    </div>
+    <div class="outlet-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
+<ng-loading></ng-loading>

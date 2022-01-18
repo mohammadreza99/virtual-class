@@ -1,0 +1,169 @@
+$root: "p-autoComplete";
+$wrapper: "p-autoComplete ::ng-deep .p-autocomplete";
+$inputEl: "p-autoComplete ::ng-deep .p-inputtext";
+
+#{$root},
+#{$wrapper},
+#{$inputEl},
+small {
+  width: 100%;
+}
+
+.wrapper {
+  direction: ltr;
+
+  #{$root} {
+    &.has-before ::ng-deep .p-inputtext {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    &.has-after ::ng-deep .p-inputtext {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+
+  > div {
+    position: relative;
+
+    i {
+      z-index: 200;
+    }
+
+    .error {
+      position: absolute;
+      top: 100%;
+    }
+  }
+
+  &.ltr {
+    > div {
+
+      .error {
+        left: 0;
+      }
+
+      &.p-input-icon-right {
+        &.autocomplete-dd {
+          i {
+            right: 3rem;
+          }
+        }
+      }
+
+      #{$root} {
+        &.has-before ::ng-deep .p-autocomplete-dropdown {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+
+        &.has-after ::ng-deep .p-autocomplete-dropdown {
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+      }
+
+      &.p-input-icon-left {
+        #{$inputEl} {
+          padding-left: 2rem;
+        }
+      }
+    }
+
+    #{$inputEl},
+    label,
+    .error,
+    ~ small {
+      direction: ltr;
+    }
+  }
+
+  &.rtl {
+    text-align: right;
+
+    > div {
+      &.p-float-label {
+        label {
+          right: 0.5rem;
+          left: auto;
+        }
+
+        &.p-input-icon-right {
+          label {
+            right: 2rem;
+          }
+        }
+      }
+
+      .error {
+        right: 0;
+      }
+
+      &.p-input-icon-right #{$inputEl} {
+        padding-right: 2rem;
+      }
+
+      &.p-input-icon-left {
+        &.autocomplete-dd {
+          i {
+            left: 3rem;
+          }
+        }
+      }
+
+      &.autocomplete-dd {
+        #{$root} {
+          ::ng-deep .p-autocomplete-dropdown {
+            border-top-left-radius: 3px;
+            border-bottom-left-radius: 3px;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+          }
+
+          ::ng-deep .p-inputtext {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+          }
+
+          &.has-before ::ng-deep .p-inputtext {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+          }
+
+          &.has-after ::ng-deep .p-autocomplete-dropdown {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+          }
+        }
+      }
+
+      #{$wrapper} {
+        .p-autocomplete-token {
+          flex-direction: row-reverse;
+          margin-left: 0.5rem;
+          margin-right: 0;
+        }
+      }
+    }
+
+    #{$inputEl},
+    #{$wrapper} .p-autocomplete-items,
+    label,
+    .error,
+    ~ small {
+      direction: rtl;
+    }
+
+    #{$wrapper} {
+      flex-direction: row-reverse;
+
+      .p-autocomplete-loader {
+        right: auto;
+        left: 0.5rem;
+      }
+    }
+  }
+}

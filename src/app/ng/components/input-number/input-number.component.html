@@ -1,0 +1,84 @@
+<div
+  [ngClass]="{
+    rtl: rtl,
+    ltr: !rtl,
+    'flex-column-reverse': labelPos == 'fix-top',
+    'align-items-center': labelPos == 'fix-side',
+    'align-items-end': labelPos == 'fix-top' && rtl,
+    'flex-row': labelPos == 'fix-side' && rtl,
+    'flex-row-reverse': labelPos == 'fix-side' && !rtl
+  }"
+  class="wrapper d-flex"
+>
+  <div
+    [ngClass]="{
+      'w-100': labelPos == 'fix-top',
+      'p-float-label': labelPos == 'float',
+      'p-input-icon-left': icon && iconPos == 'left',
+      'p-input-icon-right': icon && iconPos == 'right',
+      'p-inputtext-sm': inputSize == 'sm',
+      'p-inputtext-lg': inputSize == 'lg',
+      'p-input-filled': filled && value
+    }"
+    class="flex-grow-1"
+  >
+    <i *ngIf="icon" [ngClass]="icon"></i>
+    <p-inputNumber
+      (onAfterBtnClick)="emitter('onAfterBtnClick', $event)"
+      (onBeforeBtnClick)="emitter('onBeforeBtnClick', $event)"
+      (onBlur)="_onBlur()"
+      (onFocus)="emitter('onFocus',$event)"
+      (onInput)="_onInput($event)"
+      [(ngModel)]="value"
+      [buttonLayout]="buttonLayout"
+      [currencyDisplay]="currencyDisplay"
+      [currency]="currency"
+      [decrementButtonIcon]="decrementButtonIcon"
+      [disabled]="disabled"
+      [format]="format"
+      [incrementButtonIcon]="incrementButtonIcon"
+      [inputId]="inputId"
+      [maxFractionDigits]="maxFractionDigits"
+      [max]="max"
+      [maxlength]="maxlength"
+      [minFractionDigits]="minFractionDigits"
+      [min]="min"
+      [mode]="mode"
+      [ngAddon]="addon"
+      [ngClass]="{
+        'ng-invalid ng-dirty': ngControl ? isInvalid(ngControl.control) : false
+      }"
+      [placeholder]="placeholder"
+      [prefix]="prefix"
+      [showButtons]="showButtons"
+      [size]="size"
+      [step]="step"
+      [suffix]="suffix"
+      [title]="title"
+      [useGrouping]="useGrouping"
+      ></p-inputNumber>
+      <label *ngIf="label && labelPos == 'float'" [attr.for]="inputId">{{
+      label
+    }}</label>
+    <ng-container *ngFor="let error of errors | keyvalue">
+      <small *ngIf="showError(error.key)" [class.mt-4]="hint"
+        class="error p-invalid p-error">
+        {{ error.value }}
+      </small>
+    </ng-container>
+  </div>
+  <label
+    *ngIf="label && labelPos != 'float'"
+    [attr.for]="inputId"
+    [ngClass]="{
+      'mb-0': labelPos == 'fix-side',
+      'ml-4': rtl,
+      'mr-4': !rtl,
+      'text-muted': disabled
+    }"
+    [style.width.px]="labelWidth"
+    >{{ label }}</label
+  >
+</div>
+
+<small *ngIf="hint">{{ hint }}</small>

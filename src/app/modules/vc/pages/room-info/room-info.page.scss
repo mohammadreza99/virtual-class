@@ -1,0 +1,45 @@
+@import "mixins";
+
+.container-lg {
+  display: flex;
+  align-items: center;
+
+  .wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 1fr;
+    width: 100%;
+
+    .video-preview {
+      position: relative;
+
+      .video-wrapper {
+        position: relative;
+        padding-bottom: 56.25%;
+
+        video {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      .preview-footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+      }
+    }
+
+    @include media-breakpoint-down(lg) {
+      display: flex;
+      flex-direction: column;
+
+      .video-preview {
+        min-height: 250px
+      }
+    }
+  }
+}

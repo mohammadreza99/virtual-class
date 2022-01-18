@@ -1,0 +1,123 @@
+$root: "p-cascadeSelect";
+$wrapper: "p-cascadeSelect ::ng-deep .p-cascadeselect";
+$inputEl: "p-cascadeSelect ::ng-deep .p-inputwrapper";
+
+#{$root} {
+  display: block;
+}
+
+#{$root},
+#{$wrapper},
+#{$inputEl},
+small {
+  width: 100%;
+}
+
+.wrapper { direction: ltr;
+  #{$root} {
+    &.has-before ::ng-deep .p-cascadeselect {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    &.has-after ::ng-deep .p-cascadeselect {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    &.ng-invalid.ng-dirty {
+      ::ng-deep .p-cascadeselect {
+        border-color: #f44336;
+      }
+    }
+  }
+  > div {
+    i {
+      z-index: 200;
+    }
+    position: relative;
+    .error {
+      position: absolute;
+      top: 100%;
+    }
+
+    &.p-inputtext-lg ::ng-deep .p-cascadeselect-label {
+      font-size: 1.25rem;
+      padding: 0.625rem 0.625rem;
+    }
+    &.p-inputtext-sm ::ng-deep .p-cascadeselect-label {
+      font-size: 0.875rem;
+      padding: 0.4375rem 0.4375rem;
+    }
+  }
+  &.ltr {
+    > div {
+
+      .error {
+        left: 0;
+      }
+      &.p-input-icon-left #{$inputEl} {
+        padding-left: 2rem;
+      }
+      &.p-input-icon-right {
+        i {
+          right: 2.5rem;
+        }
+      }
+    }
+    #{$inputEl},
+    label,
+    .error,
+    ~ small {
+      direction: ltr;
+    }
+  }
+  &.rtl { text-align: right;
+    > div {
+      &.p-float-label {
+        label {
+          right: 0.5rem;
+          left: auto;
+        }
+        &.p-input-icon-right {
+          label {
+            right: 2rem;
+          }
+        }
+      }
+      .error {
+        right: 0;
+      }
+
+      &.p-input-icon-right #{$inputEl} {
+        padding-right: 2rem;
+      }
+      &.p-input-icon-left {
+        i {
+          left: 2.5rem;
+        }
+      }
+    }
+    #{$inputEl},
+    #{$wrapper} .p-cascadeselect-items,
+    label,
+    .error,
+    ~ small {
+      direction: rtl;
+    }
+    #{$wrapper} {
+      .p-cascadeselect-item-active > .p-cascadeselect-sublist {
+        right: 100%;
+        left: auto;
+      }
+      .p-cascadeselect-items {
+        left: auto !important;
+      }
+      .p-cascadeselect-group-icon {
+        margin-left: 0;
+        margin-right: auto;
+        &:before {
+          content: "\e931";
+        }
+      }
+    }
+  }
+}

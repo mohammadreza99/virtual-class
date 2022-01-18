@@ -1,0 +1,173 @@
+<div class="virtual-class-wrapper" [class.rtl]="fa" [class.sidebar-visible]="sidebarVisible" #wrapper>
+  <div class="header d-flex align-items-center justify-content-between fixed-top">
+    <div class="actions d-flex align-items-center">
+      <ng-logo></ng-logo>
+      <ng-button class="mx-3" icon="icon-view" (click)="viewModes.toggle($event)"></ng-button>
+      <h6 class="mb-0">{{currentUser.first_name}} {{currentUser.last_name}}</h6>
+    </div>
+    <div class="info">
+      <ng-button [label]="'room.sessionInfo' | translate" (click)="sessionInfo.toggle($event)"></ng-button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="speaker-view" [hidden]="currentViewMode != 'speaker'">
+      <ng-screen position="mainPosition"></ng-screen>
+      <ng-screen position="mainThumbPosition"></ng-screen>
+      <div class="no-stream h-100">
+        <ng-main-placeholder></ng-main-placeholder>
+      </div>
+    </div>
+
+    <div class="grid-view" [hidden]="currentViewMode != 'grid'" [ngClass]="getColumnTemplate()">
+      <ng-screen position="mainPosition"></ng-screen>
+      <ng-screen position="mainThumbPosition"></ng-screen>
+      <ng-screen position="sideThumbPosition"
+                 *ngFor="let u of roomUsers;trackBy:trackByFn" [user]="u">
+      </ng-screen>
+    </div>
+
+    <div class="thumbnail-view" [hidden]="currentViewMode != 'thumbnail'">
+      <div class="d-flex flex-column-reverse flex-xl-row h-100">
+        <div class="participants">
+          <ng-screen position="sideThumbPosition"
+                     *ngFor="let u of roomUsers;trackBy:trackByFn" [user]="u">
+          </ng-screen>
+        </div>
+        <div class="main-area flex-grow-1">
+          <ng-screen position="mainPosition"></ng-screen>
+          <ng-screen position="mainThumbPosition"></ng-screen>
+          <div class="no-stream h-100">
+            <ng-main-placeholder></ng-main-placeholder>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer d-flex align-items-center justify-content-between fixed-bottom">
+    <ng-button icon="icon-participant" [class.active]="sidebarVisible" (click)="toggleSidebar()"></ng-button>
+    <div class="actions">
+      <ng-button-async (clickAsync)="toggleCamera($event)"
+                       newColor="success"
+                       [disabled]="disableWebcam"
+                       [icon]="disableWebcam ? 'icon-camera-off' : 'icon-camera'">
+      </ng-button-async>
+      <ng-button-async (clickAsync)="toggleMic($event)"
+                       newColor="success"
+                       [disabled]="disableMic"
+                       [icon]="disableMic ? 'icon-mic-off' : 'icon-mic'">
+      </ng-button-async>
+      <ng-button-async *ngPermission="'Viewer'" (clickAsync)="toggleRaiseHand($event)" newColor="success"
+                       [defaultState]="raiseHandActivated ? 2 : 1" icon="icon-hand-raise">
+      </ng-button-async>
+      <ng-button-async *ngPermission="'Admin'" icon="icon-share-screen" (clickAsync)="toggleScreen($event)"
+                       newColor="success">
+      </ng-button-async>
+    </div>
+    <ng-button class="d-none d-md-block" (click)="leaveRoom()" color="danger"
+               [label]="'room.leaveSession' | translate"></ng-button>
+    <ng-button class="d-md-none" (click)="leaveRoom()" color="danger"
+               icon="icon-log-out"></ng-button>
+  </div>
+
+</div>
+
+
+<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [showCloseIcon]="false" [(visible)]="sidebarVisible"
+           [modal]="false"
+           transitionOptions="180ms"
+           styleClass="shadow-sm">
+  <div class="sidebar-header py-4">
+    <div class="participants-count">
+      <i class="icon-participant mx-2"></i>
+      <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>
+    </div>
+    <i class="icon-close mx-2" (click)="closeSidebar()"></i>
+  </div>
+  <div class="sidebar-actions py-4 px-3" *ngPermission="'Admin'">
+    <div class="item mb-3">
+      <div class="label">
+        <i class="icon-mic"></i>
+        <span class="mx-2">{{'room.everyOnesVoice' | translate}}</span>
+      </div>
+      <div class="checkbox">
+        <span class="mx-2">{{(allMuted ? 'room.off' : 'room.on') | translate}}</span>
+        <ng-switch (onChange)="toggleMuteAll($event)"></ng-switch>
+      </div>
+    </div>
+    <div class="item">
+      <div class="label">
+        <i class="icon-camera"></i>
+        <span class="mx-2">{{'room.everyOnesVideo' | translate}}</span>
+      </div>
+      <div class="checkbox">
+        <span class="mx-2">{{(allMutedVideo ? 'room.off' : 'room.on') | translate}}</span>
+        <ng-switch [value]="true" (onChange)="toggleMuteVideoAll($event)"></ng-switch>
+      </div>
+    </div>
+  </div>
+  <div class="search-box px-3 p-4">
+    <ng-input-text inputSize="md" [rtl]="fa" icon="icon-search" [(ngModel)]="searchText" [iconPos]="fa ? 'left' : 'right'"
+                   [placeholder]="'room.searchParticipants' | translate">
+    </ng-input-text>
+  </div>
+  <div class="participants-list">
+    <p-accordion [class.rtl]="fa" [multiple]="true">
+      <p-accordionTab [selected]="true">
+        <ng-template pTemplate="header">
+          <span class="raise-hand-info">
+            <span>{{'room.tribuneRequest' | translate}}</span>
+            <span class="raise-hand-count mx-2" *ngIf="raisedHandsUsers.length != 0">{{raisedHandsUsers.length}}</span>
+          </span>
+        </ng-template>
+        <ng-user-item [user]="user" *ngFor="let user of raisedHandsUsers"
+                      [raiseHand]="true">
+        </ng-user-item>
+        <ng-empty *ngIf="raisedHandsUsers.length == 0" [message]="'nothingFound' | translate"></ng-empty>
+      </p-accordionTab>
+      <p-accordionTab [header]="'room.participants' | translate" [selected]="true">
+        <ng-user-item [user]="user"
+                      *ngFor="let user of allUsers | ngFilter:'first_name,last_name':searchText">
+        </ng-user-item>
+        <ng-empty *ngIf="(allUsers | ngFilter:'first_name,last_name':searchText).length == 0"
+                  [message]="'nothingFound' | translate"></ng-empty>
+      </p-accordionTab>
+    </p-accordion>
+  </div>
+</p-sidebar>
+
+<p-overlayPanel [baseZIndex]="2000" #viewModes styleClass="view-modes {{fa ? 'rtl' : null}}">
+  <ng-template pTemplate>
+    <ul class="list-unstyled p-0 m-0">
+      <li (click)="changeView('speaker',viewModes)" [class.active]="currentViewMode == 'speaker'">
+        <i class="icon-view-speaker"></i>
+        <span>{{'room.showSpeakerOnly' | translate}}</span>
+      </li>
+      <li (click)="changeView('grid',viewModes)" [class.active]="currentViewMode == 'grid'">
+        <i class="icon-view-grid"></i>
+        <span>{{'room.showAllParticipants' | translate}}</span>
+      </li>
+      <li (click)="changeView('thumbnail',viewModes)" [class.active]="currentViewMode == 'thumbnail'">
+        <i class="icon-view-thumbnail1"></i>
+        <span>{{'room.showSpeakerAndParticipants' | translate}}</span>
+      </li>
+    </ul>
+  </ng-template>
+</p-overlayPanel>
+
+<p-overlayPanel [baseZIndex]="2000" #sessionInfo styleClass="session-info {{fa ? 'rtl' : null}}">
+  <ng-template pTemplate>
+    <div class="room-info d-flex align-items-center border-bottom">
+      <ng-logo></ng-logo>
+      <div class="info {{fa ? 'mr-3' : 'ml-3'}}">
+        <div>{{currentRoom.name}}</div>
+        <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>
+      </div>
+    </div>
+    <div class="session-link d-flex align-items-center justify-content-between">
+      <span>{{'room.sessionLink' | translate}}</span>
+      <i class="icon-copy" (click)="copySessionLink(sessionInfo)"></i>
+    </div>
+  </ng-template>
+</p-overlayPanel>

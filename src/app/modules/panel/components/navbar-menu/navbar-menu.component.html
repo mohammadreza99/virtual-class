@@ -1,0 +1,75 @@
+<!--<nav class="navbar navbar-expand-sm shadow fixed-top">-->
+<!--  <div class="collapse navbar-collapse">-->
+<!--    <ul class="navbar-nav p-0 m{{ fa ? 'l' : 'r' }}-auto">-->
+<!--      <li class="nav-item" (click)="accountMenu.toggle($event)">-->
+<!--        <p-avatar shape="circle" size="large" icon="pi pi-user"></p-avatar>-->
+<!--        <span class="m{{ fa ? 'r' : 'l' }}-3">{{ "admin" }}</span>-->
+<!--      </li>-->
+<!--    </ul>-->
+<!--  </div>-->
+<!--</nav>-->
+<!--<p-menu-->
+<!--  #accountMenu-->
+<!--  [baseZIndex]="20000"-->
+<!--  [popup]="true"-->
+<!--  [model]="accountItems"-->
+<!--&gt;</p-menu>-->
+
+<nav class="navbar navbar-expand shadow-sm fixed-top">
+  <div class="collapse navbar-collapse">
+    <ng-button
+      icon="pi pi-bars"
+      color="primary"
+      appearance="text"
+      *ngIf="!sidebarLock && menuType != 'hover' && menuType != 'horizontal'"
+      (click)="handleSidebarToggler()"
+    >
+    </ng-button>
+    <div class="navbar-brand mx-3 d-none d-sm-block">
+      <ng-logo></ng-logo>
+    </div>
+    <ul class="navbar-nav flex-grow-1 p-0 m{{ fa ? 'r' : 'l' }}-auto">
+      <li class="nav-item h6 mb-0">
+        <span class="nav-link">{{ user?.first_name + ' ' + user?.last_name }}</span>
+        <span class="d-none d-sm-block">خوش آمدید</span>
+        <span class="role mx-2 text-light p-1">{{user?.role}}</span>
+      </li>
+      <li class="nav-item flex-grow-1"></li>
+      <li class="nav-item">
+        <i class="icon-notification"></i>
+      </li>
+      <li
+        class="nav-item p{{ fa ? 'r' : 'l' }}-4 m{{
+          fa ? 'r' : 'l'
+        }}-4 border-{{ fa ? 'right' : 'left' }}"
+        (click)="accountMenu.toggle($event)"
+      >
+        <p-avatar shape="circle" size="large" icon="pi pi-user"></p-avatar>
+      </li>
+    </ul>
+  </div>
+</nav>
+<p-menu
+  #accountMenu
+  [baseZIndex]="1000"
+  [popup]="true"
+  [model]="accountItems"
+></p-menu>
+<p-sidebar
+  [styleClass]="sidebarLock ? 'shadow' : ''"
+  [class.lock]="sidebarLock"
+  [blockScroll]="isModalSidebar"
+  [modal]="isModalSidebar"
+  [closeOnEscape]="false"
+  [showCloseIcon]="false"
+  [position]="fa ? 'right' : 'left'"
+  [visible]="sidebarVisible"
+  (visibleChange)="toggleSidebar($event)"
+>
+  <div class="d-flex align-items-center justify-content-between py-3 mb-3 border-bottom sticky-top section-top">
+    <ng-logo></ng-logo>
+    <i class="border rounded-circle p-2 bg-light d-none d-md-block pi pi-lock{{ !sidebarLock ? '-open' : '' }}"
+       (click)="handleSidebarLockToggler()"></i>
+  </div>
+  <p-panelMenu [multiple]="false" [model]="sidebarItems"></p-panelMenu>
+</p-sidebar>

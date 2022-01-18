@@ -1,0 +1,24 @@
+.copy-link {
+  cursor: pointer;
+}
+
+.role-item {
+  border-radius: 4px;
+  text-align: center;
+  display: inline-block;
+
+  &.role-Admin {
+    background-color: #D8F7E9;
+    color: #00CC70;
+  }
+
+  &.role-Viewer {
+    background-color: #FDEDD2;
+    color: #F5A31F;
+  }
+
+  &-extra {
+    background-color: #F5F6F7;
+    color: #5643C1;
+  }
+}

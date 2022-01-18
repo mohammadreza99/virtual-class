@@ -1,0 +1,47 @@
+:host ::ng-deep {
+  .participant-item {
+    &, .info, .avatar, .actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .info {
+      flex-grow: 1;
+      max-width: 60%;
+
+      .name {
+        flex-grow: 1;
+
+        p {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          margin: 0;
+        }
+
+        .role {
+          font-size: 10px;
+          background-color: #5643C1;
+          border-radius: 4px;
+          padding: 0.15rem;
+        }
+      }
+
+      .avatar {
+        min-width: 40px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%
+      }
+    }
+
+    .actions, .raise-hand {
+      ng-button,
+      ng-button-async {
+        button.p-button-primary {
+          background-color: #5F6069;
+        }
+      }
+    }
+  }
+}

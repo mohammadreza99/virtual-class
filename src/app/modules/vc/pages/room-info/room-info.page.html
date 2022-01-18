@@ -1,0 +1,19 @@
+<div class="container-lg h-100">
+  <div class="wrapper shadow my-5 border rounded">
+    <div class="item video-preview d-flex align-items-center justify-content-center border-{{fa ? 'left' : 'right'}}">
+      <div class="video-wrapper w-100 bg-dark" [hidden]="message">
+        <video #videoPreview playsinline autoplay muted></video>
+      </div>
+      <h4 class="mt-n5" *ngIf="message">{{message | translate}}</h4>
+      <div class="preview-footer bg-light py-2 text-center border-top">
+        <ng-button [label]="'room.testWebcam' | translate" (click)="toggleWebcam()"></ng-button>
+      </div>
+    </div>
+    <div class="item room-info d-flex flex-column align-items-center justify-content-center py-5 px-4">
+      <h4>{{room?.name}}</h4>
+      <p class="text-muted">{{'room.participantsCount' | translate:{value: room?.online_users} }}</p>
+      <ng-button color="success" size="lg" [label]="'room.enterRoom' | translate" (click)="enterRoom()"></ng-button>
+    </div>
+  </div>
+</div>
+<ng-loading></ng-loading>

@@ -1,0 +1,53 @@
+<div class="participant-item justify-content-between" [class.rtl]="fa">
+  <div class="info">
+    <div [style.backgroundColor]="getColor()" class="avatar justify-content-center">
+      {{user.first_name[0] + '.' + user.last_name[0]}}
+    </div>
+    <div class="name mx-2">
+      <p>{{user.first_name + ' ' + user.last_name}}</p>
+      <small class="role" *ngIf="user.role == 'Admin'">{{('room.role' + user.role) | translate}}</small>
+    </div>
+  </div>
+  <ng-container *ngIf="currentUser.id != user.id">
+    <ng-container *ngPermission="'Admin'">
+      <div class="raise-hand text-center" *ngIf="raiseHand">
+        <ng-container *ngIf="!raiseHandConfirmed">
+          <ng-button icon="icon-check" class="ml-1" (click)="confirmRaiseHand()"></ng-button>
+          <ng-button icon="icon-close" (click)="rejectRaiseHand()"></ng-button>
+        </ng-container>
+        <ng-button color="danger" size="sm" (click)="rejectRaiseHand()" [label]="'room.endAccess' | translate"
+                   *ngIf="raiseHandConfirmed">
+        </ng-button>
+      </div>
+      <div class="actions" *ngIf="!raiseHand">
+        <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm"
+                         [icon]="user.muted_video ? 'icon-camera-off' : 'icon-camera'"
+                         (clickAsync)="muteUserCamera($event)">
+        </ng-button-async>
+        <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm" [icon]="user.muted ? 'icon-mic-off' : 'icon-mic'"
+                         (clickAsync)="muteUser($event)">
+        </ng-button-async>
+        <ng-button size="sm" icon="icon-more" (click)="actions.toggle($event)"></ng-button>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>
+
+<p-overlayPanel #actions styleClass="actions {{fa ? 'rtl' : null}}">
+  <ng-template pTemplate>
+    <ul class="list-unstyled p-0 m-0">
+      <li (click)="actionClick('assign-admin',actions)" *ngIf="user.role != 'Admin'">
+        <i class="icon-assign-admin"></i>
+        <span>{{'room.upgradeRole' | translate}}</span>
+      </li>
+      <li (click)="actionClick('unassign-admin',actions)" *ngIf="user.role == 'Admin'">
+        <i class="icon-unassign-admin"></i>
+        <span>{{'room.downgradeRole' | translate}}</span>
+      </li>
+      <li (click)="actionClick('remove-user',actions)" *ngIf="user.role != 'Admin'">
+        <i class="icon-remove-user"></i>
+        <span>{{'room.fireUser' | translate}}</span>
+      </li>
+    </ul>
+  </ng-template>
+</p-overlayPanel>

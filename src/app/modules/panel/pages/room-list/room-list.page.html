@@ -1,0 +1,66 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <ng-custom-table *ngIf="rowData" [showCaption]="true" [rowData]="rowData.items" [config]="tableConfig"
+                       captionIcon="icon-list"
+                       [captionText]="'مدیریت اتاق ها' | translate">
+        <ng-template let-item let-index="rowIndex">
+          <tr>
+            <td>
+        <span tooltipPosition="bottom" [pTooltip]="'کپی لینک' | translate" (click)="copyRoomLink(item.id)"
+              class="mr-2 copy-link">
+                  <i class="icon-file"></i>
+          </span>
+              <span>{{item.name}}</span>
+            </td>
+            <td>
+              <ng-container *ngIf="item.role?.split(',') as roles">
+                <ng-container *ngIf="roles.length <= 2">
+                  <span class="role-item px-3 py-2 role-{{r}}"
+                        [class.mr-1]="!first"
+                        *ngFor="let r of roles;let first=first">
+                    {{r}}
+                  </span>
+                </ng-container>
+                <ng-container *ngIf="roles.length > 2">
+                  <span class="role-item px-3 py-2 role-{{roles[0]}}">
+                    {{roles[0]}}
+                  </span>
+                  <span class="role-item-extra px-3 py-2">
+                    +{{roles.length - 1}}
+                  </span>
+                </ng-container>
+              </ng-container>
+            </td>
+            <td>{{item.start_datetime | ngDate:'fa-ir'}}</td>
+            <td>{{item.end_datetime | ngDate:'fa-ir'}}</td>
+            <td>{{item.status}}</td>
+            <td>
+              <div class="d-flex align-items-center">
+                <ng-switch [value]="item.active" (onChange)="changeRoomStatus(item,$event.checked)"></ng-switch>
+                <span class="mx-2"
+                      [ngClass]="{'text-success' : item.active,'text-danger' : !item.active}">{{(item.active ? 'فعال' : 'غیرفعال') | translate}}</span>
+              </div>
+            </td>
+            <td class="d-flex">
+              <ng-button *ngPanelPermission="'Owner'" pTooltip="ویرایش اتاق" tooltipPosition="bottom"
+                         appearance="outlined" class="ml-2"
+                         icon="icon-edit" (click)="editRoom(item,index)"></ng-button>
+              <ng-button *ngPanelPermission="'Owner'" pTooltip="مدیریت اعضا" tooltipPosition="bottom"
+                         appearance="outlined" class="ml-2"
+                         icon="icon-user-groups" [routerLink]="['/room-setting',item.id]"></ng-button>
+              <ng-button *ngPanelPermission="'Owner'" pTooltip="حذف اتاق" tooltipPosition="bottom" appearance="outlined"
+                         class="ml-2" color="danger"
+                         (click)="deleteRoom(item)" icon="icon-delete"></ng-button>
+              <ng-button pTooltip="ورود به اتاق" tooltipPosition="bottom" appearance="outlined" class="ml-2"
+                         (click)="goToRoom(item)"
+                         icon="icon-go-room"></ng-button>
+              <!--                         [routerLink]="['/vc/room-info',item.id]"-->
+            </td>
+          </tr>
+        </ng-template>
+      </ng-custom-table>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,12 @@
+<div class="screen-wrapper" [style.backgroundColor]="hasVideo() ? '#1f1f1f' :  getColor()">
+  <video #videoElem autoplay muted playsinline [hidden]="!hasVideo()"></video>
+  <ng-container *ngIf="user">
+    <div class="avatar" *ngIf="!hasVideo()">
+      <div class="avatar-info">{{user.first_name[0].toUpperCase()}}.{{user.last_name[0].toUpperCase()}}</div>
+      <small>{{user.first_name + ' ' + user.last_name}}</small>
+    </div>
+    <div *ngIf="hasVideo()" class="user-fullname">
+      {{user.first_name + ' ' + user.last_name}}
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,34 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-md-12 mb-3">
+      <ng-input-text inputSize="md" [rtl]="fa" [label]="'نام گروه' | translate" [(ngModel)]="groupName"></ng-input-text>
+    </div>
+    <div class="col-md-12 mb-3">
+      <ng-auto-complete [suggestions]="filteredUsers" field="label"
+                        [placeholder]="'جستجوی ایمیل کاربر' | translate"
+                        [forceSelection]="true"
+                        [rtl]="fa"
+                        (onSelect)="onSelectUser($event)"
+                        (completeMethod)="onSearchUsers($event)">
+      </ng-auto-complete>
+    </div>
+    <div class="col-md-12">
+      <ng-custom-table [rowData]="selectedUsers" [config]="config">
+        <ng-template let-item>
+          <tr>
+            <td>{{item.first_name + ' ' + item.last_name}}</td>
+            <td>{{item.email}}</td>
+            <td (click)="removeUser(item)">
+              <i class="icon-delete"></i>
+            </td>
+          </tr>
+        </ng-template>
+      </ng-custom-table>
+    </div>
+    <div class="col-md-12 pt-3 mt-3 text-left">
+      <ng-button (onClick)="onSubmit()" [label]="'ذخیره' | translate"
+                 [disabled]="selectedUsers.length === 0">
+      </ng-button>
+    </div>
+  </div>
+</div>

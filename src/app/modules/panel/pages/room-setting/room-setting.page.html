@@ -1,0 +1,89 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 mb-4">
+      <h4 class="main-title">{{'مدیریت اعضای اتاق' | translate}}</h4>
+    </div>
+    <div class="col-8 col-lg-11 mb-4">
+      <ng-input-text inputSize="md" icon="icon-search" [rtl]="fa"
+                     [placeholder]="'جستجوی ایمیل کاربر...' | translate"
+                     (onKeyup)="filterRoomUsers($event)"></ng-input-text>
+    </div>
+    <div class="col-4 col-lg-1 mb-4">
+      <ng-button iconPos="right" icon="icon-add" [label]="'افزودن' | translate" [full]="true"
+                 (click)="showAddUserModal()"></ng-button>
+    </div>
+
+    <div class="col-12 mb-5">
+      <ng-custom-table *ngIf="roomUsers" [rowData]="roomUsers.items" [config]="roomUsersConfig">
+        <ng-template let-item let-index="rowIndex">
+          <tr>
+            <td>{{item.first_name + ' ' + item.last_name}}</td>
+            <td>{{item.email}}</td>
+            <td>
+              <span *ngIf="!item.editing">{{item.role}}</span>
+              <ng-dropdown
+                *ngIf="item.editing"
+                [(ngModel)]="item.role"
+                [options]="[{label:'asAdmin' | translate,value:'Admin'},{label:'asUser' | translate,value:'Viewer'}]">
+              </ng-dropdown>
+            </td>
+            <td class="d-flex">
+              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-delete"
+                         (click)="removeUser(item)" appearance="text" color="danger"></ng-button>
+              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-edit"
+                         (click)="editUserRole(item)" appearance="text" color="success"></ng-button>
+              <ng-button class="mx-1" *ngIf="item.editing" icon="icon-check"
+                         (click)="submitUserEditing(item)" appearance="text" color="success"></ng-button>
+              <ng-button class="mx-1" *ngIf="item.editing" icon="icon-close"
+                         (click)="cancelUserEditing(item,index)" appearance="text" color="danger"></ng-button>
+            </td>
+          </tr>
+        </ng-template>
+      </ng-custom-table>
+    </div>
+
+    <div class="col-12 mb-4">
+      <h4 class="main-title">{{'مدیریت گروه های اتاق' | translate}}</h4>
+    </div>
+    <div class="col-11 mb-4">
+      <ng-input-text inputSize="md" icon="icon-search" [rtl]="fa"
+                     [placeholder]="'جستجوی نام گروه...' | translate"
+                     (onKeyup)="filterRoomGroups($event)"></ng-input-text>
+    </div>
+    <div class="col-1 mb-4">
+      <ng-button iconPos="right" icon="icon-add" [full]="true" [label]="'افزودن' | translate"
+                 (click)="showAddGroupModal()"></ng-button>
+    </div>
+    <div class="col-12">
+      <ng-custom-table *ngIf="roomGroups" [rowData]="roomGroups.items" [config]="roomGroupsConfig">
+        <ng-template let-item let-index="rowIndex">
+          <tr>
+            <td>{{item.name}}</td>
+            <td>{{item.user_count}}</td>
+            <td>
+              <span *ngIf="!item.editing">{{item.role}}</span>
+              <ng-dropdown
+                *ngIf="item.editing"
+                [(ngModel)]="item.role"
+                [options]="[{label:'asAdmin' | translate,value:'Admin'},{label:'asUser' | translate,value:'Viewer'}]">
+              </ng-dropdown>
+            </td>
+            <td class="d-flex">
+              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-delete"
+                         (click)="removeGroup(item)" appearance="text" color="danger"></ng-button>
+              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-edit"
+                         (click)="editGroupRole(item)" appearance="text" color="success"></ng-button>
+              <ng-button class="mx-1" *ngIf="item.editing" icon="icon-check"
+                         (click)="submitGroupEditing(item)" appearance="text" color="success"></ng-button>
+              <ng-button class="mx-1" *ngIf="item.editing" icon="icon-close"
+                         (click)="cancelGroupEditing(item,index)" appearance="text" color="danger"></ng-button>
+            </td>
+          </tr>
+        </ng-template>
+      </ng-custom-table>
+    </div>
+  </div>
+</div>
+
+
+

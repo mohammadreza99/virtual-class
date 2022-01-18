@@ -1,0 +1,91 @@
+<div
+  [ngClass]="{
+    rtl: rtl,
+    ltr: !rtl,
+    'flex-column-reverse': labelPos == 'fix-top',
+    'align-items-center': labelPos == 'fix-side',
+    'align-items-end': labelPos == 'fix-top' && rtl,
+    'flex-row': labelPos == 'fix-side' && rtl,
+    'flex-row-reverse': labelPos == 'fix-side' && !rtl
+  }"
+  class="wrapper d-flex"
+>
+  <div
+    (clickOutside)="onOutsideClick()"
+    [ngClass]="{
+      'w-100': labelPos == 'fix-top',
+      'p-float-label': labelPos == 'float',
+      'p-input-icon-left': rtl,
+      'p-input-icon-right': !rtl,
+      'p-inputtext-sm': inputSize == 'sm',
+      'p-inputtext-lg': inputSize == 'lg',
+      'p-input-filled': filled || selection
+    }"
+    class="flex-grow-1 dd-tree"
+  >
+    <i class="pi pi-chevron-down"></i>
+    <input
+      #inputEl
+      (click)="onClick()"
+      (onAfterBtnClick)="emitter('onAfterBtnClick', $event)"
+      (onBeforeBtnClick)="emitter('onBeforeBtnClick', $event)"
+      [(ngModel)]="inputValue"
+      [attr.id]="inputId"
+      [attr.placeholder]="placeholder"
+      [disabled]="disabled"
+      [ngAddon]="addon"
+      [ngClass]="{
+        'ng-invalid ng-dirty': ngControl ? isInvalid(ngControl.control) : false
+      }"
+      [readonly]="true"
+      pInputText
+    />
+    <div #ddEl [class.hide]="!visible" class="dropdown-section">
+      <ng-tree
+        (onNodeCollapse)="emitter('onNodeCollapse', $event)"
+        (onNodeExpand)="emitter('onNodeExpand', $event)"
+        (onNodeSelect)="_onNodeSelect($event)"
+        (onNodeUnselect)="_onNodeUnselect($event)"
+        (selectionChange)="_onSelectionChange($event)"
+        [emptyMessage]="emptyMessage"
+        [filterBy]="filterBy"
+        [filterLocale]="filterLocale"
+        [filterMode]="filterMode"
+        [filterPlaceholder]="filterPlaceholder"
+        [filter]="filter"
+        [items]="items"
+        [rtl]="rtl"
+        [selectionMode]="selectionMode"
+        [selection]="selection"
+      >
+      </ng-tree>
+    </div>
+
+    <label *ngIf="label && labelPos == 'float'" [attr.for]="inputId">{{
+      label
+    }}</label>
+    <ng-container *ngFor="let error of errors | keyvalue">
+      <small
+        *ngIf="showError(error.key)"
+        [class.mt-4]="hint"
+        class="error p-invalid p-error"
+      >
+        {{ error.value }}
+      </small>
+    </ng-container>
+  </div>
+  <label
+    *ngIf="label && labelPos != 'float'"
+    [attr.for]="inputId"
+    [ngClass]="{
+      'mb-0': labelPos == 'fix-side',
+      'ml-4': rtl,
+      'mr-4': !rtl,
+      'text-muted': disabled
+    }"
+    [style.width.px]="labelWidth"
+    >{{ label }}</label
+  >
+</div>
+
+<small *ngIf="hint">{{ hint }}</small>

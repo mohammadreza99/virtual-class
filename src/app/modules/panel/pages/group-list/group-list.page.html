@@ -1,0 +1,33 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <ng-custom-table *ngIf="rowData" [showCaption]="true" [rowData]="rowData.items" [config]="tableConfig"
+                       captionIcon="icon-list"
+                       [captionText]="'groupManagement' | translate">
+        <ng-template let-item let-index="rowIndex">
+          <tr>
+            <td>{{item.name}}</td>
+            <td>{{item.user_count}}</td>
+            <td>{{item.room_count}}</td>
+            <td>
+              <div class="d-flex align-items-center">
+                <ng-switch [value]="item.active" (onChange)="changeGroupStatus(item,$event.checked)"></ng-switch>
+                <span class="mx-2"
+                      [ngClass]="{'text-success' : item.active,'text-danger' : !item.active}">{{(item.active ? 'active' : 'inactive') | translate}}</span>
+              </div>
+            </td>
+            <td class="d-flex">
+              <ng-button [pTooltip]="'edit' | translate" tooltipPosition="bottom" appearance="outlined" class="ml-2"
+                         icon="icon-edit" (click)="editGroup(item,index)"></ng-button>
+              <ng-button [pTooltip]="'memberManagement' | translate" tooltipPosition="bottom" appearance="outlined"
+                         class="ml-2"
+                         icon="icon-user-groups" [routerLink]="['/group-setting',item.id]"></ng-button>
+              <ng-button [pTooltip]="'delete' | translate" tooltipPosition="bottom" appearance="outlined" color="danger"
+                         (click)="deleteGroup(item)" icon="icon-delete"></ng-button>
+            </td>
+          </tr>
+        </ng-template>
+      </ng-custom-table>
+    </div>
+  </div>
+</div>
