@@ -28,6 +28,7 @@ export class ButtonAsyncComponent implements OnInit, OnChanges {
   @Input() newAppearance: NgButtonAppearance;
   @Input() newColor: NgColor = 'primary';
   @Input() defaultState: 1 | 2 = 1;
+  @Output() defaultStateChange = new EventEmitter();
   @Output() clickAsync = new EventEmitter();
 
   loading: boolean = false;
@@ -50,6 +51,7 @@ export class ButtonAsyncComponent implements OnInit, OnChanges {
   onClick() {
     this.loading = true;
     this.defaultState = this.defaultState === 1 ? 2 : 1;
+    this.defaultStateChange.emit(this.defaultState);
     this.clickAsync.emit(this.removeLoading);
   }
 

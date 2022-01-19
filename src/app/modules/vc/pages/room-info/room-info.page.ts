@@ -30,6 +30,10 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
   async loadData() {
     try {
       const roomId = +this.route.snapshot.paramMap.get('roomId');
+      const token = this.route.snapshot.queryParamMap.get('t');
+      if (token) {
+        localStorage.setItem('token', token);
+      }
       const result = await this.roomService.getRoomById(roomId).toPromise();
       if (result.status == 'OK') {
         this.room = result.data;

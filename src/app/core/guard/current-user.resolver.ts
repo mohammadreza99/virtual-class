@@ -19,6 +19,7 @@ export class CurrentUserResolver implements Resolve<void> {
     } catch (error) {
       await this.router.navigateByUrl('/');
       await this.utilsService.showDialog({message: 'مشکلی بوجود آمده است'});
+      return;
     }
   }
 }

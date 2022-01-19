@@ -14,7 +14,7 @@ export const routes: Routes = [
     path: 'vc',
     loadChildren: (): Promise<Type<any>> =>
       import('./modules/vc/vc.module').then((m) => m.VcModule),
-    canLoad: [AuthGuard, TranslationLoader],
+    canLoad: [/*AuthGuard,*/ TranslationLoader],
   },
   {
     path: '',

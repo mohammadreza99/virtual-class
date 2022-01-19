@@ -15,8 +15,8 @@ export class PanelPage extends LanguageChecker implements OnInit {
     super();
   }
 
-  sidebarVisible = false;
-  sidebarLock = false;
+  sidebarLock: boolean = false;
+  sidebarVisible: boolean = false;
   currentUser: User;
   sidebarItems: MenuItem[];
   menuType: string;
@@ -26,6 +26,11 @@ export class PanelPage extends LanguageChecker implements OnInit {
   }
 
   ngOnInit(): void {
+    if (localStorage.getItem('menuLock')) {
+      const sidebarLock = JSON.parse(localStorage.getItem('menuLock'));
+      this.sidebarLock = sidebarLock != undefined ? sidebarLock : false;
+      this.sidebarVisible = this.sidebarLock;
+    }
     this.handleResize();
     this.currentUser = this.authService.currentUser;
     const allSidebarItems = [
@@ -75,14 +80,6 @@ export class PanelPage extends LanguageChecker implements OnInit {
     });
   }
 
-  handleResize() {
-    if (window.innerWidth < 767) {
-      this.onMenuTypeChange('overlay');
-      this.toggleOverlayDisplay(false);
-    } else {
-      this.onMenuTypeChange('static');
-    }
-  }
 
   toggleSidebar(event: any) {
     const el = event.currentTarget as HTMLElement;
@@ -109,9 +106,9 @@ export class PanelPage extends LanguageChecker implements OnInit {
     if (this.menuType == 'hover') {
       this.sidebarVisible = true;
     } else {
-      this.onSidebarVisibleChange(false);
+      this.onSidebarVisibleChange(this.sidebarVisible);
     }
-    this.onSidebarLockChange(false);
+    this.onSidebarLockChange(this.sidebarLock);
   }
 
   onSidebarVisibleChange(event: any) {
@@ -127,6 +124,7 @@ export class PanelPage extends LanguageChecker implements OnInit {
 
   onSidebarLockChange(event: any) {
     this.sidebarLock = event;
+    localStorage.setItem('menuLock', this.sidebarLock.toString());
     if (this.menuType == 'overlay' || this.menuType == 'overlay-mask' || this.menuType == 'push' || this.menuType == 'push-mask') {
       this.toggleOverlayDisplay(!event);
     }
@@ -154,6 +152,15 @@ export class PanelPage extends LanguageChecker implements OnInit {
         overlay.style.transitionDuration = '0ms';
         overlay.style.opacity = 0;
       }
+    }
+  }
+
+  handleResize() {
+    if (window.innerWidth < 767) {
+      this.onMenuTypeChange('overlay');
+      this.toggleOverlayDisplay(false);
+    } else {
+      this.onMenuTypeChange('static');
     }
   }
 }

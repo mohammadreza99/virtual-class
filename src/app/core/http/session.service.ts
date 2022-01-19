@@ -92,6 +92,10 @@ export class SessionService extends ApiService {
       if (result.status == 'SESSION_ERROR') {
         await this.checkSession(this.currentRoom.id);
       }
+      if (result.detail == 'SessionNotExist') {
+        const newSession = await this.newSession().toPromise();
+        this.currentUser.session = newSession.data.session;
+      }
       this.updatePublishers(result.data.publishers);
       this.retryUpdateRoomPublishers();
     } catch (error) {

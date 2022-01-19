@@ -48,9 +48,9 @@ export class NavbarMenuComponent
   };
 
   @Input() user: User;
-  @Input() sidebarVisible: boolean = false;
+  @Input() sidebarVisible: boolean;
   @Output() sidebarVisibleChange = new EventEmitter();
-  @Input() sidebarLock: boolean = false;
+  @Input() sidebarLock: boolean;
   @Output() sidebarLockChange = new EventEmitter();
   @Input() menuType: string;
 
@@ -62,6 +62,7 @@ export class NavbarMenuComponent
   }
 
   ngOnInit() {
+    this.toggleSidebarLock(this.sidebarLock);
     this.loadThemes();
   }
 

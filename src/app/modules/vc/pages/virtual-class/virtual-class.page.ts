@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Room, RoomUser, StreamActionEvent, ViewMode} from '@core/models';
 import {SessionService} from '@core/http';
 import {OverlayPanel} from 'primeng/overlaypanel';
@@ -45,11 +45,13 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   raisedHandsSubscription: Subscription;
   updateViewSubscription: Subscription;
 
+
+  @HostListener('window:beforeunload', ['$event']) unloadHandler(event: Event) {
+    event.returnValue = false;
+  }
+
   ngOnInit(): void {
-    history.pushState(null, null, location.href);
-    this.location.onPopState(() => {
-      history.pushState(null, null, location.href);
-    });
+    this.disableWindowBackButton();
     this.currentRoom = this.sessionService.currentRoom;
     this.currentUser = this.sessionService.currentUser;
     this.disableWebcam = this.sessionService.currentUser?.muted_video;
@@ -72,11 +74,13 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
         case 'mutePerson':
         case 'muteAll':
           this.disableMic = res.data;
+          this.micActivated = false;
           break;
 
         case 'muteVideo':
         case 'muteVideoAll':
           this.disableWebcam = res.data;
+          this.webcamActivated = false;
           break;
 
         case 'raiseHandAccepted':
@@ -223,6 +227,14 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     } else if (usersCount >= 17) {
       return 'g-one-twenty-fifth';
     }
+  }
+
+
+  disableWindowBackButton() {
+    history.pushState(null, null, location.href);
+    this.location.onPopState(() => {
+      history.pushState(null, null, location.href);
+    });
   }
 
   ngOnDestroy(): void {
