@@ -9,7 +9,11 @@
         <ng-button [label]="'room.testWebcam' | translate" (click)="toggleWebcam()"></ng-button>
       </div>
     </div>
-    <div class="item room-info d-flex flex-column align-items-center justify-content-center py-5 px-4">
+    <div class="item room-info d-flex flex-column align-items-center justify-content-center p-5 px-4">
+      <div class="align-self-end mt-n4 ml-n4">
+        <ng-button color="primary" size="md" appearance="text" [label]="'goBack' | translate"
+                   icon="pi pi-angle-left" routerLink="/rooms"></ng-button>
+      </div>
       <h4>{{room?.name}}</h4>
       <p class="text-muted">{{'room.participantsCount' | translate:{value: room?.online_users} }}</p>
       <ng-button color="success" size="lg" [label]="'room.enterRoom' | translate" (click)="enterRoom()"></ng-button>

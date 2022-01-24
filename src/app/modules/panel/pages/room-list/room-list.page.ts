@@ -36,25 +36,25 @@ export class RoomListPage extends LanguageChecker implements OnInit {
       this.tableConfig = {
         total: this.rowData.total,
         colDef: [{
-          header: 'نام',
+          header: this.translations.name,
           sortField: 'name'
         }, {
-          header: 'دسترسی',
+          header: this.translations.access,
           sortField: 'role'
         }, {
-          header: 'تاریخ شروع',
+          header: this.translations.startDate,
           sortField: 'start_datetime'
         }, {
-          header: 'تاریخ پایان',
+          header: this.translations.endDate,
           sortField: 'end_datetime'
         }, {
-          header: 'وضعیت اتاق',
+          header: this.translations.roomStatus,
           sortField: 'status'
         }, {
-          header: 'وضعیت',
+          header: this.translations.status,
           sortField: 'active'
         }, {
-          header: 'عملیات',
+          header: this.translations.operations,
         }],
         onAdd: this.addRoom,
         onFetch: (data: SearchParam) => this.roomService.getRooms(data).toPromise()
@@ -91,7 +91,7 @@ export class RoomListPage extends LanguageChecker implements OnInit {
   }
 
   editRoom(room: Room, index: number) {
-    const dialogRef = this.utilsService.showDialogForm('ویرایش اتاق',
+    const dialogRef = this.utilsService.showDialogForm(this.translations.editRoom,
       [
         {
           type: 'hidden',
@@ -101,38 +101,38 @@ export class RoomListPage extends LanguageChecker implements OnInit {
         {
           type: 'text',
           formControlName: 'name',
-          label: 'نام',
+          label: this.translations.name,
           className: 'col-md-6',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}],
+          errors: [{type: 'required', message: this.translations.requiredField}],
           value: room.name
         },
         {
           type: 'text',
           formControlName: 'max_user',
-          label: 'تعداد کاربران',
+          label: this.translations.membersCount,
           className: 'col-md-6',
           keyFilter: 'num',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}],
+          errors: [{type: 'required', message: this.translations.requiredField}],
           value: room.max_user
         },
         {
           type: 'date-picker',
           formControlName: 'start_datetime',
-          label: 'تاریخ شروع',
+          label: this.translations.startDate,
           className: 'col-md-6',
           value: moment(new Date(room.start_datetime))
         },
         {
           type: 'date-picker',
           formControlName: 'end_datetime',
-          label: 'تاریخ پایان',
+          label: this.translations.endDate,
           className: 'col-md-6',
           value: moment(new Date(room.end_datetime))
         },
         {
           type: 'switch',
           formControlName: 'private',
-          label: 'خصوصی',
+          label: this.translations.private,
           className: 'col-md-6',
           value: room.private
         },
@@ -152,46 +152,46 @@ export class RoomListPage extends LanguageChecker implements OnInit {
     try {
       const usersData = await this.userService.getUsers({limit: 1000}).toPromise();
       const admins = usersData.items.map(a => ({label: `${a.first_name} ${a.last_name}`, value: a.id}));
-      const dialogRef = this.utilsService.showDialogForm('افزودن اتاق',
+      const dialogRef = this.utilsService.showDialogForm(this.translations.addRoom,
         [
           {
             type: 'text',
             formControlName: 'name',
-            label: 'نام اتاق',
+            label: this.translations.name,
             className: 'col-md-6',
-            errors: [{type: 'required', message: 'این فیلد الزامیست'}]
+            errors: [{type: 'required', message: this.translations.requiredField}]
           },
           {
             type: 'dropdown',
             formControlName: 'admin_user_id',
             options: admins,
-            label: 'انتخاب ادمین',
+            label: this.translations.selectAdmin,
             className: 'col-md-6',
-            errors: [{type: 'required', message: 'این فیلد الزامیست'}]
+            errors: [{type: 'required', message: this.translations.requiredField}]
           },
           {
             type: 'date-picker',
             formControlName: 'start_datetime',
-            label: 'تاریخ شروع',
+            label: this.translations.startDate,
             className: 'col-md-6'
           },
           {
             type: 'date-picker',
             formControlName: 'end_datetime',
-            label: 'تاریخ خاتمه',
+            label: this.translations.endDate,
             className: 'col-md-6'
           },
           {
             type: 'number',
             formControlName: 'max_user',
-            label: 'تعداد کاربران',
+            label: this.translations.membersCount,
             className: 'col-md-6',
-            errors: [{type: 'required', message: 'این فیلد الزامیست'}]
+            errors: [{type: 'required', message: this.translations.requiredField}]
           },
           {
             type: 'switch',
             formControlName: 'private',
-            label: 'خصوصی',
+            label: this.translations.private,
             className: 'col-md-6 align-self-center',
             labelPos: 'fix-side',
             value: false
@@ -225,5 +225,12 @@ export class RoomListPage extends LanguageChecker implements OnInit {
     setTimeout(() => {
       this.router.navigate(['/vc/room-info', room.id]);
     }, 30);
+  }
+
+  getTranslated(status: string) {
+    const str = status.toLowerCase().replace(/_([a-z])/g, function(g) {
+      return g[1].toUpperCase();
+    });
+    return this.translations[str];
   }
 }

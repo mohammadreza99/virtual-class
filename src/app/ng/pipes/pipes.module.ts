@@ -5,4 +5,5 @@ import {PIPES} from '.';
   exports: [...PIPES],
   declarations: [...PIPES],
 })
-export class NgPipesModule {}
+export class NgPipesModule {
+}

@@ -42,13 +42,13 @@ export class GroupListPage extends LanguageChecker implements OnInit {
           header: this.translations.membersCount,
           sortField: 'user_count'
         }, {
-          header: 'عضویت در کلاس یا اتاق',
+          header: this.translations.joinedInClassOrGroup,
           sortField: 'room_count'
         }, {
-          header: 'وضعیت',
+          header: this.translations.status,
           sortField: 'active'
         }, {
-          header: 'عملیات',
+          header: this.translations.operations,
         }],
         onAdd: this.addGroup,
         onFetch: (data: SearchParam) => this.groupService.getGroups(data).toPromise()
@@ -71,7 +71,7 @@ export class GroupListPage extends LanguageChecker implements OnInit {
   }
 
   editGroup(group: Group, index: number) {
-    const dialogRef = this.utilsService.showDialogForm('ویرایش گروه',
+    const dialogRef = this.utilsService.showDialogForm(this.translations.editGroup,
       [
         {
           type: 'hidden',
@@ -81,9 +81,9 @@ export class GroupListPage extends LanguageChecker implements OnInit {
         {
           type: 'text',
           formControlName: 'name',
-          label: 'نام',
+          label: this.translations.name,
           className: 'col-12',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}],
+          errors: [{type: 'required', message: this.translations.requiredField}],
           value: group.name
         },
       ], {width: '900px', rtl: this.fa}
@@ -104,7 +104,7 @@ export class GroupListPage extends LanguageChecker implements OnInit {
       if (this.relations.rooms.length) {
         this.dialogService.open(UserRelationsComponent, {
           data: this.relations,
-          header: 'تاییدیه حذف گروه',
+          header: this.translations.deleteGroupConfirm,
           rtl: this.fa
         }).onClose.subscribe(async res => {
           if (res) {
@@ -113,8 +113,8 @@ export class GroupListPage extends LanguageChecker implements OnInit {
         });
       } else {
         const dialogRes = await this.utilsService.showConfirm({
-          header: 'تاییدیه حذف گروه',
-          message: 'ایا از حذف گروه مطمئن هستید؟',
+          header: this.translations.deleteGroupConfirm,
+          message: this.translations.deleteGroupConfirmBody,
           rtl: this.fa
         });
         if (dialogRes) {
@@ -127,7 +127,7 @@ export class GroupListPage extends LanguageChecker implements OnInit {
 
   addGroup = async () => {
     this.dialogService.open(AddGroupFormComponent, {
-      header: 'افزودن گروه',
+      header: this.translations.addGroup,
       width: '900px'
     }).onClose.subscribe(async res => {
       try {

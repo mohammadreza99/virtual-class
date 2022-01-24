@@ -14,39 +14,69 @@ const routes: Routes = [
   {
     path: '',
     component: PanelPage,
+    data: {breadcrumb: 'home'},
     resolve: {data: CurrentUserResolver},
     children: [
       {
         path: 'dashboard',
         component: DashboardPage,
+        data: {title: 'dashboard'}
       },
       {
-        path: 'room-list',
-        component: RoomListPage
+        path: 'rooms',
+        data: {breadcrumb: 'rooms'},
+        children: [
+          {
+            path: 'list',
+            component: RoomListPage,
+            data: {title: 'roomList', breadcrumb: 'roomList'}
+          },
+          {
+            path: 'setting/:id',
+            component: RoomSettingPage,
+            data: {title: 'roomManagement', breadcrumb: 'roomManagement'}
+          },
+          {
+            path: '',
+            redirectTo: 'list',
+            pathMatch: 'full'
+          },
+        ]
       },
       {
-        path: 'room-setting/:id',
-        component: RoomSettingPage
-      },
-      {
-        path: 'group-list',
-        component: GroupListPage,
-      },
-      {
-        path: 'group-setting/:id',
-        component: GroupSettingPage,
+        path: 'groups',
+        data: {breadcrumb: 'groups'},
+        children: [
+          {
+            path: 'list',
+            component: GroupListPage,
+            data: {title: 'groupList', breadcrumb: 'groupList'}
+          },
+          {
+            path: 'setting/:id',
+            component: GroupSettingPage,
+            data: {title: 'groupManagement', breadcrumb: 'groupManagement'}
+          },
+          {
+            path: '',
+            redirectTo: 'list',
+            pathMatch: 'full'
+          },
+        ]
       },
       {
         path: 'user-list',
-        component: UserListPage
+        component: UserListPage,
+        data: {title: 'userList', breadcrumb: 'userList'}
       },
       {
         path: 'profile',
-        component: ProfilePage
+        component: ProfilePage,
+        data: {title: 'profileSetting', breadcrumb: 'profileSetting'}
       },
       {
         path: '',
-        redirectTo: 'room-list',
+        redirectTo: 'rooms',
         pathMatch: 'full'
       },
     ],

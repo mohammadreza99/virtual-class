@@ -1,10 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from '@core/http';
 import {UtilsService} from '@ng/services';
-import {ConfirmationService} from 'primeng/api';
 import {DialogService} from 'primeng/dynamicdialog';
 import {PagerRes, SearchParam, TableConfig, User, UserRelation} from '@core/models';
-import {AddGroupFormComponent} from '@modules/panel/components/add-group-form/add-group-form.component';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {UserRelationsComponent} from '@modules/panel/components/user-relations/user-relations.component';
 
@@ -35,25 +33,25 @@ export class UserListPage extends LanguageChecker implements OnInit {
       this.tableConfig = {
         total: this.rowData.total,
         colDef: [{
-          header: 'نام',
+          header: this.translations.name,
           sortField: 'first_name'
         }, {
-          header: 'نام خانوادگی',
+          header: this.translations.lastName,
           sortField: 'last_name'
         }, {
-          header: 'ایمیل',
+          header: this.translations.email,
           sortField: 'email'
         }, {
-          header: 'موبایل',
+          header: this.translations.mobile,
           sortField: 'phone_number'
         }, {
-          header: 'ارسال ایمیل',
+          header: this.translations.sendEmail,
           sortField: 'state'
         }, {
-          header: 'وضعیت',
+          header: this.translations.status,
           sortField: 'active'
         }, {
-          header: 'عملیات',
+          header: this.translations.operations,
         }],
         onAdd: this.addUser,
         onFetch: (data: SearchParam) => this.userService.getUsers(data).toPromise()
@@ -74,7 +72,7 @@ export class UserListPage extends LanguageChecker implements OnInit {
     if (this.relations.rooms.length || this.relations.groups.length) {
       this.dialogService.open(UserRelationsComponent, {
         data: this.relations,
-        header: 'تاییدیه حذف کاربر',
+        header: this.translations.deleteUserConfirm,
         rtl: this.fa
       }).onClose.subscribe(async res => {
         if (res) {
@@ -83,8 +81,8 @@ export class UserListPage extends LanguageChecker implements OnInit {
       });
     } else {
       const dialogRes = await this.utilsService.showConfirm({
-        header: 'تاییدیه حذف کاربر',
-        message: 'ایا از حذف کاربر مطمئن هستید؟',
+        header: this.translations.deleteUserConfirm,
+        message: this.translations.deleteUserConfirmBody,
         rtl: this.fa
       });
       if (dialogRes) {
@@ -94,37 +92,40 @@ export class UserListPage extends LanguageChecker implements OnInit {
   }
 
   addUser = async () => {
-    const dialogRef = this.utilsService.showDialogForm('افزودن کاربر',
+    const dialogRef = this.utilsService.showDialogForm(this.translations.addUser,
       [
         {
           type: 'text',
           formControlName: 'first_name',
-          label: 'نام',
+          label: this.translations.name,
           className: 'col-md-6',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}]
+          errors: [{type: 'required', message: this.translations.requiredField}]
         },
         {
           type: 'text',
           formControlName: 'last_name',
-          label: 'نام خانوادگی',
+          label: this.translations.lastName,
           className: 'col-md-6',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}]
+          errors: [{type: 'required', message: this.translations.requiredField}]
         },
         {
           type: 'text',
           formControlName: 'email',
-          label: 'ایمیل',
+          label: this.translations.email,
           className: 'col-md-6',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}, {type: 'email', message: 'ایمیل نامعتبر است'}]
+          errors: [{type: 'required', message: this.translations.requiredField}, {
+            type: 'email',
+            message: this.translations.emailPattern
+          }]
         },
         {
           type: 'text',
           formControlName: 'phone_number',
-          label: 'شماره موبایل',
+          label: this.translations.mobile,
           className: 'col-md-6',
           maxlength: 11,
           keyFilter: 'num',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}]
+          errors: [{type: 'required', message: this.translations.requiredField}]
         },
       ], {width: '900px', rtl: this.fa}
     );
@@ -139,7 +140,7 @@ export class UserListPage extends LanguageChecker implements OnInit {
   };
 
   editUser(user: User, index: number) {
-    const dialogRef = this.utilsService.showDialogForm('ویرایش کاربر',
+    const dialogRef = this.utilsService.showDialogForm(this.translations.editUser,
       [
         {
           type: 'hidden',
@@ -149,35 +150,38 @@ export class UserListPage extends LanguageChecker implements OnInit {
         {
           type: 'text',
           formControlName: 'first_name',
-          label: 'نام',
+          label: this.translations.name,
           className: 'col-md-6',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}],
+          errors: [{type: 'required', message: this.translations.requiredField}],
           value: user.first_name
         },
         {
           type: 'text',
           formControlName: 'last_name',
-          label: 'نام خانوادگی',
+          label: this.translations.lastName,
           className: 'col-md-6',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}],
+          errors: [{type: 'required', message: this.translations.requiredField}],
           value: user.last_name
         },
         {
           type: 'text',
           formControlName: 'email',
-          label: 'ایمیل',
+          label: this.translations.email,
           className: 'col-md-6',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}, {type: 'email', message: 'ایمیل نامعتبر است'}],
+          errors: [{type: 'required', message: this.translations.requiredField}, {
+            type: 'email',
+            message: this.translations.emailPattern
+          }],
           value: user.email
         },
         {
           type: 'text',
           formControlName: 'phone_number',
-          label: 'شماره موبایل',
+          label: this.translations.mobile,
           className: 'col-md-6',
           maxlength: 11,
           keyFilter: 'num',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}],
+          errors: [{type: 'required', message: this.translations.requiredField}],
           value: user.phone_number
         },
       ], {width: '900px', rtl: this.fa}
@@ -203,13 +207,13 @@ export class UserListPage extends LanguageChecker implements OnInit {
   async resetPassword(user: User) {
     try {
       const dialogRes = await this.utilsService.showConfirm({
-        header: 'تاییدیه بازیابی رمز عبور',
-        message: 'بازیابی رمزعبور و ارسال ایمیل مطمئن هستید؟',
+        header: this.translations.passwordResetConfirmTitle,
+        message: this.translations.passwordResetConfirmBody,
         rtl: this.fa
       });
       if (dialogRes) {
         const password = await this.userService.resetPassword(user.email).toPromise();
-        await this.utilsService.showDialogForm('رمزعبور جدید', [
+        await this.utilsService.showDialogForm(this.translations.newPassword, [
           {
             type: 'text',
             formControlName: 'email',
@@ -227,12 +231,17 @@ export class UserListPage extends LanguageChecker implements OnInit {
           }
         ], {
           rejectVisible: false,
-          acceptLabel: 'تایید',
+          acceptLabel: this.translations.verify,
           acceptIcon: null,
           rtl: this.fa
         });
       }
     } catch {
     }
+  }
+
+  getTranslated(state: string) {
+    const str = state.charAt(0).toLowerCase() + state.slice(1);
+    return this.translations[str];
   }
 }

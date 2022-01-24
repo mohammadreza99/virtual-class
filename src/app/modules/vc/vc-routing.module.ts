@@ -8,12 +8,14 @@ const routes: Routes = [
   {
     path: 'room-info/:roomId',
     component: RoomInfoPage,
+    data: {title: 'roomInfo'}
   },
   {
     path: ':roomId',
     component: VirtualClassPage,
     canActivate: [EnterRoomGuard],
     resolve: {data: RoomResolver},
+    data: {title: 'virtualClass'}
   },
 ];
 

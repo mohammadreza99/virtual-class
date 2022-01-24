@@ -13,11 +13,9 @@ export class RoomResolver implements Resolve<void> {
   async resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<void> {
     const roomId = +route.paramMap.get('roomId');
     try {
-      await this.sessionService.initRoom(roomId);
-      document.body.style.backgroundColor = '#40414A';
+      await this.sessionService.checkSession(roomId);
     } catch (error) {
       console.error(error);
-      this.utilsService.showDialog({message: 'مشکلی بوجود آمده است'});
     }
   }
 }

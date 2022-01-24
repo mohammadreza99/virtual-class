@@ -1,9 +1,9 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Router} from '@angular/router';
 import {UtilsService} from '@ng/services';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {MenuItem} from 'primeng/api';
-import {Room, RoomUser, User} from '@core/models';
+import {User} from '@core/models';
 
 @Component({
   selector: 'navbar-menu',
@@ -16,16 +16,17 @@ export class NavbarMenuComponent
 
   accountItems: MenuItem[] = [
     {
-      label: 'خروج',
+      label: this.translations.exit,
       icon: 'pi pi-sign-out',
       command: async (event) => {
         const dialogRes = await this.utilsService.showConfirm(
           {
-            header: 'خروج از سایت',
-            message: 'آیا برای خروج اطمینان دارید؟',
-            acceptLabel: 'بلی',
-            rejectLabel: 'خیر'
-          }
+            header: this.translations.exit,
+            message: this.translations.exitConfirmBody,
+            acceptLabel: this.translations.yes,
+            rejectLabel: this.translations.no,
+            rtl: this.fa
+          },
         );
         if (dialogRes) {
           localStorage.removeItem('token');

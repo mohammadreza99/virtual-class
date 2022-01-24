@@ -16,7 +16,7 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
-    transition: all 180ms;
+    transition: all 150ms;
     color: #f8f9fa;
 
     .header, .footer {
@@ -24,7 +24,7 @@
       min-height: 70px;
       max-height: 70px;
       padding: 0 1rem;
-      transition: all 180ms;
+      transition: all 150ms;
     }
 
     .content {
@@ -38,6 +38,8 @@
       }
 
       .thumbnail-view {
+        height: calc(100vh - 140px);
+
         .participants, .main-area {
           padding: 1rem 0.5rem;
         }
@@ -55,10 +57,15 @@
             margin-bottom: 1rem
           }
 
-          @include media-breakpoint-down(xl) {
+        }
+
+        @include media-breakpoint-down(xl) {
+          height: 100%;
+          .participants {
             width: 100%;
             display: flex;
             flex-wrap: wrap;
+
             ng-screen {
               width: 100%;
               @include media-breakpoint-up(sm) {

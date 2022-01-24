@@ -8,7 +8,6 @@ li {
   &:not(:last-child):hover {
     cursor: pointer;
     span {
-      color: $primary;
     }
   }
 }

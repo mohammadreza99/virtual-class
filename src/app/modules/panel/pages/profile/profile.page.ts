@@ -41,38 +41,41 @@ export class ProfilePage extends LanguageChecker implements OnInit {
 
   async updateProfile() {
     try {
-      const dialogRef = this.utilsService.showDialogForm('ویرایش حساب کاربری',
+      const dialogRef = this.utilsService.showDialogForm(this.translations.editProfile,
         [
           {
             type: 'text',
             formControlName: 'first_name',
-            label: 'نام',
+            label: this.translations.name,
             className: 'col-md-6',
-            errors: [{type: 'required', message: 'این فیلد الزامیست'}],
+            errors: [{type: 'required', message: this.translations.requiredField}],
             value: this.currentUser.first_name
           },
           {
             type: 'text',
             formControlName: 'last_name',
-            label: 'نام خانوادگی',
+            label: this.translations.lastName,
             className: 'col-md-6',
-            errors: [{type: 'required', message: 'این فیلد الزامیست'}],
+            errors: [{type: 'required', message: this.translations.requiredField}],
             value: this.currentUser.last_name
           },
           {
             type: 'text',
             formControlName: 'nick_name',
-            label: 'نام نمایشی',
+            label: this.translations.nickName,
             className: 'col-md-6',
-            errors: [{type: 'required', message: 'این فیلد الزامیست'}],
+            errors: [{type: 'required', message: this.translations.requiredField}],
             value: this.currentUser.nick_name
           },
           {
             type: 'text',
             formControlName: 'email',
-            label: 'ایمیل',
+            label: this.translations.email,
             className: 'col-md-6',
-            errors: [{type: 'required', message: 'این فیلد الزامیست'}, {type: 'email', message: 'ایمیل نامعتبر است'}],
+            errors: [{type: 'required', message: this.translations.requiredField}, {
+              type: 'email',
+              message: this.translations.emailPattern
+            }],
             value: this.currentUser.email
           },
         ], {width: '900px', rtl: this.fa}
@@ -96,28 +99,28 @@ export class ProfilePage extends LanguageChecker implements OnInit {
   }
 
   updatePassword() {
-    const dialogRef = this.utilsService.showDialogForm('تغییر رمز عبور',
+    const dialogRef = this.utilsService.showDialogForm(this.translations.changePassword,
       [
         {
           type: 'password',
           formControlName: 'current_password',
-          label: 'پسورد فعلی',
+          label: this.translations.currentPassword,
           className: 'col-12',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}]
+          errors: [{type: 'required', message: this.translations.requiredField}]
         },
         {
           type: 'password',
           formControlName: 'new_password',
-          label: 'پسورد جدید',
+          label: this.translations.newPassword,
           className: 'col-12',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}]
+          errors: [{type: 'required', message: this.translations.requiredField}]
         },
         {
           type: 'password',
           formControlName: 'confirm_password',
-          label: 'تکرار رمز جدید',
+          label: this.translations.repeatNewPassword,
           className: 'col-12',
-          errors: [{type: 'required', message: 'این فیلد الزامیست'}]
+          errors: [{type: 'required', message: this.translations.requiredField}]
         },
       ], {
         width: '600px',
@@ -125,7 +128,7 @@ export class ProfilePage extends LanguageChecker implements OnInit {
         formValidator: {
           validatorFn: this.checkPasswords,
           error: 'notSame',
-          message: 'رمزعبور و تکرار مطابقت ندارند'
+          message: this.translations.passwordNotMatch
         }
       });
     dialogRef.onClose.subscribe(async (res: any) => {

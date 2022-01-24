@@ -20,7 +20,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
   roomUsers: number;
   stream: MediaStream;
   webcamTestActive: boolean = false;
-  message: string = 'جهت تست دوربین کلیک کنید';
+  message: string = this.translations.pleaseTestWebcam;
 
   ngOnInit(): void {
     this.loadData();
@@ -40,7 +40,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
       }
       const webcamConnected = await this.sessionService.webcamConnected();
       if (!webcamConnected) {
-        this.message = 'وبکم یافت نشد';
+        this.message = this.translations.webcamNotFound;
       }
     } catch (error) {
       console.error(error);
@@ -54,15 +54,15 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
         this.stream = await this.sessionService.getUserMedia();
       } catch (error) {
         if (error.name == 'NotAllowedError') {
-          this.message = 'لطفا دسترسی دوربین را باز کنید';
+          this.message = this.translations.pleaseAllowWebcam;
         } else {
-          this.message = 'وبکم یافت نشد';
+          this.message = this.translations.webcamNotFound;
         }
         this.resetTest();
         return;
       }
       if (!this.stream) {
-        this.message = 'وبکم یافت نشد';
+        this.message = this.translations.webcamNotFound;
         this.resetTest();
         return;
       }
@@ -72,14 +72,14 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     } else {
       this.stopVideo();
       this.webcamTestActive = false;
-      this.message = 'جهت تست دوربین کلیک کنید';
+      this.message = this.translations.pleaseTestWebcam;
     }
   }
 
   resetTest() {
     this.webcamTestActive = false;
     setTimeout(() => {
-      this.message = 'جهت تست دوربین کلیک کنید';
+      this.message = this.translations.pleaseTestWebcam;
     }, 3000);
   }
 
@@ -97,6 +97,8 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     this.stopVideo();
     const roomId = +this.route.snapshot.paramMap.get('roomId');
     localStorage.setItem('roomEnterTime', Date.now().toString());
-    this.router.navigate(['/vc', roomId]);
+    if (this.room) {
+      this.router.navigate(['/vc', roomId]);
+    }
   }
 }

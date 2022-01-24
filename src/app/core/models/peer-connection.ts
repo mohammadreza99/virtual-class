@@ -1,18 +1,16 @@
-import {DisplayName, PeerConnectionOptions, TrackPosition} from "../models/webrtc.model";
+import {PeerConnectionOptions, TrackPosition} from '../models/webrtc.model';
 
 export class PeerConnection {
 
   private pc: RTCPeerConnection;
-  private tryCount = 2;
 
   constructor(private options: PeerConnectionOptions) {
     if (!this.options) {
-      throw 'Invalid Options';
+      throw Error('Invalid Options');
     }
-
     this.pc = new RTCPeerConnection();
     this.pc.onconnectionstatechange = (e: Event) => {
-      this.handleConnectionStateChange(e)
+      this.handleConnectionStateChange(e);
     };
     this.pc.ontrack = (e: RTCTrackEvent) => {
       if (this.options.onTrack) {
@@ -24,20 +22,30 @@ export class PeerConnection {
 
   async createSubscribeConnection() {
     try {
-      const remoteData = await this.options.getRemoteOfferSdp();
-      if (!remoteData.data || !remoteData.data.sdp_offer_data) {
-        throw `SDP OFFER NULL => ID:${this.userId}`;
+      const remoteOffer = await this.options.getRemoteOfferSdp();
+      if (remoteOffer.status_det == 'JANUS_ERROR') {
+        this.options.onError('JANUS_ERROR');
+        return;
       }
-      await this.pc.setRemoteDescription({type: 'offer', sdp: remoteData.data.sdp_offer_data});
+      if (remoteOffer.status_det == 'SessionNotExist') {
+        this.options.onError('SessionNotExist');
+        return;
+      }
+      await this.pc.setRemoteDescription({type: 'offer', sdp: remoteOffer.data.sdp_offer_data});
       const answer = await this.pc.createAnswer();
       await this.pc.setLocalDescription(answer);
-      await this.options.startSubscription(answer.sdp);
+      const result = await this.options.startSubscription(answer.sdp);
+      if (result.status_det == 'JANUS_ERROR') {
+        this.options.onError('JANUS_ERROR');
+        return;
+      }
+      if (result.status_det == 'SessionNotExist') {
+        this.options.onError('SessionNotExist');
+        return;
+      }
     } catch (error) {
-      console.error(error)
-      if (this.tryCount > 0) {
-        this.tryCount--;
-        await this.createSubscribeConnection();
-      } else if (this.options.onError) {
+      console.error(error);
+      if (this.options.onError) {
         this.options.onError(error);
       }
     }
@@ -47,30 +55,31 @@ export class PeerConnection {
     const offerOptions: RTCOfferOptions = {offerToReceiveAudio: true, offerToReceiveVideo: true};
     if (mediaType == 'audio') {
       this.options.stream.getVideoTracks().forEach(t => {
-        t.enabled = false
+        t.enabled = false;
       });
     } else {
       this.options.stream.getAudioTracks().forEach(t => {
-        t.enabled = false
+        t.enabled = false;
       });
     }
     this.options.stream.getTracks().forEach(track => {
-      this.pc.addTrack(track)
+      this.pc.addTrack(track);
     });
     try {
       const offer = await this.pc.createOffer(offerOptions);
       await this.pc.setLocalDescription(offer);
-      const remoteData = await this.options.getRemoteAnswerSdp(offer.sdp);
-      if (!remoteData.data || !remoteData.data.sdp_answer_data) {
-        throw `SDP ANSWER NULL => ID:${this.userId}`
+      const result = await this.options.getRemoteAnswerSdp(offer.sdp);
+      if (result.status_det == 'JANUS_ERROR') {
+        this.options.onError('JANUS_ERROR');
+        return;
       }
-      await this.pc.setRemoteDescription({type: 'answer', sdp: remoteData.data.sdp_answer_data});
+      await this.pc.setRemoteDescription({type: 'answer', sdp: result.data.sdp_answer_data});
       await this.options.publishConfirm();
       if (this.options.onTrack) {
         this.options.onTrack();
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
       if (this.options.onError) {
         this.options.onError(error);
       }

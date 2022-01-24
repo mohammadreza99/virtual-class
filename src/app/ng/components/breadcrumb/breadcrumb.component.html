@@ -1,15 +1,21 @@
-<!-- <ul class="list-unstyled d-flex align-items-center m-0 p-0 mt-1">
-  <li class="d-flex align-items-center">
-    <span routerLink="/">{{ "agah.home" | translate }}</span>
-    <i class="pi pi-angle-{{ fa ? 'left' : 'right' }} mx-3"></i>
-  </li>
-  <li
-    class="d-flex align-items-center"
-    *ngFor="let breadcrumb of breadcrumbs; let last = last"
-  >
-    <span [routerLink]="breadcrumb.url">{{
-      breadcrumb.label | translate
-    }}</span>
-    <i class="pi pi-angle-{{ fa ? 'left' : 'right' }} mx-3" *ngIf="!last"></i>
-  </li>
-</ul> -->
+<!--<ul class="list-unstyled d-flex align-items-center m-0 p-0 mt-1">-->
+<!--  &lt;!&ndash;  <li class="d-flex align-items-center">&ndash;&gt;-->
+<!--  &lt;!&ndash;    <span routerLink="/">{{ "agah.home" | translate }}</span>&ndash;&gt;-->
+<!--  &lt;!&ndash;    <i class="pi pi-angle-{{ fa ? 'left' : 'right' }} mx-3"></i>&ndash;&gt;-->
+<!--  &lt;!&ndash;  </li>&ndash;&gt;-->
+<!--  <li-->
+<!--    class="d-flex align-items-center"-->
+<!--    *ngFor="let breadcrumb of breadcrumbs; let last = last"-->
+<!--  >-->
+<!--    <span [routerLink]="breadcrumb.url">{{breadcrumb.label}}</span>-->
+<!--    <i class="pi pi-angle-{{ fa ? 'left' : 'right' }} mx-3" *ngIf="!last"></i>-->
+<!--  </li>-->
+<!--</ul>-->
+
+<!--<ul>-->
+<!--  <li *ngFor="let breadcrumb of (breadcrumbs$ | async)">-->
+<!--    <a [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>-->
+<!--  </li>-->
+<!--</ul>-->
+
+<p-breadcrumb [model]="breadcrumbs$ | async"></p-breadcrumb>

@@ -43,7 +43,6 @@ export class GroupService extends ApiService {
       items: item.data.items,
       total: item.data.meta.total
     })));
-    ;
   }
 
   addUserToGroup(group_id: number, user_ids: number[]): Observable<BaseRes<any>> {

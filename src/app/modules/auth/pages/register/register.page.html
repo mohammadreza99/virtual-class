@@ -10,20 +10,20 @@
       <div class="process d-flex align-items-center justify-content-between">
         <div class="process-item"
              [ngClass]="{'current': step == 1,'passed':step == 2 || step == 3}">
-          <div>{{'اطلاعات شخصی' | translate}}</div>
+          <div>{{'personalInfo' | translate}}</div>
         </div>
         <div class="process-item" [ngClass]="{'current': step == 2,'passed':step == 3}">
-          <div>{{'انتخاب کاربری' | translate}}</div>
+          <div>{{'selectUser' | translate}}</div>
         </div>
         <div class="process-item" [ngClass]="{'current': step == 3}">
-          <div>{{'اظلاعات تماس' | translate}}</div>
+          <div>{{'contactInfo' | translate}}</div>
         </div>
       </div>
     </div>
     <div class="w-100"></div>
     <div class="col-sm-10 col-md-9 col-lg-5">
       <div class="content p-3 p-sm-5">
-        <h4 class="mb-5">{{'ثبت نام' | translate}}</h4>
+        <h4 class="mb-5">{{'register' | translate}}</h4>
         <form class="form-row" [formGroup]="step1Form" *ngIf="step == 1">
           <ng-input-text [rtl]="fa" class="col-12 mb-5" [label]="'name' | translate"
                          formControlName="first_name"
@@ -35,10 +35,10 @@
           </ng-input-text>
           <div class="col-12 d-flex justify-content-between">
             <ng-button size="lg" (click)="goToStep(0)" color="secondary" appearance="outlined"
-                       [label]="'بازگشت' | translate">
+                       [label]="'goBack' | translate">
             </ng-button>
             <ng-button size="lg" [disabled]="step1Form.invalid"
-                       [label]="'بعدی' | translate" (onClick)="goToStep(2)">
+                       [label]="'goNext' | translate" (onClick)="goToStep(2)">
             </ng-button>
           </div>
         </form>
@@ -53,34 +53,34 @@
           </ng-input-password>
           <small class="p-error"
                  *ngIf="(step2Form.get('password').dirty && step2Form.get('confirm_password').dirty && step2Form.get('password').value && step2Form.get('confirm_password').value) && step2Form.hasError('notSame')">
-            {{'رمز عبور و تکرار مطابقت ندارند' | translate}}
+            {{'passwordNotMatch' | translate}}
           </small>
           <div class="col-12 d-flex justify-content-between mt-5">
             <ng-button size="lg" (click)="goToStep(1)" color="secondary" appearance="outlined"
-                       [label]="'بازگشت' | translate">
+                       [label]="'goBack' | translate">
             </ng-button>
             <ng-button size="lg" [disabled]="step2Form.invalid"
-                       [label]="'بعدی' | translate" (onClick)="goToStep(3)">
+                       [label]="'goNext' | translate" (onClick)="goToStep(3)">
             </ng-button>
           </div>
         </form>
 
         <form class="form-row" [formGroup]="step3Form" *ngIf="step == 3">
-          <ng-input-text [rtl]="fa" class="col-12 mb-5" formControlName="phone_number" [numberOnly]="true"
+          <ng-input-text [rtl]="fa" class="col-12 mb-5" formControlName="phone_number" keyFilter="num"
                          maxlength="11"
-                         [label]="'im_mobile' | translate"
-                         [errors]="{'required':'requiredField'| translate,'minLength':'im_phone_length' | translate,'pattern':'im_phone_invalid' | translate}">
+                         [label]="'mobile' | translate"
+                         [errors]="{'required':'requiredField'| translate,'minLength':'phoneLength' | translate,'pattern':'phonePattern' | translate}">
           </ng-input-text>
 
-          <ng-input-text [rtl]="fa" class="col-12 mb-5" formControlName="email" [label]="'im_email' | translate"
-                         [errors]="{'required':'requiredField'| translate,'email':'im_email_invalid' | translate}">
+          <ng-input-text [rtl]="fa" class="col-12 mb-5" formControlName="email" [label]="'email' | translate"
+                         [errors]="{'required':'requiredField'| translate,'email':'emailPattern' | translate}">
           </ng-input-text>
           <div class="col-12 d-flex justify-content-between">
             <ng-button size="lg" (click)="goToStep(2)" color="secondary" appearance="outlined"
-                       [label]="'بازگشت' | translate">
+                       [label]="'goBack' | translate">
             </ng-button>
             <ng-button-async size="lg" [disabled]="step3Form.invalid" type="submit"
-                             [label]="'ثبت نام' | translate" (clickAsync)="onSubmit($event)">
+                             [label]="'register' | translate" (clickAsync)="onSubmit($event)">
             </ng-button-async>
           </div>
         </form>

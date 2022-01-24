@@ -51,11 +51,13 @@
       <ng-button-async (clickAsync)="toggleCamera($event)"
                        newColor="success"
                        [disabled]="disableWebcam"
+                       [defaultState]="webcamActivated ? 2 : 1"
                        [icon]="disableWebcam ? 'icon-camera-off' : 'icon-camera'">
       </ng-button-async>
       <ng-button-async (clickAsync)="toggleMic($event)"
                        newColor="success"
                        [disabled]="disableMic"
+                       [defaultState]="micActivated ? 2 : 1"
                        [icon]="disableMic ? 'icon-mic-off' : 'icon-mic'">
       </ng-button-async>
       <ng-button-async *ngPermission="'Viewer'" (clickAsync)="toggleRaiseHand($event)" newColor="success"
@@ -76,7 +78,6 @@
 
 <p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [showCloseIcon]="false" [(visible)]="sidebarVisible"
            [modal]="false"
-           transitionOptions="180ms"
            styleClass="shadow-sm">
   <div class="sidebar-header py-4">
     <div class="participants-count">

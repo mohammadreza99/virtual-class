@@ -35,22 +35,22 @@ export class PanelPage extends LanguageChecker implements OnInit {
     this.currentUser = this.authService.currentUser;
     const allSidebarItems = [
       {
-        label: 'لیست کاربران',
+        label: this.translations.userList,
         routerLink: '/user-list',
         icon: 'icon-user-groups'
       },
       {
-        label: 'لیست گروه ها',
-        routerLink: 'group-list',
+        label: this.translations.groupList,
+        routerLink: 'groups',
         icon: 'icon-user-groups'
       },
       {
-        label: 'لیست اتاق ها',
-        routerLink: 'room-list',
+        label: this.translations.roomList,
+        routerLink: 'rooms',
         icon: 'icon-camera'
       },
       {
-        label: 'پروفایل',
+        label: this.translations.profile,
         routerLink: 'profile',
         icon: 'icon-profile'
       }
@@ -58,12 +58,12 @@ export class PanelPage extends LanguageChecker implements OnInit {
     if (this.currentUser.role == 'User') {
       this.sidebarItems = [
         {
-          label: 'لیست اتاق ها',
-          routerLink: 'room-list',
+          label: this.translations.roomList,
+          routerLink: 'rooms',
           icon: 'icon-camera'
         },
         {
-          label: 'پروفایل',
+          label: this.translations.profile,
           routerLink: 'profile',
           icon: 'icon-profile'
         }

@@ -24,10 +24,10 @@ export class AddRoomGroupFormComponent extends LanguageChecker implements OnInit
   selectedRole: string = 'Admin';
   config: TableConfig = {
     colDef: [
-      {header: 'نام'},
-      {header: 'تعداد اعضا'},
-      {header: 'دسترسی'},
-      {header: 'عملیات'},
+      {header: this.translations.name},
+      {header: this.translations.membersCount},
+      {header: this.translations.access},
+      {header: this.translations.operations},
     ]
   };
 
@@ -53,8 +53,8 @@ export class AddRoomGroupFormComponent extends LanguageChecker implements OnInit
   async removeGroup(item: User) {
     const dialogRes = await this.utilsService.showConfirm({
       rtl: this.fa,
-      header: 'تاییدیه حذف گروه',
-      message: 'آیا مایلید گروه حذف شود؟'
+      header: this.translations.deleteGroupConfirm,
+      message: this.translations.deleteGroupConfirmBody
     });
     if (dialogRes) {
       const idx = this.selectedGroups.findIndex(u => u.id == item.id);

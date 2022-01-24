@@ -18,7 +18,7 @@
                              formControlName="password"
                              [errors]="{'required':'requiredField' | translate}">
           </ng-input-password>
-          <ng-single-checkbox [rtl]="fa" class="col-12 mb-4" [label]="'rememberMe' | translate"></ng-single-checkbox>
+<!--          <ng-single-checkbox [rtl]="fa" class="col-12 mb-4" [label]="'rememberMe' | translate"></ng-single-checkbox>-->
           <ng-button-async size="lg" class="col-12" [full]="true" type="submit" [label]="'login' | translate"
                            (clickAsync)="onSubmit($event)"></ng-button-async>
         </form>

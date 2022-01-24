@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-10 mb-3">
       <ng-auto-complete [suggestions]="filteredGroups" field="label"
-                        [placeholder]="'جستجوی نام گروه' | translate"
+                        [placeholder]="'searchGroupName' | translate"
                         [forceSelection]="true"
                         [rtl]="fa"
                         (onSelect)="onSelectGroup($event)"
@@ -30,7 +30,7 @@
       </ng-custom-table>
     </div>
     <div class="col-12 pt-3 mt-3 text-left">
-      <ng-button (onClick)="onSubmit()" [label]="'ذخیره' | translate"
+      <ng-button (onClick)="onSubmit()" [label]="'submit' | translate"
                  [disabled]="selectedGroups.length === 0">
       </ng-button>
     </div>

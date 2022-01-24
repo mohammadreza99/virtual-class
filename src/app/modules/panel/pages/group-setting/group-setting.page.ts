@@ -37,10 +37,10 @@ export class GroupSettingPage extends LanguageChecker implements OnInit {
       this.groupUsersConfig = {
         total: this.groupUsers.total,
         colDef: [
-          {header: 'نام و نام خانوادگی'},
-          {header: 'ایمیل'},
-          {header: 'دسترسی'},
-          {header: 'عملیات'},
+          {header: this.translations.fullName},
+          {header: this.translations.email},
+          {header: this.translations.access},
+          {header: this.translations.operations},
         ],
       };
     } catch {
@@ -57,7 +57,7 @@ export class GroupSettingPage extends LanguageChecker implements OnInit {
 
   async showAddUserModal() {
     this.dialogService.open(AddGroupUserFormComponent, {
-      header: 'افزودن عضو',
+      header: 'addMember',
       width: '900px'
     }).onClose.subscribe(async res => {
       try {
@@ -76,8 +76,8 @@ export class GroupSettingPage extends LanguageChecker implements OnInit {
   async removeUser(user: User) {
     try {
       const dialogResult = await this.utilsService.showConfirm({
-        header: 'تاییدیه حذف کاربر',
-        message: 'آیا مایلید کاربر حذف شود؟',
+        header: this.translations.deleteUserConfirm,
+        message: this.translations.deleteUserConfirmBody,
         rtl: this.fa
       });
       if (dialogResult) {

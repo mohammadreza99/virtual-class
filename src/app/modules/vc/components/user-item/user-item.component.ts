@@ -60,9 +60,11 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
     }
   }
 
-  async rejectRaiseHand() {
+  async rejectRaiseHand(mute: boolean) {
     await this.sessionService.rejectRaiseHand(this.user.id).toPromise();
-    await this.sessionService.muteUser(this.user.id, true).toPromise();
+    if (mute) {
+      await this.sessionService.muteUser(this.user.id, true).toPromise();
+    }
     this.raiseHandConfirmed = false;
   }
 

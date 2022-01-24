@@ -1,10 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {ActivatedRoute} from '@angular/router';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import * as moment from 'jalali-moment';
 
-import {Room, PagerRes, Group, TableConfig, User} from '@core/models';
+import {Group, PagerRes, TableConfig, User} from '@core/models';
 import {RoomService, UserService} from '@core/http';
 import {DialogService} from 'primeng/dynamicdialog';
 import {AddRoomUserFormComponent} from '@modules/panel/components/add-room-user-form/add-room-user-form.component';
@@ -53,19 +51,19 @@ export class RoomSettingPage extends LanguageChecker implements OnInit {
       this.roomUsersConfig = {
         total: this.roomUsers.total,
         colDef: [
-          {header: 'نام و نام خانوادگی'},
-          {header: 'ایمیل'},
-          {header: 'دسترسی'},
-          {header: 'عملیات'},
+          {header: this.translations.fullName},
+          {header: this.translations.email},
+          {header: this.translations.access},
+          {header: this.translations.operations},
         ],
       };
       this.roomGroupsConfig = {
         total: this.roomGroups.total,
         colDef: [
-          {header: 'نام گروه'},
-          {header: 'تعداد اعضا'},
-          {header: 'دسترسی'},
-          {header: 'عملیات'},
+          {header: this.translations.name},
+          {header: this.translations.membersCount},
+          {header: this.translations.access},
+          {header: this.translations.operations},
         ],
       };
     } catch (error) {
@@ -92,7 +90,7 @@ export class RoomSettingPage extends LanguageChecker implements OnInit {
 
   async showAddUserModal() {
     this.dialogService.open(AddRoomUserFormComponent, {
-      header: 'افزودن عضو',
+      header: this.translations.addMember,
       width: '900px'
     }).onClose.subscribe(async res => {
       try {
@@ -110,7 +108,7 @@ export class RoomSettingPage extends LanguageChecker implements OnInit {
 
   async showAddGroupModal() {
     this.dialogService.open(AddRoomGroupFormComponent, {
-      header: 'افزودن عضو',
+      header: this.translations.addMember,
       width: '900px'
     }).onClose.subscribe(async res => {
       try {
@@ -129,8 +127,8 @@ export class RoomSettingPage extends LanguageChecker implements OnInit {
   async removeUser(user: User) {
     try {
       const dialogResult = await this.utilsService.showConfirm({
-        header: 'تاییدیه حذف کاربر',
-        message: 'آیا مایلید کاربر حذف شود؟',
+        header: this.translations.deleteUserConfirm,
+        message: this.translations.deleteUserConfirmBody,
         rtl: this.fa
       });
       if (dialogResult) {
@@ -147,8 +145,8 @@ export class RoomSettingPage extends LanguageChecker implements OnInit {
   async removeGroup(group: Group) {
     try {
       const dialogResult = await this.utilsService.showConfirm({
-        header: 'تاییدیه حذف گروه',
-        message: 'ایا از حذف گروه مطمئن هستید؟',
+        header: this.translations.deleteGroupConfirm,
+        message: this.translations.deleteGroupConfirmBody,
         rtl: this.fa
       });
       if (dialogResult) {

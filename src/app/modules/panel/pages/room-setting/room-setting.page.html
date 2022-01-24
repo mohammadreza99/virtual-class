@@ -1,15 +1,15 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-12 mb-4">
-      <h4 class="main-title">{{'مدیریت اعضای اتاق' | translate}}</h4>
+      <h4 class="main-title">{{'roomMemberManagement' | translate}}</h4>
     </div>
     <div class="col-8 col-lg-11 mb-4">
       <ng-input-text inputSize="md" icon="icon-search" [rtl]="fa"
-                     [placeholder]="'جستجوی ایمیل کاربر...' | translate"
+                     [placeholder]="'searchUserEmail' | translate"
                      (onKeyup)="filterRoomUsers($event)"></ng-input-text>
     </div>
     <div class="col-4 col-lg-1 mb-4">
-      <ng-button iconPos="right" icon="icon-add" [label]="'افزودن' | translate" [full]="true"
+      <ng-button iconPos="right" icon="icon-add" [label]="'add' | translate" [full]="true"
                  (click)="showAddUserModal()"></ng-button>
     </div>
 
@@ -20,9 +20,10 @@
             <td>{{item.first_name + ' ' + item.last_name}}</td>
             <td>{{item.email}}</td>
             <td>
-              <span *ngIf="!item.editing">{{item.role}}</span>
+              <span *ngIf="!item.editing">{{item.role.toLowerCase() | translate}}</span>
               <ng-dropdown
                 *ngIf="item.editing"
+                appendTo="body"
                 [(ngModel)]="item.role"
                 [options]="[{label:'asAdmin' | translate,value:'Admin'},{label:'asUser' | translate,value:'Viewer'}]">
               </ng-dropdown>
@@ -43,15 +44,15 @@
     </div>
 
     <div class="col-12 mb-4">
-      <h4 class="main-title">{{'مدیریت گروه های اتاق' | translate}}</h4>
+      <h4 class="main-title">{{'roomGroupManagement' | translate}}</h4>
     </div>
     <div class="col-11 mb-4">
       <ng-input-text inputSize="md" icon="icon-search" [rtl]="fa"
-                     [placeholder]="'جستجوی نام گروه...' | translate"
+                     [placeholder]="'searchGroupName' | translate"
                      (onKeyup)="filterRoomGroups($event)"></ng-input-text>
     </div>
     <div class="col-1 mb-4">
-      <ng-button iconPos="right" icon="icon-add" [full]="true" [label]="'افزودن' | translate"
+      <ng-button iconPos="right" icon="icon-add" [full]="true" [label]="'add' | translate"
                  (click)="showAddGroupModal()"></ng-button>
     </div>
     <div class="col-12">
@@ -61,9 +62,10 @@
             <td>{{item.name}}</td>
             <td>{{item.user_count}}</td>
             <td>
-              <span *ngIf="!item.editing">{{item.role}}</span>
+              <span *ngIf="!item.editing">{{item.role.toLowerCase() | translate}}</span>
               <ng-dropdown
                 *ngIf="item.editing"
+                appendTo="body"
                 [(ngModel)]="item.role"
                 [options]="[{label:'asAdmin' | translate,value:'Admin'},{label:'asUser' | translate,value:'Viewer'}]">
               </ng-dropdown>

@@ -3,11 +3,11 @@
     <div class="col-12">
       <ng-custom-table *ngIf="rowData" [showCaption]="true" [rowData]="rowData.items" [config]="tableConfig"
                        captionIcon="icon-list"
-                       [captionText]="'مدیریت اتاق ها' | translate">
+                       [captionText]="'roomManagement' | translate">
         <ng-template let-item let-index="rowIndex">
           <tr>
             <td>
-        <span tooltipPosition="bottom" [pTooltip]="'کپی لینک' | translate" (click)="copyRoomLink(item.id)"
+        <span tooltipPosition="bottom" [pTooltip]="'copyLink' | translate" (click)="copyRoomLink(item.id)"
               class="mr-2 copy-link">
                   <i class="icon-file"></i>
           </span>
@@ -34,25 +34,28 @@
             </td>
             <td>{{item.start_datetime | ngDate:'fa-ir'}}</td>
             <td>{{item.end_datetime | ngDate:'fa-ir'}}</td>
-            <td>{{item.status}}</td>
+            <td>{{getTranslated(item.status)}}</td>
             <td>
               <div class="d-flex align-items-center">
                 <ng-switch [value]="item.active" (onChange)="changeRoomStatus(item,$event.checked)"></ng-switch>
                 <span class="mx-2"
-                      [ngClass]="{'text-success' : item.active,'text-danger' : !item.active}">{{(item.active ? 'فعال' : 'غیرفعال') | translate}}</span>
+                      [ngClass]="{'text-success' : item.active,'text-danger' : !item.active}">{{(item.active ? 'active' : 'inactive') | translate}}</span>
               </div>
             </td>
             <td class="d-flex">
-              <ng-button *ngPanelPermission="'Owner'" pTooltip="ویرایش اتاق" tooltipPosition="bottom"
+              <ng-button *ngPanelPermission="'Owner'" [pTooltip]="'editRoom' | translate" tooltipPosition="bottom"
                          appearance="outlined" class="ml-2"
                          icon="icon-edit" (click)="editRoom(item,index)"></ng-button>
-              <ng-button *ngPanelPermission="'Owner'" pTooltip="مدیریت اعضا" tooltipPosition="bottom"
+              <ng-button *ngPanelPermission="'Owner'" [pTooltip]="'memberManagement' | translate"
+                         tooltipPosition="bottom"
                          appearance="outlined" class="ml-2"
-                         icon="icon-user-groups" [routerLink]="['/room-setting',item.id]"></ng-button>
-              <ng-button *ngPanelPermission="'Owner'" pTooltip="حذف اتاق" tooltipPosition="bottom" appearance="outlined"
+                         icon="icon-user-groups" [routerLink]="['/rooms/setting',item.id]"></ng-button>
+              <ng-button *ngPanelPermission="'Owner'" [pTooltip]="'deleteRoom' | translate" tooltipPosition="bottom"
+                         appearance="outlined"
                          class="ml-2" color="danger"
                          (click)="deleteRoom(item)" icon="icon-delete"></ng-button>
-              <ng-button pTooltip="ورود به اتاق" tooltipPosition="bottom" appearance="outlined" class="ml-2"
+              <ng-button [pTooltip]="'enterRoom' | translate" tooltipPosition="bottom" appearance="outlined"
+                         class="ml-2"
                          (click)="goToRoom(item)"
                          icon="icon-go-room"></ng-button>
               <!--                         [routerLink]="['/vc/room-info',item.id]"-->

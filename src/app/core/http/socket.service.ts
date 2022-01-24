@@ -1,14 +1,12 @@
 import {Injectable} from '@angular/core';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {ApiService} from '@core/http/api.service';
-import {filter, map} from 'rxjs/operators';
-import {SocketEventTypes} from '@core/models';
-import {Subscription} from 'rxjs';
-import {environment} from '../../../environments/environment';
+import {Subject, Subscription} from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class SocketService extends ApiService {
   private webSocket: WebSocketSubject<any>;
+  private socketChannel = new Subject<any>();
   private subscription: Subscription;
   private roomId: number;
   private token: string;
@@ -16,6 +14,7 @@ export class SocketService extends ApiService {
   private pingTimer: any;
   private started = false;
   private connected = false;
+  tryConnection = true;
 
   constructor() {
     super();
@@ -43,32 +42,27 @@ export class SocketService extends ApiService {
   close() {
     if (this.connected) {
       this.webSocket.complete();
+      this.subscription.unsubscribe();
     }
   }
 
-  listen(eventName?: SocketEventTypes) {
-    if (!eventName) {
-      return this.webSocket.asObservable();
-    }
-
-    return this.webSocket.asObservable().pipe(
-      map((item: any) => ({event: item.method, ...item.data})),
-      filter((ws: any) => {
-        return ws.event == eventName;
-      })
-    );
+  listen() {
+    return this.socketChannel.asObservable();
   }
 
   private createSocketConnection() {
-    this.webSocket = webSocket(environment.socketUrl);
+    this.webSocket = webSocket(this.socketBaseUrl);
     this.sendConnect();
     console.log('connect sent');
-    this.subscription = this.listen().subscribe(() => {
+    this.subscription = this.webSocket.subscribe((res) => {
       this.connected = true;
+      this.socketChannel.next({event: res.method, ...res.data});
       this.retryConnection(true);
       this.pingWithDelay();
     }, (err) => {
       this.connected = false;
+      this.close();
+      this.webSocket = null;
       this.retryConnection();
     }, () => {
       this.retryConnection();
@@ -77,6 +71,9 @@ export class SocketService extends ApiService {
 
   private retryConnection(clear?: boolean, delay?: number) {
     this.clearReconnectTimer();
+    if (!this.tryConnection) {
+      return;
+    }
     if (clear) {
       return;
     }

@@ -2,7 +2,7 @@ import {HttpClient, HttpContext, HttpHeaders, HttpParams} from '@angular/common/
 import {Global} from '@ng/global';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {environment} from 'src/environments/environment';
+import {EnvService} from '@core/utils/env.service';
 
 interface RequestOptions {
   headers?: HttpHeaders | { [p: string]: string | string[] };
@@ -15,25 +15,15 @@ interface RequestOptions {
 export class ApiService {
   constructor() {
     this.http = Global.Injector.get(HttpClient);
+    this.envService = Global.Injector.get(EnvService);
+    this.baseUrl = this.envService.apiUrl;
+    this.socketBaseUrl = this.envService.socketUrl;
   }
 
   private http: HttpClient;
-  private baseUrl: string = environment.apiUrl;
-
-  protected _get<T>(
-    endpoint: string,
-    options: RequestOptions = null,
-    mappingKey: string = null
-  ): Observable<T> {
-    return this.http.get<T>(`${this.baseUrl}`, {
-      ...options,
-      params: this.getHttpParams(options?.params)
-    }).pipe(
-      map((res: any) => {
-        return !mappingKey ? res : (res[mappingKey] as T);
-      })
-    );
-  }
+  private envService: EnvService;
+  private baseUrl: string;
+  protected socketBaseUrl: string;
 
   protected _post<T>(
     endpoint: string,
@@ -42,38 +32,6 @@ export class ApiService {
     mappingKey: string = null
   ): Observable<T> {
     return this.http.post<T>(`${this.baseUrl}`, data, {
-      ...options,
-      params: this.getHttpParams(options?.params)
-    }).pipe(
-      map((res: any) => {
-        return !mappingKey ? res : (res[mappingKey] as T);
-      })
-    );
-  }
-
-  protected _put<T>(
-    endpoint: string,
-    data: any,
-    options: RequestOptions = null,
-    mappingKey: string = null
-  ): Observable<T> {
-    return this.http.put(`${this.baseUrl}`, data, {
-      ...options,
-      params: this.getHttpParams(options?.params)
-    }).pipe(
-      map((res: any) => {
-        return !mappingKey ? res : (res[mappingKey] as T);
-      })
-    );
-  }
-
-  protected _patch<T>(
-    endpoint: string,
-    data: any,
-    options: RequestOptions = null,
-    mappingKey: string = null
-  ): Observable<T> {
-    return this.http.patch(`${this.baseUrl}`, data, {
       ...options,
       params: this.getHttpParams(options?.params)
     }).pipe(

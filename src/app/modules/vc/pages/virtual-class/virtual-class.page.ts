@@ -4,7 +4,7 @@ import {SessionService} from '@core/http';
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {UtilsService} from '@ng/services';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {LocationStrategy} from '@angular/common';
 import {UpdateViewService} from '@core/http/update-view.service';
@@ -19,6 +19,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   constructor(private sessionService: SessionService,
               private utilsService: UtilsService,
               private location: LocationStrategy,
+              private route: ActivatedRoute,
               private updateViewService: UpdateViewService,
               private router: Router) {
     super();
@@ -30,6 +31,8 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   sidebarVisible: boolean = true;
   disableWebcam = false;
   disableMic = false;
+  webcamFound: boolean;
+  micFound: boolean;
   screenActivated = false;
   webcamActivated = false;
   micActivated = false;
@@ -46,17 +49,14 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   updateViewSubscription: Subscription;
 
 
-  @HostListener('window:beforeunload', ['$event']) unloadHandler(event: Event) {
-    event.returnValue = false;
+  ngOnInit(): void {
+    this.loadData();
   }
 
-  ngOnInit(): void {
+  async loadData() {
     this.disableWindowBackButton();
-    this.currentRoom = this.sessionService.currentRoom;
-    this.currentUser = this.sessionService.currentUser;
-    this.disableWebcam = this.sessionService.currentUser?.muted_video;
-    this.disableMic = this.sessionService.currentUser?.muted;
-    this.raiseHandActivated = this.sessionService.currentUser?.raise_hand;
+    this.initUserData();
+    this.sessionService.initRoom();
     this.roomParticipantSubscription = this.sessionService.onRoomParticipantsChange().subscribe(res => {
       this.allUsers = res;
     });
@@ -64,21 +64,31 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
       this.roomUsers = res;
     });
     this.raisedHandsSubscription = this.sessionService.onRaisedHandsChange().subscribe(res => {
-      this.raisedHandsUsers = res;
+      const deletedIndex = this.raisedHandsUsers.findIndex(x => res.find(u => u.id == x.id) == undefined);
+      const addedIndex = res.findIndex(x => this.raisedHandsUsers.find(u => u.id == x.id) == undefined);
+      if (addedIndex > -1) {
+        this.raisedHandsUsers.push(res[addedIndex]);
+      }
+      if (deletedIndex > -1) {
+        this.raisedHandsUsers.splice(deletedIndex, 1);
+      }
     });
     this.updateViewSubscription = this.updateViewService.getViewEvent().subscribe(res => {
-      if (this.sessionService.currentUser.role == 'Admin') {
-        return;
-      }
       switch (res.event) {
         case 'mutePerson':
         case 'muteAll':
+          if (this.sessionService.currentUser.role == 'Admin') {
+            return;
+          }
           this.disableMic = res.data;
           this.micActivated = false;
           break;
 
         case 'muteVideo':
         case 'muteVideoAll':
+          if (this.sessionService.currentUser.role == 'Admin') {
+            return;
+          }
           this.disableWebcam = res.data;
           this.webcamActivated = false;
           break;
@@ -87,19 +97,31 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           this.raiseHandActivated = false;
           break;
 
-        case 'webcamCheck':
-          this.disableWebcam = res.data;
+        case 'activateWebcamButton':
+          this.webcamActivated = false;
           break;
 
-        case 'micCheck':
-          this.disableMic = res.data;
-          break;
+        // case 'webcamCheck':
+        //   this.webcamFound = res.data;
+        //   break;
+        //
+        // case 'micCheck':
+        //   this.micFound = res.data;
+        //   break;
 
         case 'closeSidebar':
           this.sidebarVisible = false;
           break;
       }
     });
+  }
+
+  initUserData() {
+    this.currentRoom = this.sessionService.currentRoom;
+    this.currentUser = this.sessionService.currentUser;
+    this.disableWebcam = this.currentUser.muted_video;
+    this.disableMic = this.currentUser.muted;
+    this.raiseHandActivated = this.currentUser.raise_hand;
   }
 
   async toggleCamera(callback: (toggleState?: boolean) => any) {
@@ -159,12 +181,12 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
       rtl: this.fa
     });
     if (dialogRes) {
+      this.sidebarVisible = false;
       await this.sessionService.leaveRoom().toPromise();
       if (isTeacher) {
         await this.sessionService.closeRoom().toPromise();
       }
-      this.sidebarVisible = false;
-      await this.router.navigateByUrl('/');
+      this.router.navigate(['/vc/room-info', this.currentRoom.id]);
     }
   }
 

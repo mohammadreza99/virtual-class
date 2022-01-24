@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
-import {catchError, filter, tap} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {UtilsService} from '@ng/services';
 
@@ -28,6 +28,9 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         if (status != 'OK' && !request.url.includes('.json')) {
           if (hasFailureMessageApis.findIndex(x => method == x) >= 0) {
             this.showFailureToast(status);
+          }
+          if (status == 'NOT_FOUND') {
+            this.router.navigateByUrl('/404');
           }
         }
         return event;

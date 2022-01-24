@@ -50,15 +50,14 @@ export class SessionService extends ApiService {
   ///////////////////////////////////////////////////////////////////////////////
   //                                    MAIN                                   //
   ///////////////////////////////////////////////////////////////////////////////
-  async initRoom(roomId: number) {
+  async initRoom() {
     await this.checkConnectedDevices();
-    await this.checkSession(roomId);
     await this.updateRoomUsers();
     await this.updateRoomPublishers();
     this.initSockets();
   }
 
-  private async checkSession(roomId: number) {
+  async checkSession(roomId: number) {
     try {
       const data = await this.getRoomInfo(roomId).pipe(map(d => d.data)).toPromise();
       if (!data) {
@@ -90,17 +89,27 @@ export class SessionService extends ApiService {
     try {
       const result = await this.roomStatus().toPromise();
       if (result.status == 'SESSION_ERROR') {
-        await this.checkSession(this.currentRoom.id);
+        try {
+          await this.checkSession(this.currentRoom.id);
+        } catch (e) {
+        }
+        return;
       }
-      if (result.detail == 'SessionNotExist') {
-        const newSession = await this.newSession().toPromise();
-        this.currentUser.session = newSession.data.session;
+      if (result.status_det == 'SessionNotExist') {
+        this.peerConnections.forEach(c => {
+          this.closeSubscribeConnection(c.userId, c.publishType);
+        });
+        await this.updateRoomPublishers();
       }
-      this.updatePublishers(result.data.publishers);
-      this.retryUpdateRoomPublishers();
+      if (result.status == 'JANUS_ERROR') {
+        this.utilsService.showToast({summary: 'retrying...'});
+        await this.updateRoomPublishers();
+      }
+      await this.updatePublishers(result.data.publishers);
+      this.setUpdateRoomPublishersTimer();
     } catch (error) {
       console.error(error);
-      this.retryUpdateRoomPublishers();
+      this.setUpdateRoomPublishersTimer();
     }
   }
 
@@ -122,10 +131,10 @@ export class SessionService extends ApiService {
       this.roomUsersChangeSubject.next(this.getSortedUsers());
       this.raisedHands = this.roomUsers.filter(u => u.raise_hand);
       this.raisedHandsChangeSubject.next(this.raisedHands);
-      this.retryUpdateRoomUsers();
+      this.setUpdateRoomUsersTimer();
     } catch (error) {
       console.error(error);
-      this.retryUpdateRoomUsers();
+      this.setUpdateRoomUsersTimer();
     }
   }
 
@@ -246,7 +255,17 @@ export class SessionService extends ApiService {
           resolve(pc);
         },
         onError: (error: string) => {
-          this.openToast(error);
+          this.openToast(error + ' retrying...');
+          if (error == 'JANUS_ERROR') {
+            this.closeSubscribeConnection(options.userId, options.publishType);
+            this.createSubscribeConnection(options);
+          }
+          if (error == 'SessionNotExist') {
+            this.peerConnections.forEach(c => {
+              this.closeSubscribeConnection(c.userId, c.publishType);
+            });
+            this.updateRoomPublishers();
+          }
           this.streamChangeSubject.next({
             action: 'onError',
             userId: options.userId,
@@ -254,7 +273,7 @@ export class SessionService extends ApiService {
             position: options.position,
             publishType: options.publishType,
           });
-          reject(error);
+          // reject(error);
         }
       });
       pc.createSubscribeConnection();
@@ -290,10 +309,24 @@ export class SessionService extends ApiService {
           resolve(pc);
         },
         onDisconnect: () => {
+          this.updateViewService.setViewEvent({event: `activate${options.publishType}Button`, data: false});
+          if (this.mainPositionUser?.id == options.userId) {
+            this.removeMainPositionUser();
+          }
           this.closeMyConnection(options.publishType, true);
         },
         onError: (error: string) => {
           this.openToast(error);
+          if (error == 'JANUS_ERROR') {
+            this.closeMyConnection(options.publishType, true);
+            this.createPublishConnection(options);
+          }
+          if (error == 'SessionNotExist') {
+            this.peerConnections.forEach(c => {
+              this.closeSubscribeConnection(c.userId, c.publishType);
+            });
+            this.updateRoomPublishers();
+          }
           this.streamChangeSubject.next({
             action: 'onError',
             userId: options.userId,
@@ -370,7 +403,7 @@ export class SessionService extends ApiService {
     }
   }
 
-  private retryUpdateRoomPublishers() {
+  private setUpdateRoomPublishersTimer() {
     if (this.updateRoomPublishersTimer) {
       clearTimeout(this.updateRoomPublishersTimer);
     }
@@ -379,7 +412,7 @@ export class SessionService extends ApiService {
     }, this.updateRoomPublishersDelay);
   }
 
-  private retryUpdateRoomUsers() {
+  private setUpdateRoomUsersTimer() {
     if (this.updateRoomUsersTimer) {
       clearTimeout(this.updateRoomUsersTimer);
     }
@@ -418,191 +451,177 @@ export class SessionService extends ApiService {
     return sortedUsers;
   }
 
-  private initSockets() {
+  initSockets() {
     this.socketService.start(this.currentRoom.id);
     const events: SocketEventTypes[] = Object.values(SocketEventTypes);
-    for (const eventName of events) {
-      this.socketService.listen(eventName).subscribe(res => {
-        console.log(`${eventName} => `, res);
-        // this.utilsService.showToast({
-        //   life: 5000,
-        //   detail: JSON.stringify(`${eventName} => ${JSON.stringify(res)}`),
-        //   severity: 'warn'
-        // });
-        let user: RoomUser;
-        switch (res.event) {
-          case 'newUser':
-            user = res.user;
-            if (res.target != this.currentUser.id && this.roomUsers.findIndex(u => u.id == user.id) < 0) {
-              this.roomUsers.push(user);
-              this.roomUsersChangeSubject.next(this.getSortedUsers());
-            }
-            if (user.raise_hand == true && this.raisedHands.findIndex(u => u.id == user.id) < 0) {
-              this.raisedHands.push(user);
-              this.raisedHandsChangeSubject.next(this.raisedHands);
-            }
-            break;
+    // for (const eventName of events) {
+    this.socketService.listen().subscribe(res => {
+      console.log(`${res.event} => `, res);
+      // this.utilsService.showToast({
+      //   life: 5000,
+      //   detail: JSON.stringify(`${eventName} => ${JSON.stringify(res)}`),
+      //   severity: 'warn'
+      // });
+      let user: RoomUser;
+      switch (res.event) {
+        case 'newUser':
+          user = res.user;
+          if (res.target != this.currentUser.id && this.roomUsers.findIndex(u => u.id == user.id) < 0) {
+            this.roomUsers.push(user);
+            this.roomUsersChangeSubject.next(this.getSortedUsers());
+          }
+          if (user.raise_hand == true && this.raisedHands.findIndex(u => u.id == user.id) < 0) {
+            this.raisedHands.push(user);
+            this.raisedHandsChangeSubject.next(this.raisedHands);
+          }
+          break;
 
-          case 'newPublisher':
-            setTimeout(() => {
-              this.updateRoomPublishers();
-            }, 5000);
-            break;
+        case 'newPublisher':
+          setTimeout(() => {
+            this.updateRoomPublishers();
+          }, 5000);
+          break;
 
-          case 'unpublish':
-            if (this.mainPositionUser?.id == res.target && res.publish_type == 'Webcam') {
+        case 'unpublish':
+          if (this.mainPositionUser?.id == res.target && res.publish_type == 'Webcam') {
+            this.removeMainPositionUser();
+          }
+          if (this.currentUser.id != res.target) {
+            this.closeSubscribeConnection(res.target, res.publish_type);
+          }
+          break;
+
+        case 'closeRoom':
+          this.getMeOut();
+          break;
+
+        case 'kickUser':
+          const handRaiseIndex = this.raisedHands.findIndex(p => p.id == res.target);
+          const userIndex = this.roomUsers.findIndex(u => u.id == res.target);
+          if (handRaiseIndex > -1) {
+            this.raisedHands.splice(handRaiseIndex, 1);
+          }
+          if (userIndex > -1) {
+            this.roomUsers.splice(userIndex, 1);
+          }
+          if (res.target == this.currentUser.id) {
+            this.getMeOut();
+          }
+          this.raisedHandsChangeSubject.next(this.raisedHands);
+          break;
+
+        case 'userDisconnected':
+        case 'leaveRoom':
+          if (res.target != this.currentUser.id) {
+            const connection = this.getPeerConnectionById(res.target);
+            if (connection) {
+              this.closeSubscribeConnection(res.target, connection.publishType);
+            }
+            const idx = this.roomUsers.findIndex(p => p.id == res.target);
+            if (idx > -1) {
+              this.roomUsers.splice(idx, 1);
+            }
+            if (this.mainPositionUser?.id == res.target) {
               this.removeMainPositionUser();
             }
-            if (this.currentUser.id != res.target) {
-              this.closeSubscribeConnection(res.target, res.publish_type);
-            }
-            break;
-
-          case 'kickUser':
+            this.roomUsersChangeSubject.next(this.getSortedUsers());
             const handRaiseIndex = this.raisedHands.findIndex(p => p.id == res.target);
-            const userIndex = this.roomUsers.findIndex(u => u.id == res.target);
             if (handRaiseIndex > -1) {
               this.raisedHands.splice(handRaiseIndex, 1);
             }
-            if (userIndex > -1) {
-              this.roomUsers.splice(userIndex, 1);
-            }
-            if (res.target == this.currentUser.id) {
-              this.updateViewService.setViewEvent({event: 'closeSidebar', data: true});
-              if (this.myConnection.webcam) {
-                this.stopStreamTrack(this.myConnection.webcam.stream);
-              } else if (this.myConnection.screen) {
-                this.stopStreamTrack(this.myConnection.screen.stream);
-              }
-              this.router.navigateByUrl('/');
-            }
             this.raisedHandsChangeSubject.next(this.raisedHands);
-            break;
-
-          case 'userDisconnected':
-          case 'leaveRoom':
-            user = this.getRoomUserById(res.target);
-            if (res.target != this.currentUser.id) {
-              const connection = this.getPeerConnectionById(res.target);
-              if (connection) {
-                this.closeSubscribeConnection(res.target, connection.publishType);
-              }
-              const idx = this.roomUsers.findIndex(p => p.id == res.target);
-              if (idx > -1) {
-                this.roomUsers.splice(idx, 1);
-              }
-              if (this.mainPositionUser?.id == res.target) {
-                this.removeMainPositionUser();
-              }
-              this.roomUsersChangeSubject.next(this.getSortedUsers());
-              if (this.imStudent && user?.role == 'Admin') {
-                this.updateViewService.setViewEvent({event: 'closeSidebar', data: true});
-                this.router.navigateByUrl('/');
-                return;
-              }
-              const handRaiseIndex = this.raisedHands.findIndex(p => p.id == res.target);
-              if (handRaiseIndex > -1) {
-                this.raisedHands.splice(handRaiseIndex, 1);
-              }
-              this.raisedHandsChangeSubject.next(this.raisedHands);
-            } else if (res.target == this.currentUser.id) {
-              if (this.myConnection.webcam) {
-                this.stopStreamTrack(this.myConnection.webcam.stream);
-              } else if (this.myConnection.screen) {
-                this.stopStreamTrack(this.myConnection.screen.stream);
-              }
-              if (this.updateRoomPublishersTimer) {
-                clearInterval(this.updateRoomPublishersTimer);
-              }
-              if (this.updateRoomUsersTimer) {
-                clearInterval(this.updateRoomUsersTimer);
-              }
-              this.socketService.clearPingTimer();
-              this.socketService.clearReconnectTimer();
-            }
-            break;
-
-          case 'raiseHand':
-            user = this.getRoomUserById(res.target);
-            if (res.by == res.target) {
-              // hand raise occur by student
-              if (res.value) {
-                this.raisedHands.push(user);
-              } else {
-                this.raisedHands.splice(this.raisedHands.findIndex(u => u.id == user.id), 1);
-              }
+          } else if (res.target == this.currentUser.id) {
+            if (res.event == 'leaveRoom') {
+              this.getMeOut(false);
             } else {
-              // the teacher accept student raise hand
-              this.raisedHands.splice(this.raisedHands.findIndex(u => u.id == user.id), 1);
-              if (res.target == this.currentUser.id) {
-                this.updateViewService.setViewEvent({event: 'raiseHandAccepted', data: res.value});
-              }
+              this.getMeOut();
             }
-            this.raisedHandsChangeSubject.next(this.raisedHands);
-            break;
+          }
+          break;
 
-          case 'mutePerson':
-            user = this.getRoomUserById(res.target);
-            user.muted = res.value;
-            if (this.currentUser.id == res.target) {
-              if (res.value == true) {
-                this.toggleMyAudio(false);
-              }
-              this.updateViewService.setViewEvent({event: 'mutePerson', data: res.value});
+        case 'raiseHand':
+          user = this.getRoomUserById(res.target);
+          if (res.by == res.target) {
+            const handRaiseIndex = this.raisedHands.findIndex(u => u.id == res.target);
+            // hand raise occur by student
+            if (res.value && handRaiseIndex < 0) {
+              this.raisedHands.push(user);
+            } else {
+              this.raisedHands.splice(handRaiseIndex, 1);
             }
-            break;
-
-          case 'muteVideo':
-            user = this.getRoomUserById(res.target);
-            user.muted_video = res.value;
-            if (this.currentUser.id == res.target) {
-              if (res.value == true) {
-                this.toggleMyVideo(false);
-              }
-              this.updateViewService.setViewEvent({event: 'muteVideo', data: res.value});
+          } else {
+            // the teacher accept student raise hand
+            this.raisedHands.splice(this.raisedHands.findIndex(u => u.id == user.id), 1);
+            if (res.target == this.currentUser.id) {
+              this.updateViewService.setViewEvent({event: 'raiseHandAccepted', data: res.value});
             }
-            break;
+          }
+          this.updateViewService.setViewEvent({event: 'raiseHand', data: res});
+          this.raisedHandsChangeSubject.next(this.raisedHands);
+          break;
 
-          case 'muteAll':
-            this.roomUsers.forEach(p => {
-              if (p.role != 'Admin') {
-                p.muted = res.value;
+        case 'mutePerson':
+          user = this.getRoomUserById(res.target);
+          user.muted = res.value;
+          if (this.currentUser.id == res.target) {
+            if (res.value == true) {
+              this.toggleMyAudio(false);
+            }
+            this.updateViewService.setViewEvent({event: 'mutePerson', data: res.value});
+          }
+          break;
+
+        case 'muteVideo':
+          user = this.getRoomUserById(res.target);
+          user.muted_video = res.value;
+          if (this.currentUser.id == res.target) {
+            if (res.value == true) {
+              this.toggleMyVideo(false);
+            }
+            this.updateViewService.setViewEvent({event: 'muteVideo', data: res.value});
+          }
+          break;
+
+        case 'muteAll':
+          this.roomUsers.forEach(p => {
+            if (p.role != 'Admin') {
+              p.muted = res.value;
+            }
+          });
+          if (this.imStudent) {
+            this.updateViewService.setViewEvent({event: 'muteAll', data: res.value});
+            if (res.value == true) {
+              this.toggleMyAudio(false);
+            }
+          }
+          break;
+
+        case 'muteVideoAll':
+          this.roomUsers.forEach(p => {
+            if (p.role != 'Admin') {
+              p.muted_video = res.value;
+            }
+          });
+          if (this.imStudent) {
+            this.updateViewService.setViewEvent({event: 'muteVideoAll', data: res.value});
+            if (res.value == true) {
+              this.toggleMyVideo(false);
+            }
+          }
+          break;
+
+        case 'assignAdmin':
+          if (this.currentUser.id == res.target) {
+            this.utilsService.showConfirm({message: this.translationService.translations.room.myRoleChangedConfirm}).then(dialogRes => {
+              if (dialogRes) {
+                document.location.reload();
               }
             });
-            if (this.imStudent) {
-              this.updateViewService.setViewEvent({event: 'muteAll', data: res.value});
-              if (res.value == true) {
-                this.toggleMyAudio(false);
-              }
-            }
-            break;
-
-          case 'muteVideoAll':
-            this.roomUsers.forEach(p => {
-              if (p.role != 'Admin') {
-                p.muted_video = res.value;
-              }
-            });
-            if (this.imStudent) {
-              this.updateViewService.setViewEvent({event: 'muteVideoAll', data: res.value});
-              if (res.value == true) {
-                this.toggleMyVideo(false);
-              }
-            }
-            break;
-
-          case 'assignAdmin':
-            if (this.currentUser.id == res.target) {
-              this.utilsService.showConfirm({message: this.translationService.translations.room.myRoleChangedConfirm}).then(dialogRes => {
-                if (dialogRes) {
-                  document.location.reload();
-                }
-              });
-            }
-            break;
-        }
-      });
-    }
+          }
+          break;
+      }
+    });
+    // }
   }
 
   private isMainPositionBusy() {
@@ -695,6 +714,31 @@ export class SessionService extends ApiService {
   ///////////////////////////////////////////////////////////////////////////////
   //                                   UTILS                                   //
   ///////////////////////////////////////////////////////////////////////////////
+
+  async getMeOut(showMessage: boolean = true) {
+    this.updateViewService.setViewEvent({event: 'closeSidebar', data: true});
+    if (this.myConnection.webcam) {
+      this.stopStreamTrack(this.myConnection.webcam.stream);
+    } else if (this.myConnection.screen) {
+      this.stopStreamTrack(this.myConnection.screen.stream);
+    }
+    if (this.updateRoomPublishersTimer) {
+      clearInterval(this.updateRoomPublishersTimer);
+    }
+    if (this.updateRoomUsersTimer) {
+      clearInterval(this.updateRoomUsersTimer);
+    }
+    this.socketService.tryConnection = false;
+    this.socketService.clearPingTimer();
+    // this.socketService.clearReconnectTimer();
+    this.socketService.close();
+    if (showMessage) {
+      await this.utilsService.showDialog({message: 'شما از کلاس خارج شدید.'});
+    }
+    // await this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+    window.location.reload();
+  }
+
   getProfileColor(userId: number) {
     const colors = {
       0: '#5643C1',

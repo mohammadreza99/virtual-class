@@ -11,7 +11,6 @@ import {DatePickerComponent} from './date-picker/date-picker.component';
 import {DatePicker2Component} from './date-picker2/date-picker2.component';
 import {DatePicker3Component} from './date-picker3/date-picker3.component';
 import {DialogFormComponent} from './dialog-form/dialog-form.component';
-import {DropdownTreeComponent} from './dropdown-tree/dropdown-tree.component';
 import {DropdownComponent} from './dropdown/dropdown.component';
 import {EmptyComponent} from './empty/empty.component';
 import {FilePickerComponent} from './file-picker/file-picker.component';
@@ -35,17 +34,14 @@ import {SingleCheckboxComponent} from './single-checkbox/single-checkbox.compone
 import {SliderComponent} from './slider/slider.component';
 import {SplitButtonComponent} from './split-button/split-button.component';
 import {SwitchComponent} from './switch/switch.component';
-import {TableComponent} from './table/table.component';
 import {ToastComponent} from './toast/toast.component';
 import {ToggleButtonComponent} from './toggle-button/toggle-button.component';
 import {TreeComponent} from './tree/tree.component';
-import {DynamicFormComponent} from './dynamic-form/dynamic-form.component';
-import {DynamicElComponent} from './dynamic-form/dynamic-el.component';
 import {DialogComponent} from './dialog/dialog.component';
 import {ImageSliderComponent} from './image-slider/image-slider.component';
-import {DynamicDialogComponent} from './dynamic-dialog/dynamic-dialog.component';
 import {Dialog2Component} from './dialog2/dialog2.component';
 import {ButtonAsyncComponent} from '@ng/components/button-async/button-async.component';
+import {ErrorComponent} from '@ng/components/error/error.component';
 
 export const COMPONENTS: Type<any>[] = [
   AutoCompleteComponent,
@@ -62,13 +58,10 @@ export const COMPONENTS: Type<any>[] = [
   DatePicker3Component,
   DialogComponent,
   Dialog2Component,
-  DynamicFormComponent,
-  DynamicDialogComponent,
-  DynamicElComponent,
   DialogFormComponent,
   DropdownComponent,
-  DropdownTreeComponent,
   EmptyComponent,
+  ErrorComponent,
   FilePickerComponent,
   FilePicker2Component,
   FilterListComponent,
@@ -91,7 +84,6 @@ export const COMPONENTS: Type<any>[] = [
   SliderComponent,
   SplitButtonComponent,
   SwitchComponent,
-  TableComponent,
   ToastComponent,
   ToggleButtonComponent,
   TreeComponent,

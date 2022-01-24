@@ -3,6 +3,7 @@
   .p-datatable .p-datatable-thead > tr > th,
   .p-datatable .p-datatable-tbody > tr > td {
     text-align: right;
+    white-space: nowrap;
   }
 
   tbody {
@@ -12,6 +13,11 @@
   }
 
   .table-actions {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    overflow: hidden;
+
     a {
       cursor: pointer;
       margin-right: 1rem;
@@ -22,51 +28,53 @@
   .table-caption {
     display: flex;
     align-items: center;
-    flex-grow: 1;
-    overflow: hidden;
+    white-space: nowrap;
+    justify-content: flex-start;
 
     i {
       color: #5643C1;
       margin-left: 1rem;
     }
 
-    .table-search {
-      display: flex;
-      align-items: center;
+
+  }
+
+  .table-search {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    transition: all .4s;
+    transform: translateX(-200%);
+    opacity: 0;
+
+    &.open {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    button {
+      transform: translateX(calc(100% + 1.25rem));
+
+      span {
+        vertical-align: text-bottom;
+      }
+
+      &:focus {
+        outline: none;
+        border: none;
+      }
+    }
+
+    input {
+      border: 0;
       flex-grow: 1;
-      transition: all .4s;
-      transform: translateX(-100%);
-      opacity: 0;
+      border-radius: 0;
+      background-color: #dcdcdc;
+      padding: 0.5rem 1.25rem;
 
-      &.open {
-        transform: translateX(0);
-        opacity: 1;
-      }
-
-      button {
-        transform: translateX(calc(100% + 1.25rem));
-
-        span {
-          vertical-align: text-bottom;
-        }
-
-        &:focus {
-          outline: none;
-          border: none;
-        }
-      }
-
-      input {
-        border: 0;
-        flex-grow: 1;
-        border-radius: 0;
-        background-color: #dcdcdc;
-        padding: 0.5rem 1.25rem;
-
-        &:focus {
-          outline: none;
-          border: none;
-        }
+      &:focus {
+        outline: none;
+        border: none;
       }
     }
   }

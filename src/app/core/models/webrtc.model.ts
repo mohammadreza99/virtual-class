@@ -12,7 +12,7 @@ export type DisplayName = 'studentWebcam' | 'teacherWebcam' | 'teacherScreen';
 
 export type DeviceType = 'audioinput' | 'audiooutput' | 'videoinput';
 
-export type PublishType = "Webcam" | "Screen";
+export type PublishType = 'Webcam' | 'Screen';
 
 export interface PeerConnectionOptions {
   // subscription mode
@@ -27,7 +27,7 @@ export interface PeerConnectionOptions {
   display?: DisplayName;
   stream?: MediaStream;
   getRemoteAnswerSdp?: (offerSdp: string) => Promise<any>;
-  publishConfirm?: () => any
+  publishConfirm?: () => any;
 
   // common
   position?: TrackPosition;
@@ -56,7 +56,7 @@ export interface Publisher {
   display?: DisplayName;
   talking?: boolean;
   user_id: any;
-  publish_type?: PublishType
+  publish_type?: PublishType;
 }
 
 export interface StreamActionEvent {
@@ -65,7 +65,7 @@ export interface StreamActionEvent {
   stream?: MediaStream;
   position?: TrackPosition;
   display?: DisplayName;
-  publishType?: PublishType
+  publishType?: PublishType;
 }
 
 export enum SocketEventTypes {

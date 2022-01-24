@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12 mb-3">
       <ng-auto-complete [suggestions]="filteredUsers" field="label"
-                        [placeholder]="'جستجوی ایمیل کاربر' | translate"
+                        [placeholder]="'searchUserEmail' | translate"
                         [forceSelection]="true"
                         [rtl]="fa"
                         (onSelect)="onSelectUser($event)"
@@ -24,7 +24,7 @@
       </ng-custom-table>
     </div>
     <div class="col-12 pt-3 mt-3 text-left">
-      <ng-button (onClick)="onSubmit()" [label]="'ذخیره' | translate"
+      <ng-button (onClick)="onSubmit()" [label]="'submit' | translate"
                  [disabled]="selectedUsers.length === 0">
       </ng-button>
     </div>

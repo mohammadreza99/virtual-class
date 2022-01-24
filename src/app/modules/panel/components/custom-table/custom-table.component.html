@@ -1,34 +1,36 @@
 <div class="table-responsive">
-  <div class="d-flex align-items-center justify-content-between p-3 bg-light" *ngIf="showCaption">
-    <div class="table-caption">
+  <div class="d-flex align-items-center justify-content-between p-3 bg-light flex-column flex-md-row"
+       *ngIf="showCaption">
+    <div class="table-caption w-100 mb-3 mb-md-0">
       <i [class]="captionIcon"></i>
       <h5 class="mb-0">{{captionText | translate}}</h5>
-      <div class="table-search" [class.mr-5]="captionText || captionIcon">
+    </div>
+    <div class="table-actions w-100">
+      <div class="table-search" [class.mr-md-5]="captionText || captionIcon">
         <input type="text" (keydown.enter)="onSearch()" [(ngModel)]="searchTerm"
-               [placeholder]="'im_search' | translate">
+               [placeholder]="'search' | translate">
         <button class="close" (click)="toggleSearch()">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-    </div>
-    <div class="table-actions">
       <!--      <a tooltipPosition="bottom" [pTooltip]="'im_filter' | translate" (click)="onActionClick('onFilter')">-->
       <!--        <i class="icon-settings"></i>-->
       <!--      </a>-->
-      <a *ngPanelPermission="'Owner'" tooltipPosition="bottom" [pTooltip]="'im_add' | translate"
+      <a tooltipPosition="bottom" [pTooltip]="'search' | translate" (click)="toggleSearch()">
+        <i class="icon-search"></i>
+      </a>
+      <a tooltipPosition="bottom" [pTooltip]="'refresh' | translate"
+         (click)="dataTable.reset();onActionClick('onReload')">
+        <i class="icon-refresh"></i>
+      </a>
+      <a *ngPanelPermission="'Owner'" tooltipPosition="bottom" [pTooltip]="'add' | translate"
          (click)="onActionClick('onAdd')">
         <i class="icon-add"></i>
       </a>
       <!--      <a tooltipPosition="bottom" [pTooltip]="'im_download' | translate" (click)="onActionClick('onDownload')">-->
       <!--        <i class="icon-download"></i>-->
       <!--      </a>-->
-      <a tooltipPosition="bottom" [pTooltip]="'im_refresh' | translate"
-         (click)="dataTable.reset();onActionClick('onReload')">
-        <i class="icon-refresh"></i>
-      </a>
-      <a tooltipPosition="bottom" [pTooltip]="'im_search' | translate" (click)="toggleSearch()">
-        <i class="icon-search"></i>
-      </a>
+
     </div>
   </div>
   <p-table [value]="rowData" responsiveLayout="scroll" [rowHover]="true" (onSort)="sortColumn($event)"
@@ -51,7 +53,7 @@
     <ng-template pTemplate="emptymessage">
       <tr>
         <td class="text-center" [attr.colspan]="config.colDef.length">
-          <ng-empty message="موردی یافت نشد"></ng-empty>
+          <ng-empty [message]="'nothingFound' | translate"></ng-empty>
         </td>
       </tr>
     </ng-template>

@@ -24,10 +24,10 @@ export class AddRoomUserFormComponent extends LanguageChecker implements OnInit 
   selectedRole: string = 'Admin';
   config: TableConfig = {
     colDef: [
-      {header: 'نام و نام خانوادگی'},
-      {header: 'ایمیل'},
-      {header: 'دسترسی'},
-      {header: 'عملیات'},
+      {header: this.translations.fullName},
+      {header: this.translations.email},
+      {header: this.translations.access},
+      {header: this.translations.operations},
     ]
   };
 
@@ -53,8 +53,8 @@ export class AddRoomUserFormComponent extends LanguageChecker implements OnInit 
   async removeUser(item: User) {
     const dialogRes = await this.utilsService.showConfirm({
       rtl: this.fa,
-      header: 'تاییدیه حذف کاربر',
-      message: 'آیا مایلید کاربر حذف شود؟'
+      header: this.translations.deleteUserConfirm,
+      message: this.translations.deleteUserConfirmBody
     });
     if (dialogRes) {
       const idx = this.selectedUsers.findIndex(u => u.id == item.id);

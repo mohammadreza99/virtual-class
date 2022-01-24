@@ -1,6 +1,7 @@
 import {Component, ElementRef, Input, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {SessionService, SocketService} from '@core/http';
 import {RoomUser, StreamActionEvent, TrackPosition} from '@core/models';
+import {UpdateViewService} from '@core/http/update-view.service';
 
 @Component({
   selector: 'ng-screen',
@@ -18,6 +19,7 @@ export class ScreenComponent implements OnInit {
 
   constructor(
     private sessionService: SessionService,
+    private updateViewService: UpdateViewService,
     private socketService: SocketService,
     private elementRef: ElementRef,
     private renderer: Renderer2,
@@ -48,20 +50,37 @@ export class ScreenComponent implements OnInit {
           break;
       }
     });
+
+    this.updateViewService.getViewEvent().subscribe(res => {
+      switch (res.event) {
+        case 'raiseHand':
+          if (res.data.target == this.user?.id) {
+            this.user.raise_hand = res.data.value;
+          }
+          break;
+      }
+    });
   }
 
   private setStream(stream: MediaStream) {
+    const video = this.videoElem.nativeElement;
     if (!stream) {
-      this.videoElem.nativeElement.srcObject = null;
+      video.srcObject = null;
       return;
     }
-    this.videoElem.nativeElement.load();
+    video.load();
     this.stream = stream;
     this.streamActivated = true;
-    this.videoElem.nativeElement.srcObject = stream;
-    setTimeout(() => {
-      this.videoElem.nativeElement.play().then();
-    }, 1);
+    video.srcObject = stream;
+    return video.play();
+    // video.onloadeddata = () => {
+    //   try {
+    //   } catch (e) {
+    //   }
+    // };
+    // setTimeout(() => {
+    //   this.videoElem.nativeElement.play().then();
+    // }, 1);
   }
 
 
