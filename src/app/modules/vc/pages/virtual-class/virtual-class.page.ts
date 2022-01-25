@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Room, RoomUser, ViewMode} from '@core/models';
-import {SessionService} from '@core/http';
+import {RoomService, SessionService} from '@core/http';
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {UtilsService} from '@ng/services';
@@ -18,6 +18,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   constructor(private sessionService: SessionService,
               private utilsService: UtilsService,
+              private roomService: RoomService,
               private location: LocationStrategy,
               private route: ActivatedRoute,
               private updateViewService: UpdateViewService,
@@ -85,7 +86,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           if (this.sessionService.currentUser.role == 'Admin') {
             return;
           }
-          this.disableMic = res.data;
+          this.disableMic = res.data.value;
           this.micActivated = false;
           break;
 
@@ -94,12 +95,14 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           if (this.sessionService.currentUser.role == 'Admin') {
             return;
           }
-          this.disableWebcam = res.data;
+          this.disableWebcam = res.data.value;
           this.webcamActivated = false;
           break;
 
-        case 'raiseHandAccepted':
-          this.raiseHandActivated = false;
+        case 'raiseHand':
+          if (res.data.target == this.currentUser.id) {
+            this.raiseHandActivated = res.data.value;
+          }
           break;
 
         case 'activateWebcamButton':
@@ -112,11 +115,11 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           break;
 
         // case 'webcamCheck':
-        //   this.webcamFound = res.data;
+        //   this.webcamFound = res.data.value;
         //   break;
         //
         // case 'micCheck':
-        //   this.micFound = res.data;
+        //   this.micFound = res.data.value;
         //   break;
 
         case 'closeSidebar':
@@ -184,20 +187,48 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   async leaveRoom() {
     const isTeacher = this.sessionService.imTeacher;
-    const teacherConfirm = this.translationService.instant('room.speakerLeaveConfirm') as string;
-    const studentConfirm = this.translationService.instant('room.studentLeaveConfirm') as string;
-    const dialogRes = await this.utilsService.showConfirm({
-      message: isTeacher ? teacherConfirm : studentConfirm,
-      rtl: this.fa
-    });
-    if (dialogRes) {
-      this.sidebarVisible = false;
-      await this.sessionService.leaveRoom().toPromise();
-      if (isTeacher) {
+    let dialogRes;
+    if (isTeacher) {
+      dialogRes = await this.openTeacherLeaveRoomDialog();
+      if (dialogRes === null) {
+        return;
+      }
+      if (dialogRes) {
+        await this.sessionService.leaveRoom().toPromise();
+      } else {
         await this.sessionService.closeRoom().toPromise();
       }
-      this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+      this.sidebarVisible = false;
+      setTimeout(() => {
+        this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+      }, 30);
+    } else {
+      dialogRes = await this.openStudentLeaveRoomDialog();
+      if (dialogRes) {
+        this.sidebarVisible = false;
+        setTimeout(() => {
+          this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+        }, 30);
+      }
     }
+  }
+
+  async openTeacherLeaveRoomDialog() {
+    return await this.utilsService.showConfirm({
+      message: this.translations.room.speakerLeaveConfirm,
+      rtl: this.fa,
+      acceptLabel: this.translations.room.leaveSession,
+      rejectLabel: this.translations.room.leaveAndCloseSession,
+      rejectColor: 'danger',
+      rejectAppearance: 'basic'
+    });
+  }
+
+  async openStudentLeaveRoomDialog() {
+    return await this.utilsService.showConfirm({
+      message: this.translations.room.studentLeaveConfirm,
+      rtl: this.fa,
+    });
   }
 
   async toggleMuteAll(event) {
@@ -238,7 +269,8 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   async copySessionLink(sessionInfoOverlay: OverlayPanel) {
-    await this.sessionService.copySessionLink();
+    const data = await this.roomService.generateRoomLink(this.currentRoom.id).toPromise();
+    await navigator.clipboard.writeText(data.data.link);
     sessionInfoOverlay.hide();
   }
 

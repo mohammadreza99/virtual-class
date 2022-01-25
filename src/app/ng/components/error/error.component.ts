@@ -17,7 +17,7 @@ export class ErrorComponent implements OnInit {
   }
 
   reloadPage() {
-    this.updateViewService.setViewEvent({event: 'closeSidebar', data: true});
+    this.updateViewService.setViewEvent({event: 'closeSidebar', data: {value: true}});
     setTimeout(async () => {
       await this.router.navigateByUrl('/');
       document.location.reload();

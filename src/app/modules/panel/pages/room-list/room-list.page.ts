@@ -76,8 +76,8 @@ export class RoomListPage extends LanguageChecker implements OnInit {
 
   async deleteRoom(room: Group) {
     try {
-      const header = this.translationService.instant('deleteRoomConfirm') as string;
-      const message = this.translationService.instant('roomDeleteConfirmBody') as string;
+      const header = this.translations.deleteRoomConfirm;
+      const message = this.translations.roomDeleteConfirmBody;
       const dialogRes = await this.utilsService.showConfirm({header, message, rtl: this.fa});
       if (dialogRes) {
         const result = await this.roomService.deleteRoom(room.id).toPromise();
@@ -221,7 +221,7 @@ export class RoomListPage extends LanguageChecker implements OnInit {
     //   this.router.createUrlTree([`/#/vc/room-info/${room.id}`])
     // );
     // window.open(`./#/vc/room-info/${room.id}`, '_blank');
-    this.updateViewService.setViewEvent({event: 'closeSidebar', data: true});
+    this.updateViewService.setViewEvent({event: 'closeSidebar', data: {value: true}});
     setTimeout(() => {
       this.router.navigate(['/vc/room-info', room.id]);
     }, 30);

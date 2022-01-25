@@ -8,6 +8,7 @@
     "enterRoom": "ورود به کلاس",
     "sessionInfo": "اطلاعات رویداد",
     "leaveSession": "ترک رویداد",
+    "leaveAndCloseSession": "ترک و بستن رویداد",
     "showSpeakerOnly": "نمایش فقط سخنران",
     "showSpeakerAndParticipants": "نمایش سخنران و شرکت کنندگان",
     "showAllParticipants": "نمایش تمامی شرکت کنندگان",
@@ -22,13 +23,17 @@
     "fireUser": "اخراج کاربر",
     "admin": "معلم",
     "speakerVideoNotFound": "تصویر معلم یافت نشد",
-    "speakerLeaveConfirm": "در صورت خروج از رویداد به طور کلی رویداد پایان می یابد. آیا می خواهید رویداد پایان یابد؟",
+    "speakerLeaveConfirm": "در صورت ترک و بستن، رویداد به طور کلی پایان می یابد. آیا می خواهید رویداد پایان یابد؟",
     "studentLeaveConfirm": "آیا از خروج اطمینان دارید؟",
     "fireUserConfirm": "آیا می خواهید '{{value}}' را از رویداد اخراج کنید؟",
     "myRoleChangedConfirm": "دسترسی های شما تغییر کرد . آیا مایل هستید صفحه مجدد بارگذاری شود؟",
     "openSessionConfirm": "درحال حاضر شما در یک رویداد فعال حضور دارید، آیا میخواهید رویداد قبلی بسته شود؟",
     "upgradeRoleConfirm": "آیا از انتخاب '{{value}}' بعنوان ادمین مطمئن هستید؟",
-    "downgradeRoleConfirm": "آیا دسترسی '{{value}}' را میخواهید بگیرید؟"
+    "downgradeRoleConfirm": "آیا دسترسی '{{value}}' را میخواهید بگیرید؟",
+    "yourVoiceAccessIsOpened": "دسترسی صدای شما باز شد",
+    "yourVoiceAccessIsClosed": "دسترسی صدای شما بسته شد",
+    "yourVideoAccessIsOpened": "دسترسی تصویر شما باز شد",
+    "yourVideoAccessIsClosed": "دسترسی تصویر شما بسته شد"
   },
   "home": "خانه",
   "forgetPassword": "فراموشی رمزعبور",
@@ -180,5 +185,5 @@
   "accessDeniedError": "دسترسی غیرمجاز",
   "roomHasBeenClosed": "کلاس به اتمام رسیده است",
   "yourFired": "شما از کلاس اخراج شدید",
-  "leftTheRoom": "{{value}} کلاس را ترک کرد"
+  "userLeftTheRoom": "{{value}} کلاس را ترک کرد"
 }

@@ -31,7 +31,7 @@ export class NavbarMenuComponent
           },
         );
         if (dialogRes) {
-          this.updateViewService.setViewEvent({event: 'closeSidebar', data: true});
+          this.updateViewService.setViewEvent({event: 'closeSidebar', data: {value: true}});
           this.authService.logout();
           setTimeout(() => {
             this.router.navigate(['/auth/login']);

@@ -1,13 +1,11 @@
-@import "mixins";
+p-breadcrumb ::ng-deep {
+  .p-breadcrumb ul {
+    justify-content: flex-start;
+  }
 
-:host {
-  display: block;
-  direction: ltr;
-}
-li {
-  &:not(:last-child):hover {
-    cursor: pointer;
-    span {
+  .p-breadcrumb-chevron {
+    &:before {
+      content: "\e900";
     }
   }
 }

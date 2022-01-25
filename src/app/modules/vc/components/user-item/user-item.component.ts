@@ -26,16 +26,11 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
   ngOnInit(): void {
     this.currentUser = this.sessionService.currentUser;
     this.updateViewService.getViewEvent().subscribe(res => {
-      console.log(11111111, res);
       switch (res.event) {
-        case 'mutePerson':
-          // this means handRaise accepted by teacher and user muted set to false.
-          if (res.data.target == this.user.id && res.data == false) {
-            this.activateRaiseHand = true;
+        case 'raiseHand':
+          if (res.data.target == this.user.id) {
+            this.activateRaiseHand = res.data.value;
           }
-          break;
-
-        case 'raiseHandAccepted':
           break;
       }
     });
@@ -69,9 +64,9 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
 
   async confirmRaiseHand() {
     try {
+      await this.sessionService.acceptRaiseHand(this.user.id).toPromise();
       await this.sessionService.muteUser(this.user.id, false).toPromise();
       this.raiseHandConfirmed = true;
-      this.updateViewService.setViewEvent({event: 'raiseHand', data: true});
     } catch (error) {
       console.error(error);
     }
@@ -82,7 +77,6 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
     if (mute) {
       await this.sessionService.muteUser(this.user.id, true).toPromise();
     }
-    this.updateViewService.setViewEvent({event: 'raiseHand', data: false});
     this.raiseHandConfirmed = false;
   }
 

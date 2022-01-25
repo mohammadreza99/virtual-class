@@ -101,7 +101,7 @@ export class UtilsService {
     });
   }
 
-  showConfirm(options: NgConfirmOptions): Promise<boolean> {
+  showConfirm(options: NgConfirmOptions, nullable: boolean = false): Promise<boolean> {
     if (!document.body.contains((this.confirmCmpRef?.hostView as EmbeddedViewRef<any>)?.rootNodes[0])) {
       this.confirmCmpRef = this.addComponentToBody(ConfirmComponent);
     }
@@ -114,13 +114,17 @@ export class UtilsService {
         icon: options.icon,
         blockScroll: options.blockScroll,
         defaultFocus: options.defaultFocus,
-        accept: () => {
+        accept: (data) => {
           this.removeComponentFromBody(this.confirmCmpRef);
           accept(true);
         },
-        reject: () => {
+        reject: (data) => {
           this.removeComponentFromBody(this.confirmCmpRef);
-          accept(false);
+          if (data == 2) {
+            accept(null);
+          } else if (data == 1) {
+            accept(false);
+          }
         }
       });
     });

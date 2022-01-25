@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
 import {
   DeviceType,
   DisplayName,
@@ -18,6 +18,7 @@ import {map} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {TranslationService} from '@core/utils';
 import {UpdateViewService} from '@core/http/update-view.service';
+import {NgMessageSeverities} from '@ng/models/overlay';
 
 @Injectable({providedIn: 'root'})
 export class SessionService extends ApiService {
@@ -36,6 +37,7 @@ export class SessionService extends ApiService {
   private roomUsersChangeSubject = new BehaviorSubject<RoomUser[]>([]);
   private roomParticipantsChangeSubject = new BehaviorSubject<RoomUser[]>([]);
   private raisedHandsChangeSubject = new BehaviorSubject<RoomUser[]>([]);
+  private socketSubscription: Subscription;
   private _currentUser: any;
   private _currentRoom: any;
 
@@ -62,6 +64,7 @@ export class SessionService extends ApiService {
       const data = await this.getRoomInfo(roomId).pipe(map(d => d.data)).toPromise();
       if (!data) {
         this.openToast('room info error');
+        return;
       }
       this.currentRoom = {...data.room};
       this.currentUser = {
@@ -102,7 +105,7 @@ export class SessionService extends ApiService {
         await this.updateRoomPublishers();
       }
       if (result.status == 'JANUS_ERROR') {
-        this.utilsService.showToast({summary: 'retrying...'});
+        this.openToast('RoomStatus JANUS ERROR --- retrying...', 'warn');
         await this.updateRoomPublishers();
       }
       await this.updatePublishers(result.data.publishers);
@@ -255,8 +258,8 @@ export class SessionService extends ApiService {
           resolve(pc);
         },
         onError: (error: string) => {
-          this.openToast(error + ' retrying...');
           if (error == 'JANUS_ERROR') {
+            this.openToast(`Subscribe JANUS ERROR -- retrying...`, 'warn');
             this.closeSubscribeConnection(options.userId, options.publishType);
             this.createSubscribeConnection(options);
           }
@@ -309,7 +312,7 @@ export class SessionService extends ApiService {
           resolve(pc);
         },
         onDisconnect: () => {
-          this.updateViewService.setViewEvent({event: `activate${options.publishType}Button`, data: false});
+          this.updateViewService.setViewEvent({event: `activate${options.publishType}Button`, data: {value: false}});
           if (this.mainPositionUser?.id == options.userId) {
             this.removeMainPositionUser();
           }
@@ -381,8 +384,8 @@ export class SessionService extends ApiService {
     if (!locally) {
       const data = await this.unPublish(publishType).toPromise();
       if (data.status != 'OK') {
-        this.openToast('unpublish api error');
-        throw Error('unpublish error');
+        this.openToast('unPublish error');
+        throw Error('unPublish error');
       }
     }
   }
@@ -453,15 +456,9 @@ export class SessionService extends ApiService {
 
   initSockets() {
     this.socketService.start(this.currentRoom.id);
-    const events: SocketEventTypes[] = Object.values(SocketEventTypes);
-    // for (const eventName of events) {
-    this.socketService.listen().subscribe(res => {
+    this.socketSubscription = this.socketService.listen().subscribe(res => {
       console.log(`${res.event} => `, res);
-      // this.utilsService.showToast({
-      //   life: 5000,
-      //   detail: JSON.stringify(`${eventName} => ${JSON.stringify(res)}`),
-      //   severity: 'warn'
-      // });
+      // this.openToast(JSON.stringify(`${eventName} => ${JSON.stringify(res)}`),'warn');
       let user: RoomUser;
       switch (res.event) {
         case 'newUser':
@@ -512,6 +509,7 @@ export class SessionService extends ApiService {
 
         case 'userDisconnected':
         case 'leaveRoom':
+          user = this.getRoomUserById(res.target);
           if (res.target != this.currentUser.id) {
             const connection = this.getPeerConnectionById(res.target);
             if (connection) {
@@ -530,9 +528,12 @@ export class SessionService extends ApiService {
               this.raisedHands.splice(handRaiseIndex, 1);
             }
             this.raisedHandsChangeSubject.next(this.raisedHands);
-          } else if (res.target == this.currentUser.id) {
-            if (res.event == 'leaveRoom') {
+          }
+          if (res.event == 'leaveRoom') {
+            if (res.target == this.currentUser.id) {
               this.getMeOut();
+            } else if (res.target != this.currentUser.id && this.currentUser.role == 'Admin') {
+              this.openToast('userLeftTheRoom', 'warn', user.last_name);
             }
           }
           break;
@@ -548,10 +549,10 @@ export class SessionService extends ApiService {
               this.raisedHands.splice(handRaiseIndex, 1);
             }
           } else {
-            // the teacher accept student raise hand
-            this.raisedHands.splice(this.raisedHands.findIndex(u => u.id == user.id), 1);
-            if (res.target == this.currentUser.id) {
-              this.updateViewService.setViewEvent({event: 'raiseHandAccepted', data: res.value});
+            // hand raise occur by teacher
+            if (!res.value) {
+              // the teacher reject student raise hand
+              this.raisedHands.splice(this.raisedHands.findIndex(u => u.id == user.id), 1);
             }
           }
           this.updateViewService.setViewEvent({event: 'raiseHand', data: res});
@@ -562,10 +563,12 @@ export class SessionService extends ApiService {
           user = this.getRoomUserById(res.target);
           user.muted = res.value;
           if (this.currentUser.id == res.target) {
+            this.openToast(res.value ? 'room.yourVoiceAccessIsOpened' : 'room.yourVoiceAccessIsClosed', 'warn');
             if (res.value == true) {
               this.toggleMyAudio(false);
             }
-            this.updateViewService.setViewEvent({event: 'mutePerson', data: res.value});
+            this.updateViewService.setViewEvent({event: 'mutePerson', data: res});
+
           }
           break;
 
@@ -573,10 +576,11 @@ export class SessionService extends ApiService {
           user = this.getRoomUserById(res.target);
           user.muted_video = res.value;
           if (this.currentUser.id == res.target) {
+            this.openToast(res.value ? 'room.yourVideoAccessIsOpened' : 'room.yourVideoAccessIsClosed', 'warn');
             if (res.value == true) {
               this.toggleMyVideo(false);
             }
-            this.updateViewService.setViewEvent({event: 'muteVideo', data: res.value});
+            this.updateViewService.setViewEvent({event: 'muteVideo', data: res});
           }
           break;
 
@@ -587,7 +591,8 @@ export class SessionService extends ApiService {
             }
           });
           if (this.imStudent) {
-            this.updateViewService.setViewEvent({event: 'muteAll', data: res.value});
+            this.openToast(res.value ? 'room.yourVoiceAccessIsOpened' : 'room.yourVoiceAccessIsClosed', 'warn');
+            this.updateViewService.setViewEvent({event: 'muteAll', data: res});
             if (res.value == true) {
               this.toggleMyAudio(false);
             }
@@ -601,7 +606,8 @@ export class SessionService extends ApiService {
             }
           });
           if (this.imStudent) {
-            this.updateViewService.setViewEvent({event: 'muteVideoAll', data: res.value});
+            this.openToast(res.value ? 'room.yourVideoAccessIsOpened' : 'room.yourVideoAccessIsClosed', 'warn');
+            this.updateViewService.setViewEvent({event: 'muteVideoAll', data: res});
             if (res.value == true) {
               this.toggleMyVideo(false);
             }
@@ -619,7 +625,6 @@ export class SessionService extends ApiService {
           break;
       }
     });
-    // }
   }
 
   private isMainPositionBusy() {
@@ -714,7 +719,7 @@ export class SessionService extends ApiService {
   ///////////////////////////////////////////////////////////////////////////////
 
   async getMeOut(message?: any) {
-    this.updateViewService.setViewEvent({event: 'closeSidebar', data: true});
+    this.updateViewService.setViewEvent({event: 'closeSidebar', data: {value: true}});
     if (this.myConnection.webcam) {
       this.stopStreamTrack(this.myConnection.webcam.stream);
     } else if (this.myConnection.screen) {
@@ -729,6 +734,7 @@ export class SessionService extends ApiService {
     this.socketService.tryConnection = false;
     this.socketService.clearPingTimer();
     this.socketService.close();
+    this.socketSubscription.unsubscribe();
     if (message) {
       await this.utilsService.showDialog({message});
     }
@@ -757,8 +763,8 @@ export class SessionService extends ApiService {
   private async checkConnectedDevices() {
     const webcamConnected = await this.webcamConnected();
     const micConnected = await this.micConnected();
-    this.updateViewService.setViewEvent({event: 'webcamCheck', data: webcamConnected});
-    this.updateViewService.setViewEvent({event: 'micCheck', data: micConnected});
+    this.updateViewService.setViewEvent({event: 'webcamCheck', data: {value: webcamConnected}});
+    this.updateViewService.setViewEvent({event: 'micCheck', data: {value: micConnected}});
   }
 
   async webcamConnected() {
@@ -771,10 +777,10 @@ export class SessionService extends ApiService {
     return micDevices != [];
   }
 
-  openToast(message: string) {
+  openToast(translateKey: string, severity: NgMessageSeverities = 'error', translateValue: any = null) {
     this.utilsService.showToast({
-      detail: message,
-      severity: 'success',
+      detail: this.translationService.instant(translateKey, {value: translateValue}) as string || translateKey,
+      severity
     });
   }
 
@@ -790,11 +796,6 @@ export class SessionService extends ApiService {
       return false;
     }
     return stream.getAudioTracks().findIndex(t => t.enabled) >= 0;
-  }
-
-  async copySessionLink() {
-    await navigator.clipboard.writeText(window.location.href);
-    this.openToast('لینک کپی شد.');
   }
 
   private async getConnectedDevices(type: DeviceType): Promise<MediaDeviceInfo[]> {
@@ -913,6 +914,13 @@ export class SessionService extends ApiService {
     return this._post<any>('', {
       method: 'raiseHand',
       data: {room_id: this.currentRoom.id, raise_hand},
+    });
+  }
+
+  acceptRaiseHand(user_id: number) {
+    return this._post<any>('', {
+      method: 'raiseHand',
+      data: {room_id: this.currentRoom.id, raise_hand: true, user_id},
     });
   }
 
