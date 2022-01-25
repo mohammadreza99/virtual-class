@@ -54,7 +54,7 @@ export class ScreenComponent implements OnInit {
     this.updateViewService.getViewEvent().subscribe(res => {
       switch (res.event) {
         case 'raiseHand':
-          if (res.data.target == this.user?.id) {
+          if (this.user && res.data.target == this.user.id) {
             this.user.raise_hand = res.data.value;
           }
           break;

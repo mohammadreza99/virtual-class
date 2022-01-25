@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {RoomService, SessionService} from '@core/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Room} from '@core/models';
@@ -15,6 +15,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
   }
 
   @ViewChild('videoPreview', {static: true}) videoElem: ElementRef<HTMLMediaElement>;
+
 
   room: Room;
   roomUsers: number;

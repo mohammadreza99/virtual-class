@@ -2,7 +2,7 @@ import {HttpClient, HttpContext, HttpHeaders, HttpParams} from '@angular/common/
 import {Global} from '@ng/global';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {EnvService} from '@core/utils/env.service';
+import {EnvService} from '@core/utils';
 
 interface RequestOptions {
   headers?: HttpHeaders | { [p: string]: string | string[] };

@@ -3,11 +3,11 @@ import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/com
 import {Observable, throwError} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
-import {UtilsService} from '@ng/services';
+import {MessageService} from '@core/utils';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
-  constructor(private router: Router, private utilsService: UtilsService) {
+  constructor(private router: Router, private messageService: MessageService) {
   }
 
   intercept(
@@ -15,7 +15,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const hasSuccessMessageApis = ['createRoom', 'generateRoomLink'];
-    const hasFailureMessageApis = [];
+    const hasFailureMessageApis = ['activateRoom'];
     return next.handle(request).pipe(
       tap((event: any) => {
         const method = request.body?.method;
@@ -46,30 +46,39 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   }
 
   showSuccessToast() {
-    this.utilsService.showToast({
+    this.messageService.nextMessage({
       severity: 'success',
-      summary: 'با موفقیت انجام شد'
+      detail: 'doneSuccessfully'
     });
   }
 
   showFailureToast(status) {
-    this.utilsService.showToast({
+    this.messageService.nextMessage({
       severity: 'error',
       ...this.getErrorMessage(status)
     });
   }
 
-  getErrorMessage(code: string): any {
-    switch (code) {
+  getErrorMessage(status: string): any {
+    switch (status) {
       case 'NOT_EMPTY':
+        return {
+          detail: 'notEmptyError',
+        };
       case 'UNAUTHENTICATED':
         return {
-          detail: code,
+          detail: 'unAuthenticatedError',
+        };
+      case 'ACCESS_DENIED':
+        return {
+          detail: 'accessDeniedError',
         };
       default:
-        return {
-          detail: 'خطایی رخ داده است',
-        };
+        if (status != undefined) {
+          return {
+            detail: 'errorOccurred',
+          };
+        }
     }
   }
 }

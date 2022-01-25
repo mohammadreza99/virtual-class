@@ -20,6 +20,7 @@
     "upgradeRole": "ارتقا کاربر به ادمین",
     "downgradeRole": "حذف دسترسی های ادمین",
     "fireUser": "اخراج کاربر",
+    "admin": "معلم",
     "speakerVideoNotFound": "تصویر معلم یافت نشد",
     "speakerLeaveConfirm": "در صورت خروج از رویداد به طور کلی رویداد پایان می یابد. آیا می خواهید رویداد پایان یابد؟",
     "studentLeaveConfirm": "آیا از خروج اطمینان دارید؟",
@@ -173,5 +174,11 @@
   "pleaseTestWebcam": "جهت تست دوربین کلیک کنید",
   "pleaseAllowWebcam": "لطفا دسترسی دوربین را باز کنید",
   "roomInfo": "اطلاعات کلاس",
-  "virtualClass": "کلاس مجازی"
+  "virtualClass": "کلاس مجازی",
+  "notEmptyError": "مورد خالی نیست",
+  "unAuthenticatedError": "لطفا دوباره وارد شوید",
+  "accessDeniedError": "دسترسی غیرمجاز",
+  "roomHasBeenClosed": "کلاس به اتمام رسیده است",
+  "yourFired": "شما از کلاس اخراج شدید",
+  "leftTheRoom": "{{value}} کلاس را ترک کرد"
 }

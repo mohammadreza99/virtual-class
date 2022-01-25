@@ -492,7 +492,7 @@ export class SessionService extends ApiService {
           break;
 
         case 'closeRoom':
-          this.getMeOut();
+          this.getMeOut(this.translationService.instant('roomHasBeenClosed'));
           break;
 
         case 'kickUser':
@@ -505,7 +505,7 @@ export class SessionService extends ApiService {
             this.roomUsers.splice(userIndex, 1);
           }
           if (res.target == this.currentUser.id) {
-            this.getMeOut();
+            this.getMeOut(this.translationService.instant('yourFired'));
           }
           this.raisedHandsChangeSubject.next(this.raisedHands);
           break;
@@ -532,8 +532,6 @@ export class SessionService extends ApiService {
             this.raisedHandsChangeSubject.next(this.raisedHands);
           } else if (res.target == this.currentUser.id) {
             if (res.event == 'leaveRoom') {
-              this.getMeOut(false);
-            } else {
               this.getMeOut();
             }
           }
@@ -715,7 +713,7 @@ export class SessionService extends ApiService {
   //                                   UTILS                                   //
   ///////////////////////////////////////////////////////////////////////////////
 
-  async getMeOut(showMessage: boolean = true) {
+  async getMeOut(message?: any) {
     this.updateViewService.setViewEvent({event: 'closeSidebar', data: true});
     if (this.myConnection.webcam) {
       this.stopStreamTrack(this.myConnection.webcam.stream);
@@ -730,10 +728,9 @@ export class SessionService extends ApiService {
     }
     this.socketService.tryConnection = false;
     this.socketService.clearPingTimer();
-    // this.socketService.clearReconnectTimer();
     this.socketService.close();
-    if (showMessage) {
-      await this.utilsService.showDialog({message: 'شما از کلاس خارج شدید.'});
+    if (message) {
+      await this.utilsService.showDialog({message});
     }
     // await this.router.navigate(['/vc/room-info', this.currentRoom.id]);
     window.location.reload();

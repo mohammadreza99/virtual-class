@@ -5,31 +5,32 @@
     </div>
     <div class="name mx-2">
       <p>{{user.first_name + ' ' + user.last_name}}</p>
-      <small class="role" *ngIf="user.role == 'Admin'">{{('room.role' + user.role) | translate}}</small>
+      <small class="role" *ngIf="user.role == 'Admin'">{{('room.' + user.role.toLowerCase()) | translate}}</small>
     </div>
   </div>
-  <ng-container *ngIf="currentUser.id != user.id">
-    <ng-container *ngPermission="'Admin'">
-      <div class="raise-hand text-center" *ngIf="raiseHand">
-        <ng-container *ngIf="!raiseHandConfirmed">
-          <ng-button icon="icon-check" class="ml-1" (click)="confirmRaiseHand()"></ng-button>
-          <ng-button icon="icon-close" (click)="rejectRaiseHand(false)"></ng-button>
-        </ng-container>
-        <ng-button color="danger" size="sm" (click)="rejectRaiseHand(true)" [label]="'room.endAccess' | translate"
-                   *ngIf="raiseHandConfirmed">
-        </ng-button>
-      </div>
-      <div class="actions" *ngIf="!raiseHand">
-        <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm"
-                         [icon]="user.muted_video ? 'icon-camera-off' : 'icon-camera'"
-                         (clickAsync)="muteUserCamera($event)">
-        </ng-button-async>
-        <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm" [icon]="user.muted ? 'icon-mic-off' : 'icon-mic'"
-                         (clickAsync)="muteUser($event)">
-        </ng-button-async>
-        <ng-button size="sm" icon="icon-more" (click)="actions.toggle($event)"></ng-button>
-      </div>
-    </ng-container>
+  <ng-container *ngPermission="'Viewer'">
+    <i class="icon-hand-raise" [class.text-success]="activateRaiseHand" *ngIf="user.raise_hand && raiseHand"></i>
+  </ng-container>
+  <ng-container *ngPermission="'Admin'">
+    <div class="raise-hand text-center" *ngIf="raiseHand">
+      <ng-container *ngIf="!raiseHandConfirmed">
+        <ng-button icon="icon-check" class="ml-1" (click)="confirmRaiseHand()"></ng-button>
+        <ng-button icon="icon-close" (click)="rejectRaiseHand(false)"></ng-button>
+      </ng-container>
+      <ng-button color="danger" size="sm" (click)="rejectRaiseHand(true)" [label]="'room.endAccess' | translate"
+                 *ngIf="raiseHandConfirmed">
+      </ng-button>
+    </div>
+    <div class="actions" *ngIf="!raiseHand">
+      <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm"
+                       [icon]="user.muted_video ? 'icon-camera-off' : 'icon-camera'"
+                       (clickAsync)="muteUserCamera($event)">
+      </ng-button-async>
+      <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm" [icon]="user.muted ? 'icon-mic-off' : 'icon-mic'"
+                       (clickAsync)="muteUser($event)">
+      </ng-button-async>
+      <ng-button size="sm" icon="icon-more" (click)="actions.toggle($event)"></ng-button>
+    </div>
   </ng-container>
 </div>
 

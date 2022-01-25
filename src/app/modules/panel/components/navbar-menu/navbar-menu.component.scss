@@ -25,6 +25,7 @@
     }
   }
 
+
   p-sidebar {
     .p-sidebar {
       background: var(--surface-b);
@@ -90,6 +91,22 @@
           margin-right: 0.5em;
         }
       }
+    }
+  }
+
+  .sidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    width: 20rem;
+    background-color: #ffffff;
+    z-index: 2000;
+    transition: all 150ms;
+    transform: translateX(100%);
+
+    &.open {
+      transform: translateX(0);
     }
   }
 }

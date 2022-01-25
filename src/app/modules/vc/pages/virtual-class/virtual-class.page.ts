@@ -1,5 +1,5 @@
-import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {Room, RoomUser, StreamActionEvent, ViewMode} from '@core/models';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Room, RoomUser, ViewMode} from '@core/models';
 import {SessionService} from '@core/http';
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
@@ -54,6 +54,11 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   async loadData() {
+    if (window.innerWidth <= 767) {
+      this.sidebarVisible = false;
+    } else {
+      this.sidebarVisible = true;
+    }
     this.disableWindowBackButton();
     this.initUserData();
     this.sessionService.initRoom();
@@ -99,6 +104,11 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
         case 'activateWebcamButton':
           this.webcamActivated = false;
+          break;
+
+
+        case 'activateMicButton':
+          this.micActivated = false;
           break;
 
         // case 'webcamCheck':

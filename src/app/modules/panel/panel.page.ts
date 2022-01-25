@@ -156,7 +156,7 @@ export class PanelPage extends LanguageChecker implements OnInit {
   }
 
   handleResize() {
-    if (window.innerWidth < 767) {
+    if (window.innerWidth <= 767) {
       this.onMenuTypeChange('overlay');
       this.toggleOverlayDisplay(false);
     } else {

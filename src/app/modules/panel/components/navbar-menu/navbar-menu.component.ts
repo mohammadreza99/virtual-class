@@ -4,6 +4,8 @@ import {UtilsService} from '@ng/services';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {MenuItem} from 'primeng/api';
 import {User} from '@core/models';
+import {UpdateViewService} from '@core/http/update-view.service';
+import {AuthService} from '@core/http';
 
 @Component({
   selector: 'navbar-menu',
@@ -29,8 +31,11 @@ export class NavbarMenuComponent
           },
         );
         if (dialogRes) {
-          localStorage.removeItem('token');
-          this.router.navigate(['/auth/login']);
+          this.updateViewService.setViewEvent({event: 'closeSidebar', data: true});
+          this.authService.logout();
+          setTimeout(() => {
+            this.router.navigate(['/auth/login']);
+          }, 20);
         }
       }
     }
@@ -57,7 +62,9 @@ export class NavbarMenuComponent
 
   constructor(
     private router: Router,
-    private utilsService: UtilsService
+    private utilsService: UtilsService,
+    private authService: AuthService,
+    private updateViewService: UpdateViewService,
   ) {
     super();
   }

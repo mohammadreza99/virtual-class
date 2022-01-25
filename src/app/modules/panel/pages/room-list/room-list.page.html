@@ -19,12 +19,12 @@
                   <span class="role-item px-3 py-2 role-{{r}}"
                         [class.mr-1]="!first"
                         *ngFor="let r of roles;let first=first">
-                    {{r}}
+                    {{r.toLowerCase() | translate}}
                   </span>
                 </ng-container>
                 <ng-container *ngIf="roles.length > 2">
                   <span class="role-item px-3 py-2 role-{{roles[0]}}">
-                    {{roles[0]}}
+                    {{roles[0].toLowerCase() | translate}}
                   </span>
                   <span class="role-item-extra px-3 py-2">
                     +{{roles.length - 1}}

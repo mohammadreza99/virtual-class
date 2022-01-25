@@ -4,6 +4,7 @@ import {SessionService} from '@core/http';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {UtilsService} from '@ng/services';
+import {UpdateViewService} from '@core/http/update-view.service';
 
 @Component({
   selector: 'ng-user-item',
@@ -12,17 +13,32 @@ import {UtilsService} from '@ng/services';
 })
 export class UserItemComponent extends LanguageChecker implements OnInit {
 
-  constructor(private sessionService: SessionService, private utilsService: UtilsService) {
+  constructor(private sessionService: SessionService, private utilsService: UtilsService, private updateViewService: UpdateViewService) {
     super();
   }
 
   @Input() user: RoomUser;
   @Input() raiseHand: boolean;
+  activateRaiseHand: boolean = false;
   raiseHandConfirmed: boolean = false;
   currentUser: RoomUser;
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.currentUser;
+    this.updateViewService.getViewEvent().subscribe(res => {
+      console.log(11111111, res);
+      switch (res.event) {
+        case 'mutePerson':
+          // this means handRaise accepted by teacher and user muted set to false.
+          if (res.data.target == this.user.id && res.data == false) {
+            this.activateRaiseHand = true;
+          }
+          break;
+
+        case 'raiseHandAccepted':
+          break;
+      }
+    });
   }
 
   async muteUser(callback: (toggleState?: boolean) => any) {
@@ -55,6 +71,7 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
     try {
       await this.sessionService.muteUser(this.user.id, false).toPromise();
       this.raiseHandConfirmed = true;
+      this.updateViewService.setViewEvent({event: 'raiseHand', data: true});
     } catch (error) {
       console.error(error);
     }
@@ -65,6 +82,7 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
     if (mute) {
       await this.sessionService.muteUser(this.user.id, true).toPromise();
     }
+    this.updateViewService.setViewEvent({event: 'raiseHand', data: false});
     this.raiseHandConfirmed = false;
   }
 
@@ -75,10 +93,6 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
       if (dialogRes) {
         await this.sessionService.assignRole(this.user.id, 'Admin').toPromise();
         this.user.role = 'Admin';
-        // const idx = this.roomUsers.findIndex(u => user.id == u.id);
-        // if (idx > -1) {
-        //   this.roomUsers[idx].role = isAdmin ? 'Viewer' : 'Admin';
-        // }
       }
     } catch (error) {
       console.error(error);
@@ -92,10 +106,6 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
       if (dialogRes) {
         await this.sessionService.assignRole(this.user.id, 'Viewer').toPromise();
         this.user.role = 'Viewer';
-        // const idx = this.roomUsers.findIndex(u => user.id == u.id);
-        // if (idx > -1) {
-        //   this.roomUsers[idx].role = isAdmin ? 'Viewer' : 'Admin';
-        // }
       }
     } catch (error) {
       console.error(error);
