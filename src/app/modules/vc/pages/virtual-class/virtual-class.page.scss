@@ -241,6 +241,45 @@
       }
     }
 
+    .p-tabview {
+
+      .p-tabview-nav {
+        direction: ltr;
+
+        li {
+          flex-grow: 1;
+          background-color: #40414A;
+
+          &:not(.p-highlight):not(.p-disabled) {
+            a {
+              border-color: #6c757d;
+            }
+
+            &:hover {
+              a {
+                background-color: transparent;
+              }
+            }
+          }
+
+          a {
+            justify-content: center;
+            background-color: #40414A;
+
+
+            &:focus {
+              box-shadow: none !important;
+            }
+          }
+        }
+      }
+
+      .p-tabview-panels {
+        background-color: #40414A;
+        padding: 0;
+      }
+    }
+
     p-accordion {
       .p-accordion-header {
         &.p-highlight {
