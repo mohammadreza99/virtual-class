@@ -81,11 +81,11 @@
   <p-tabView>
     <p-tabPanel header="اعضا" leftIcon="icon-user-groups">
       <div class="sidebar-header py-4">
-<!--        <div class="participants-count">-->
-<!--          <i class="icon-participant mx-2"></i>-->
-<!--          <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>-->
-<!--        </div>-->
-<!--        <i class="icon-close mx-2" (click)="closeSidebar()"></i>-->
+        <!--        <div class="participants-count">-->
+        <!--          <i class="icon-participant mx-2"></i>-->
+        <!--          <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>-->
+        <!--        </div>-->
+        <!--        <i class="icon-close mx-2" (click)="closeSidebar()"></i>-->
       </div>
       <div class="sidebar-actions py-4 px-3" *ngPermission="'Admin'">
         <div class="item mb-3">
@@ -140,7 +140,50 @@
       </div>
 
     </p-tabPanel>
-    <p-tabPanel header="چت" leftIcon="icon-user-groups"></p-tabPanel>
+    <p-tabPanel header="چت" leftIcon="icon-user-groups">
+      <section class="msger">
+        <main class="msger-chat">
+          <div class="msg left-msg">
+            <div class="msg-bubble">
+              <div class="msg-info">
+                <div class="msg-info-name">محمدرضا</div>
+                <div class="msg-info-time">12:45</div>
+              </div>
+
+              <div class="msg-text">
+                این یک پیام تستی است
+              </div>
+            </div>
+            <div
+              class="msg-img"
+              style="background-image: url('sdasd')"
+            ></div>
+          </div>
+
+          <div class="msg right-msg">
+            <div class="msg-bubble">
+              <div class="msg-info">
+                <div class="msg-info-name">سجاد</div>
+                <div class="msg-info-time">12:46</div>
+              </div>
+
+              <div class="msg-text">
+                یک پیام تستی دیگر و همچنین این پیام نسبتا طولانی تر است و ممکن است فضای بیشتری را اشغال کند
+              </div>
+            </div>
+            <div
+              class="msg-img"
+              style="background-image: url('https://image.flaticon.com/icons/svg/145/145867.svg')"
+            ></div>
+          </div>
+        </main>
+
+        <form class="msger-inputarea">
+          <ng-input-text inputSize="md" class="ml-2"></ng-input-text>
+          <ng-button label="ارسال"></ng-button>
+        </form>
+      </section>
+    </p-tabPanel>
   </p-tabView>
 
 </p-sidebar>
