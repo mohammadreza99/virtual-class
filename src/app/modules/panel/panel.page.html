@@ -1,12 +1,8 @@
 <div class="main-content {{getClasses()}}">
   <navbar-menu
-    [menuType]="menuType"
-    [user]="currentUser"
-    [sidebarItems]="sidebarItems"
-    [sidebarVisible]="sidebarVisible"
-    [sidebarLock]="sidebarLock"
-    (sidebarVisibleChange)="onSidebarVisibleChange($event)"
-    (sidebarLockChange)="onSidebarLockChange($event)"
+    [(menuType)]="menuType"
+    [(sidebarVisible)]="sidebarVisible"
+    [(sidebarLock)]="sidebarLock"
   ></navbar-menu>
   <main [ngClass]="{rtl: fa,'sidebar-open':sidebarVisible,'sidebar-lock':sidebarLock}">
     <ng-breadcrumb></ng-breadcrumb>
@@ -15,4 +11,5 @@
     </div>
   </main>
 </div>
+
 <ng-loading></ng-loading>

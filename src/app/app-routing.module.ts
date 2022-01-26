@@ -9,6 +9,7 @@ export const routes: Routes = [
     path: 'auth',
     loadChildren: (): Promise<Type<any>> =>
       import('./modules/auth/auth.module').then((m) => m.AuthModule),
+    canLoad: [TranslationLoader],
   },
   {
     path: 'vc',

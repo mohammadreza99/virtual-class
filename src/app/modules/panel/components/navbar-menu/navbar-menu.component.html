@@ -1,20 +1,3 @@
-<!--<nav class="navbar navbar-expand-sm shadow fixed-top">-->
-<!--  <div class="collapse navbar-collapse">-->
-<!--    <ul class="navbar-nav p-0 m{{ fa ? 'l' : 'r' }}-auto">-->
-<!--      <li class="nav-item" (click)="accountMenu.toggle($event)">-->
-<!--        <p-avatar shape="circle" size="large" icon="pi pi-user"></p-avatar>-->
-<!--        <span class="m{{ fa ? 'r' : 'l' }}-3">{{ "admin" }}</span>-->
-<!--      </li>-->
-<!--    </ul>-->
-<!--  </div>-->
-<!--</nav>-->
-<!--<p-menu-->
-<!--  #accountMenu-->
-<!--  [baseZIndex]="20000"-->
-<!--  [popup]="true"-->
-<!--  [model]="accountItems"-->
-<!--&gt;</p-menu>-->
-
 <nav class="navbar navbar-expand shadow-sm fixed-top">
   <div class="collapse navbar-collapse">
     <ng-button
@@ -55,30 +38,18 @@
   [popup]="true"
   [model]="accountItems"
 ></p-menu>
-<p-sidebar
-  [styleClass]="sidebarLock ? 'shadow' : ''"
-  [class.lock]="sidebarLock"
-  [blockScroll]="isModalSidebar"
-  [modal]="isModalSidebar"
-  [closeOnEscape]="false"
-  [showCloseIcon]="false"
-  [position]="fa ? 'right' : 'left'"
-  [visible]="sidebarVisible"
-  (visibleChange)="toggleSidebar($event)"
+
+<div class="sidebar"
+     [class.lock]="sidebarLock"
+     [class.shadow]="!sidebarLock && sidebarVisible"
+     [class.visible]="sidebarVisible"
 >
   <div class="d-flex align-items-center justify-content-between py-3 mb-3 border-bottom sticky-top section-top">
     <ng-logo></ng-logo>
     <i class="border rounded-circle p-2 bg-light d-none d-md-block pi pi-lock{{ !sidebarLock ? '-open' : '' }}"
        (click)="handleSidebarLockToggler()"></i>
+    <i class="border rounded-circle p-2 bg-light d-md-none pi pi-times"
+       (click)="toggleSidebarVisible(false)"></i>
   </div>
   <p-panelMenu [multiple]="false" [model]="sidebarItems"></p-panelMenu>
-</p-sidebar>
-
-<!--<div class="sidebar" [class.lock]="sidebarLock" [class.shadow]="sidebarLock" [class.open]="sidebarVisible">-->
-<!--  <div class="d-flex align-items-center justify-content-between py-3 mb-3 border-bottom sticky-top section-top">-->
-<!--    <ng-logo></ng-logo>-->
-<!--    <i class="border rounded-circle p-2 bg-light d-none d-md-block pi pi-lock{{ !sidebarLock ? '-open' : '' }}"-->
-<!--       (click)="handleSidebarLockToggler()"></i>-->
-<!--  </div>-->
-<!--  <p-panelMenu [multiple]="false" [model]="sidebarItems"></p-panelMenu>-->
-<!--</div>-->
+</div>

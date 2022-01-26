@@ -1,10 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {Router} from '@angular/router';
 import {UtilsService} from '@ng/services';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {MenuItem} from 'primeng/api';
 import {User} from '@core/models';
-import {UpdateViewService} from '@core/http/update-view.service';
 import {AuthService} from '@core/http';
 
 @Component({
@@ -31,74 +30,98 @@ export class NavbarMenuComponent
           },
         );
         if (dialogRes) {
-          this.updateViewService.setViewEvent({event: 'closeSidebar', data: {value: true}});
           this.authService.logout();
-          setTimeout(() => {
-            this.router.navigate(['/auth/login']);
-          }, 20);
+          this.router.navigate(['/auth/login']);
         }
       }
     }
   ];
-  selectedLanguage = this.translationService.getDefaultLang();
-  selectedTheme = 'saga-blue';
-  themes: any[];
   sidebarItems: MenuItem[];
 
-
-  @Input('sidebarItems') set setSidebarItems(items: MenuItem[]) {
-    this.sidebarItems = items;
-    for (const item of this.sidebarItems) {
-      this.assignSidebarCloseFunc(item);
-    }
-  };
+  @HostListener('window:resize', ['$event']) onResize(e) {
+    this.handleResize();
+  }
 
   @Input() user: User;
   @Input() sidebarVisible: boolean;
-  @Output() sidebarVisibleChange = new EventEmitter();
   @Input() sidebarLock: boolean;
-  @Output() sidebarLockChange = new EventEmitter();
   @Input() menuType: string;
+  @Output() sidebarVisibleChange = new EventEmitter();
+  @Output() sidebarLockChange = new EventEmitter();
+  @Output() menuTypeChange = new EventEmitter();
 
   constructor(
     private router: Router,
     private utilsService: UtilsService,
     private authService: AuthService,
-    private updateViewService: UpdateViewService,
   ) {
     super();
   }
 
   ngOnInit() {
+    if (localStorage.getItem('menuLock')) {
+      const sidebarLock = JSON.parse(localStorage.getItem('menuLock'));
+      this.sidebarLock = sidebarLock != undefined ? sidebarLock : false;
+      this.sidebarVisible = this.sidebarLock;
+    }
+    this.user = this.authService.currentUser;
+    const allSidebarItems = [
+      {
+        label: this.translations.userList,
+        routerLink: '/user-list',
+        icon: 'icon-user-groups'
+      },
+      {
+        label: this.translations.groupList,
+        routerLink: 'groups',
+        icon: 'icon-user-groups'
+      },
+      {
+        label: this.translations.roomList,
+        routerLink: 'rooms',
+        icon: 'icon-camera'
+      },
+      {
+        label: this.translations.profile,
+        routerLink: 'profile',
+        icon: 'icon-profile'
+      }
+    ];
+    if (this.user.role == 'User') {
+      this.sidebarItems = [
+        {
+          label: this.translations.roomList,
+          routerLink: 'rooms',
+          icon: 'icon-camera'
+        },
+        {
+          label: this.translations.profile,
+          routerLink: 'profile',
+          icon: 'icon-profile'
+        }
+      ];
+    } else {
+      this.sidebarItems = allSidebarItems;
+    }
+    for (const item of this.sidebarItems) {
+      this.assignSidebarCloseFunc(item);
+    }
+    this.handleResize();
     this.toggleSidebarLock(this.sidebarLock);
-    this.loadThemes();
-  }
-
-  changeTheme(event) {
-    const themeElement = document.getElementById('theme-link');
-    themeElement.setAttribute(
-      'href',
-      themeElement.getAttribute('href').replace(this.selectedTheme, event.value)
-    );
-    this.selectedTheme = event.value;
-  }
-
-  async onLangChange(event) {
-    await this.translationService.use(event.value).toPromise();
-    this.selectedLanguage = event.value;
   }
 
   handleSidebarToggler() {
     this.sidebarVisible = !this.sidebarVisible;
-    this.toggleSidebar(this.sidebarVisible);
+    this.toggleSidebarVisible(this.sidebarVisible);
   }
 
   handleSidebarLockToggler() {
     this.sidebarLock = !this.sidebarLock;
+    localStorage.setItem('menuLock', this.sidebarLock.toString());
     this.toggleSidebarLock(this.sidebarLock);
   }
 
-  toggleSidebar(activate: boolean) {
+  toggleSidebarVisible(activate: boolean) {
     this.sidebarVisible = activate;
     this.sidebarVisibleChange.emit(this.sidebarVisible);
   }
@@ -108,54 +131,9 @@ export class NavbarMenuComponent
     this.sidebarLockChange.emit(this.sidebarLock);
   }
 
-  loadThemes() {
-    const themes = [
-      'arya-blue',
-      'arya-green',
-      'arya-orange',
-      'arya-purple',
-      'bootstrap4-dark-blue',
-      'bootstrap4-dark-purple',
-      'bootstrap4-light-blue',
-      'bootstrap4-light-purple',
-      'fluent-light',
-      'lara-dark-indigo',
-      'lara-dark-purple',
-      'lara-light-indigo',
-      'lara-light-purple',
-      'luna-amber',
-      'luna-blue',
-      'luna-green',
-      'luna-pink',
-      'md-dark-deeppurple',
-      'md-dark-indigo',
-      'md-light-deeppurple',
-      'md-light-indigo',
-      'mdc-dark-deeppurple',
-      'mdc-dark-indigo',
-      'mdc-light-deeppurple',
-      'mdc-light-indigo',
-      'mira',
-      'nano',
-      'nova',
-      'nova-accent',
-      'nova-alt',
-      'rhea',
-      'saga-blue',
-      'saga-green',
-      'saga-orange',
-      'saga-purple',
-      'soho-dark',
-      'soho-light',
-      'tailwind-light',
-      'vela-blue',
-      'vela-green',
-      'vela-orange',
-      'vela-purple',
-      'viva-dark',
-      'viva-light',
-    ];
-    this.themes = themes.map((t, i) => ({label: `${i + 1}-${t}`, value: t}));
+  toggleMenuType(menuType: string) {
+    this.menuType = menuType;
+    this.menuTypeChange.emit(this.menuType);
   }
 
   assignSidebarCloseFunc(item: MenuItem) {
@@ -171,7 +149,16 @@ export class NavbarMenuComponent
     }
   }
 
-  get isModalSidebar() {
-    return (this.menuType == 'overlay' || this.menuType == 'overlay-mask' || this.menuType == 'push' || this.menuType == 'push-mask');
+  handleResize() {
+    if (window.innerWidth <= 767) {
+      this.menuType = 'overlay';
+      this.sidebarVisible = false;
+      this.sidebarLock = false;
+    } else {
+      this.menuType = 'static';
+    }
+    this.toggleMenuType(this.menuType);
+    this.toggleSidebarVisible(this.sidebarVisible);
+    this.toggleSidebarLock(this.sidebarLock);
   }
 }

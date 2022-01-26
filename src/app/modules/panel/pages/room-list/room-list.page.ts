@@ -216,19 +216,8 @@ export class RoomListPage extends LanguageChecker implements OnInit {
     await navigator.clipboard.writeText(data.data.link);
   }
 
-  goToRoom(room: Room) {
-    // const url = this.router.serializeUrl(
-    //   this.router.createUrlTree([`/#/vc/room-info/${room.id}`])
-    // );
-    // window.open(`./#/vc/room-info/${room.id}`, '_blank');
-    this.updateViewService.setViewEvent({event: 'closeSidebar', data: {value: true}});
-    setTimeout(() => {
-      this.router.navigate(['/vc/room-info', room.id]);
-    }, 30);
-  }
-
   getTranslated(status: string) {
-    const str = status.toLowerCase().replace(/_([a-z])/g, function(g) {
+    const str = status.toLowerCase().replace(/_([a-z])/g, function (g) {
       return g[1].toUpperCase();
     });
     return this.translations[str];

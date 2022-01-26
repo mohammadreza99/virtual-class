@@ -158,18 +158,18 @@
   </ng-template>
 </p-overlayPanel>
 
-<p-overlayPanel [baseZIndex]="2000" #sessionInfo styleClass="session-info {{fa ? 'rtl' : null}}">
-  <ng-template pTemplate>
-    <div class="room-info d-flex align-items-center border-bottom">
-      <ng-logo></ng-logo>
-      <div class="info {{fa ? 'mr-3' : 'ml-3'}}">
-        <div>{{currentRoom.name}}</div>
-        <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>
-      </div>
-    </div>
-    <div class="session-link d-flex align-items-center justify-content-between">
-      <span>{{'room.sessionLink' | translate}}</span>
-      <i class="icon-copy" (click)="copySessionLink(sessionInfo)"></i>
-    </div>
-  </ng-template>
-</p-overlayPanel>
+<!--<p-overlayPanel [baseZIndex]="2000" #sessionInfo styleClass="session-info {{fa ? 'rtl' : null}}">-->
+<!--  <ng-template pTemplate>-->
+<!--    <div class="room-info d-flex align-items-center border-bottom">-->
+<!--      <ng-logo></ng-logo>-->
+<!--      <div class="info {{fa ? 'mr-3' : 'ml-3'}}">-->
+<!--        <div>{{currentRoom.name}}</div>-->
+<!--        <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="session-link d-flex align-items-center justify-content-between">-->
+<!--      <span>{{'room.sessionLink' | translate}}</span>-->
+<!--      <i class="icon-copy" (click)="copySessionLink(sessionInfo)"></i>-->
+<!--    </div>-->
+<!--  </ng-template>-->
+<!--</p-overlayPanel>-->

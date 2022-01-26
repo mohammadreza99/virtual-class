@@ -121,10 +121,6 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
         // case 'micCheck':
         //   this.micFound = res.data.value;
         //   break;
-
-        case 'closeSidebar':
-          this.sidebarVisible = false;
-          break;
       }
     });
   }

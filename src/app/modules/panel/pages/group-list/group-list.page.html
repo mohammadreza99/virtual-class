@@ -17,13 +17,14 @@
               </div>
             </td>
             <td class="d-flex">
-              <ng-button [pTooltip]="'edit' | translate" tooltipPosition="bottom" appearance="outlined" class="ml-2"
+              <ng-button [pTooltip]="'editGroup' | translate" tooltipPosition="bottom" appearance="outlined" class="ml-2"
                          icon="icon-edit" (click)="editGroup(item,index)"></ng-button>
-              <ng-button [pTooltip]="'memberManagement' | translate" tooltipPosition="bottom" appearance="outlined"
-                         class="ml-2"
-                         icon="icon-user-groups" [routerLink]="['/groups/setting',item.id]"></ng-button>
-              <ng-button [pTooltip]="'delete' | translate" tooltipPosition="bottom" appearance="outlined" color="danger"
+              <ng-button [pTooltip]="'deleteGroup' | translate" tooltipPosition="bottom" appearance="outlined"
+                         class="ml-2" color="danger"
                          (click)="deleteGroup(item)" icon="icon-delete"></ng-button>
+              <ng-button [pTooltip]="'memberManagement' | translate" tooltipPosition="bottom" appearance="outlined"
+
+                         icon="icon-user-groups" [routerLink]="['/groups/setting',item.id]"></ng-button>
             </td>
           </tr>
         </ng-template>

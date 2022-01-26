@@ -27,7 +27,9 @@ export class AppComponent extends LanguageChecker implements OnInit {
       .pipe(filter((e: any) => e instanceof ActivationStart))
       .subscribe((event: ActivatedRoute) => {
         const data = event.snapshot.data;
-        this.title.setTitle(this.translations[data['title']]);
+        if (data?.title) {
+          this.title.setTitle(this.translations[data.title]);
+        }
       });
 
     this.messageService.getMessage().subscribe(res => {

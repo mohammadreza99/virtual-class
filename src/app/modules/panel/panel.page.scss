@@ -20,39 +20,18 @@
       border: 1px solid #DADBE1;
     }
 
-    &.menu-overlay, &.menu-overlay-mask {
-      &.sidebar-lock {
-        .pi-times {
-          display: none;
-        }
-
-        &:not(.rtl) {
-          main, nav {
-            margin-left: 20rem;
-          }
-        }
-
-        &.rtl {
-          main, nav {
-            text-align: right;
-            margin-right: 20rem;
-          }
+    &.menu-overlay.sidebar-lock,
+    &.menu-static.sidebar-open {
+      &:not(.rtl) {
+        main, nav {
+          margin-left: 20rem;
         }
       }
-    }
 
-    &.menu-static {
-      &.sidebar-open {
-        &:not(.rtl) {
-          main, nav {
-            margin-left: 20rem;
-          }
-        }
-
-        &.rtl {
-          main, nav {
-            margin-right: 20rem;
-          }
+      &.rtl {
+        main, nav {
+          text-align: right;
+          margin-right: 20rem;
         }
       }
     }

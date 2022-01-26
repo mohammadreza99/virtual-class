@@ -9,18 +9,22 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginPage,
+    data: {title: 'login'}
   },
   {
     path: 'register',
     component: RegisterPage,
+    data: {title: 'register'}
   },
   {
     path: 'forget-password',
     component: ForgetPasswordPage,
+    data: {title: 'forgetPassword'}
   },
   {
     path: 'set-password/:token',
     component: SetPasswordPage,
+    data: {title: 'setPassword'}
   },
   {
     path: '',

@@ -16,12 +16,9 @@ export class ErrorComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  reloadPage() {
-    this.updateViewService.setViewEvent({event: 'closeSidebar', data: {value: true}});
-    setTimeout(async () => {
-      await this.router.navigateByUrl('/');
-      document.location.reload();
-    }, 100);
+  async reloadPage() {
+    await this.router.navigateByUrl('/');
+    document.location.reload();
   }
 
 }

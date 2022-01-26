@@ -719,7 +719,6 @@ export class SessionService extends ApiService {
   ///////////////////////////////////////////////////////////////////////////////
 
   async getMeOut(message?: any) {
-    this.updateViewService.setViewEvent({event: 'closeSidebar', data: {value: true}});
     if (this.myConnection.webcam) {
       this.stopStreamTrack(this.myConnection.webcam.stream);
     } else if (this.myConnection.screen) {
