@@ -182,6 +182,7 @@
   "notEmptyError": "مورد خالی نیست",
   "unAuthenticatedError": "لطفا دوباره وارد شوید",
   "accessDeniedError": "دسترسی غیرمجاز",
+  "wrongCredential": "اطلاعات نادرست است",
   "roomHasBeenClosed": "کلاس به اتمام رسیده است",
   "yourFired": "شما از کلاس اخراج شدید",
   "userLeftTheRoom": "{{value}} کلاس را ترک کرد"

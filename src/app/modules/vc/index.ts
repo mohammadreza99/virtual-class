@@ -8,10 +8,12 @@ import {ScreenComponent} from '@modules/vc/components/screen/screen.component';
 import {MainPlaceholderComponent} from '@modules/vc/components/main-placeholder/main-placeholder.component';
 import {UserItemComponent} from '@modules/vc/components/user-item/user-item.component';
 import {RoomInfoPage} from '@modules/vc/pages/room-info/room-info.page';
+import {MessageItemComponent} from '@modules/vc/components/message-item/message-item.component';
 
 export const COMPONENTS: Type<any>[] = [
   VirtualClassPage,
   RoomInfoPage,
+  MessageItemComponent,
   UserItemComponent,
   MainPlaceholderComponent,
   ScreenComponent,

@@ -5,9 +5,10 @@
       <ng-button class="mx-3" icon="icon-view" (click)="viewModes.toggle($event)"></ng-button>
       <h6 class="mb-0">{{currentUser.first_name}} {{currentUser.last_name}}</h6>
     </div>
-    <!--    <div class="info">-->
-    <!--      <ng-button [label]="'room.sessionInfo' | translate" (click)="sessionInfo.toggle($event)"></ng-button>-->
-    <!--    </div>-->
+    <div class="info">
+      <div>{{currentRoom.name}}</div>
+      <!--      <ng-button [label]="'room.sessionInfo' | translate" (click)="sessionInfo.toggle($event)"></ng-button>-->
+    </div>
   </div>
 
   <div class="content">
@@ -19,7 +20,8 @@
       </div>
     </div>
 
-    <div class="grid-view" [hidden]="currentViewMode != 'grid'" [ngClass]="getColumnTemplate()">
+    <div class="grid-view" [hidden]="currentViewMode != 'grid'" [ngClass]="getColumnTemplate()"
+         [attr.user-count]="allUsers.length">
       <ng-screen position="mainPosition"></ng-screen>
       <ng-screen position="mainThumbPosition"></ng-screen>
       <ng-screen position="sideThumbPosition"
@@ -46,7 +48,7 @@
   </div>
 
   <div class="footer d-flex align-items-center justify-content-between fixed-bottom">
-    <ng-button icon="icon-participant" [class.active]="sidebarVisible" (click)="toggleSidebar()"></ng-button>
+    <ng-button icon="pi pi-bars" [class.active]="sidebarVisible" (click)="toggleSidebar()"></ng-button>
     <div class="actions">
       <ng-button-async (clickAsync)="toggleCamera($event)"
                        newColor="success"
@@ -63,7 +65,8 @@
       <ng-button-async *ngPermission="'Viewer'" (clickAsync)="toggleRaiseHand($event)" newColor="success"
                        [defaultState]="raiseHandActivated ? 2 : 1" icon="icon-hand-raise">
       </ng-button-async>
-      <ng-button-async *ngPermission="'Admin'" icon="icon-share-screen" (clickAsync)="toggleScreen($event)"
+      <ng-button-async class="d-none d-xl-inline" *ngPermission="'Admin'" icon="icon-share-screen"
+                       (clickAsync)="toggleScreen($event)"
                        newColor="success">
       </ng-button-async>
     </div>
@@ -78,15 +81,15 @@
 <p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [showCloseIcon]="false" [(visible)]="sidebarVisible"
            [modal]="false"
            styleClass="shadow-sm">
+  <div class="sidebar-header py-4">
+    <div class="participants-count">
+      <i class="icon-participant mx-2"></i>
+      <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>
+    </div>
+    <i class="icon-close mx-2" (click)="closeSidebar()"></i>
+  </div>
   <p-tabView>
     <p-tabPanel header="اعضا" leftIcon="icon-user-groups">
-      <div class="sidebar-header py-4">
-        <!--        <div class="participants-count">-->
-        <!--          <i class="icon-participant mx-2"></i>-->
-        <!--          <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>-->
-        <!--        </div>-->
-        <!--        <i class="icon-close mx-2" (click)="closeSidebar()"></i>-->
-      </div>
       <div class="sidebar-actions py-4 px-3" *ngPermission="'Admin'">
         <div class="item mb-3">
           <div class="label">
@@ -141,47 +144,34 @@
 
     </p-tabPanel>
     <p-tabPanel header="چت" leftIcon="icon-user-groups">
-      <section class="msger">
-        <main class="msger-chat">
-          <div class="msg left-msg">
-            <div class="msg-bubble">
-              <div class="msg-info">
-                <div class="msg-info-name">محمدرضا</div>
-                <div class="msg-info-time">12:45</div>
-              </div>
+      <section class="chat">
+        <main class="chat-messages" #chatContainer>
+          <ng-message-item position="left"
+                           [message]="{
+                           text:'یک پیام تستی دیگر و همچنین این پیام نسبتا طولانی تر است و ممکن است فضای بیشتری را اشغال کند',
+                           sender:'سجاد',
+                           time:'12:46'
+                           }">
+          </ng-message-item>
 
-              <div class="msg-text">
-                این یک پیام تستی است
-              </div>
-            </div>
-            <div
-              class="msg-img"
-              style="background-image: url('sdasd')"
-            ></div>
-          </div>
-
-          <div class="msg right-msg">
-            <div class="msg-bubble">
-              <div class="msg-info">
-                <div class="msg-info-name">سجاد</div>
-                <div class="msg-info-time">12:46</div>
-              </div>
-
-              <div class="msg-text">
-                یک پیام تستی دیگر و همچنین این پیام نسبتا طولانی تر است و ممکن است فضای بیشتری را اشغال کند
-              </div>
-            </div>
-            <div
-              class="msg-img"
-              style="background-image: url('https://image.flaticon.com/icons/svg/145/145867.svg')"
-            ></div>
-          </div>
+          <ng-message-item position="right"
+                           [message]="{
+                           text:'یک پیام تستی دیگر و همچنین این پیام نسبتا طولانی تر است و ممکن است فضای بیشتری را اشغال کند',
+                           sender:'سجاد',
+                           time:'12:46'
+                           }">
+          </ng-message-item>
+          <ng-container #chatItemContainer></ng-container>
         </main>
 
-        <form class="msger-inputarea">
-          <ng-input-text inputSize="md" class="ml-2"></ng-input-text>
-          <ng-button label="ارسال"></ng-button>
-        </form>
+        <div class="chat-inputarea">
+          <div class="reply-container">
+
+          </div>
+          <ng-input-text (keyup.enter)="sendMessage(chatContainer)" inputSize="md" class="ml-2"
+                         [(ngModel)]="chatText"></ng-input-text>
+          <ng-button label="ارسال" (click)="sendMessage(chatContainer)"></ng-button>
+        </div>
       </section>
     </p-tabPanel>
   </p-tabView>

@@ -530,6 +530,9 @@ export class SessionService extends ApiService {
             this.raisedHandsChangeSubject.next(this.raisedHands);
           }
           if (res.event == 'leaveRoom') {
+            console.log(res.target != this.currentUser.id);
+            console.log(this.currentUser.role == 'Admin');
+            console.log(res.target != this.currentUser.id && this.currentUser.role == 'Admin');
             if (res.target == this.currentUser.id) {
               this.getMeOut();
             } else if (res.target != this.currentUser.id && this.currentUser.role == 'Admin') {
@@ -563,7 +566,7 @@ export class SessionService extends ApiService {
           user = this.getRoomUserById(res.target);
           user.muted = res.value;
           if (this.currentUser.id == res.target) {
-            this.openToast(res.value ? 'room.yourVoiceAccessIsOpened' : 'room.yourVoiceAccessIsClosed', 'warn');
+            this.openToast(res.value ? 'room.yourVoiceAccessIsClosed' : 'room.yourVoiceAccessIsOpened', 'warn');
             if (res.value == true) {
               this.toggleMyAudio(false);
             }
@@ -576,7 +579,7 @@ export class SessionService extends ApiService {
           user = this.getRoomUserById(res.target);
           user.muted_video = res.value;
           if (this.currentUser.id == res.target) {
-            this.openToast(res.value ? 'room.yourVideoAccessIsOpened' : 'room.yourVideoAccessIsClosed', 'warn');
+            this.openToast(res.value ? 'room.yourVideoAccessIsClosed' : 'room.yourVideoAccessIsOpened', 'warn');
             if (res.value == true) {
               this.toggleMyVideo(false);
             }
@@ -591,7 +594,7 @@ export class SessionService extends ApiService {
             }
           });
           if (this.imStudent) {
-            this.openToast(res.value ? 'room.yourVoiceAccessIsOpened' : 'room.yourVoiceAccessIsClosed', 'warn');
+            this.openToast(res.value ? 'room.yourVoiceAccessIsClosed' : 'room.yourVoiceAccessIsOpened', 'warn');
             this.updateViewService.setViewEvent({event: 'muteAll', data: res});
             if (res.value == true) {
               this.toggleMyAudio(false);
@@ -606,7 +609,7 @@ export class SessionService extends ApiService {
             }
           });
           if (this.imStudent) {
-            this.openToast(res.value ? 'room.yourVideoAccessIsOpened' : 'room.yourVideoAccessIsClosed', 'warn');
+            this.openToast(res.value ? 'room.yourVideoAccessIsClosed' : 'room.yourVideoAccessIsOpened', 'warn');
             this.updateViewService.setViewEvent({event: 'muteVideoAll', data: res});
             if (res.value == true) {
               this.toggleMyVideo(false);

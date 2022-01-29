@@ -39,6 +39,7 @@ export class ScreenComponent implements OnInit {
       }
       switch (res.action) {
         case 'onTrack':
+          console.log(res.userId, this.hasVideo());
           this.handleTrackClassNames(res);
           this.setStream(res.stream);
           break;
@@ -73,14 +74,6 @@ export class ScreenComponent implements OnInit {
     this.streamActivated = true;
     video.srcObject = stream;
     return video.play();
-    // video.onloadeddata = () => {
-    //   try {
-    //   } catch (e) {
-    //   }
-    // };
-    // setTimeout(() => {
-    //   this.videoElem.nativeElement.play().then();
-    // }, 1);
   }
 
 

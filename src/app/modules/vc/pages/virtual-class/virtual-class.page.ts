@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import {Room, RoomUser, ViewMode} from '@core/models';
 import {RoomService, SessionService} from '@core/http';
 import {OverlayPanel} from 'primeng/overlaypanel';
@@ -8,11 +8,12 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {LocationStrategy} from '@angular/common';
 import {UpdateViewService} from '@core/http/update-view.service';
+import {MessageItemComponent} from '@modules/vc/components/message-item/message-item.component';
 
 @Component({
   selector: 'ng-virtual-class',
   templateUrl: './virtual-class.page.html',
-  styleUrls: ['./virtual-class.page.scss']
+  styleUrls: ['./virtual-class.page.scss'],
 })
 export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestroy {
 
@@ -22,9 +23,12 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
               private location: LocationStrategy,
               private route: ActivatedRoute,
               private updateViewService: UpdateViewService,
+              private resolver: ComponentFactoryResolver,
               private router: Router) {
     super();
   }
+
+  @ViewChild('chatItemContainer', {static: true, read: ViewContainerRef}) chatContainer: ViewContainerRef;
 
   allUsers: RoomUser[] = [];
   roomUsers: RoomUser[] = [];
@@ -48,6 +52,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   roomUsersSubscription: Subscription;
   raisedHandsSubscription: Subscription;
   updateViewSubscription: Subscription;
+  chatText: string;
 
 
   ngOnInit(): void {
@@ -202,6 +207,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
       dialogRes = await this.openStudentLeaveRoomDialog();
       if (dialogRes) {
         this.sidebarVisible = false;
+        await this.sessionService.leaveRoom().toPromise();
         setTimeout(() => {
           this.router.navigate(['/vc/room-info', this.currentRoom.id]);
         }, 30);
@@ -260,8 +266,15 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     this.sidebarVisible = false;
   }
 
-  clearSearch() {
-    this.searchText = '';
+  sendMessage(container: HTMLElement) {
+    const factory = this.resolver.resolveComponentFactory(MessageItemComponent);
+    const cmpRef = this.chatContainer.createComponent(factory);
+    cmpRef.instance.position = 'right';
+    cmpRef.instance.message = {text: this.chatText, sender: this.currentUser.first_name, time: '12:23'};
+    this.chatText = '';
+    setTimeout(() => {
+      container.scrollTop = container.scrollHeight;
+    }, 0);
   }
 
   async copySessionLink(sessionInfoOverlay: OverlayPanel) {
@@ -279,13 +292,13 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     if (usersCount == 1) {
       return 'g-full';
     } else if (usersCount >= 2 && usersCount <= 4) {
-      return 'g-one-fourth';
+      return 'g-four';
     } else if (usersCount >= 5 && usersCount <= 9) {
-      return 'g-one-ninth';
+      return 'g-nine';
     } else if (usersCount >= 10 && usersCount <= 16) {
-      return 'g-one-sixteenth';
+      return 'g-sixteen';
     } else if (usersCount >= 17) {
-      return 'g-one-twenty-fifth';
+      return 'g-twenty-five';
     }
   }
 
@@ -303,5 +316,4 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     this.updateViewSubscription.unsubscribe();
     this.roomParticipantSubscription.unsubscribe();
   }
-
 }

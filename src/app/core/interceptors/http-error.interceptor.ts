@@ -15,7 +15,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const hasSuccessMessageApis = ['createRoom', 'generateRoomLink'];
-    const hasFailureMessageApis = ['activateRoom'];
+    const hasFailureMessageApis = ['activateRoom', 'login'];
     return next.handle(request).pipe(
       tap((event: any) => {
         const method = request.body?.method;
@@ -72,6 +72,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
       case 'ACCESS_DENIED':
         return {
           detail: 'accessDeniedError',
+        };
+      case 'WRONG_CREDENTIAL':
+        return {
+          detail: 'wrongCredential',
         };
       default:
         if (status != undefined) {
