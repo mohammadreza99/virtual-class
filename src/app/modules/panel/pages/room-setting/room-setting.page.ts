@@ -91,7 +91,8 @@ export class RoomSettingPage extends LanguageChecker implements OnInit {
   async showAddUserModal() {
     this.dialogService.open(AddRoomUserFormComponent, {
       header: this.translations.addMember,
-      width: '900px'
+      width: '900px',
+      rtl: this.fa
     }).onClose.subscribe(async res => {
       try {
         if (res) {
@@ -109,7 +110,8 @@ export class RoomSettingPage extends LanguageChecker implements OnInit {
   async showAddGroupModal() {
     this.dialogService.open(AddRoomGroupFormComponent, {
       header: this.translations.addMember,
-      width: '900px'
+      width: '900px',
+      rtl: this.fa
     }).onClose.subscribe(async res => {
       try {
         if (res) {

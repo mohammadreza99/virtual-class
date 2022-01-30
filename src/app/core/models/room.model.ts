@@ -9,6 +9,7 @@ export interface Room {
   private: boolean;
   status?: string;
   online_users?: number;
+  session_duration?: number;
 }
 
 export interface UserOrGroup {

@@ -18,9 +18,12 @@
           <ng-button icon="icon-check" class="ml-1" (click)="confirmRaiseHand()"></ng-button>
           <ng-button icon="icon-close" (click)="rejectRaiseHand(false)"></ng-button>
         </ng-container>
-        <ng-button color="danger" size="sm" (click)="rejectRaiseHand(true)" [label]="'room.endAccess' | translate"
+        <ng-button class="ml-1" color="danger" (click)="rejectRaiseHand(true)"
+                   [label]="'room.endAccess' | translate"
                    *ngIf="raiseHandConfirmed">
         </ng-button>
+        <ng-button icon="icon-close" *ngIf="raiseHandConfirmed" class="ml-1"
+                   (click)="rejectRaiseHand(false)"></ng-button>
       </div>
       <div class="actions" *ngIf="!raiseHand">
         <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm"
@@ -49,7 +52,7 @@
       <!--      </li>-->
       <li (click)="actionClick('remove-user',actions)" *ngIf="user.role != 'Admin'">
         <i class="icon-remove-user"></i>
-        <span>{{'room.fireUser' | translate}}</span>
+        <span>{{'room.kickUser' | translate}}</span>
       </li>
     </ul>
   </ng-template>

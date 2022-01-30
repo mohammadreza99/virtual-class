@@ -15,7 +15,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const hasSuccessMessageApis = ['createRoom', 'generateRoomLink'];
-    const hasFailureMessageApis = ['activateRoom', 'login'];
+    const hasFailureMessageApis = ['activateRoom', 'login', 'userEnterStatus'];
     return next.handle(request).pipe(
       tap((event: any) => {
         const method = request.body?.method;

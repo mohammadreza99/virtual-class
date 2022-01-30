@@ -54,7 +54,7 @@ export class InputPasswordComponent implements OnInit, ControlValueAccessor {
   @Input() icon: string;
   @Input() disabled: boolean = false;
   @Input() placeholder: string;
-  @Input() inputSize: NgSize = 'lg';
+  @Input() inputSize: NgSize = 'md';
   @Input() promptLabel: string = 'لطفا رمز عبور را وارد کنید';
   @Input() weakLabel: string = 'ضعیف';
   @Input() mediumLabel: string = 'متوسط';

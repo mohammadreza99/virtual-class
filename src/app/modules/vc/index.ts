@@ -9,10 +9,12 @@ import {MainPlaceholderComponent} from '@modules/vc/components/main-placeholder/
 import {UserItemComponent} from '@modules/vc/components/user-item/user-item.component';
 import {RoomInfoPage} from '@modules/vc/pages/room-info/room-info.page';
 import {MessageItemComponent} from '@modules/vc/components/message-item/message-item.component';
+import {KickUserConfirmComponent} from '@modules/vc/components/kick-user-confirm/kick-user-confirm.component';
 
 export const COMPONENTS: Type<any>[] = [
   VirtualClassPage,
   RoomInfoPage,
+  KickUserConfirmComponent,
   MessageItemComponent,
   UserItemComponent,
   MainPlaceholderComponent,

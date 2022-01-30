@@ -101,7 +101,7 @@ export class UtilsService {
     });
   }
 
-  showConfirm(options: NgConfirmOptions, nullable: boolean = false): Promise<boolean> {
+  showConfirm(options: NgConfirmOptions): Promise<boolean> {
     if (!document.body.contains((this.confirmCmpRef?.hostView as EmbeddedViewRef<any>)?.rootNodes[0])) {
       this.confirmCmpRef = this.addComponentToBody(ConfirmComponent);
     }

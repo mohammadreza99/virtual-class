@@ -58,7 +58,8 @@ export class GroupSettingPage extends LanguageChecker implements OnInit {
   async showAddUserModal() {
     this.dialogService.open(AddGroupUserFormComponent, {
       header: 'addMember',
-      width: '900px'
+      width: '900px',
+      rtl: this.fa
     }).onClose.subscribe(async res => {
       try {
         if (res) {

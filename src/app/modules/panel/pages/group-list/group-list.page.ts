@@ -105,6 +105,7 @@ export class GroupListPage extends LanguageChecker implements OnInit {
         this.dialogService.open(GroupRelationsComponent, {
           data: this.relations,
           header: this.translations.deleteGroupConfirm,
+          width: '900px',
           rtl: this.fa
         }).onClose.subscribe(async res => {
           if (res) {
@@ -128,7 +129,8 @@ export class GroupListPage extends LanguageChecker implements OnInit {
   addGroup = async () => {
     this.dialogService.open(AddGroupFormComponent, {
       header: this.translations.addGroup,
-      width: '900px'
+      width: '900px',
+      rtl: this.fa
     }).onClose.subscribe(async res => {
       try {
         if (res) {

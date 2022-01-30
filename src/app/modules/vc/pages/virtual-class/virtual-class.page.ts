@@ -33,7 +33,6 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   allUsers: RoomUser[] = [];
   roomUsers: RoomUser[] = [];
   raisedHandsUsers: RoomUser[] = [];
-  sidebarVisible: boolean = true;
   disableWebcam = false;
   disableMic = false;
   webcamFound: boolean;
@@ -53,7 +52,9 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   raisedHandsSubscription: Subscription;
   updateViewSubscription: Subscription;
   chatText: string;
-
+  membersSidebarVisible: boolean = true;
+  chatSidebarVisible: boolean = false;
+  sessionDuration: any;
 
   ngOnInit(): void {
     this.loadData();
@@ -61,13 +62,14 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   async loadData() {
     if (window.innerWidth <= 767) {
-      this.sidebarVisible = false;
+      this.membersSidebarVisible = false;
     } else {
-      this.sidebarVisible = true;
+      this.membersSidebarVisible = true;
     }
     this.disableWindowBackButton();
     this.initUserData();
     this.sessionService.initRoom();
+    this.calculateSessionDuration();
     this.roomParticipantSubscription = this.sessionService.onRoomParticipantsChange().subscribe(res => {
       this.allUsers = res;
     });
@@ -199,14 +201,14 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
       } else {
         await this.sessionService.closeRoom().toPromise();
       }
-      this.sidebarVisible = false;
+      this.membersSidebarVisible = false;
       setTimeout(() => {
         this.router.navigate(['/vc/room-info', this.currentRoom.id]);
       }, 30);
     } else {
       dialogRes = await this.openStudentLeaveRoomDialog();
       if (dialogRes) {
-        this.sidebarVisible = false;
+        this.membersSidebarVisible = false;
         await this.sessionService.leaveRoom().toPromise();
         setTimeout(() => {
           this.router.navigate(['/vc/room-info', this.currentRoom.id]);
@@ -258,23 +260,33 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     viewModesOverlay.hide();
   }
 
-  toggleSidebar() {
-    this.sidebarVisible = !this.sidebarVisible;
+  toggleMembersSidebar() {
+    this.membersSidebarVisible = !this.membersSidebarVisible;
   }
 
-  closeSidebar() {
-    this.sidebarVisible = false;
+  toggleChatSidebar() {
+    this.chatSidebarVisible = !this.chatSidebarVisible;
+  }
+
+  closeMembersSidebar() {
+    this.membersSidebarVisible = false;
+  }
+
+  closeChatSidebar() {
+    this.chatSidebarVisible = false;
   }
 
   sendMessage(container: HTMLElement) {
-    const factory = this.resolver.resolveComponentFactory(MessageItemComponent);
-    const cmpRef = this.chatContainer.createComponent(factory);
-    cmpRef.instance.position = 'right';
-    cmpRef.instance.message = {text: this.chatText, sender: this.currentUser.first_name, time: '12:23'};
-    this.chatText = '';
-    setTimeout(() => {
-      container.scrollTop = container.scrollHeight;
-    }, 0);
+    if (this.chatText) {
+      const factory = this.resolver.resolveComponentFactory(MessageItemComponent);
+      const cmpRef = this.chatContainer.createComponent(factory);
+      cmpRef.instance.position = 'right';
+      cmpRef.instance.message = {text: this.chatText, sender: this.currentUser.first_name, time: '12:23'};
+      this.chatText = '';
+      setTimeout(() => {
+        container.scrollTop = container.scrollHeight;
+      }, 0);
+    }
   }
 
   async copySessionLink(sessionInfoOverlay: OverlayPanel) {
@@ -302,12 +314,31 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     }
   }
 
-
   disableWindowBackButton() {
     history.pushState(null, null, location.href);
     this.location.onPopState(() => {
       history.pushState(null, null, location.href);
     });
+  }
+
+  calculateSessionDuration() {
+    this.sessionDuration = this.convertToTimeFormat(this.currentRoom.session_duration++);
+    setInterval(() => {
+      this.sessionDuration = this.convertToTimeFormat(this.currentRoom.session_duration++);
+    }, 1000);
+  }
+
+  convertToTimeFormat(duration) {
+    const hrs = Math.floor((duration / 3600));
+    const mins = Math.floor(((duration % 3600) / 60));
+    const secs = Math.floor(duration % 60);
+    let result = '';
+    if (hrs > 0) {
+      result += '' + hrs + ':' + (mins < 10 ? '0' : '');
+    }
+    result += '' + mins + ':' + (secs < 10 ? '0' : '');
+    result += '' + secs;
+    return result;
   }
 
   ngOnDestroy(): void {

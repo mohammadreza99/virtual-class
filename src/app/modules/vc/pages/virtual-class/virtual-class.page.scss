@@ -1,5 +1,6 @@
 @import "mixins";
 
+
 @mixin restoreFullAspectRatio() {
   // reset default style (16:9 ratio) for ng-screen component in main-area
   height: 100%;
@@ -231,8 +232,6 @@
 
     @include media-breakpoint-up(xl) {
       .content {
-        //height: calc(100% + 140px);
-
         .participants {
           overflow: auto;
         }
@@ -241,12 +240,12 @@
     @include media-breakpoint-up(md) {
       &:not(.rtl).sidebar-visible {
         &, .header, .footer {
-          margin-left: 20rem;
+          margin-left: $sidebarWidth;
         }
       }
       &.rtl.sidebar-visible {
         &, .header, .footer {
-          margin-right: 20rem;
+          margin-right: $sidebarWidth;
         }
       }
     }
@@ -254,6 +253,7 @@
 
   .p-sidebar {
     background-color: #40414A;
+    width: $sidebarWidth;
 
     .p-sidebar-content, .p-tabview-panels {
       color: #f8f9fa;
@@ -269,7 +269,7 @@
     }
 
     .sidebar-header,
-    .sidebar-header .participants-count,
+    .sidebar-header .header-title,
     .sidebar-actions .item,
     .sidebar-actions .item .label,
     .sidebar-actions .item .checkbox,
@@ -285,6 +285,7 @@
 
     .sidebar-header {
       background-color: #50585F;
+      height: 63px;
 
       .icon-close {
         cursor: pointer;
@@ -297,32 +298,37 @@
 
     .p-tabview {
 
-      .p-tabview-nav {
-        direction: ltr;
+      .p-tabview-nav-container {
+        height: 60px;
 
-        li {
-          flex-grow: 1;
-          background-color: #40414A;
+        .p-tabview-nav {
+          direction: ltr;
+          background: transparent;
 
-          &:not(.p-highlight):not(.p-disabled) {
-            a {
-              border-color: #6c757d;
-            }
-
-            &:hover {
-              a {
-                background-color: transparent;
-              }
-            }
-          }
-
-          a {
-            justify-content: center;
+          li {
+            flex-grow: 1;
             background-color: #40414A;
 
+            &:not(.p-highlight):not(.p-disabled) {
+              a {
+                border-color: #6c757d;
+              }
 
-            &:focus {
-              box-shadow: none !important;
+              &:hover {
+                a {
+                  background-color: transparent;
+                }
+              }
+            }
+
+            a {
+              justify-content: center;
+              background-color: #40414A;
+
+
+              &:focus {
+                box-shadow: none !important;
+              }
             }
           }
         }
@@ -331,121 +337,141 @@
       .p-tabview-panels {
         background-color: #40414A;
         padding: 0;
-        height: calc(100vh - 50px - 63px);
+        height: calc(100vh - 60px - 63px);
 
         .p-tabview-panel {
           height: 100%;
         }
       }
+    }
 
-      .chat {
-        --chat-bg: #fff;
-        --border: 2px solid #ddd;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
+    p-accordion {
+      .p-accordion-header {
+        &.p-highlight {
+          .p-accordion-header-link {
+            background-color: #595a62 !important;
+            border-color: #595a62 !important
+          }
+        }
 
-        .chat-messages {
-          flex: 1;
-          overflow-y: auto;
-          padding: 10px;
+        .p-accordion-header-link {
+          justify-content: space-between;
+          flex-direction: row-reverse;
+          background-color: #40414A !important;
+          border-color: #40414A #40414A #848484 #40414A !important;
+          transition: all .4s;
+          color: #f8f9fa !important;
+
+          &:focus {
+            box-shadow: none;
+          }
+
+          &:hover {
+            background-color: #595a62 !important;
+            border-color: #595a62 !important
+          }
+
+          .p-accordion-toggle-icon {
+            &:before {
+              content: "\e902";
+            }
+          }
+
+          &[aria-expanded="true"] {
+            .p-accordion-toggle-icon {
+              &:before {
+                content: "\e903";
+              }
+            }
+          }
+        }
+
+        .raise-hand-info {
+          &, .raise-hand-count {
+            display: flex;
+            align-items: center;
+          }
+
+          .raise-hand-count {
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background-color: #F5A31F;
+            border-radius: 50%;
+          }
+        }
+      }
+
+      .p-accordion-content {
+        background-color: #40414A;
+        border-color: #40414A;
+        color: #f8f9fa;
+        padding: 1.5rem 0.25rem;
+
+        ng-user-item:not(:last-of-type) {
+          display: block;
+          margin-bottom: 1rem;
+        }
+      }
+    }
+
+    .chat {
+      height: calc(100% - 63px);
+      display: flex;
+      flex-direction: column;
+
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+      }
+
+      .chat-footer {
+        .reply-container {
+          border-right: 6px solid #61987A;
+          padding: 0.2rem 1rem;
+          background: rgba(196, 196, 196, 0.08);
+          border-radius: 4px;
+          margin-bottom: 0.5rem;
+
+          i {
+            cursor: pointer;
+
+            &:hover {
+              opacity: 0.5;
+            }
+          }
         }
 
         .chat-inputarea {
           display: flex;
           padding: 10px;
-          border-top: var(--border);
-          background: #eee;
-        }
-      }
+          background: #5F6069;
 
-      p-accordion {
-        .p-accordion-header {
-          &.p-highlight {
-            .p-accordion-header-link {
-              background-color: #595a62 !important;
-              border-color: #595a62 !important
-            }
-          }
-
-          .p-accordion-header-link {
-            justify-content: space-between;
-            flex-direction: row-reverse;
-            background-color: #40414A !important;
-            border-color: #40414A #40414A #848484 #40414A !important;
-            transition: all .4s;
-            color: #f8f9fa !important;
-
-            &:focus {
-              box-shadow: none;
-            }
-
-            &:hover {
-              background-color: #595a62 !important;
-              border-color: #595a62 !important
-            }
-
-            .p-accordion-toggle-icon {
-              &:before {
-                content: "\e902";
-              }
-            }
-
-            &[aria-expanded="true"] {
-              .p-accordion-toggle-icon {
-                &:before {
-                  content: "\e903";
-                }
-              }
-            }
-          }
-
-          .raise-hand-info {
-            &, .raise-hand-count {
-              display: flex;
-              align-items: center;
-            }
-
-            .raise-hand-count {
-              justify-content: center;
-              width: 20px;
-              height: 20px;
-              background-color: #F5A31F;
-              border-radius: 50%;
-            }
-          }
-        }
-
-        .p-accordion-content {
-          background-color: #40414A;
-          border-color: #40414A;
-          color: #f8f9fa;
-          padding: 1.5rem 0.25rem;
-
-          ng-user-item:not(:last-of-type) {
-            display: block;
-            margin-bottom: 1rem;
+          input {
+            background-color: transparent;
+            color: #ffffff;
           }
         }
       }
+    }
 
-      .search-box {
-        input[type=text] {
-          background-color: #585A66;
-          border-color: #585A66;
-          border-radius: 8px;
-          color: #ffffff;
+    .search-box {
+      input[type=text] {
+        background-color: #585A66;
+        border-color: #585A66;
+        border-radius: 8px;
+        color: #ffffff;
 
-          &::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-          }
-        }
-
-        i {
+        &::placeholder {
           color: rgba(255, 255, 255, 0.5);
-          margin-top: 0;
-          transform: translateY(-50%);
         }
+      }
+
+      i {
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 0;
+        transform: translateY(-50%);
       }
     }
   }

@@ -73,6 +73,7 @@ export class UserListPage extends LanguageChecker implements OnInit {
       this.dialogService.open(UserRelationsComponent, {
         data: this.relations,
         header: this.translations.deleteUserConfirm,
+        width: '900px',
         rtl: this.fa
       }).onClose.subscribe(async res => {
         if (res) {

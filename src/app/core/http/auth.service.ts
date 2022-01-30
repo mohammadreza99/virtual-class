@@ -53,6 +53,10 @@ export class AuthService extends ApiService {
     return !!localStorage.getItem('token');
   }
 
+  isLimitMode(): boolean {
+    return !!localStorage.getItem('limitMode');
+  }
+
   set currentUser(data: User) {
     this._currentUser = data;
   }

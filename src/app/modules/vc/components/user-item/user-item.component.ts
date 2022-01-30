@@ -5,6 +5,9 @@ import {LanguageChecker} from '@shared/components/language-checker/language-chec
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {UtilsService} from '@ng/services';
 import {UpdateViewService} from '@core/http/update-view.service';
+import {GroupRelationsComponent} from '@modules/panel/components/group-relations/group-relations.component';
+import {DialogService} from 'primeng/dynamicdialog';
+import {KickUserConfirmComponent} from '@modules/vc/components/kick-user-confirm/kick-user-confirm.component';
 
 @Component({
   selector: 'ng-user-item',
@@ -13,7 +16,10 @@ import {UpdateViewService} from '@core/http/update-view.service';
 })
 export class UserItemComponent extends LanguageChecker implements OnInit {
 
-  constructor(private sessionService: SessionService, private utilsService: UtilsService, private updateViewService: UpdateViewService) {
+  constructor(private sessionService: SessionService,
+              private utilsService: UtilsService,
+              private dialogService: DialogService,
+              private updateViewService: UpdateViewService) {
     super();
   }
 
@@ -108,14 +114,22 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
 
   async kickUser() {
     try {
-      const fireMessage = this.translationService.instant('room.fireUserConfirm', {value: this.user.last_name}) as string;
-      const dialogRes = await this.utilsService.showConfirm({message: fireMessage, rtl: this.fa});
-      if (dialogRes) {
-        if (this.user.role == 'Admin') {
-          return;
+      // const fireMessage = this.translationService.instant('room.kickUserConfirm', {value: this.user.last_name}) as string;
+      // const dialogRes = await this.utilsService.showConfirm({message: fireMessage, rtl: this.fa});
+      this.dialogService.open(KickUserConfirmComponent, {
+        data: this.user,
+        header: this.translations.kickUser,
+        width: '900px',
+        rtl: this.fa
+      }).onClose.subscribe(async res => {
+        if (res !== false) {
+          if (this.user.role == 'Admin') {
+            return;
+          }
+          await this.sessionService.kickUser(this.user.id, res).toPromise();
         }
-        await this.sessionService.kickUser(this.user.id).toPromise();
-      }
+      });
+
     } catch (error) {
       console.error(error);
     }

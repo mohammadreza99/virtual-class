@@ -1,4 +1,5 @@
 export * from './auth.guard';
+export * from './limit-mode.guard';
 export * from './current-user.resolver';
 export * from './enter-room.guard';
 export * from './room.resolver';

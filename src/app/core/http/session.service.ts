@@ -63,7 +63,6 @@ export class SessionService extends ApiService {
     try {
       const data = await this.getRoomInfo(roomId).pipe(map(d => d.data)).toPromise();
       if (!data) {
-        this.openToast('room info error');
         return;
       }
       this.currentRoom = {...data.room};
@@ -184,15 +183,19 @@ export class SessionService extends ApiService {
   }
 
   async toggleMyVideo(activate: boolean) {
-    const myStream = this.myWebcam?.stream;
-    if (myStream?.getVideoTracks()?.length) {
-      this.toggleStreamVideo(myStream, activate);
-      if (!myStream.getTracks()?.find(t => t.enabled)) {
-        await this.toggleShareMedia(false);
+    try {
+      const myStream = this.myWebcam?.stream;
+      if (myStream?.getVideoTracks()?.length) {
+        this.toggleStreamVideo(myStream, activate);
+        if (!myStream.getTracks()?.find(t => t.enabled)) {
+          await this.toggleShareMedia(false);
+        }
+        return;
       }
-      return;
+      await this.toggleShareMedia(activate, 'video');
+    } catch (error) {
+      throw Error(error);
     }
-    await this.toggleShareMedia(activate, 'video');
   }
 
   async toggleShareMedia(activate: boolean, mediaType?): Promise<void> {
@@ -223,6 +226,7 @@ export class SessionService extends ApiService {
     } catch (error) {
       console.error(error);
       this.stopStreamTrack(stream);
+      throw Error(error);
     }
   }
 
@@ -292,7 +296,7 @@ export class SessionService extends ApiService {
         stream: options.stream,
         publishType: options.publishType,
         getRemoteAnswerSdp: (offerSdp: string) => {
-          return this.startPublishing(this.currentRoom.id, offerSdp, options.display, options.publishType).toPromise();
+          return this.joinAsPublisher(this.currentRoom.id, offerSdp, options.display, options.publishType).toPromise();
         },
         publishConfirm: () => {
           return this.newPublisher(options.publishType).toPromise();
@@ -319,7 +323,6 @@ export class SessionService extends ApiService {
           this.closeMyConnection(options.publishType, true);
         },
         onError: (error: string) => {
-          this.openToast(error);
           if (error == 'JANUS_ERROR') {
             this.closeMyConnection(options.publishType, true);
             this.createPublishConnection(options);
@@ -384,7 +387,6 @@ export class SessionService extends ApiService {
     if (!locally) {
       const data = await this.unPublish(publishType).toPromise();
       if (data.status != 'OK') {
-        this.openToast('unPublish error');
         throw Error('unPublish error');
       }
     }
@@ -458,7 +460,6 @@ export class SessionService extends ApiService {
     this.socketService.start(this.currentRoom.id);
     this.socketSubscription = this.socketService.listen().subscribe(res => {
       console.log(`${res.event} => `, res);
-      // this.openToast(JSON.stringify(`${eventName} => ${JSON.stringify(res)}`),'warn');
       let user: RoomUser;
       switch (res.event) {
         case 'newUser':
@@ -502,7 +503,7 @@ export class SessionService extends ApiService {
             this.roomUsers.splice(userIndex, 1);
           }
           if (res.target == this.currentUser.id) {
-            this.getMeOut(this.translationService.instant('yourFired'));
+            this.getMeOut(this.translationService.instant('yourKicked'));
           }
           this.raisedHandsChangeSubject.next(this.raisedHands);
           break;
@@ -530,9 +531,6 @@ export class SessionService extends ApiService {
             this.raisedHandsChangeSubject.next(this.raisedHands);
           }
           if (res.event == 'leaveRoom') {
-            console.log(res.target != this.currentUser.id);
-            console.log(this.currentUser.role == 'Admin');
-            console.log(res.target != this.currentUser.id && this.currentUser.role == 'Admin');
             if (res.target == this.currentUser.id) {
               this.getMeOut();
             } else if (res.target != this.currentUser.id && this.currentUser.role == 'Admin') {
@@ -908,8 +906,8 @@ export class SessionService extends ApiService {
     return this._post<any>('', {method: 'closeRoom', data: {room_id: this.currentRoom.id}});
   }
 
-  kickUser(user_id: number) {
-    return this._post<any>('', {method: 'kickUser', data: {user_id, room_id: this.currentRoom.id}});
+  kickUser(user_id: number, kick_time?: number) {
+    return this._post<any>('', {method: 'kickUser', data: {user_id, kick_time, room_id: this.currentRoom.id}});
   }
 
   raiseHand(raise_hand: boolean) {
@@ -941,6 +939,13 @@ export class SessionService extends ApiService {
     return this._post<any>('', {
       method: 'unpublish',
       data: {room_id: this.currentRoom.id, publish_type, session: this.currentUser.session},
+    });
+  }
+
+  userEnterStatus(room_id: number) {
+    return this._post<any>('', {
+      method: 'userEnterStatus',
+      data: {room_id},
     });
   }
 
@@ -997,7 +1002,7 @@ export class SessionService extends ApiService {
     });
   }
 
-  private startPublishing(room_id: number, sdp_offer_data: string, tag: DisplayName, publish_type: PublishType) {
+  private joinAsPublisher(room_id: number, sdp_offer_data: string, tag: DisplayName, publish_type: PublishType) {
     return this._post<any>('', {
       method: 'joinPublisher',
       data: {sdp_offer_data, tag, room_id, publish_type, session: this.currentUser.session}

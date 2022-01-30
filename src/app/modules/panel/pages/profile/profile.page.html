@@ -38,7 +38,8 @@
                          [readonly]="true"></ng-input-text>
         </div>
         <div class="col-md-6 mb-5">
-          <ng-input-text formControlName="nick_name" [rtl]="fa" label="nickName" [readonly]="true"></ng-input-text>
+          <ng-input-text formControlName="nick_name" [rtl]="fa" [label]="'nickName' | translate"
+                         [readonly]="true"></ng-input-text>
         </div>
       </form>
     </div>

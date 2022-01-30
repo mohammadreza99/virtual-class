@@ -8,7 +8,8 @@ import {GroupListPage} from '@modules/panel/pages/group-list/group-list.page';
 import {GroupSettingPage} from '@modules/panel/pages/group-setting/group-setting.page';
 import {UserListPage} from '@modules/panel/pages/user-list/user-list.page';
 import {ProfilePage} from '@modules/panel/pages/profile/profile.page';
-import {CurrentUserResolver} from '@core/guard';
+import {CurrentUserResolver, LimitModeGuard} from '@core/guard';
+
 
 const routes: Routes = [
   {
@@ -16,6 +17,8 @@ const routes: Routes = [
     component: PanelPage,
     data: {breadcrumb: 'home'},
     resolve: {data: CurrentUserResolver},
+    canActivate: [LimitModeGuard],
+    canActivateChild: [LimitModeGuard],
     children: [
       {
         path: 'dashboard',
@@ -67,12 +70,12 @@ const routes: Routes = [
       {
         path: 'user-list',
         component: UserListPage,
-        data: {title: 'userList', breadcrumb: 'userList'}
+        data: {title: 'userList', breadcrumb: 'userList'},
       },
       {
         path: 'profile',
         component: ProfilePage,
-        data: {title: 'profileSetting', breadcrumb: 'profileSetting'}
+        data: {title: 'profileSetting', breadcrumb: 'profileSetting'},
       },
       {
         path: '',

@@ -24,14 +24,14 @@
     &.menu-static.sidebar-open {
       &:not(.rtl) {
         main, nav {
-          margin-left: 20rem;
+          margin-left: $sidebarWidth;
         }
       }
 
       &.rtl {
         main, nav {
           text-align: right;
-          margin-right: 20rem;
+          margin-right: $sidebarWidth;
         }
       }
     }

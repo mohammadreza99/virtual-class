@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgPosition} from '@ng/models/offset';
+import {SessionService} from '@core/http';
 
 @Component({
   selector: 'ng-message-item',
@@ -8,7 +9,7 @@ import {NgPosition} from '@ng/models/offset';
 })
 export class MessageItemComponent implements OnInit {
 
-  constructor() {
+  constructor(private sessionService: SessionService) {
   }
 
   @Input() position: NgPosition = 'left';
@@ -17,4 +18,7 @@ export class MessageItemComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  getColor() {
+    return this.sessionService.getProfileColor(+this.message.sender);
+  }
 }

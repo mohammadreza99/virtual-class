@@ -1,0 +1,14 @@
+<div class="wrapper">
+  <p>
+    {{'room.kickUserConfirm' | translate}}
+  </p>
+  <div class="actions mb-4">
+    <ng-radio [rtl]="fa" [(ngModel)]="kickMode" [options]="kickOptions"></ng-radio>
+  </div>
+</div>
+<div class="actions text-left">
+  <ng-button class="mx-2" appearance="outlined" color="secondary" [label]="'cancel' | translate"
+             (click)="onClose()"></ng-button>
+  <ng-button class="mx-2" color="danger" [label]="'room.kickUser' | translate"
+             (click)="onSubmit()"></ng-button>
+</div>

@@ -52,7 +52,7 @@ export class InputTextComponent implements OnInit, ControlValueAccessor {
     after?: NgAddonConfig;
   };
   @Input() icon: string;
-  @Input() inputSize: NgSize = 'lg';
+  @Input() inputSize: NgSize = 'md';
   @Input() readonly: boolean = false;
   @Input() disabled: boolean = false;
   @Input() maxlength: number;
