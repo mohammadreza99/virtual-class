@@ -1,0 +1,42 @@
+@mixin restoreFullAspectRatio() {
+  // reset default style (16:9 ratio) for ng-screen component in main-area
+  height: 100%;
+
+  .screen-wrapper {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
+}
+
+:host ::ng-deep {
+  .speaker-view {
+    position: relative;
+    touch-action: auto !important;
+    height: 100%;
+    padding: 1rem;
+
+    ng-screen {
+      @include restoreFullAspectRatio();
+
+      &.teacher-screen-shared + .teacher-webcam-shared {
+        position: absolute;
+        width: 250px;
+        height: auto;
+        right: 0.5rem;
+        bottom: 1rem;
+
+        .screen-wrapper {
+          padding-bottom: 56.25%;
+        }
+      }
+
+      &.teacher-webcam-shared,
+      &.teacher-screen-shared, {
+        ~ .no-stream {
+          display: none
+        }
+      }
+    }
+  }
+}

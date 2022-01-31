@@ -1,28 +1,69 @@
-<div class="container-lg h-100">
-  <div class="wrapper shadow my-5 border rounded">
-    <div class="item video-preview d-flex align-items-center justify-content-center border-{{fa ? 'left' : 'right'}}">
-      <div class="video-wrapper w-100 bg-dark">
-        <video #videoPreview playsinline autoplay muted></video>
-        <video #audioPreview autoplay muted></video>
+<div class="container-md h-100">
+  <div class="row h-100 align-items-center justify-content-center">
+    <div class="col-sm-8 col-md-7 col-lg-5 my-5">
+      <div class="wrapper shadow border rounded p-3">
+        <div class="video-wrapper bg-dark mb-3">
+          <i class="display-4 pi pi-user"></i>
+          <video #webcamPreview playsinline autoplay muted></video>
+          <video #micPreview playsinline autoplay muted></video>
+        </div>
+        <div class="room-info" [hidden]="showTestArea">
+          <div class="mb-5 h5">
+            <span>{{'room.roomName' | translate}} : </span>
+            <span class="font-regular"> {{room?.name}} </span>
+          </div>
+          <div class="mb-5 h5">
+            <span>{{'room.teacherName' | translate}} : </span>
+            <span class="font-regular"> {{room?.admin_user_id}} </span>
+          </div>
+          <div class="d-flex flex-column align-items-center mb-5">
+            <ng-button (click)="toggleTestArea()" size="md" class="mb-4" color="secondary" appearance="link"
+                       [label]="'room.testAudioAndVideo' | translate"></ng-button>
+            <ng-button (click)="enterRoom()" size="lg" [label]="'room.enterRoom' | translate"></ng-button>
+          </div>
+          <p-messages [closable]="false" [(value)]="roomStatusMessage" [enableService]="false"></p-messages>
+        </div>
+        <div class="media-test" [hidden]="!showTestArea">
+          <div class="test-item p-3 d-flex align-items-center justify-content-between">
+            <div class="label d-flex align-items-center mb-2">
+              <i class="ml-2 icon-camera"></i>
+              <span>{{'room.webcam' | translate}}</span>
+            </div>
+            <ng-dropdown (onChange)="onChangeVideoInput($event)"
+                         [value]="selectedVideoInput"
+                         inputSize="sm"
+                         [options]="videoInputDevices"></ng-dropdown>
+          </div>
+          <div class="test-item p-3">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div class="label d-flex align-items-center">
+                <i class="ml-2 icon-mic"></i>
+                <span>{{'room.mic' | translate}}</span>
+              </div>
+              <meter #meter high="0.25" max="1" value="0"></meter>
+            </div>
+            <ng-dropdown (onChange)="onChangeAudioInput($event)" inputSize="sm"
+                         [value]="selectedAudioInput"
+                         [options]="audioInputDevices"></ng-dropdown>
+          </div>
+          <div class="test-item p-3">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div class="label d-flex align-items-center">
+                <i class="ml-2 icon-speaker"></i>
+                <span>{{'room.speaker' | translate}}</span>
+              </div>
+              <ng-button (onClick)="playAudio()" appearance="text"
+                         [disabled]="!speakerTestAudioElem.paused"
+                         [icon]="!speakerTestAudioElem.paused ? 'icon-pause': 'icon-play'"></ng-button>
+            </div>
+            <ng-dropdown [disabled]="sinkIsNotSupported()" (onChange)="onChangeAudioOutput($event)" inputSize="sm"
+                         [value]="selectedAudioOutput"
+                         [options]="audioOutputDevices"></ng-dropdown>
+          </div>
+          <ng-button (click)="toggleTestArea()" class="d-block text-center" appearance="outlined"
+                     [label]="'goBack' | translate"></ng-button>
+        </div>
       </div>
-<!--      <h4 class="mt-n5" *ngIf="webcamCheckMessage">{{webcamCheckMessage | translate}}</h4>-->
-      <div class="preview-footer bg-light py-2 border-top d-flex align-items-center justify-content-around">
-        <ng-switch [rtl]="fa" [label]="'room.testWebcam' | translate" [value]="webcamTestActive"
-                   (onChange)="toggleWebcam($event)"></ng-switch>
-        <ng-switch [rtl]="fa" [label]="'room.testMic' | translate" [value]="micTestActive"
-                   (onChange)="toggleMic($event)"></ng-switch>
-        <!--        <ng-button></ng-button>-->
-      </div>
-    </div>
-    <div class="item room-info d-flex flex-column align-items-center justify-content-center p-5 px-4">
-      <div class="align-self-end mt-n4 ml-n4" *ngIf="!limitMode">
-        <ng-button color="primary" size="md" appearance="text" [label]="'goBack' | translate"
-                   icon="pi pi-angle-left" routerLink="/rooms"></ng-button>
-      </div>
-      <h4>{{room?.name}}</h4>
-      <p class="text-muted">{{'room.participantsCount' | translate:{value: room?.online_users} }}</p>
-      <p-messages [closable]="false" [(value)]="roomStatusMessage" [enableService]="false"></p-messages>
-      <ng-button color="success" size="lg" [label]="'room.enterRoom' | translate" (click)="enterRoom()"></ng-button>
     </div>
   </div>
 </div>

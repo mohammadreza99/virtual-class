@@ -1,9 +1,15 @@
 {
   "room": {
+    "testAudioAndVideo": "تست صدا و تصویر",
+    "webcam": "دوربین",
+    "mic": "میکروفن",
+    "speaker": "اسپیکر",
     "testWebcam": "تست وبکم",
     "testMic": "تست میکروفن",
     "participantsCount": "{{value}} شرکت کننده",
     "messages": "پیام ها",
+    "roomName": "نام کلاس",
+    "teacherName": "نام معلم",
     "on": "روشن",
     "off": "خاموش",
     "searchParticipants": "جستجوی شرکت کننده",

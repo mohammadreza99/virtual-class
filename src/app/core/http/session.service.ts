@@ -7,7 +7,7 @@ import {
   PeerConnectionOptions,
   Publisher,
   PublishType,
-  RoomUser,
+  RoomUser, SearchParam,
   SocketEventTypes,
   StreamActionEvent,
   TrackPosition
@@ -960,24 +960,38 @@ export class SessionService extends ApiService {
     return this._post<any>('', {method: 'getRoomInfo', data: {room_id}});
   }
 
-  assignRole(user_id: number, role: 'Admin' | 'Viewer') {
-    return this._post<any>('', {
-      method: 'assignAdmin',
-      data: {room_id: this.currentRoom.id, user_id, role},
-    });
-  }
-
-  assignRoleGroup(group_id: number, role: 'Admin' | 'Viewer') {
-    return this._post<any>('', {
-      method: 'assignAdminGroup',
-      data: {room_id: this.currentRoom.id, group_id, role},
-    });
-  }
-
   newPublisher(publish_type: PublishType) {
     return this._post<any>('', {
       method: 'newPublisher',
       data: {room_id: this.currentRoom.id, publish_type, session: this.currentUser.session},
+    });
+  }
+
+  sendPublicMessage(message: string, reply_to_message_id: number = null) {
+    return this._post<any>('', {
+      method: 'sendPublicMessage',
+      data: {room_id: this.currentRoom.id, message, reply_to_message_id},
+    });
+  }
+
+  getPublicMessages(data: SearchParam | {} = {}) {
+    return this._post<any>('', {
+      method: 'getPublicMessages',
+      data: {room_id: this.currentRoom.id, ...data},
+    });
+  }
+
+  deletePublicMessage(message_id: number) {
+    return this._post<any>('', {
+      method: 'deletePublicMessage',
+      data: {message_id},
+    });
+  }
+
+  isTalking(talking: boolean) {
+    return this._post<any>('', {
+      method: 'isTalking',
+      data: {room_id: this.currentRoom.id, talking},
     });
   }
 

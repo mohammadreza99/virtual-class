@@ -1,0 +1,8 @@
+<div class="grid-view" [ngClass]="getColumnTemplate()"
+     [attr.user-count]="allUsers.length">
+  <ng-screen position="mainPosition"></ng-screen>
+  <ng-screen position="mainThumbPosition"></ng-screen>
+  <ng-screen position="sideThumbPosition"
+             *ngFor="let u of users;trackBy:trackByFn" [user]="u">
+  </ng-screen>
+</div>

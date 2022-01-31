@@ -5,7 +5,7 @@ import {AuthService} from '@core/http';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'ag-login',
+  selector: 'ng-register',
   templateUrl: './register.page.html',
   styleUrls: ['./register.page.scss'],
 })

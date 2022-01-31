@@ -1,0 +1,16 @@
+<div class="thumbnail-view xx">
+  <div class="d-flex flex-column-reverse flex-xl-row h-100">
+    <div class="participants" [class.d-none]="users.length == 0">
+      <ng-screen position="sideThumbPosition"
+                 *ngFor="let u of users;trackBy:trackByFn" [user]="u">
+      </ng-screen>
+    </div>
+    <div class="main-area flex-grow-1">
+      <ng-screen position="mainPosition"></ng-screen>
+      <ng-screen position="mainThumbPosition"></ng-screen>
+      <div class="no-stream h-100">
+        <ng-main-placeholder></ng-main-placeholder>
+      </div>
+    </div>
+  </div>
+</div>

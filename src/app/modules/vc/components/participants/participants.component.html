@@ -1,0 +1,60 @@
+<div class="participants">
+  <div class="participants-header py-4">
+    <div class="header-title">
+      <i class="icon-participant mx-2"></i>
+      <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>
+    </div>
+    <div class="actions">
+      <i class="icon-close mx-2" (click)="closeSidebar.emit()"></i>
+    </div>
+  </div>
+  <div class="participants-actions py-4 px-3" *ngPermission="'Admin'">
+    <div class="action-item mb-3">
+      <div class="label">
+        <i class="icon-mic"></i>
+        <span class="mx-2">{{'room.everyOnesVoice' | translate}}</span>
+      </div>
+      <div class="checkbox">
+        <span class="mx-2">{{(allMuted ? 'room.off' : 'room.on') | translate}}</span>
+        <ng-switch (onChange)="toggleMuteAll($event)"></ng-switch>
+      </div>
+    </div>
+    <div class="action-item">
+      <div class="label">
+        <i class="icon-camera"></i>
+        <span class="mx-2">{{'room.everyOnesVideo' | translate}}</span>
+      </div>
+      <div class="checkbox">
+        <span class="mx-2">{{(allMutedVideo ? 'room.off' : 'room.on') | translate}}</span>
+        <ng-switch [value]="true" (onChange)="toggleMuteVideoAll($event)"></ng-switch>
+      </div>
+    </div>
+  </div>
+  <div class="search-box px-3 p-4">
+    <ng-input-text inputSize="md" [rtl]="fa" icon="icon-search" [(ngModel)]="searchText"
+                   [iconPos]="fa ? 'left' : 'right'"
+                   [placeholder]="'room.searchParticipants' | translate">
+    </ng-input-text>
+  </div>
+  <p-accordion [class.rtl]="fa" [multiple]="true">
+    <p-accordionTab [selected]="true">
+      <ng-template pTemplate="header">
+          <span class="raise-hand-info">
+            <span>{{'room.tribuneRequest' | translate}}</span>
+            <span class="raise-hand-count mx-2" *ngIf="raisedHandsUsers.length != 0">{{raisedHandsUsers.length}}</span>
+          </span>
+      </ng-template>
+      <ng-user-item [user]="user" *ngFor="let user of raisedHandsUsers"
+                    [raiseHand]="true">
+      </ng-user-item>
+      <ng-empty *ngIf="raisedHandsUsers.length == 0" [message]="'nothingFound' | translate"></ng-empty>
+    </p-accordionTab>
+    <p-accordionTab [header]="'room.participants' | translate" [selected]="true">
+      <ng-user-item [user]="user"
+                    *ngFor="let user of allUsers | ngFilter:'first_name,last_name':searchText">
+      </ng-user-item>
+      <ng-empty *ngIf="(allUsers | ngFilter:'first_name,last_name':searchText).length == 0"
+                [message]="'nothingFound' | translate"></ng-empty>
+    </p-accordionTab>
+  </p-accordion>
+</div>

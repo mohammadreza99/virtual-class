@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {RoomUser} from '@core/models';
-import {SessionService} from '@core/http';
+import {RoomService, SessionService} from '@core/http';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {UtilsService} from '@ng/services';
@@ -17,6 +17,7 @@ import {KickUserConfirmComponent} from '@modules/vc/components/kick-user-confirm
 export class UserItemComponent extends LanguageChecker implements OnInit {
 
   constructor(private sessionService: SessionService,
+              private roomService: RoomService,
               private utilsService: UtilsService,
               private dialogService: DialogService,
               private updateViewService: UpdateViewService) {
@@ -86,36 +87,8 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
     this.raiseHandConfirmed = false;
   }
 
-  async assignAdmin() {
-    try {
-      const upgradeMessage = this.translationService.instant('room.upgradeRoleConfirm', {value: this.user.last_name}) as string;
-      const dialogRes = await this.utilsService.showConfirm({message: upgradeMessage, rtl: this.fa});
-      if (dialogRes) {
-        await this.sessionService.assignRole(this.user.id, 'Admin').toPromise();
-        this.user.role = 'Admin';
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async unAssignAdmin() {
-    try {
-      const downgradeMessage = this.translationService.instant('room.downgradeRoleConfirm', {value: this.user.last_name}) as string;
-      const dialogRes = await this.utilsService.showConfirm({message: downgradeMessage, rtl: this.fa});
-      if (dialogRes) {
-        await this.sessionService.assignRole(this.user.id, 'Viewer').toPromise();
-        this.user.role = 'Viewer';
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   async kickUser() {
     try {
-      // const fireMessage = this.translationService.instant('room.kickUserConfirm', {value: this.user.last_name}) as string;
-      // const dialogRes = await this.utilsService.showConfirm({message: fireMessage, rtl: this.fa});
       this.dialogService.open(KickUserConfirmComponent, {
         data: this.user,
         header: this.translations.kickUser,
@@ -135,20 +108,47 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
     }
   }
 
-  async actionClick(action: string, actions: OverlayPanel) {
+  // async assignAdmin() {
+  //   try {
+  //     const upgradeMessage = this.translationService.instant('room.upgradeRoleConfirm', {value: this.user.last_name}) as string;
+  //     const dialogRes = await this.utilsService.showConfirm({message: upgradeMessage, rtl: this.fa});
+  //     if (dialogRes) {
+  //       await this.roomService.assignRole(this.user.id, 'Admin').toPromise();
+  //       this.user.role = 'Admin';
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+
+  // async unAssignAdmin() {
+  //   try {
+  //     const downgradeMessage = this.translationService.instant('room.downgradeRoleConfirm', {value: this.user.last_name}) as string;
+  //     const dialogRes = await this.utilsService.showConfirm({message: downgradeMessage, rtl: this.fa});
+  //     if (dialogRes) {
+  //       await this.roomService.assignRole(this.user.id, 'Viewer').toPromise();
+  //       this.user.role = 'Viewer';
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+
+  async actionClick(action: string, actionsOverlay: OverlayPanel) {
     switch (action) {
-      case 'assign-admin':
-        await this.assignAdmin();
+      case 'assignAdmin':
+        // await this.assignAdmin();
         break;
 
-      case 'unassign-admin':
-        await this.unAssignAdmin();
+      case 'unassignAdmin':
+        // await this.unAssignAdmin();
         break;
 
-      case 'remove-user':
+      case 'kickUser':
         await this.kickUser();
         break;
     }
+    actionsOverlay.hide();
   }
 
   getColor() {

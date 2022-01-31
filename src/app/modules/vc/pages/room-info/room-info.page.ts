@@ -5,6 +5,7 @@ import {Room} from '@core/models';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {NgMessage} from '@ng/models/overlay';
 import {UtilsService} from '@ng/services';
+import {NgDropdownItem} from '@ng/models/forms';
 
 @Component({
   selector: 'ng-room-info',
@@ -20,108 +21,166 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     super();
   }
 
-  @ViewChild('videoPreview', {static: true}) videoElem: ElementRef<HTMLMediaElement>;
-  @ViewChild('audioPreview', {static: true}) audioElem: ElementRef<HTMLMediaElement>;
+  @ViewChild('webcamPreview', {static: true}) webcamVideoElem: ElementRef;
+  @ViewChild('micPreview', {static: true}) micVideoElem: ElementRef;
+  @ViewChild('meter', {static: true}) volumeMeterElem: ElementRef;
 
   room: Room;
-  roomUsers: number;
   videoStream: MediaStream;
   audioStream: MediaStream;
-  webcamTestActive: boolean = false;
-  micTestActive: boolean = false;
-  roomStatusMessage: NgMessage[];
   limitMode: boolean = false;
+  roomStatusMessage: NgMessage[];
+  webcamTestMessage: string;
+  micTestMessage: string;
+  audioInputDevices: NgDropdownItem[];
+  audioOutputDevices: NgDropdownItem[];
+  videoInputDevices: NgDropdownItem[];
+  selectedVideoInput: string;
+  selectedAudioInput: string;
+  selectedAudioOutput: string;
+  showTestArea: boolean = false;
+  speakerTestAudioElem = new Audio();
 
   ngOnInit(): void {
     this.loadData();
-    this.videoElem.nativeElement.muted = true;
+    this.webcamVideoElem.nativeElement.muted = true;
+    this.micVideoElem.nativeElement.muted = true;
   }
 
   async loadData() {
     try {
       const roomId = +this.route.snapshot.paramMap.get('roomId');
+      const result = await this.roomService.getRoomById(roomId).toPromise();
+      if (result.status == 'OK') {
+        this.room = result.data;
+      }
       const token = this.route.snapshot.queryParamMap.get('t');
       if (token) {
         localStorage.setItem('token', token);
         localStorage.setItem('limitMode', 'true');
         this.limitMode = true;
       }
-      const result = await this.roomService.getRoomById(roomId).toPromise();
-      if (result.status == 'OK') {
-        this.room = result.data;
-      }
+      await this.loadDevices();
+      await this.startAudioStream();
+      await this.startVideoStream();
+      this.selectedVideoInput = this.videoInputDevices[0].value;
+      this.selectedAudioInput = this.audioInputDevices[0].value;
+      this.selectedAudioOutput = this.audioOutputDevices[0].value;
       await this.checkEnterRoomStatus();
-      const webcamConnected = await this.sessionService.webcamConnected();
-      if (!webcamConnected) {
-        this.openToast('webcamNotFound');
-      }
     } catch (error) {
       console.error(error);
     }
   }
 
-  async toggleWebcam(event: any) {
-    this.webcamTestActive = event.checked;
-    if (this.webcamTestActive) {
-      try {
-        this.videoStream = await this.sessionService.getUserMedia({video: true});
-      } catch (error) {
-        if (error.name == 'NotAllowedError') {
-          this.openToast('pleaseAllowWebcam');
-        } else {
-          this.openToast('webcamNotFound');
-        }
-        this.resetTest();
-        return;
-      }
-      if (!this.videoStream) {
-        this.openToast('webcamNotFound');
-        this.resetTest();
-        return;
-      }
-      this.videoElem.nativeElement.srcObject = this.videoStream;
-      await this.videoElem.nativeElement.play();
-    } else {
+  toggleTestArea() {
+    this.showTestArea = !this.showTestArea;
+  }
+
+  async enterRoom() {
+    const result = await this.checkEnterRoomStatus();
+    if (result) {
       this.stopVideo();
-      this.webcamTestActive = false;
+      this.stopAudio();
+      localStorage.setItem('roomEnterTime', Date.now().toString());
+      this.router.navigate(['/vc', this.room.id]);
     }
   }
 
-  async toggleMic(event: any) {
-    this.micTestActive = event.checked;
-    if (this.micTestActive) {
-      try {
-        this.audioStream = await this.sessionService.getUserMedia({audio: true});
-      } catch (error) {
-        if (error.name == 'NotAllowedError') {
-          this.openToast('pleaseAllowMic');
-        } else {
-          this.openToast('micNotFound');
+  async attachSinkId(element: any, sinkId: string) {
+    if (typeof element.sinkId !== 'undefined') {
+      await element.setSinkId(sinkId).catch(error => {
+        let errorMessage = error;
+        if (error.name === 'SecurityError') {
+          errorMessage = `You need to use HTTPS for selecting audio output device: ${error}`;
         }
-        this.resetTest();
-        return;
-      }
+        console.error(errorMessage);
+        this.selectedAudioOutput = this.audioOutputDevices[0].value;
+      });
+    } else {
+      console.error('Browser does not support output device selection.');
+    }
+  }
+
+  async startAudioStream() {
+    this.stopAudio();
+    const audioSource = this.selectedAudioInput;
+    const constraints = {
+      audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
+    };
+    try {
+      this.audioStream = await navigator.mediaDevices.getUserMedia(constraints);
       if (!this.audioStream) {
-        this.openToast('micNotFound');
-        this.resetTest();
+        this.micTestMessage = 'micNotFound';
         return;
       }
-      this.audioElem.nativeElement.srcObject = this.audioStream;
-      await this.audioElem.nativeElement.play();
-    } else {
-      this.stopVideo();
-      this.micTestActive = false;
+    } catch (error) {
+      if (error.name == 'NotAllowedError') {
+        this.micTestMessage = 'pleaseAllowMic';
+      } else {
+        this.micTestMessage = 'micNotFound';
+      }
+      return;
     }
+    this.micVideoElem.nativeElement.srcObject = this.audioStream;
+    const audioContext = new AudioContext();
+    const streamSource = audioContext.createMediaStreamSource(this.audioStream);
+    const analyser = audioContext.createAnalyser();
+    streamSource.connect(analyser);
+    const pcmData = new Float32Array(analyser.fftSize);
+    const onFrame = () => {
+      analyser.getFloatTimeDomainData(pcmData);
+      let sumSquares = 0.0;
+      for (const amplitude of pcmData) {
+        sumSquares += amplitude * amplitude;
+      }
+      this.volumeMeterElem.nativeElement.value = Math.sqrt(sumSquares / pcmData.length);
+      window.requestAnimationFrame(onFrame);
+    };
+    window.requestAnimationFrame(onFrame);
   }
 
-  resetTest() {
-    this.webcamTestActive = false;
-    this.micTestActive = false;
+  async startVideoStream() {
+    this.stopVideo();
+    const videoSource = this.selectedVideoInput;
+    const constraints = {
+      video: {deviceId: videoSource ? {exact: videoSource} : undefined}
+    };
+    try {
+      this.videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+      if (!this.videoStream) {
+        this.webcamTestMessage = 'webcamNotFound';
+        return;
+      }
+    } catch (error) {
+      if (error.name == 'NotAllowedError') {
+        this.webcamTestMessage = 'pleaseAllowMic';
+      } else {
+        this.webcamTestMessage = 'webcamNotFound';
+      }
+      return;
+    }
+    this.webcamVideoElem.nativeElement.srcObject = this.videoStream;
+  }
+
+  async loadDevices() {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    this.videoInputDevices = devices.filter(d => d.kind == 'videoinput').map((d, i) => ({
+      label: d.label || `Webcam - ${i + 1}`,
+      value: d.deviceId
+    }));
+    this.audioInputDevices = devices.filter(d => d.kind == 'audioinput').map((d, i) => ({
+      label: d.label || `Microphone - ${i + 1}`,
+      value: d.deviceId
+    }));
+    this.audioOutputDevices = devices.filter(d => d.kind == 'audiooutput').map((d, i) => ({
+      label: d.label || `Webcam - ${i + 1}`,
+      value: d.deviceId
+    }));
   }
 
   stopVideo() {
-    this.videoElem.nativeElement.pause();
-    this.videoElem.nativeElement.srcObject = null;
+    this.webcamVideoElem.nativeElement.pause();
+    this.webcamVideoElem.nativeElement.srcObject = null;
     if (this.videoStream) {
       this.videoStream.getTracks().forEach(track => {
         track.stop();
@@ -130,8 +189,8 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
   }
 
   stopAudio() {
-    this.audioElem.nativeElement.pause();
-    this.audioElem.nativeElement.srcObject = null;
+    this.micVideoElem.nativeElement.pause();
+    this.micVideoElem.nativeElement.srcObject = null;
     if (this.audioStream) {
       this.audioStream.getTracks().forEach(track => {
         track.stop();
@@ -139,23 +198,40 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     }
   }
 
-  async enterRoom() {
-    const result = await this.checkEnterRoomStatus();
-    if (result) {
-      this.stopVideo();
-      const roomId = +this.route.snapshot.paramMap.get('roomId');
-      localStorage.setItem('roomEnterTime', Date.now().toString());
-      this.router.navigate(['/vc', roomId]);
+  onChangeVideoInput(event: any) {
+    this.selectedVideoInput = event.value;
+    this.startVideoStream();
+  }
+
+  onChangeAudioInput(event: any) {
+    this.selectedAudioInput = event.value;
+    this.startAudioStream();
+  }
+
+  onChangeAudioOutput(event: any) {
+    this.selectedAudioOutput = event.value;
+    this.attachSinkId(this.speakerTestAudioElem, this.selectedAudioOutput);
+  }
+
+  playAudio() {
+    if (this.speakerTestAudioElem) {
+      this.speakerTestAudioElem.pause();
     }
+    this.speakerTestAudioElem.src = 'assets/files/audio.mp3';
+    this.speakerTestAudioElem.load();
+    this.speakerTestAudioElem.play();
+    this.speakerTestAudioElem.onended = () => {
+      this.speakerTestAudioElem.pause();
+    };
   }
 
   async checkEnterRoomStatus() {
     if (!this.room) {
-      return;
+      return false;
     }
     const result = await this.sessionService.userEnterStatus(this.room.id).toPromise();
     if (result.status != 'OK') {
-      return;
+      return false;
     }
     switch (result.data.enter_status) {
       case'Enter':
@@ -176,10 +252,14 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     }
   }
 
-  openToast(message: string) {
-    this.utilsService.showToast({
-      severity: 'warn',
-      detail: this.translations[message]
-    });
+  sinkIsNotSupported() {
+    return !('sinkId' in HTMLMediaElement.prototype);
   }
+
+  // openToast(message: string) {
+  //   this.utilsService.showToast({
+  //     severity: 'warn',
+  //     detail: this.translations[message]
+  //   });
+  // }
 }

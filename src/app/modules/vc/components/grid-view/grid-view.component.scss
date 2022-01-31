@@ -1,0 +1,103 @@
+@import "mixins";
+
+@mixin restoreFullAspectRatio() {
+  // reset default style (16:9 ratio) for ng-screen component in main-area
+  height: 100%;
+
+  .screen-wrapper {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
+}
+
+:host ::ng-deep {
+  .grid-view {
+    display: grid;
+    padding: 1rem;
+    grid-gap: 1rem;
+    grid-auto-flow: row;
+    height: 100%;
+
+    &.g-full {
+      grid-template-rows: auto;
+      grid-template-columns: auto;
+
+      ng-screen {
+        width: 100%;
+        @include restoreFullAspectRatio();
+      }
+    }
+
+    &.g-four {
+      &[user-count="2"] {
+        ng-screen {
+          width: 100%;
+          @include restoreFullAspectRatio();
+        }
+      }
+
+      @include media-breakpoint-up(md) {
+        grid-template-rows: auto;
+        grid-template-columns: auto auto;
+        ng-screen {
+          width: 100%;
+          @include restoreFullAspectRatio();
+        }
+      }
+    }
+
+    &.g-nine {
+      grid-template-rows: auto;
+
+      @include media-breakpoint-up(sm) {
+        grid-template-columns: auto auto;
+        ng-screen {
+          width: 100%;
+          @include restoreFullAspectRatio();
+        }
+      }
+      @include media-breakpoint-up(md) {
+        grid-template-columns: auto auto auto;
+        ng-screen {
+          width: 100%;
+          @include restoreFullAspectRatio();
+        }
+      }
+    }
+
+    &.g-sixteen {
+      grid-template-rows: auto;
+
+      @include media-breakpoint-up(sm) {
+        grid-template-columns: auto auto;
+      }
+      @include media-breakpoint-up(md) {
+        grid-template-columns: auto auto auto auto;
+        ng-screen {
+          width: 100%;
+          @include restoreFullAspectRatio();
+        }
+      }
+    }
+
+    &.g-twenty-fife {
+      grid-template-rows: auto;
+
+      @include media-breakpoint-up(sm) {
+        grid-template-columns: auto auto;
+      }
+      @include media-breakpoint-up(md) {
+        grid-template-columns: auto auto auto;
+      }
+      @include media-breakpoint-up(lg) {
+        grid-template-columns: auto auto auto auto auto;
+        ng-screen {
+          width: 100%;
+          @include restoreFullAspectRatio();
+        }
+      }
+    }
+  }
+}
+

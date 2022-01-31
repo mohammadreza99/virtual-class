@@ -1,0 +1,53 @@
+<div class="chat">
+  <div class="chat-header py-4">
+    <div class="header-title">
+      <i class="icon-chat mx-2"></i>
+      <div>{{'room.messages' | translate }}</div>
+    </div>
+    <div class="d-flex align-items-center">
+      <i class="pi pi-bars mx-2"></i>
+      <i class="icon-close mx-2" (click)="closeSidebar.emit()"></i>
+    </div>
+  </div>
+  <!--  <p-tabView>-->
+  <!--    <p-tabPanel header="چت خصوصی" leftIcon="icon-user-groups">-->
+
+  <!--    </p-tabPanel>-->
+  <!--    <p-tabPanel header="چت عمومی" leftIcon="icon-user-groups">-->
+  <section class="chat-wrapper">
+    <main class="chat-messages" #chatContainer>
+      <ng-message-item position="left"
+                       [message]="{
+                           text:'درود بر تو',
+                           sender:'سجاد',
+                           time:'12:46'
+                           }">
+      </ng-message-item>
+
+      <ng-message-item position="right"
+                       [message]="{
+                           text:'یک پیام تستی دیگر و همچنین این پیام نسبتا طولانی تر است و ممکن است فضای بیشتری را اشغال کند',
+                           sender:'سجاد',
+                           time:'12:46'
+                           }">
+      </ng-message-item>
+      <ng-container #chatItemContainer></ng-container>
+    </main>
+    <div class="chat-footer">
+      <div class="reply-container d-flex align-items-center justify-content-between py-2 mx-2 rounded">
+        <div class="message-info">
+          <small class="d-block font-medium">محمد رضا</small>
+          <small class="d-block font-light">سلام همگی</small>
+        </div>
+        <i class="pi pi-times"></i>
+      </div>
+      <div class="chat-inputarea">
+        <ng-input-text [rtl]="fa" (keyup.enter)="sendMessage(chatContainer)" inputSize="md" class="ml-2 flex-grow-1"
+                       [(ngModel)]="chatText"></ng-input-text>
+        <ng-button icon="pi pi-chevron-left" (click)="sendMessage(chatContainer)"></ng-button>
+      </div>
+    </div>
+  </section>
+  <!--    </p-tabPanel>-->
+  <!--  </p-tabView>-->
+</div>

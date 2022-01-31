@@ -63,4 +63,11 @@ export class GroupService extends ApiService {
   getGroupById(group_id: number): Observable<Group> {
     return this._post<BaseRes<Group>>('', {method: 'getGroup', data: {group_id}}).pipe(map(item => item.data));
   }
+
+  assignRole(room_id: number, group_id: number, role: 'Admin' | 'Viewer') {
+    return this._post<any>('', {
+      method: 'assignAdminGroup',
+      data: {room_id, group_id, role},
+    });
+  }
 }

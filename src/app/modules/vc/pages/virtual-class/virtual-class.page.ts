@@ -28,15 +28,15 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     super();
   }
 
-  @ViewChild('chatItemContainer', {static: true, read: ViewContainerRef}) chatContainer: ViewContainerRef;
+  // @ViewChild('chatItemContainer', {static: true, read: ViewContainerRef}) chatContainer: ViewContainerRef;
 
   allUsers: RoomUser[] = [];
   roomUsers: RoomUser[] = [];
   raisedHandsUsers: RoomUser[] = [];
   disableWebcam = false;
   disableMic = false;
-  webcamFound: boolean;
-  micFound: boolean;
+  // webcamFound: boolean;
+  // micFound: boolean;
   screenActivated = false;
   webcamActivated = false;
   micActivated = false;
@@ -44,14 +44,14 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   currentViewMode: ViewMode = 'thumbnail';
   currentRoom: Room;
   currentUser: RoomUser;
-  allMuted: boolean = true;
-  allMutedVideo: boolean = false;
-  searchText: string;
+  // allMuted: boolean = true;
+  // allMutedVideo: boolean = false;
+  // searchText: string;
   roomParticipantSubscription: Subscription;
   roomUsersSubscription: Subscription;
   raisedHandsSubscription: Subscription;
   updateViewSubscription: Subscription;
-  chatText: string;
+  // chatText: string;
   membersSidebarVisible: boolean = true;
   chatSidebarVisible: boolean = false;
   sessionDuration: any;
@@ -201,18 +201,12 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
       } else {
         await this.sessionService.closeRoom().toPromise();
       }
-      this.membersSidebarVisible = false;
-      setTimeout(() => {
-        this.router.navigate(['/vc/room-info', this.currentRoom.id]);
-      }, 30);
+      this.router.navigate(['/vc/room-info', this.currentRoom.id]);
     } else {
       dialogRes = await this.openStudentLeaveRoomDialog();
       if (dialogRes) {
-        this.membersSidebarVisible = false;
         await this.sessionService.leaveRoom().toPromise();
-        setTimeout(() => {
-          this.router.navigate(['/vc/room-info', this.currentRoom.id]);
-        }, 30);
+        this.router.navigate(['/vc/room-info', this.currentRoom.id]);
       }
     }
   }
@@ -235,25 +229,25 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     });
   }
 
-  async toggleMuteAll(event) {
-    try {
-      await this.sessionService.muteAll(!event.checked).toPromise();
-      this.allMuted = !event.checked;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
+  // async toggleMuteAll(event) {
+  //   try {
+  //     await this.sessionService.muteAll(!event.checked).toPromise();
+  //     this.allMuted = !event.checked;
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+  // }
 
-  async toggleMuteVideoAll(event) {
-    try {
-      await this.sessionService.muteVideoAll(!event.checked).toPromise();
-      this.allMutedVideo = !event.checked;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
+  // async toggleMuteVideoAll(event) {
+  //   try {
+  //     await this.sessionService.muteVideoAll(!event.checked).toPromise();
+  //     this.allMutedVideo = !event.checked;
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+  // }
 
   changeView(mode: ViewMode, viewModesOverlay: OverlayPanel) {
     this.currentViewMode = mode;
@@ -276,18 +270,19 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     this.chatSidebarVisible = false;
   }
 
-  sendMessage(container: HTMLElement) {
-    if (this.chatText) {
-      const factory = this.resolver.resolveComponentFactory(MessageItemComponent);
-      const cmpRef = this.chatContainer.createComponent(factory);
-      cmpRef.instance.position = 'right';
-      cmpRef.instance.message = {text: this.chatText, sender: this.currentUser.first_name, time: '12:23'};
-      this.chatText = '';
-      setTimeout(() => {
-        container.scrollTop = container.scrollHeight;
-      }, 0);
-    }
-  }
+  // async sendMessage(container: HTMLElement) {
+  //   if (this.chatText) {
+  //     const result = this.sessionService.sendPublicMessage(this.chatText).toPromise();
+  //     const factory = this.resolver.resolveComponentFactory(MessageItemComponent);
+  //     const cmpRef = this.chatContainer.createComponent(factory);
+  //     cmpRef.instance.position = 'right';
+  //     cmpRef.instance.message = {text: this.chatText, sender: this.currentUser.first_name, time: '12:23'};
+  //     this.chatText = '';
+  //     setTimeout(() => {
+  //       container.scrollTop = container.scrollHeight;
+  //     }, 0);
+  //   }
+  // }
 
   async copySessionLink(sessionInfoOverlay: OverlayPanel) {
     const data = await this.roomService.generateRoomLink(this.currentRoom.id).toPromise();
@@ -295,24 +290,24 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     sessionInfoOverlay.hide();
   }
 
-  trackByFn(index: number, item: RoomUser): number {
-    return item.id;
-  }
-
-  getColumnTemplate() {
-    const usersCount = this.allUsers.length;
-    if (usersCount == 1) {
-      return 'g-full';
-    } else if (usersCount >= 2 && usersCount <= 4) {
-      return 'g-four';
-    } else if (usersCount >= 5 && usersCount <= 9) {
-      return 'g-nine';
-    } else if (usersCount >= 10 && usersCount <= 16) {
-      return 'g-sixteen';
-    } else if (usersCount >= 17) {
-      return 'g-twenty-five';
-    }
-  }
+  // trackByFn(index: number, item: RoomUser): number {
+  //   return item.id;
+  // }
+  //
+  // getColumnTemplate() {
+  //   const usersCount = this.allUsers.length;
+  //   if (usersCount == 1) {
+  //     return 'g-full';
+  //   } else if (usersCount >= 2 && usersCount <= 4) {
+  //     return 'g-four';
+  //   } else if (usersCount >= 5 && usersCount <= 9) {
+  //     return 'g-nine';
+  //   } else if (usersCount >= 10 && usersCount <= 16) {
+  //     return 'g-sixteen';
+  //   } else if (usersCount >= 17) {
+  //     return 'g-twenty-five';
+  //   }
+  // }
 
   disableWindowBackButton() {
     history.pushState(null, null, location.href);

@@ -1,0 +1,122 @@
+@import "mixins";
+
+:host ::ng-deep {
+  .participants {
+    &-header,
+    &-header .header-title,
+    &-actions .action-item,
+    &-actions .action-item .label,
+    &-actions .action-item .checkbox,
+    &-actions .action-item .checkbox ng-switch .wrapper > div {
+      display: flex;
+      align-items: center;
+    }
+
+    &-actions .action-item,
+    &-header {
+      justify-content: space-between;
+    }
+
+    &-header {
+      background-color: #50585F;
+      height: 63px;
+
+      .icon-close {
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+
+    p-accordion {
+      .p-accordion-header {
+        &.p-highlight {
+          .p-accordion-header-link {
+            background-color: #595a62 !important;
+            border-color: #595a62 !important
+          }
+        }
+
+        .p-accordion-header-link {
+          justify-content: space-between;
+          flex-direction: row-reverse;
+          background-color: #40414A !important;
+          border-color: #40414A #40414A #848484 #40414A !important;
+          transition: all .4s;
+          color: #f8f9fa !important;
+
+          &:focus {
+            box-shadow: none;
+          }
+
+          &:hover {
+            background-color: #595a62 !important;
+            border-color: #595a62 !important
+          }
+
+          .p-accordion-toggle-icon {
+            &:before {
+              content: "\e902";
+            }
+          }
+
+          &[aria-expanded="true"] {
+            .p-accordion-toggle-icon {
+              &:before {
+                content: "\e903";
+              }
+            }
+          }
+        }
+
+        .raise-hand-info {
+          &, .raise-hand-count {
+            display: flex;
+            align-items: center;
+          }
+
+          .raise-hand-count {
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background-color: #F5A31F;
+            border-radius: 50%;
+          }
+        }
+      }
+
+      .p-accordion-content {
+        background-color: #40414A;
+        border-color: #40414A;
+        color: #f8f9fa;
+        padding: 1.5rem 0.25rem;
+
+        ng-user-item:not(:last-of-type) {
+          display: block;
+          margin-bottom: 1rem;
+        }
+      }
+    }
+
+    .search-box {
+      input[type=text] {
+        background-color: #585A66;
+        border-color: #585A66;
+        border-radius: 8px;
+        color: #ffffff;
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+
+      i {
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 0;
+        transform: translateY(-50%);
+      }
+    }
+  }
+}
