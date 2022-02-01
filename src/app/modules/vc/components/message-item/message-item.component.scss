@@ -1,72 +1,96 @@
+:host ::ng-deep {
 
-.message {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 0.8rem;
-
-  .message-info {
+  .message {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+    align-items: flex-start;
+    margin-bottom: 0.8rem;
 
-    .message-info-name {
-      margin-right: 10px;
-    }
+    .message-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
 
-    .message-info-time {
-      font-size: 0.85em;
-    }
-  }
+      .message-info-name {
+        margin-right: 10px;
+      }
 
-  .message-img {
-    width: 30px;
-    min-width: 30px;
-    height: 30px;
-    margin-right: 10px;
-    background-color: #dddddd;
-    border-radius: 50%;
-  }
-
-  .message-bubble {
-    flex-grow: 1;
-    padding: 1rem;
-    border-radius: 1rem;
-    background-color: #5C5C5C;
-    color: #ffffff;
-
-    .reply-container {
-      border-right: 6px solid #61987A;
-      padding: 0.2rem 1rem;
-      background: rgba(196, 196, 196, 0.08);
-      border-radius: 4px;
-      margin-bottom: 0.5rem;
-
-      small:last-child {
-        color: #FFFFFF;
-        opacity: 0.6;
-        display: block;
+      .message-info-time {
+        font-size: 0.85em;
       }
     }
 
-  }
-
-  &.left {
     .message-bubble {
-      border-bottom-left-radius: 0;
+      flex-grow: 1;
+      padding: 1rem;
+      border-radius: 1rem;
+      background-color: #5C5C5C;
+      color: #ffffff;
+
+      .reply-container {
+        border-right: 6px solid #61987A;
+        padding: 0.2rem 1rem;
+        background: rgba(196, 196, 196, 0.08);
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+
+        small:last-child {
+          color: #FFFFFF;
+          opacity: 0.6;
+          display: block;
+        }
+      }
     }
-  }
 
-  &.right {
-    flex-direction: row-reverse;
+    .reply {
+      .message-img, button {
+        width: 2.5rem;
+        min-width: 2.5rem;
+        height: 2.5rem;
+      }
 
-    .message-bubble {
-      background-color: #5C527F;
-      border-bottom-right-radius: 0;
+      .message-img {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #dddddd;
+        border-radius: 50%;
+      }
     }
 
-    .message-img {
-      margin-left: 0.5rem;
+    &.left {
+      .message-bubble {
+        border-bottom-left-radius: 0;
+      }
+
+      .message-img {
+        margin-right: 0.5rem;
+      }
+
+      .reply {
+        ng-button {
+          margin-right: 0.5rem
+        }
+      }
+    }
+
+    &.right {
+      flex-direction: row-reverse;
+
+      .message-bubble {
+        background-color: #5C527F;
+        border-bottom-right-radius: 0;
+      }
+
+      .message-img {
+        margin-left: 0.5rem;
+      }
+
+      .reply {
+        ng-button {
+          margin-left: 0.5rem
+        }
+      }
     }
   }
 }

@@ -317,23 +317,10 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   calculateSessionDuration() {
-    this.sessionDuration = this.convertToTimeFormat(this.currentRoom.session_duration++);
+    this.sessionDuration = this.utilsService.convertToTimeFormat(this.currentRoom.session_duration++);
     setInterval(() => {
-      this.sessionDuration = this.convertToTimeFormat(this.currentRoom.session_duration++);
+      this.sessionDuration = this.utilsService.convertToTimeFormat(this.currentRoom.session_duration++);
     }, 1000);
-  }
-
-  convertToTimeFormat(duration) {
-    const hrs = Math.floor((duration / 3600));
-    const mins = Math.floor(((duration % 3600) / 60));
-    const secs = Math.floor(duration % 60);
-    let result = '';
-    if (hrs > 0) {
-      result += '' + hrs + ':' + (mins < 10 ? '0' : '');
-    }
-    result += '' + mins + ':' + (secs < 10 ? '0' : '');
-    result += '' + secs;
-    return result;
   }
 
   ngOnDestroy(): void {

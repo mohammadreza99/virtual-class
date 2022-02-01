@@ -157,7 +157,7 @@ export class SessionService extends ApiService {
       stream
     };
     try {
-      this.myScreen = await this.createPublishConnection(options);
+      this.myScreen = await this.createPublishConnection(options, null);
       const videoTrack = this.myScreen.stream.getVideoTracks();
       if (videoTrack.length) {
         videoTrack[0].onended = () => {
@@ -175,7 +175,7 @@ export class SessionService extends ApiService {
     if (myStream?.getAudioTracks()?.length) {
       this.toggleStreamAudio(myStream, activate);
       if (!myStream.getTracks()?.find(t => t.enabled)) {
-        await this.toggleShareMedia(false);
+        await this.toggleShareMedia(false, 'audio');
       }
       return;
     }
@@ -188,17 +188,18 @@ export class SessionService extends ApiService {
       if (myStream?.getVideoTracks()?.length) {
         this.toggleStreamVideo(myStream, activate);
         if (!myStream.getTracks()?.find(t => t.enabled)) {
-          await this.toggleShareMedia(false);
+          await this.toggleShareMedia(false, 'video');
         }
         return;
       }
       await this.toggleShareMedia(activate, 'video');
     } catch (error) {
+      console.log(error);
       throw Error(error);
     }
   }
 
-  async toggleShareMedia(activate: boolean, mediaType?): Promise<void> {
+  async toggleShareMedia(activate: boolean, mediaType: 'audio' | 'video'): Promise<void> {
     if (!activate) {
       await this.closeMyConnection('Webcam');
       return;
@@ -287,7 +288,7 @@ export class SessionService extends ApiService {
     });
   }
 
-  private async createPublishConnection(options: PeerConnectionOptions, mediaType?) {
+  private async createPublishConnection(options: PeerConnectionOptions, mediaType: 'audio' | 'video') {
     return new Promise<PeerConnection>((resolve, reject) => {
       const pc = new PeerConnection({
         userId: options.userId,
@@ -325,7 +326,7 @@ export class SessionService extends ApiService {
         onError: (error: string) => {
           if (error == 'JANUS_ERROR') {
             this.closeMyConnection(options.publishType, true);
-            this.createPublishConnection(options);
+            this.createPublishConnection(options, mediaType);
           }
           if (error == 'SessionNotExist') {
             this.peerConnections.forEach(c => {
@@ -718,6 +719,23 @@ export class SessionService extends ApiService {
   ///////////////////////////////////////////////////////////////////////////////
   //                                   UTILS                                   //
   ///////////////////////////////////////////////////////////////////////////////
+  checkIsTalking(stream: MediaStream) {
+    const audioContext = new AudioContext();
+    const streamSource = audioContext.createMediaStreamSource(stream);
+    const analyser = audioContext.createAnalyser();
+    streamSource.connect(analyser);
+    const pcmData = new Float32Array(analyser.fftSize);
+    const onFrame = () => {
+      analyser.getFloatTimeDomainData(pcmData);
+      let sumSquares = 0.0;
+      for (const amplitude of pcmData) {
+        sumSquares += amplitude * amplitude;
+      }
+      window.requestAnimationFrame(onFrame);
+      return Math.sqrt(sumSquares / pcmData.length);
+    };
+    window.requestAnimationFrame(onFrame);
+  }
 
   async getMeOut(message?: any) {
     if (this.myConnection.webcam) {
@@ -967,10 +985,17 @@ export class SessionService extends ApiService {
     });
   }
 
-  sendPublicMessage(message: string, reply_to_message_id: number = null) {
+  sendPublicMessage(message: string, reply_to_message_id: number = null): any {
     return this._post<any>('', {
       method: 'sendPublicMessage',
       data: {room_id: this.currentRoom.id, message, reply_to_message_id},
+    });
+  }
+
+  changePublicChatState(state: boolean): any {
+    return this._post<any>('', {
+      method: 'changePublicChatState',
+      data: {room_id: this.currentRoom.id, state},
     });
   }
 

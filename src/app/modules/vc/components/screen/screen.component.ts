@@ -72,7 +72,10 @@ export class ScreenComponent implements OnInit {
     this.stream = stream;
     this.streamActivated = true;
     video.srcObject = stream;
-    return video.play();
+    video.onloadedmetadata = (e) => {
+      video.play();
+    };
+    // return video.play();
   }
 
 

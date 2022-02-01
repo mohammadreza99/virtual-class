@@ -5,7 +5,7 @@
       <div>{{'room.messages' | translate }}</div>
     </div>
     <div class="d-flex align-items-center">
-      <i class="pi pi-bars mx-2"></i>
+      <i class="pi pi-bars mx-2" (click)="chatActions.toggle($event)"></i>
       <i class="icon-close mx-2" (click)="closeSidebar.emit()"></i>
     </div>
   </div>
@@ -16,38 +16,54 @@
   <!--    <p-tabPanel header="چت عمومی" leftIcon="icon-user-groups">-->
   <section class="chat-wrapper">
     <main class="chat-messages" #chatContainer>
-      <ng-message-item position="left"
-                       [message]="{
-                           text:'درود بر تو',
-                           sender:'سجاد',
-                           time:'12:46'
-                           }">
-      </ng-message-item>
-
-      <ng-message-item position="right"
-                       [message]="{
-                           text:'یک پیام تستی دیگر و همچنین این پیام نسبتا طولانی تر است و ممکن است فضای بیشتری را اشغال کند',
-                           sender:'سجاد',
-                           time:'12:46'
-                           }">
+      <ng-message-item *ngFor="let message of messages;trackBy:trackByFn"
+                       [position]="message.user.id == currentUser.id ? 'right' : 'left'"
+                       [message]="message.message"
+                       [sender]="message.user"
+                       [replyMessage]="getReplyMessageOf(message)"
+                       (reply)="onReply(message)">
       </ng-message-item>
       <ng-container #chatItemContainer></ng-container>
     </main>
     <div class="chat-footer">
-      <div class="reply-container d-flex align-items-center justify-content-between py-2 mx-2 rounded">
+      <div class="reply-container d-flex align-items-center justify-content-between py-2 mx-2 rounded"
+           *ngIf="currentReplyMessage">
         <div class="message-info">
-          <small class="d-block font-medium">محمد رضا</small>
-          <small class="d-block font-light">سلام همگی</small>
+          <small
+            class="d-block font-medium">{{currentReplyMessage.user.first_name + ' ' + currentReplyMessage.user.last_name}}</small>
+          <small class="d-block font-light">{{currentReplyMessage.message.message}}</small>
         </div>
-        <i class="pi pi-times"></i>
+        <i class="pi pi-times" (click)="cancelReply()"></i>
       </div>
       <div class="chat-inputarea">
-        <ng-input-text [rtl]="fa" (keyup.enter)="sendMessage(chatContainer)" inputSize="md" class="ml-2 flex-grow-1"
+        <ng-input-text [disabled]="!openPublicChat" [rtl]="fa" (keyup.enter)="sendMessage(chatContainer)" inputSize="md"
+                       class="ml-2 flex-grow-1"
                        [(ngModel)]="chatText"></ng-input-text>
-        <ng-button icon="pi pi-chevron-left" (click)="sendMessage(chatContainer)"></ng-button>
+        <ng-button-async [disabled]="!openPublicChat" icon="pi pi-chevron-left"
+                         (clickAsync)="sendMessage(chatContainer,$event)"></ng-button-async>
       </div>
     </div>
   </section>
   <!--    </p-tabPanel>-->
   <!--  </p-tabView>-->
 </div>
+
+
+<p-overlayPanel [baseZIndex]="2000" #chatActions styleClass="view-modes {{fa ? 'rtl' : null}}">
+  <ng-template pTemplate>
+    <ul class="list-unstyled p-0 m-0">
+      <!--      <li (click)="saveChat()">-->
+      <!--        <i class="icon-view-speaker"></i>-->
+      <!--        <span>{{'room.showSpeakerOnly' | translate}}</span>-->
+      <!--      </li>-->
+      <li (click)="togglePublicChatActivation(chatActions)">
+        <i class="icon-view-speaker"></i>
+        <span>{{(openPublicChat ? 'closePublicChat' : 'openPublicChat') | translate}}</span>
+      </li>
+      <!--      <li (click)="saveChat()">-->
+      <!--        <i class="icon-view-speaker"></i>-->
+      <!--        <span>{{(openPrivateChat ? 'closePrivateChat' : 'openPrivateChat') | translate}}</span>-->
+      <!--      </li>-->
+    </ul>
+  </ng-template>
+</p-overlayPanel>

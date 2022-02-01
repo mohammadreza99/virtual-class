@@ -10,6 +10,7 @@ export interface Room {
   status?: string;
   online_users?: number;
   session_duration?: number;
+  public_messages?: boolean;
 }
 
 export interface UserOrGroup {

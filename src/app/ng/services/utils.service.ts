@@ -271,4 +271,17 @@ export class UtilsService {
     this.appRef.detachView(componentRef.hostView);
     componentRef.destroy();
   }
+
+  convertToTimeFormat(duration: number) {
+    const hrs = Math.floor((duration / 3600));
+    const mins = Math.floor(((duration % 3600) / 60));
+    const secs = Math.floor(duration % 60);
+    let result = '';
+    if (hrs > 0) {
+      result += '' + hrs + ':' + (mins < 10 ? '0' : '');
+    }
+    result += '' + mins + ':' + (secs < 10 ? '0' : '');
+    result += '' + secs;
+    return result;
+  }
 }

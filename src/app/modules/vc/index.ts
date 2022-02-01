@@ -24,5 +24,5 @@ export const COMPONENTS: Type<any>[] = [
   ChatComponent,
   ThumbnailViewComponent,
   GridViewComponent,
-  SpeakerViewComponent
+  SpeakerViewComponent,
 ];

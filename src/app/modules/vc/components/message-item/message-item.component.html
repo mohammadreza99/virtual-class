@@ -1,16 +1,20 @@
 <div class="message {{position}}">
   <div class="message-bubble">
     <div class="message-info">
-      <div class="message-info-name font-medium">{{message.sender}}</div>
-      <div class="message-info-time">{{message.time}}</div>
+      <div class="message-info-name font-medium">{{sender.first_name + ' ' + sender.last_name}}</div>
+      <div class="message-info-time">{{ message.datetime | date:'hh:mm' }}</div>
     </div>
-    <div class="reply-container">
-      <small class="sender font-medium">محمد رضا</small>
-      <small class="text font-light">سلام همگی</small>
+    <div class="reply-container" *ngIf="replyMessage">
+      <small class="sender font-medium">{{replyMessage.user.first_name + ' ' + sender.last_name}}</small>
+      <small class="text font-light">{{replyMessage.message.message}}</small>
     </div>
     <div class="message-text">
-      {{message.text}}
+      {{message.message}}
     </div>
   </div>
-  <div class="message-img"></div>
+  <div class="reply">
+    <div class="message-img"
+         [style.backgroundColor]="getColor()">{{sender.first_name[0] + '.' + sender.last_name[0]}}</div>
+    <ng-button (onClick)="reply.emit()" class="mt-2" [rounded]="true" icon="icon-forward"></ng-button>
+  </div>
 </div>

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import {NgPosition} from '@ng/models/offset';
 import {SessionService} from '@core/http';
 
@@ -13,12 +13,15 @@ export class MessageItemComponent implements OnInit {
   }
 
   @Input() position: NgPosition = 'left';
-  @Input() message: { sender: string, time: string, text: string };
+  @Input() message: any;
+  @Input() sender: any;
+  @Input() replyMessage: any;
+  @Output() reply = new EventEmitter();
 
   ngOnInit(): void {
   }
 
   getColor() {
-    return this.sessionService.getProfileColor(+this.message.sender);
+    return this.sessionService.getProfileColor(+this.sender.id);
   }
 }

@@ -89,7 +89,7 @@
 
 <p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
            [(visible)]="chatSidebarVisible">
-  <ng-chat (closeSidebar)="closeChatSidebar()"></ng-chat>
+  <ng-chat [openPublicChat]="currentRoom.public_messages" (closeSidebar)="closeChatSidebar()"></ng-chat>
   <!--  <div class="sidebar-header py-4">-->
   <!--    <div class="header-title">-->
   <!--      <i class="icon-chat mx-2"></i>-->

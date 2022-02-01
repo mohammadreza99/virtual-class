@@ -51,7 +51,7 @@ export class PeerConnection {
     }
   }
 
-  async createPublishConnection(mediaType): Promise<void> {
+  async createPublishConnection(mediaType: 'audio' | 'video'): Promise<void> {
     const offerOptions: RTCOfferOptions = {offerToReceiveAudio: true, offerToReceiveVideo: true};
     if (mediaType == 'audio') {
       this.options.stream.getVideoTracks().forEach(t => {

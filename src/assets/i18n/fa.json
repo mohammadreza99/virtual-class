@@ -187,6 +187,7 @@
   "editProfile": "ویرایش حساب کاربری",
   "webcamNotFound": "وبکم یافت نشد",
   "micNotFound": "میکروفن یافت نشد",
+  "speakerNotFound": "اسپیکر یافت نشد",
   "pleaseAllowWebcam": "لطفا دسترسی دوربین را باز کنید",
   "pleaseAllowMic": "لطفا دسترسی میکروفن را باز کنید",
   "roomInfo": "اطلاعات کلاس",
@@ -197,9 +198,14 @@
   "wrongCredential": "اطلاعات نادرست است",
   "roomHasBeenClosed": "کلاس به اتمام رسیده است",
   "yourKicked": "شما از کلاس اخراج شدید",
-  "yourTemporaryKicked": "شما موقتا از کلاس اخراج شده اید. لطفا {{value}} دقیقه دیگر وارد شوید",
+  "yourTemporaryKicked": "شما موقتا از کلاس اخراج شده اید. لطفا {{value}} دیگر وارد شوید",
   "userLeftTheRoom": "{{value}} کلاس را ترک کرد",
-  "teacherIsNotInRoom": "معلم هنوز وارد نشده است",
-  "teacherIsInRoom": "معلم در کلاس حضور دارد",
-  "requestNotPossible": "درخواست ممکن نیست"
+  "roomIsNotStarted": "کلاس هنوز شروع نشده است",
+  "roomIsInHold": "کلاس در حال برگزاری است",
+  "requestNotPossible": "درخواست ممکن نیست",
+  "saveChat": "ذخیره چت",
+  "closePublicChat": "بستن چت عمومی",
+  "openPublicChat": "بازکردن چت عمومی",
+  "closePrivateChat": "بستن چت خصوصی",
+  "openPrivateChat": "بازکردن چت خصوصی"
 }

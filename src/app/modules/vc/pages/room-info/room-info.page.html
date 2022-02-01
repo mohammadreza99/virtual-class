@@ -2,66 +2,77 @@
   <div class="row h-100 align-items-center justify-content-center">
     <div class="col-sm-8 col-md-7 col-lg-5 my-5">
       <div class="wrapper shadow border rounded p-3">
+        <ng-button appearance="text" size="sm" [label]="'goBack' | translate" color="secondary" (click)="goBack()"
+                   class="d-block mr-auto mb-3"
+                   icon="pi pi-angle-left"></ng-button>
         <div class="video-wrapper bg-dark mb-3">
           <i class="display-4 pi pi-user"></i>
           <video #webcamPreview playsinline autoplay muted></video>
           <video #micPreview playsinline autoplay muted></video>
+          <meter [hidden]="micTestMessage" #meter high="0.25" max="1" value="0"></meter>
         </div>
         <div class="room-info" [hidden]="showTestArea">
           <div class="mb-5 h5">
             <span>{{'room.roomName' | translate}} : </span>
             <span class="font-regular"> {{room?.name}} </span>
           </div>
-          <div class="mb-5 h5">
-            <span>{{'room.teacherName' | translate}} : </span>
-            <span class="font-regular"> {{room?.admin_user_id}} </span>
-          </div>
+          <!--          <div class="mb-5 h5">-->
+          <!--            <span>{{'room.teacherName' | translate}} : </span>-->
+          <!--            <span class="font-regular"> {{room?.admin_user_id}} </span>-->
+          <!--          </div>-->
           <div class="d-flex flex-column align-items-center mb-5">
             <ng-button (click)="toggleTestArea()" size="md" class="mb-4" color="secondary" appearance="link"
                        [label]="'room.testAudioAndVideo' | translate"></ng-button>
             <ng-button (click)="enterRoom()" size="lg" [label]="'room.enterRoom' | translate"></ng-button>
           </div>
-          <p-messages [closable]="false" [(value)]="roomStatusMessage" [enableService]="false"></p-messages>
+          <p-messages [class.rtl]="fa" [closable]="false" [(value)]="roomStatusMessage"
+                      [enableService]="false"></p-messages>
         </div>
         <div class="media-test" [hidden]="!showTestArea">
           <div class="test-item p-3 d-flex align-items-center justify-content-between">
-            <div class="label d-flex align-items-center mb-2">
+            <div class="label d-flex align-items-center">
               <i class="ml-2 icon-camera"></i>
               <span>{{'room.webcam' | translate}}</span>
             </div>
-            <ng-dropdown (onChange)="onChangeVideoInput($event)"
+            <ng-dropdown class="mt-2 d-block" *ngIf="!webcamTestMessage" (onChange)="onChangeVideoInput($event)"
                          [value]="selectedVideoInput"
                          inputSize="sm"
                          [options]="videoInputDevices"></ng-dropdown>
+            <p *ngIf="webcamTestMessage">{{webcamTestMessage | translate}}</p>
           </div>
           <div class="test-item p-3">
-            <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="d-flex align-items-center justify-content-between">
               <div class="label d-flex align-items-center">
                 <i class="ml-2 icon-mic"></i>
                 <span>{{'room.mic' | translate}}</span>
               </div>
-              <meter #meter high="0.25" max="1" value="0"></meter>
+              <meter [hidden]="micTestMessage" #meter high="0.25" max="1" value="0"></meter>
+              <p *ngIf="micTestMessage">{{micTestMessage | translate}}</p>
             </div>
-            <ng-dropdown (onChange)="onChangeAudioInput($event)" inputSize="sm"
+            <ng-dropdown class="mt-2 d-block" *ngIf="!micTestMessage" (onChange)="onChangeAudioInput($event)"
+                         inputSize="sm"
                          [value]="selectedAudioInput"
                          [options]="audioInputDevices"></ng-dropdown>
           </div>
           <div class="test-item p-3">
-            <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="d-flex align-items-center justify-content-between">
               <div class="label d-flex align-items-center">
                 <i class="ml-2 icon-speaker"></i>
                 <span>{{'room.speaker' | translate}}</span>
               </div>
-              <ng-button (onClick)="playAudio()" appearance="text"
+              <p *ngIf="speakerTestMessage">{{speakerTestMessage | translate}}</p>
+              <ng-button *ngIf="!speakerTestMessage" (onClick)="playAudio()" appearance="text"
                          [disabled]="!speakerTestAudioElem.paused"
                          [icon]="!speakerTestAudioElem.paused ? 'icon-pause': 'icon-play'"></ng-button>
             </div>
-            <ng-dropdown [disabled]="sinkIsNotSupported()" (onChange)="onChangeAudioOutput($event)" inputSize="sm"
+            <ng-dropdown *ngIf="!speakerTestMessage" class="mt-2 d-block" [disabled]="sinkIsNotSupported()"
+                         (onChange)="onChangeAudioOutput($event)"
+                         inputSize="sm"
                          [value]="selectedAudioOutput"
                          [options]="audioOutputDevices"></ng-dropdown>
           </div>
-          <ng-button (click)="toggleTestArea()" class="d-block text-center" appearance="outlined"
-                     [label]="'goBack' | translate"></ng-button>
+          <ng-button (onClick)="toggleTestArea()" class="d-block text-center" appearance="outlined"
+                     [label]="'verify' | translate"></ng-button>
         </div>
       </div>
     </div>

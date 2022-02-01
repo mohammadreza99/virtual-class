@@ -1,7 +1,7 @@
 import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {RoomService, SessionService} from '@core/http';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Room} from '@core/models';
+import {Room, RoomUser} from '@core/models';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {NgMessage} from '@ng/models/overlay';
 import {UtilsService} from '@ng/services';
@@ -26,12 +26,14 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
   @ViewChild('meter', {static: true}) volumeMeterElem: ElementRef;
 
   room: Room;
+  user: RoomUser;
   videoStream: MediaStream;
   audioStream: MediaStream;
   limitMode: boolean = false;
   roomStatusMessage: NgMessage[];
   webcamTestMessage: string;
   micTestMessage: string;
+  speakerTestMessage: string;
   audioInputDevices: NgDropdownItem[];
   audioOutputDevices: NgDropdownItem[];
   videoInputDevices: NgDropdownItem[];
@@ -52,7 +54,8 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
       const roomId = +this.route.snapshot.paramMap.get('roomId');
       const result = await this.roomService.getRoomById(roomId).toPromise();
       if (result.status == 'OK') {
-        this.room = result.data;
+        this.room = result.data.room;
+        this.user = result.data.member;
       }
       const token = this.route.snapshot.queryParamMap.get('t');
       if (token) {
@@ -63,9 +66,6 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
       await this.loadDevices();
       await this.startAudioStream();
       await this.startVideoStream();
-      this.selectedVideoInput = this.videoInputDevices[0].value;
-      this.selectedAudioInput = this.audioInputDevices[0].value;
-      this.selectedAudioOutput = this.audioOutputDevices[0].value;
       await this.checkEnterRoomStatus();
     } catch (error) {
       console.error(error);
@@ -74,16 +74,6 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
 
   toggleTestArea() {
     this.showTestArea = !this.showTestArea;
-  }
-
-  async enterRoom() {
-    const result = await this.checkEnterRoomStatus();
-    if (result) {
-      this.stopVideo();
-      this.stopAudio();
-      localStorage.setItem('roomEnterTime', Date.now().toString());
-      this.router.navigate(['/vc', this.room.id]);
-    }
   }
 
   async attachSinkId(element: any, sinkId: string) {
@@ -153,7 +143,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
       }
     } catch (error) {
       if (error.name == 'NotAllowedError') {
-        this.webcamTestMessage = 'pleaseAllowMic';
+        this.webcamTestMessage = 'pleaseAllowWebcam';
       } else {
         this.webcamTestMessage = 'webcamNotFound';
       }
@@ -168,14 +158,26 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
       label: d.label || `Webcam - ${i + 1}`,
       value: d.deviceId
     }));
+    if (this.videoInputDevices.length == 0) {
+      this.webcamTestMessage = 'webcamNotFound';
+    }
     this.audioInputDevices = devices.filter(d => d.kind == 'audioinput').map((d, i) => ({
       label: d.label || `Microphone - ${i + 1}`,
       value: d.deviceId
     }));
+    if (this.audioInputDevices.length == 0) {
+      this.micTestMessage = 'micNotFound';
+    }
     this.audioOutputDevices = devices.filter(d => d.kind == 'audiooutput').map((d, i) => ({
-      label: d.label || `Webcam - ${i + 1}`,
+      label: d.label || `Speaker - ${i + 1}`,
       value: d.deviceId
     }));
+    if (this.audioOutputDevices.length == 0) {
+      this.speakerTestMessage = 'speakerNotFound';
+    }
+    this.selectedVideoInput = this.videoInputDevices[0]?.value;
+    this.selectedAudioInput = this.audioInputDevices[0]?.value;
+    this.selectedAudioOutput = this.audioOutputDevices[0]?.value;
   }
 
   stopVideo() {
@@ -229,23 +231,28 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     if (!this.room) {
       return false;
     }
+    if (this.user.role == 'Admin') {
+      return true;
+    }
     const result = await this.sessionService.userEnterStatus(this.room.id).toPromise();
     if (result.status != 'OK') {
       return false;
     }
     switch (result.data.enter_status) {
       case'Enter':
-        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.teacherIsInRoom}];
+        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsInHold}];
         return true;
       case'RoomNotStarted':
-        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.teacherIsNotInRoom}];
+        this.utilsService.showDialog({message: this.translations.roomIsNotStarted});
         return false;
       case'Kicked':
-        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.yourKicked}];
+        this.utilsService.showDialog({message: this.translations.yourKicked});
+        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsInHold}];
         return false;
       case'TemporaryKicked':
-        const message = this.translationService.instant('yourTemporaryKicked', {value: result.data.kick_time}) as string;
-        this.roomStatusMessage = [{severity: 'warn', detail: message}];
+        const message = this.translationService.instant('yourTemporaryKicked', {value: this.utilsService.convertToTimeFormat(result.data.kick_time)}) as string;
+        this.utilsService.showDialog({message});
+        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsInHold}];
         return false;
       default:
         return false;
@@ -262,4 +269,21 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
   //     detail: this.translations[message]
   //   });
   // }
+
+  async enterRoom() {
+    const result = await this.checkEnterRoomStatus();
+    if (!result) {
+      return;
+    }
+    this.stopVideo();
+    this.stopAudio();
+    localStorage.setItem('roomEnterTime', Date.now().toString());
+    this.router.navigate(['/vc', this.room.id]);
+  }
+
+  goBack() {
+    this.stopAudio();
+    this.stopVideo();
+    this.router.navigateByUrl('/rooms/list');
+  }
 }
