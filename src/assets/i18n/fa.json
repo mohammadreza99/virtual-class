@@ -198,7 +198,7 @@
   "wrongCredential": "اطلاعات نادرست است",
   "roomHasBeenClosed": "کلاس به اتمام رسیده است",
   "yourKicked": "شما از کلاس اخراج شدید",
-  "yourTemporaryKicked": "شما موقتا از کلاس اخراج شده اید. لطفا {{value}} دیگر وارد شوید",
+  "yourTemporaryKicked": "شما موقتا از کلاس اخراج شده اید. لطفا {{value}} دقیقه دیگر وارد شوید",
   "userLeftTheRoom": "{{value}} کلاس را ترک کرد",
   "roomIsNotStarted": "کلاس هنوز شروع نشده است",
   "roomIsInHold": "کلاس در حال برگزاری است",

@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {RoomService, SessionService} from '@core/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Room, RoomUser} from '@core/models';
@@ -258,7 +258,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
         this.utilsService.showDialog({message: this.translations.yourKicked});
         return;
       case 'TemporaryKicked':
-        const message = this.translationService.instant(this.translations.yourTemporaryKicked, {value: this.utilsService.convertToTimeFormat(result.data.kick_time)}) as string;
+        const message = this.translationService.instant(this.translations.yourTemporaryKicked, {value: (result.data.kick_time / 60)}) as string;
         this.utilsService.showDialog({message});
         return;
     }
