@@ -30,7 +30,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
   videoStream: MediaStream;
   audioStream: MediaStream;
   limitMode: boolean = false;
-  roomStatusMessage: NgMessage[];
+  roomStatusMessage: NgMessage[] = [];
   webcamTestMessage: string;
   micTestMessage: string;
   speakerTestMessage: string;
@@ -68,9 +68,6 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
       await this.startAudioStream();
       await this.startVideoStream();
       await this.checkEnterRoomStatus();
-      // this.checkEnterRoomStatusInterval = setInterval(async () => {
-      //   await this.checkEnterRoomStatus();
-      // }, 10000);
     } catch (error) {
       console.error(error);
     }
@@ -222,52 +219,48 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
   }
 
   async checkEnterRoomStatus() {
+    const checkEnterRoomStatus = await this.getEnterRoomStatus();
+    switch (checkEnterRoomStatus) {
+      case 'RoomNotStarted':
+        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomEnterStatus_RoomNotStarted}];
+        break;
+      default:
+        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomEnterStatus_Enter}];
+        break;
+    }
+    this.checkEnterRoomStatusInterval = setInterval(async () => {
+      await this.checkEnterRoomStatus();
+    }, 10000);
+  }
+
+  async getEnterRoomStatus() {
     if (!this.room) {
-      return false;
+      return;
     }
     if (this.user.role == 'Admin') {
-      return true;
+      return;
     }
     const result = await this.sessionService.userEnterStatus(this.room.id).toPromise();
     if (result.status != 'OK') {
-      return false;
+      return;
     }
-    switch (result.data.enter_status) {
-      case'Enter':
-        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsInHold}];
-        return true;
-      case'RoomNotStarted':
-        this.utilsService.showDialog({message: this.translations.roomIsNotStarted});
-        return false;
-      case'Kicked':
-        this.utilsService.showDialog({message: this.translations.yourKicked});
-        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsInHold}];
-        return false;
-      case'TemporaryKicked':
-        const message = this.translationService.instant('yourTemporaryKicked', {value: this.utilsService.convertToTimeFormat(result.data.kick_time)}) as string;
-        this.utilsService.showDialog({message});
-        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsInHold}];
-        return false;
-      default:
-        return false;
-    }
+    return result.data.enter_status;
   }
 
   sinkIsNotSupported() {
     return !('sinkId' in HTMLMediaElement.prototype);
   }
 
-  // openToast(message: string) {
-  //   this.utilsService.showToast({
-  //     severity: 'warn',
-  //     detail: this.translations[message]
-  //   });
-  // }
-
   async enterRoom() {
-    const result = await this.checkEnterRoomStatus();
-    if (!result) {
-      return;
+    const result = await this.getEnterRoomStatus();
+    switch (result) {
+      case 'Kicked':
+        this.utilsService.showDialog({message: this.translations[`roomEnterStatus_${result}`]});
+        return;
+      case 'TemporaryKicked':
+        const message = this.translationService.instant(this.translations[`roomEnterStatus_${result}`], {value: this.utilsService.convertToTimeFormat(result.data.kick_time)}) as string;
+        this.utilsService.showDialog({message});
+        return;
     }
     this.stopVideo();
     this.stopAudio();
