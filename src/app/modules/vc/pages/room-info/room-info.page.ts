@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {RoomService, SessionService} from '@core/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Room, RoomUser} from '@core/models';
@@ -23,7 +23,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
 
   @ViewChild('webcamPreview', {static: true}) webcamVideoElem: ElementRef;
   @ViewChild('micPreview', {static: true}) micVideoElem: ElementRef;
-  @ViewChild('meter', {static: true}) volumeMeterElem: ElementRef;
+  @ViewChildren('meter') volumeMeterElem: QueryList<ElementRef>;
 
   room: Room;
   user: RoomUser;
@@ -112,21 +112,11 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
       return;
     }
     this.micVideoElem.nativeElement.srcObject = this.audioStream;
-    const audioContext = new AudioContext();
-    const streamSource = audioContext.createMediaStreamSource(this.audioStream);
-    const analyser = audioContext.createAnalyser();
-    streamSource.connect(analyser);
-    const pcmData = new Float32Array(analyser.fftSize);
-    const onFrame = () => {
-      analyser.getFloatTimeDomainData(pcmData);
-      let sumSquares = 0.0;
-      for (const amplitude of pcmData) {
-        sumSquares += amplitude * amplitude;
-      }
-      this.volumeMeterElem.nativeElement.value = Math.sqrt(sumSquares / pcmData.length);
-      window.requestAnimationFrame(onFrame);
-    };
-    window.requestAnimationFrame(onFrame);
+    this.sessionService.checkIsTalking(this.audioStream, (value: number) => {
+      this.volumeMeterElem.toArray().forEach(el => {
+        el.nativeElement.value = value / 100;
+      });
+    });
   }
 
   async startVideoStream() {

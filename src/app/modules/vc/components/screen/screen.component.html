@@ -1,4 +1,5 @@
-<div class="screen-wrapper" [style.backgroundColor]="hasVideo() ? '#1f1f1f' :  getColor()">
+<div class="screen-wrapper" [style.backgroundColor]="hasVideo() ? '#1f1f1f' :  getColor()"
+     [class.is-talking]="isTalking">
   <video preload="none" #videoElem autoplay muted playsinline [hidden]="!hasVideo()"></video>
   <ng-container *ngIf="user">
     <div class="avatar" *ngIf="!hasVideo()">

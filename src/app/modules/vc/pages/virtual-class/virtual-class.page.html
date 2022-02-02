@@ -16,41 +16,8 @@
 
   <div class="content">
     <ng-speaker-view [hidden]="currentViewMode != 'speaker'"></ng-speaker-view>
-    <!--    <div class="speaker-view" [hidden]="currentViewMode != 'speaker'">-->
-    <!--      <ng-screen position="mainPosition"></ng-screen>-->
-    <!--      <ng-screen position="mainThumbPosition"></ng-screen>-->
-    <!--      <div class="no-stream h-100">-->
-    <!--        <ng-main-placeholder></ng-main-placeholder>-->
-    <!--      </div>-->
-    <!--    </div>-->
-
     <ng-grid-view [users]="roomUsers" [allUsers]="allUsers" [hidden]="currentViewMode != 'grid'"></ng-grid-view>
-    <!--    <div class="grid-view" [hidden]="currentViewMode != 'grid'" [ngClass]="getColumnTemplate()"-->
-    <!--         [attr.user-count]="allUsers.length">-->
-    <!--      <ng-screen position="mainPosition"></ng-screen>-->
-    <!--      <ng-screen position="mainThumbPosition"></ng-screen>-->
-    <!--      <ng-screen position="sideThumbPosition"-->
-    <!--                 *ngFor="let u of roomUsers;trackBy:trackByFn" [user]="u">-->
-    <!--      </ng-screen>-->
-    <!--    </div>-->
-
     <ng-thumbnail-view [users]="roomUsers" [hidden]="currentViewMode != 'thumbnail'"></ng-thumbnail-view>
-    <!--    <div class="thumbnail-view" [hidden]="currentViewMode != 'thumbnail'">-->
-    <!--      <div class="d-flex flex-column-reverse flex-xl-row h-100">-->
-    <!--        <div class="participants">-->
-    <!--          <ng-screen position="sideThumbPosition"-->
-    <!--                     *ngFor="let u of roomUsers;trackBy:trackByFn" [user]="u">-->
-    <!--          </ng-screen>-->
-    <!--        </div>-->
-    <!--        <div class="main-area flex-grow-1">-->
-    <!--          <ng-screen position="mainPosition"></ng-screen>-->
-    <!--          <ng-screen position="mainThumbPosition"></ng-screen>-->
-    <!--          <div class="no-stream h-100">-->
-    <!--            <ng-main-placeholder></ng-main-placeholder>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </div>-->
   </div>
 
   <div class="footer d-flex align-items-center justify-content-between fixed-bottom">
@@ -90,122 +57,10 @@
 <p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
            [(visible)]="chatSidebarVisible">
   <ng-chat [openPublicChat]="currentRoom.public_messages" (closeSidebar)="closeChatSidebar()"></ng-chat>
-  <!--  <div class="sidebar-header py-4">-->
-  <!--    <div class="header-title">-->
-  <!--      <i class="icon-chat mx-2"></i>-->
-  <!--      <div>{{'room.messages' | translate }}</div>-->
-  <!--    </div>-->
-  <!--    <div class="d-flex align-items-center">-->
-  <!--      <i class="pi pi-bars mx-2"></i>-->
-  <!--      <i class="icon-close mx-2" (click)="closeChatSidebar()"></i>-->
-  <!--    </div>-->
-  <!--  </div>-->
-  <!--  &lt;!&ndash;  <p-tabView>&ndash;&gt;-->
-  <!--  &lt;!&ndash;    <p-tabPanel header="چت خصوصی" leftIcon="icon-user-groups">&ndash;&gt;-->
-
-  <!--  &lt;!&ndash;    </p-tabPanel>&ndash;&gt;-->
-  <!--  &lt;!&ndash;    <p-tabPanel header="چت عمومی" leftIcon="icon-user-groups">&ndash;&gt;-->
-  <!--  <section class="chat">-->
-  <!--    <main class="chat-messages" #chatContainer>-->
-  <!--      <ng-message-item position="left"-->
-  <!--                       [message]="{-->
-  <!--                           text:'درود بر تو',-->
-  <!--                           sender:'سجاد',-->
-  <!--                           time:'12:46'-->
-  <!--                           }">-->
-  <!--      </ng-message-item>-->
-
-  <!--      <ng-message-item position="right"-->
-  <!--                       [message]="{-->
-  <!--                           text:'یک پیام تستی دیگر و همچنین این پیام نسبتا طولانی تر است و ممکن است فضای بیشتری را اشغال کند',-->
-  <!--                           sender:'سجاد',-->
-  <!--                           time:'12:46'-->
-  <!--                           }">-->
-  <!--      </ng-message-item>-->
-  <!--      <ng-container #chatItemContainer></ng-container>-->
-  <!--    </main>-->
-
-  <!--    <div class="chat-footer">-->
-  <!--      <div class="reply-container d-flex align-items-center justify-content-between py-2 mx-2 rounded">-->
-  <!--        <div class="message-info">-->
-  <!--          <small class="d-block font-medium">محمد رضا</small>-->
-  <!--          <small class="d-block font-light">سلام همگی</small>-->
-  <!--        </div>-->
-  <!--        <i class="pi pi-times"></i>-->
-  <!--      </div>-->
-  <!--      <div class="chat-inputarea">-->
-  <!--        <ng-input-text [rtl]="fa" (keyup.enter)="sendMessage(chatContainer)" inputSize="md" class="ml-2 flex-grow-1"-->
-  <!--                       [(ngModel)]="chatText"></ng-input-text>-->
-  <!--        <ng-button icon="pi pi-chevron-left" (click)="sendMessage(chatContainer)"></ng-button>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </section>-->
-  <!--  &lt;!&ndash;    </p-tabPanel>&ndash;&gt;-->
-  <!--  &lt;!&ndash;  </p-tabView>&ndash;&gt;-->
 </p-sidebar>
 
 <p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
            [(visible)]="membersSidebarVisible">
-  <!--  <div class="sidebar-header py-4">-->
-  <!--    <div class="header-title">-->
-  <!--      <i class="icon-participant mx-2"></i>-->
-  <!--      <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>-->
-  <!--    </div>-->
-  <!--    <div class="actions">-->
-  <!--      <i class="icon-close mx-2" (click)="closeMembersSidebar()"></i>-->
-  <!--    </div>-->
-  <!--  </div>-->
-  <!--  <div class="sidebar-actions py-4 px-3" *ngPermission="'Admin'">-->
-  <!--    <div class="item mb-3">-->
-  <!--      <div class="label">-->
-  <!--        <i class="icon-mic"></i>-->
-  <!--        <span class="mx-2">{{'room.everyOnesVoice' | translate}}</span>-->
-  <!--      </div>-->
-  <!--      <div class="checkbox">-->
-  <!--        <span class="mx-2">{{(allMuted ? 'room.off' : 'room.on') | translate}}</span>-->
-  <!--        <ng-switch (onChange)="toggleMuteAll($event)"></ng-switch>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--    <div class="item">-->
-  <!--      <div class="label">-->
-  <!--        <i class="icon-camera"></i>-->
-  <!--        <span class="mx-2">{{'room.everyOnesVideo' | translate}}</span>-->
-  <!--      </div>-->
-  <!--      <div class="checkbox">-->
-  <!--        <span class="mx-2">{{(allMutedVideo ? 'room.off' : 'room.on') | translate}}</span>-->
-  <!--        <ng-switch [value]="true" (onChange)="toggleMuteVideoAll($event)"></ng-switch>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </div>-->
-  <!--  <div class="search-box px-3 p-4">-->
-  <!--    <ng-input-text inputSize="md" [rtl]="fa" icon="icon-search" [(ngModel)]="searchText"-->
-  <!--                   [iconPos]="fa ? 'left' : 'right'"-->
-  <!--                   [placeholder]="'room.searchParticipants' | translate">-->
-  <!--    </ng-input-text>-->
-  <!--  </div>-->
-  <!--  <div class="participants-list">-->
-  <!--    <p-accordion [class.rtl]="fa" [multiple]="true">-->
-  <!--      <p-accordionTab [selected]="true">-->
-  <!--        <ng-template pTemplate="header">-->
-  <!--          <span class="raise-hand-info">-->
-  <!--            <span>{{'room.tribuneRequest' | translate}}</span>-->
-  <!--            <span class="raise-hand-count mx-2" *ngIf="raisedHandsUsers.length != 0">{{raisedHandsUsers.length}}</span>-->
-  <!--          </span>-->
-  <!--        </ng-template>-->
-  <!--        <ng-user-item [user]="user" *ngFor="let user of raisedHandsUsers"-->
-  <!--                      [raiseHand]="true">-->
-  <!--        </ng-user-item>-->
-  <!--        <ng-empty *ngIf="raisedHandsUsers.length == 0" [message]="'nothingFound' | translate"></ng-empty>-->
-  <!--      </p-accordionTab>-->
-  <!--      <p-accordionTab [header]="'room.participants' | translate" [selected]="true">-->
-  <!--        <ng-user-item [user]="user"-->
-  <!--                      *ngFor="let user of allUsers | ngFilter:'first_name,last_name':searchText">-->
-  <!--        </ng-user-item>-->
-  <!--        <ng-empty *ngIf="(allUsers | ngFilter:'first_name,last_name':searchText).length == 0"-->
-  <!--                  [message]="'nothingFound' | translate"></ng-empty>-->
-  <!--      </p-accordionTab>-->
-  <!--    </p-accordion>-->
-  <!--  </div>-->
   <ng-participants [allUsers]="allUsers" [raisedHandsUsers]="raisedHandsUsers"
                    (closeSidebar)="closeMembersSidebar()">
   </ng-participants>

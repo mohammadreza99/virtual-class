@@ -15,7 +15,9 @@ export class ScreenComponent implements OnInit {
   @ViewChild('videoElem', {static: true}) videoElem: ElementRef<HTMLMediaElement>;
 
   streamActivated: boolean = false;
+  isTalking: boolean = false;
   stream: MediaStream;
+  isTalkingUpdateTimer: any;
 
   constructor(
     private sessionService: SessionService,
@@ -58,6 +60,15 @@ export class ScreenComponent implements OnInit {
             this.user.raise_hand = res.data.value;
           }
           break;
+        case 'isTalking':
+          if (this.isTalkingUpdateTimer != null) {
+            return;
+          }
+          this.isTalking = res.data.value;
+          this.isTalkingUpdateTimer = setTimeout(() => {
+            this.isTalkingUpdateTimer = null;
+          }, this.sessionService.isTalkingCheckDelay);
+          break;
       }
     });
   }
@@ -75,7 +86,6 @@ export class ScreenComponent implements OnInit {
     video.onloadedmetadata = (e) => {
       video.play();
     };
-    // return video.play();
   }
 
 

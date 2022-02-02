@@ -2,11 +2,12 @@ import {Injectable} from '@angular/core';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {ApiService} from '@core/http/api.service';
 import {Subject, Subscription} from 'rxjs';
+import {SocketEventTypes} from '@core/models';
 
 @Injectable({providedIn: 'root'})
 export class SocketService extends ApiService {
   private webSocket: WebSocketSubject<any>;
-  private socketChannel = new Subject<any>();
+  private socketChannel = new Subject<{ event: SocketEventTypes, [key: string]: any }>();
   private subscription: Subscription;
   private roomId: number;
   private token: string;

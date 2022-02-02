@@ -22,6 +22,7 @@
   position: relative;
   padding-bottom: 56.25%;
   border-radius: 4px;
+  transition: all .4s;
 
   .user-fullname {
     position: absolute;
@@ -76,5 +77,9 @@
     small {
       color: #ffffff;
     }
+  }
+
+  &.is-talking {
+    border: 5px solid #fec144 !important;
   }
 }

@@ -40,6 +40,8 @@ export class SessionService extends ApiService {
   private socketSubscription: Subscription;
   private _currentUser: any;
   private _currentRoom: any;
+  private talkingTimer: any;
+  isTalkingCheckDelay: number = 3000;
 
   constructor(private utilsService: UtilsService,
               private router: Router,
@@ -56,6 +58,7 @@ export class SessionService extends ApiService {
     await this.checkConnectedDevices();
     await this.updateRoomUsers();
     await this.updateRoomPublishers();
+    await this.updateRoomPublicMessages();
     this.initSockets();
   }
 
@@ -79,7 +82,7 @@ export class SessionService extends ApiService {
           const newSession = await this.newSession().toPromise();
           this.currentUser.session = newSession.data.session;
         } else {
-          this.router.navigateByUrl('/');
+          await this.router.navigate(['/vc/room-info', roomId]);
         }
       }
     } catch (error) {
@@ -217,6 +220,20 @@ export class SessionService extends ApiService {
       this.myWebcam.close();
     }
     try {
+      this.checkIsTalking(stream, async (value) => {
+        console.log(value);
+        if (this.talkingTimer != null) {
+          return;
+        }
+        if (value > 10) {
+          await this.isTalking(true).toPromise();
+        } else {
+          await this.isTalking(false).toPromise();
+        }
+        this.talkingTimer = setTimeout(() => {
+          this.talkingTimer = null;
+        }, this.isTalkingCheckDelay);
+      });
       this.myWebcam = await this.createPublishConnection(options, mediaType);
       const videoTrack = this.myWebcam.stream.getVideoTracks();
       if (videoTrack.length) {
@@ -625,6 +642,21 @@ export class SessionService extends ApiService {
             });
           }
           break;
+
+        case 'isTalking':
+          this.updateViewService.setViewEvent({event: 'isTalking', data: res});
+          break;
+
+        case 'publicChatState':
+          this.updateViewService.setViewEvent({event: 'publicChatState', data: res});
+          break;
+
+        case 'newMessage':
+          this.updateViewService.setViewEvent({event: 'newPublicMessage', data: res});
+          break;
+
+        case 'deletedMessage':
+          break;
       }
     });
   }
@@ -635,6 +667,13 @@ export class SessionService extends ApiService {
 
   private isMainThumbPositionBusy() {
     return !!this.mainPositionUser || this.peerConnections.findIndex(c => c.position == 'mainThumbPosition') >= 0;
+  }
+
+  private async updateRoomPublicMessages() {
+    const result = await this.getPublicMessages().toPromise();
+    if (result.status == 'OK') {
+      this.updateViewService.setViewEvent({event: 'publicMessages', data: result.data.items.reverse()});
+    }
   }
 
   ///////////////////////////////////////////////////////////////////////////////
@@ -719,22 +758,28 @@ export class SessionService extends ApiService {
   ///////////////////////////////////////////////////////////////////////////////
   //                                   UTILS                                   //
   ///////////////////////////////////////////////////////////////////////////////
-  checkIsTalking(stream: MediaStream) {
+
+  checkIsTalking(stream: MediaStream, callback: (v: number) => any) {
     const audioContext = new AudioContext();
-    const streamSource = audioContext.createMediaStreamSource(stream);
     const analyser = audioContext.createAnalyser();
-    streamSource.connect(analyser);
-    const pcmData = new Float32Array(analyser.fftSize);
-    const onFrame = () => {
-      analyser.getFloatTimeDomainData(pcmData);
-      let sumSquares = 0.0;
-      for (const amplitude of pcmData) {
-        sumSquares += amplitude * amplitude;
+    const microphone = audioContext.createMediaStreamSource(stream);
+    const javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+    analyser.smoothingTimeConstant = 0.8;
+    analyser.fftSize = 1024;
+    microphone.connect(analyser);
+    analyser.connect(javascriptNode);
+    javascriptNode.connect(audioContext.destination);
+    javascriptNode.onaudioprocess = () => {
+      const array = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteFrequencyData(array);
+      let values = 0;
+      const length = array.length;
+      for (let i = 0; i < length; i++) {
+        values += (array[i]);
       }
-      window.requestAnimationFrame(onFrame);
-      return Math.sqrt(sumSquares / pcmData.length);
+      const average = values / length;
+      callback(average);
     };
-    window.requestAnimationFrame(onFrame);
   }
 
   async getMeOut(message?: any) {
@@ -756,8 +801,7 @@ export class SessionService extends ApiService {
     if (message) {
       await this.utilsService.showDialog({message});
     }
-    // await this.router.navigate(['/vc/room-info', this.currentRoom.id]);
-    window.location.reload();
+    document.location.reload();
   }
 
   getProfileColor(userId: number) {
@@ -999,7 +1043,7 @@ export class SessionService extends ApiService {
     });
   }
 
-  getPublicMessages(data: SearchParam | {} = {}) {
+  private getPublicMessages(data: SearchParam | {} = {}) {
     return this._post<any>('', {
       method: 'getPublicMessages',
       data: {room_id: this.currentRoom.id, ...data},

@@ -5,7 +5,7 @@
       <div>{{'room.messages' | translate }}</div>
     </div>
     <div class="d-flex align-items-center">
-      <i class="pi pi-bars mx-2" (click)="chatActions.toggle($event)"></i>
+      <i class="pi pi-bars mx-2" (click)="chatActions.toggle($event)" *ngPermission="'Admin'"></i>
       <i class="icon-close mx-2" (click)="closeSidebar.emit()"></i>
     </div>
   </div>
@@ -16,14 +16,14 @@
   <!--    <p-tabPanel header="چت عمومی" leftIcon="icon-user-groups">-->
   <section class="chat-wrapper">
     <main class="chat-messages" #chatContainer>
-      <ng-message-item *ngFor="let message of messages;trackBy:trackByFn"
+      <ng-message-item *ngFor="let message of publicMessages;trackBy:trackByFn"
                        [position]="message.user.id == currentUser.id ? 'right' : 'left'"
                        [message]="message.message"
                        [sender]="message.user"
                        [replyMessage]="getReplyMessageOf(message)"
                        (reply)="onReply(message)">
       </ng-message-item>
-      <ng-container #chatItemContainer></ng-container>
+      <!--      <ng-container #chatItemContainer></ng-container>-->
     </main>
     <div class="chat-footer">
       <div class="reply-container d-flex align-items-center justify-content-between py-2 mx-2 rounded"
@@ -36,11 +36,11 @@
         <i class="pi pi-times" (click)="cancelReply()"></i>
       </div>
       <div class="chat-inputarea">
-        <ng-input-text [disabled]="!openPublicChat" [rtl]="fa" (keyup.enter)="sendMessage(chatContainer)" inputSize="md"
+        <ng-input-text [disabled]="!openPublicChat" [rtl]="fa" (keyup.enter)="sendMessage()" inputSize="md"
                        class="ml-2 flex-grow-1"
                        [(ngModel)]="chatText"></ng-input-text>
         <ng-button-async [disabled]="!openPublicChat" icon="pi pi-chevron-left"
-                         (clickAsync)="sendMessage(chatContainer,$event)"></ng-button-async>
+                         (clickAsync)="sendMessage($event)"></ng-button-async>
       </div>
     </div>
   </section>

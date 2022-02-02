@@ -83,5 +83,9 @@ export enum SocketEventTypes {
   Unpublish = 'unpublish',
   NewUser = 'newUser',
   AssignAdmin = 'assignAdmin',
-  Connect = 'connect'
+  Connect = 'connect',
+  IsTalking = 'isTalking',
+  PublicChatState = 'publicChatState',
+  NewMessage = 'newMessage',
+  DeletedMessage = 'deletedMessage',
 }

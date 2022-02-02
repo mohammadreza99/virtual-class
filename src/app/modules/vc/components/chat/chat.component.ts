@@ -1,8 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewContainerRef} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewContainerRef} from '@angular/core';
 import {SessionService} from '@core/http';
 import {RoomUser} from '@core/models';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {OverlayPanel} from 'primeng/overlaypanel';
+import {UpdateViewService} from '@core/http/update-view.service';
 
 @Component({
   selector: 'ng-chat',
@@ -11,33 +12,49 @@ import {OverlayPanel} from 'primeng/overlaypanel';
 })
 export class ChatComponent extends LanguageChecker implements OnInit {
 
-  constructor(private sessionService: SessionService,) {
+  constructor(private sessionService: SessionService, private updateViewService: UpdateViewService) {
     super();
   }
 
   @Input() openPublicChat: boolean = true;
   @Input() openPrivateChat: boolean = true;
   @Output() closeSidebar = new EventEmitter();
-  @ViewChild('chatItemContainer', {static: true, read: ViewContainerRef}) chatContainer: ViewContainerRef;
+  @ViewChild('chatContainer', {static: true}) chatContainer: ElementRef;
+  // @ViewChild('chatItemContainer', {static: true, read: ViewContainerRef}) chatItemContainer: ViewContainerRef;
 
+  publicMessages: any[] = [];
   currentUser: RoomUser;
   chatText: string;
-  messages: any[];
   currentReplyMessage: any;
 
   ngOnInit(): void {
     this.loadData();
+    this.scrollDown();
   }
 
   async loadData() {
     this.currentUser = this.sessionService.currentUser;
-    const result = await this.sessionService.getPublicMessages().toPromise();
-    if (result.status == 'OK') {
-      this.messages = result.data.items.reverse();
-    }
+    this.updateViewService.getViewEvent().subscribe(res => {
+      switch (res.event) {
+        case 'publicMessages':
+          this.publicMessages = res.data;
+          break;
+
+        case 'newPublicMessage':
+          this.publicMessages.push({message: res.data.message, user: res.data.user});
+          break;
+
+        case 'deletedMessage':
+          break;
+
+        case 'publicChatState':
+          this.openPublicChat = res.data.value;
+          break;
+      }
+    });
   }
 
-  async sendMessage(container: HTMLElement, callback?: () => any) {
+  async sendMessage(callback?: () => any) {
     if (!this.chatText) {
       return;
     }
@@ -45,22 +62,20 @@ export class ChatComponent extends LanguageChecker implements OnInit {
     if (callback) {
       callback();
     }
-    if (result.status == 'OK') {
-      this.messages.push({message: result.data.message, user: this.sessionService.currentUser});
-      // const factory = this.resolver.resolveComponentFactory(MessageItemComponent);
-      // const cmpRef = this.chatContainer.createComponent(factory);
-      // cmpRef.instance.position = 'right';
-      // cmpRef.instance.message = result.data.message;
-      // cmpRef.instance.sender = this.sessionService.currentUser;
-      // if (this.currentReplyMessage?.id) {
-      //   cmpRef.instance.replyMessage = this.currentReplyMessage;
-      // }
-    }
+    // if (result.status == 'OK') {
+    // this.publicMessages.push({message: result.data.message, user: this.sessionService.currentUser});
+    // const factory = this.resolver.resolveComponentFactory(MessageItemComponent);
+    // const cmpRef = this.chatContainer.createComponent(factory);
+    // cmpRef.instance.position = 'right';
+    // cmpRef.instance.message = result.data.message;
+    // cmpRef.instance.sender = this.sessionService.currentUser;
+    // if (this.currentReplyMessage?.id) {
+    //   cmpRef.instance.replyMessage = this.currentReplyMessage;
+    // }
+    // }
     this.chatText = '';
     this.currentReplyMessage = null;
-    setTimeout(() => {
-      container.scrollTop = container.scrollHeight;
-    }, 0);
+    this.scrollDown();
   }
 
   onReply(message: any) {
@@ -73,7 +88,7 @@ export class ChatComponent extends LanguageChecker implements OnInit {
 
   getReplyMessageOf(message: any) {
     if (message.message.reply_to_message_id) {
-      return this.messages.find(m => m.message.id == message.message.reply_to_message_id);
+      return this.publicMessages.find(m => m.message.id == message.message.reply_to_message_id);
     }
   }
 
@@ -82,9 +97,9 @@ export class ChatComponent extends LanguageChecker implements OnInit {
 
   async togglePublicChatActivation(chatActions: OverlayPanel) {
     const result = await this.sessionService.changePublicChatState(!this.openPublicChat).toPromise();
-    if (result.status == 'OK') {
-      this.openPublicChat = !this.openPublicChat;
-    }
+    // if (result.status == 'OK') {
+    //   this.openPublicChat = !this.openPublicChat;
+    // }
     chatActions.hide();
   }
 
@@ -93,5 +108,14 @@ export class ChatComponent extends LanguageChecker implements OnInit {
 
   trackByFn(index: number, item: any): number {
     return item.id;
+  }
+
+  scrollDown() {
+    this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+    this.chatContainer.nativeElement.scroll({
+      top: this.chatContainer.nativeElement.scrollHeight,
+      left: 0,
+      behavior: 'smooth'
+    });
   }
 }

@@ -11,7 +11,7 @@ export class UpdateViewService {
   constructor() {
   }
 
-  setViewEvent(event: { event: string, data: { value: any, target?: number } }) {
+  setViewEvent(event: { event: string, data: any }) {
     this.updateViewSubject.next(event);
   }
 

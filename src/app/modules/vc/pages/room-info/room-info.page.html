@@ -7,9 +7,9 @@
                    icon="pi pi-angle-left"></ng-button>
         <div class="video-wrapper bg-dark mb-3">
           <i class="display-4 pi pi-user"></i>
-          <video #webcamPreview playsinline autoplay muted></video>
-          <video #micPreview playsinline autoplay muted></video>
-          <meter [hidden]="micTestMessage" #meter high="0.25" max="1" value="0"></meter>
+          <meter [hidden]="micTestMessage || showTestArea" #meter high="0.25" max="1" value="0"></meter>
+          <video class="webcam" #webcamPreview playsinline autoplay muted></video>
+          <video class="mic" #micPreview playsinline autoplay muted></video>
         </div>
         <div class="room-info" [hidden]="showTestArea">
           <div class="mb-5 h5">
