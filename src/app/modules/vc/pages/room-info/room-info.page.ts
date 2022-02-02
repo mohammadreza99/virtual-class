@@ -42,6 +42,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
   selectedAudioOutput: string;
   showTestArea: boolean = false;
   speakerTestAudioElem = new Audio();
+  checkEnterRoomStatusInterval: any;
 
   ngOnInit(): void {
     this.loadData();
@@ -67,6 +68,9 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
       await this.startAudioStream();
       await this.startVideoStream();
       await this.checkEnterRoomStatus();
+      // this.checkEnterRoomStatusInterval = setInterval(async () => {
+      //   await this.checkEnterRoomStatus();
+      // }, 10000);
     } catch (error) {
       console.error(error);
     }

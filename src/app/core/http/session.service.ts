@@ -508,7 +508,7 @@ export class SessionService extends ApiService {
           break;
 
         case 'closeRoom':
-          this.getMeOut(this.translationService.instant('roomHasBeenClosed'));
+          this.getMeOut();
           break;
 
         case 'kickUser':
@@ -521,7 +521,7 @@ export class SessionService extends ApiService {
             this.roomUsers.splice(userIndex, 1);
           }
           if (res.target == this.currentUser.id) {
-            this.getMeOut(this.translationService.instant('yourKicked'));
+            this.getMeOut();
           }
           this.raisedHandsChangeSubject.next(this.raisedHands);
           break;
