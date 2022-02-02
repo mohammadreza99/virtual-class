@@ -222,14 +222,14 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     const checkEnterRoomStatus = await this.getEnterRoomStatus();
     switch (checkEnterRoomStatus) {
       case 'RoomNotStarted':
-        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomEnterStatus_RoomNotStarted}];
+        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsNotStarted}];
         break;
       default:
-        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomEnterStatus_Enter}];
+        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsInHold}];
         break;
     }
-    this.checkEnterRoomStatusInterval = setInterval(async () => {
-      await this.checkEnterRoomStatus();
+    this.checkEnterRoomStatusInterval = setInterval(() => {
+      this.checkEnterRoomStatus();
     }, 10000);
   }
 
@@ -255,10 +255,10 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     const result = await this.getEnterRoomStatus();
     switch (result) {
       case 'Kicked':
-        this.utilsService.showDialog({message: this.translations[`roomEnterStatus_${result}`]});
+        this.utilsService.showDialog({message: this.translations.yourKicked});
         return;
       case 'TemporaryKicked':
-        const message = this.translationService.instant(this.translations[`roomEnterStatus_${result}`], {value: this.utilsService.convertToTimeFormat(result.data.kick_time)}) as string;
+        const message = this.translationService.instant(this.translations.yourTemporaryKicked, {value: this.utilsService.convertToTimeFormat(result.data.kick_time)}) as string;
         this.utilsService.showDialog({message});
         return;
     }

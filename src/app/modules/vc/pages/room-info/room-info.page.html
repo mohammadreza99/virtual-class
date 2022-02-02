@@ -25,7 +25,8 @@
                        [label]="'room.testAudioAndVideo' | translate"></ng-button>
             <ng-button (click)="enterRoom()" size="lg" [label]="'room.enterRoom' | translate"></ng-button>
           </div>
-          <p-messages [class.rtl]="fa" [closable]="false" [(value)]="roomStatusMessage"
+          <p-messages [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" [class.rtl]="fa"
+                      [closable]="false" [(value)]="roomStatusMessage"
                       [enableService]="false"></p-messages>
         </div>
         <div class="media-test" [hidden]="!showTestArea">
