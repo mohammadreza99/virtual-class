@@ -43,6 +43,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
   showTestArea: boolean = false;
   speakerTestAudioElem = new Audio();
   checkEnterRoomStatusInterval: any;
+  disableEnterButton: boolean = false;
 
   ngOnInit(): void {
     this.loadData();
@@ -65,9 +66,9 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
         this.limitMode = true;
       }
       await this.loadDevices();
+      await this.checkEnterRoomStatus();
       await this.startAudioStream();
       await this.startVideoStream();
-      await this.checkEnterRoomStatus();
     } catch (error) {
       console.error(error);
     }
@@ -220,13 +221,20 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
 
   async checkEnterRoomStatus() {
     const checkEnterRoomStatus = await this.getEnterRoomStatus();
-    switch (checkEnterRoomStatus) {
-      case 'RoomNotStarted':
-        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsNotStarted}];
-        break;
-      default:
-        this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsInHold}];
-        break;
+    if (checkEnterRoomStatus) {
+      switch (checkEnterRoomStatus.enter_status) {
+        case 'RoomNotStarted':
+          this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsNotStarted}];
+          this.disableEnterButton = true;
+          break;
+        default:
+          this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsInHold}];
+          this.disableEnterButton = false;
+          break;
+      }
+    }
+    if (this.checkEnterRoomStatusInterval) {
+      clearInterval(this.checkEnterRoomStatusInterval);
     }
     this.checkEnterRoomStatusInterval = setInterval(() => {
       this.checkEnterRoomStatus();
@@ -244,23 +252,29 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     if (result.status != 'OK') {
       return;
     }
-    return result.data.enter_status;
+    return result.data;
   }
 
   sinkIsNotSupported() {
     return !('sinkId' in HTMLMediaElement.prototype);
   }
 
-  async enterRoom() {
+  async enterRoom(callback: () => any) {
     const result = await this.getEnterRoomStatus();
-    switch (result) {
-      case 'Kicked':
-        this.utilsService.showDialog({message: this.translations.yourKicked});
-        return;
-      case 'TemporaryKicked':
-        const message = this.translationService.instant(this.translations.yourTemporaryKicked, {value: (result.data.kick_time / 60)}) as string;
-        this.utilsService.showDialog({message});
-        return;
+    callback();
+    if (result) {
+      switch (result.enter_status) {
+        case 'Kicked':
+          this.utilsService.showDialog({message: this.translations.yourKicked});
+          return;
+        case 'TemporaryKicked':
+          const kickTime = Math.round(+result.kick_time / 60);
+          const message = this.translationService.instant('yourTemporaryKicked', {value: kickTime}) as string;
+          this.utilsService.showDialog({message});
+          return;
+        case 'RoomNotStarted':
+          return;
+      }
     }
     this.stopVideo();
     this.stopAudio();

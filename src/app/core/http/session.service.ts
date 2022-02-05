@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
+import {Subscription} from 'rxjs';
 import {
   DeviceType,
   DisplayName,
@@ -7,9 +7,8 @@ import {
   PeerConnectionOptions,
   Publisher,
   PublishType,
-  RoomUser, SearchParam,
-  SocketEventTypes,
-  StreamActionEvent,
+  RoomUser,
+  SearchParam,
   TrackPosition
 } from '@core/models';
 import {ApiService, SocketService} from '@core/http';
@@ -19,29 +18,22 @@ import {Router} from '@angular/router';
 import {TranslationService} from '@core/utils';
 import {UpdateViewService} from '@core/http/update-view.service';
 import {NgMessageSeverities} from '@ng/models/overlay';
+import {GlobalConfig} from '../../global.config';
 
 @Injectable({providedIn: 'root'})
 export class SessionService extends ApiService {
 
-  private updateRoomPublishersDelay = 30000;
-  private updateRoomUsersDelay = 30000;
   private updateRoomPublishersTimer: any;
   private updateRoomUsersTimer: any;
+  private talkingTimer: any;
   private myConnection: { webcam: PeerConnection, screen: PeerConnection } = {webcam: null, screen: null};
   private peerConnections: PeerConnection[] = [];
-  private publishers: Publisher[] = [];
   private roomUsers: RoomUser[] = [];
   private raisedHands: RoomUser[] = [];
   private mainPositionUser: RoomUser;
-  private streamChangeSubject = new Subject<StreamActionEvent>();
-  private roomUsersChangeSubject = new BehaviorSubject<RoomUser[]>([]);
-  private roomParticipantsChangeSubject = new BehaviorSubject<RoomUser[]>([]);
-  private raisedHandsChangeSubject = new BehaviorSubject<RoomUser[]>([]);
   private socketSubscription: Subscription;
   private _currentUser: any;
   private _currentRoom: any;
-  private talkingTimer: any;
-  isTalkingCheckDelay: number = 3000;
 
   constructor(private utilsService: UtilsService,
               private router: Router,
@@ -133,9 +125,9 @@ export class SessionService extends ApiService {
       if (this.roomUsers.findIndex(u => u.id == this.currentUser.id) < 0) {
         this.roomUsers.unshift(this.currentUser);
       }
-      this.roomUsersChangeSubject.next(this.getSortedUsers());
+      this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
       this.raisedHands = this.roomUsers.filter(u => u.raise_hand);
-      this.raisedHandsChangeSubject.next(this.raisedHands);
+      this.updateViewService.setViewEvent({event: 'raisedHands', data: this.raisedHands});
       this.setUpdateRoomUsersTimer();
     } catch (error) {
       console.error(error);
@@ -221,7 +213,9 @@ export class SessionService extends ApiService {
     }
     try {
       this.checkIsTalking(stream, async (value) => {
-        console.log(value);
+        if (!stream.getAudioTracks()[0].enabled) {
+          return;
+        }
         if (this.talkingTimer != null) {
           return;
         }
@@ -232,7 +226,7 @@ export class SessionService extends ApiService {
         }
         this.talkingTimer = setTimeout(() => {
           this.talkingTimer = null;
-        }, this.isTalkingCheckDelay);
+        }, GlobalConfig.isTalkingCheckDelay);
       });
       this.myWebcam = await this.createPublishConnection(options, mediaType);
       const videoTrack = this.myWebcam.stream.getVideoTracks();
@@ -269,13 +263,15 @@ export class SessionService extends ApiService {
           if (options.position == 'mainThumbPosition') {
             this.setMainPositionUser(options.userId);
           }
-          this.streamChangeSubject.next({
-            action: 'onTrack',
-            stream: event.streams[0],
-            userId: options.userId,
-            display: options.display,
-            position: options.position,
-            publishType: options.publishType,
+          this.updateViewService.setViewEvent({
+            event: 'onTrack',
+            data: {
+              stream: event.streams[0],
+              userId: options.userId,
+              display: options.display,
+              position: options.position,
+              publishType: options.publishType,
+            }
           });
           resolve(pc);
         },
@@ -291,14 +287,15 @@ export class SessionService extends ApiService {
             });
             this.updateRoomPublishers();
           }
-          this.streamChangeSubject.next({
-            action: 'onError',
-            userId: options.userId,
-            display: options.display,
-            position: options.position,
-            publishType: options.publishType,
+          this.updateViewService.setViewEvent({
+            event: 'onError',
+            data: {
+              userId: options.userId,
+              display: options.display,
+              position: options.position,
+              publishType: options.publishType,
+            }
           });
-          // reject(error);
         }
       });
       pc.createSubscribeConnection();
@@ -323,13 +320,15 @@ export class SessionService extends ApiService {
           if (options.position == 'mainThumbPosition') {
             this.setMainPositionUser(options.userId);
           }
-          this.streamChangeSubject.next({
-            action: 'onTrack',
-            userId: options.userId,
-            display: options.display,
-            position: options.position,
-            stream: options.stream,
-            publishType: options.publishType,
+          this.updateViewService.setViewEvent({
+            event: 'onTrack',
+            data: {
+              userId: options.userId,
+              display: options.display,
+              position: options.position,
+              stream: options.stream,
+              publishType: options.publishType,
+            }
           });
           resolve(pc);
         },
@@ -351,12 +350,14 @@ export class SessionService extends ApiService {
             });
             this.updateRoomPublishers();
           }
-          this.streamChangeSubject.next({
-            action: 'onError',
-            userId: options.userId,
-            display: options.display,
-            position: options.position,
-            publishType: options.publishType,
+          this.updateViewService.setViewEvent({
+            event: 'onError',
+            data: {
+              userId: options.userId,
+              display: options.display,
+              position: options.position,
+              publishType: options.publishType,
+            }
           });
           reject(error);
         },
@@ -382,7 +383,7 @@ export class SessionService extends ApiService {
         const newPC = await this.createSubscribeConnection({publishId, userId, display, position, publishType});
         this.peerConnections.push(newPC);
       }
-      this.roomUsersChangeSubject.next(this.getSortedUsers());
+      this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
     }
   }
 
@@ -394,12 +395,14 @@ export class SessionService extends ApiService {
     }
     this.stopStreamTrack(myStream);
     myConnection.close();
-    this.streamChangeSubject.next({
-      action: 'onDisconnect',
-      userId: myConnection.userId,
-      display: myConnection.display,
-      position: myConnection.position,
-      publishType: myConnection.publishType,
+    this.updateViewService.setViewEvent({
+      event: 'onDisconnect',
+      data: {
+        userId: myConnection.userId,
+        display: myConnection.display,
+        position: myConnection.position,
+        publishType: myConnection.publishType,
+      }
     });
     this.myConnection[publishType.toLowerCase()] = null;
     if (!locally) {
@@ -416,12 +419,14 @@ export class SessionService extends ApiService {
       const connection = this.peerConnections[index];
       connection.close();
       this.peerConnections.splice(index, 1);
-      this.streamChangeSubject.next({
-        action: 'onDisconnect',
-        userId: connection.userId,
-        publishType: connection.publishType,
-        display: connection.display,
-        position: connection.position,
+      this.updateViewService.setViewEvent({
+        event: 'onDisconnect',
+        data: {
+          userId: connection.userId,
+          publishType: connection.publishType,
+          display: connection.display,
+          position: connection.position,
+        }
       });
     }
   }
@@ -432,7 +437,7 @@ export class SessionService extends ApiService {
     }
     this.updateRoomPublishersTimer = setTimeout(() => {
       this.updateRoomPublishers();
-    }, this.updateRoomPublishersDelay);
+    }, GlobalConfig.updateRoomPublishersDelay);
   }
 
   private setUpdateRoomUsersTimer() {
@@ -441,23 +446,23 @@ export class SessionService extends ApiService {
     }
     this.updateRoomUsersTimer = setTimeout(() => {
       this.updateRoomUsers();
-    }, this.updateRoomUsersDelay);
+    }, GlobalConfig.updateRoomUsersDelay);
   }
 
   private removeMainPositionUser() {
     if (this.mainPositionUser) {
       this.mainPositionUser = null;
-      this.roomUsersChangeSubject.next(this.getSortedUsers());
+      this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
     }
   }
 
   private setMainPositionUser(userId: any) {
     this.mainPositionUser = this.getRoomUserById(userId);
-    this.roomUsersChangeSubject.next(this.getSortedUsers());
+    this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
   }
 
   private getSortedUsers() {
-    this.roomParticipantsChangeSubject.next(this.roomUsers);
+    this.updateViewService.setViewEvent({event: 'roomParticipants', data: this.roomUsers});
     let sortedUsers = [...this.roomUsers];
     const meIndex = sortedUsers.findIndex(u => u.id == this.currentUser.id);
     const me = sortedUsers[meIndex];
@@ -484,11 +489,11 @@ export class SessionService extends ApiService {
           user = res.user;
           if (res.target != this.currentUser.id && this.roomUsers.findIndex(u => u.id == user.id) < 0) {
             this.roomUsers.push(user);
-            this.roomUsersChangeSubject.next(this.getSortedUsers());
+            this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
           }
           if (user.raise_hand == true && this.raisedHands.findIndex(u => u.id == user.id) < 0) {
             this.raisedHands.push(user);
-            this.raisedHandsChangeSubject.next(this.raisedHands);
+            this.updateViewService.setViewEvent({event: 'raisedHands', data: this.raisedHands});
           }
           break;
 
@@ -523,7 +528,7 @@ export class SessionService extends ApiService {
           if (res.target == this.currentUser.id) {
             this.getMeOut();
           }
-          this.raisedHandsChangeSubject.next(this.raisedHands);
+          this.updateViewService.setViewEvent({event: 'raisedHands', data: this.raisedHands});
           break;
 
         case 'userDisconnected':
@@ -541,12 +546,12 @@ export class SessionService extends ApiService {
             if (this.mainPositionUser?.id == res.target) {
               this.removeMainPositionUser();
             }
-            this.roomUsersChangeSubject.next(this.getSortedUsers());
+            this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
             const handRaiseIndex = this.raisedHands.findIndex(p => p.id == res.target);
             if (handRaiseIndex > -1) {
               this.raisedHands.splice(handRaiseIndex, 1);
             }
-            this.raisedHandsChangeSubject.next(this.raisedHands);
+            this.updateViewService.setViewEvent({event: 'raisedHands', data: this.raisedHands});
           }
           if (res.event == 'leaveRoom') {
             if (res.target == this.currentUser.id) {
@@ -575,7 +580,7 @@ export class SessionService extends ApiService {
             }
           }
           this.updateViewService.setViewEvent({event: 'raiseHand', data: res});
-          this.raisedHandsChangeSubject.next(this.raisedHands);
+          this.updateViewService.setViewEvent({event: 'raisedHands', data: this.raisedHands});
           break;
 
         case 'mutePerson':
@@ -737,22 +742,6 @@ export class SessionService extends ApiService {
 
   getRoomUserById(id: any) {
     return this.roomUsers.find(u => u.id == id);
-  }
-
-  onStreamChange(): Observable<StreamActionEvent> {
-    return this.streamChangeSubject.asObservable();
-  }
-
-  onRoomUsersChange() {
-    return this.roomUsersChangeSubject.asObservable();
-  }
-
-  onRoomParticipantsChange() {
-    return this.roomParticipantsChangeSubject.asObservable();
-  }
-
-  onRaisedHandsChange() {
-    return this.raisedHandsChangeSubject.asObservable();
   }
 
   ///////////////////////////////////////////////////////////////////////////////

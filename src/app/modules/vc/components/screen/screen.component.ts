@@ -2,6 +2,7 @@ import {Component, ElementRef, Input, OnInit, Renderer2, ViewChild} from '@angul
 import {SessionService, SocketService} from '@core/http';
 import {RoomUser, StreamActionEvent, TrackPosition} from '@core/models';
 import {UpdateViewService} from '@core/http/update-view.service';
+import {GlobalConfig} from '../../../../global.config';
 
 @Component({
   selector: 'ng-screen',
@@ -29,31 +30,30 @@ export class ScreenComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sessionService.onStreamChange().subscribe((res: StreamActionEvent) => {
-      if (this.position !== res.position) {
-        return;
+    this.updateViewService.getViewEvent().subscribe((res: any) => {
+      if (['onTrack', 'onDisconnect'].findIndex(e => e == res.event) > -1) {
+        if (this.position !== res.data.position) {
+          return;
+        }
+        if (!this.isInMainPosition() && (this.user && this.user.id !== res.data.userId)) {
+          return;
+        }
+        if (res.data.userId == this.sessionService.currentUser.id) {
+          this.videoElem.nativeElement.muted = true;
+        }
+        switch (res.event) {
+          case 'onTrack':
+            this.handleTrackClassNames(res.data);
+            this.setStream(res.data.stream);
+            break;
+          case 'onDisconnect':
+            this.handleDisconnectClassNames(res.data);
+            this.streamActivated = false;
+            this.stream = null;
+            this.videoElem.nativeElement.srcObject = null;
+            break;
+        }
       }
-      if (!this.isInMainPosition() && (this.user && this.user.id !== res.userId)) {
-        return;
-      }
-      if (res.userId == this.sessionService.currentUser.id) {
-        this.videoElem.nativeElement.muted = true;
-      }
-      switch (res.action) {
-        case 'onTrack':
-          this.handleTrackClassNames(res);
-          this.setStream(res.stream);
-          break;
-        case 'onDisconnect':
-          this.handleDisconnectClassNames(res);
-          this.streamActivated = false;
-          this.stream = null;
-          this.videoElem.nativeElement.srcObject = null;
-          break;
-      }
-    });
-
-    this.updateViewService.getViewEvent().subscribe(res => {
       switch (res.event) {
         case 'raiseHand':
           if (this.user && res.data.target == this.user.id) {
@@ -61,13 +61,16 @@ export class ScreenComponent implements OnInit {
           }
           break;
         case 'isTalking':
+          if (res.data.target != this.user.id) {
+            return;
+          }
           if (this.isTalkingUpdateTimer != null) {
             return;
           }
           this.isTalking = res.data.value;
           this.isTalkingUpdateTimer = setTimeout(() => {
             this.isTalkingUpdateTimer = null;
-          }, this.sessionService.isTalkingCheckDelay);
+          }, GlobalConfig.isTalkingCheckDelay);
           break;
       }
     });

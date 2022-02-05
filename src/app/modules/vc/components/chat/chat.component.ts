@@ -4,6 +4,7 @@ import {RoomUser} from '@core/models';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {UpdateViewService} from '@core/http/update-view.service';
+import {UtilsService} from '@ng/services';
 
 @Component({
   selector: 'ng-chat',
@@ -12,7 +13,9 @@ import {UpdateViewService} from '@core/http/update-view.service';
 })
 export class ChatComponent extends LanguageChecker implements OnInit {
 
-  constructor(private sessionService: SessionService, private updateViewService: UpdateViewService) {
+  constructor(private sessionService: SessionService,
+              private updateViewService: UpdateViewService,
+              private utilsService: UtilsService) {
     super();
   }
 
@@ -20,12 +23,12 @@ export class ChatComponent extends LanguageChecker implements OnInit {
   @Input() openPrivateChat: boolean = true;
   @Output() closeSidebar = new EventEmitter();
   @ViewChild('chatContainer', {static: true}) chatContainer: ElementRef;
-  // @ViewChild('chatItemContainer', {static: true, read: ViewContainerRef}) chatItemContainer: ViewContainerRef;
 
   publicMessages: any[] = [];
   currentUser: RoomUser;
   chatText: string;
-  currentReplyMessage: any;
+  replyMessage: any;
+  pinnedMessage: any;
 
   ngOnInit(): void {
     this.loadData();
@@ -49,6 +52,8 @@ export class ChatComponent extends LanguageChecker implements OnInit {
 
         case 'publicChatState':
           this.openPublicChat = res.data.value;
+          const message = this.openPublicChat ? this.translations.room.chatAccessOpened : this.translations.room.chatAccessClosed;
+          this.utilsService.showToast({detail: message, severity: 'warn'});
           break;
       }
     });
@@ -58,32 +63,41 @@ export class ChatComponent extends LanguageChecker implements OnInit {
     if (!this.chatText) {
       return;
     }
-    const result = await this.sessionService.sendPublicMessage(this.chatText, this.currentReplyMessage?.message?.id).toPromise();
-    if (callback) {
-      callback();
+    const result = await this.sessionService.sendPublicMessage(this.chatText, this.replyMessage?.message?.id).toPromise();
+    if (result.status == 'OK') {
+      if (callback) {
+        callback();
+      }
+      this.chatText = '';
+      this.replyMessage = null;
+      this.scrollDown();
     }
-    // if (result.status == 'OK') {
-    // this.publicMessages.push({message: result.data.message, user: this.sessionService.currentUser});
-    // const factory = this.resolver.resolveComponentFactory(MessageItemComponent);
-    // const cmpRef = this.chatContainer.createComponent(factory);
-    // cmpRef.instance.position = 'right';
-    // cmpRef.instance.message = result.data.message;
-    // cmpRef.instance.sender = this.sessionService.currentUser;
-    // if (this.currentReplyMessage?.id) {
-    //   cmpRef.instance.replyMessage = this.currentReplyMessage;
-    // }
-    // }
-    this.chatText = '';
-    this.currentReplyMessage = null;
-    this.scrollDown();
   }
 
   onReply(message: any) {
-    this.currentReplyMessage = message;
+    this.replyMessage = message;
+  }
+
+  async onDelete(message: any) {
+    const dialogRes = await this.utilsService.showConfirm({
+      message: this.translations.room.deletePublicMessageConfirm,
+      rtl: this.fa
+    });
+    if (dialogRes) {
+      try {
+        await this.sessionService.deletePublicMessage(message.message.id).toPromise();
+      } catch (error) {
+
+      }
+    }
+  }
+
+  onPin(message: any) {
+    this.pinnedMessage = message;
   }
 
   cancelReply() {
-    this.currentReplyMessage = null;
+    this.replyMessage = null;
   }
 
   getReplyMessageOf(message: any) {
@@ -96,10 +110,7 @@ export class ChatComponent extends LanguageChecker implements OnInit {
   }
 
   async togglePublicChatActivation(chatActions: OverlayPanel) {
-    const result = await this.sessionService.changePublicChatState(!this.openPublicChat).toPromise();
-    // if (result.status == 'OK') {
-    //   this.openPublicChat = !this.openPublicChat;
-    // }
+    await this.sessionService.changePublicChatState(!this.openPublicChat).toPromise();
     chatActions.hide();
   }
 

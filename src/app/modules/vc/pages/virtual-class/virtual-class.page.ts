@@ -70,24 +70,43 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     this.initUserData();
     this.sessionService.initRoom();
     this.calculateSessionDuration();
-    this.roomParticipantSubscription = this.sessionService.onRoomParticipantsChange().subscribe(res => {
-      this.allUsers = res;
-    });
-    this.roomUsersSubscription = this.sessionService.onRoomUsersChange().subscribe(res => {
-      this.roomUsers = res;
-    });
-    this.raisedHandsSubscription = this.sessionService.onRaisedHandsChange().subscribe(res => {
-      const deletedIndex = this.raisedHandsUsers.findIndex(x => res.find(u => u.id == x.id) == undefined);
-      const addedIndex = res.findIndex(x => this.raisedHandsUsers.find(u => u.id == x.id) == undefined);
-      if (addedIndex > -1) {
-        this.raisedHandsUsers.push(res[addedIndex]);
-      }
-      if (deletedIndex > -1) {
-        this.raisedHandsUsers.splice(deletedIndex, 1);
-      }
-    });
+    // this.roomParticipantSubscription = this.sessionService.onRoomParticipantsChange().subscribe(res => {
+    //   this.allUsers = res;
+    // });
+    // this.roomUsersSubscription = this.sessionService.onRoomUsersChange().subscribe(res => {
+    //   this.roomUsers = res;
+    // });
+    // this.raisedHandsSubscription = this.sessionService.onRaisedHandsChange().subscribe(res => {
+    //   const deletedIndex = this.raisedHandsUsers.findIndex(x => res.find(u => u.id == x.id) == undefined);
+    //   const addedIndex = res.findIndex(x => this.raisedHandsUsers.find(u => u.id == x.id) == undefined);
+    //   if (addedIndex > -1) {
+    //     this.raisedHandsUsers.push(res[addedIndex]);
+    //   }
+    //   if (deletedIndex > -1) {
+    //     this.raisedHandsUsers.splice(deletedIndex, 1);
+    //   }
+    // });
     this.updateViewSubscription = this.updateViewService.getViewEvent().subscribe(res => {
       switch (res.event) {
+        case 'raisedHands':
+          const deletedIndex = this.raisedHandsUsers.findIndex(x => res.data.find(u => u.id == x.id) == undefined);
+          const addedIndex = res.data.findIndex(x => this.raisedHandsUsers.find(u => u.id == x.id) == undefined);
+          if (addedIndex > -1) {
+            this.raisedHandsUsers.push(res.data[addedIndex]);
+          }
+          if (deletedIndex > -1) {
+            this.raisedHandsUsers.splice(deletedIndex, 1);
+          }
+          break;
+
+        case 'roomUsers':
+          this.roomUsers = res.data;
+          break;
+
+        case 'roomParticipants':
+          this.allUsers = res.data;
+          break;
+
         case 'mutePerson':
         case 'muteAll':
           if (this.sessionService.currentUser.role == 'Admin') {
@@ -324,6 +343,8 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   ngOnDestroy(): void {
+    this.chatSidebarVisible = false;
+    this.membersSidebarVisible = false;
     this.roomUsersSubscription.unsubscribe();
     this.raisedHandsSubscription.unsubscribe();
     this.updateViewSubscription.unsubscribe();

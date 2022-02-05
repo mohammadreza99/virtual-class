@@ -23,7 +23,8 @@
           <div class="d-flex flex-column align-items-center mb-5">
             <ng-button (click)="toggleTestArea()" size="md" class="mb-4" color="secondary" appearance="link"
                        [label]="'room.testAudioAndVideo' | translate"></ng-button>
-            <ng-button (click)="enterRoom()" size="lg" [label]="'room.enterRoom' | translate"></ng-button>
+            <ng-button-async (clickAsync)="enterRoom($event)" [disabled]="disableEnterButton" size="lg"
+                             [label]="'room.enterRoom' | translate"></ng-button-async>
           </div>
           <p-messages [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" [class.rtl]="fa"
                       [closable]="false" [(value)]="roomStatusMessage"
@@ -64,7 +65,7 @@
               <p *ngIf="speakerTestMessage">{{speakerTestMessage | translate}}</p>
               <ng-button *ngIf="!speakerTestMessage" (onClick)="playAudio()" appearance="text"
                          [disabled]="!speakerTestAudioElem.paused"
-                         [icon]="!speakerTestAudioElem.paused ? 'icon-pause': 'icon-play'"></ng-button>
+                         [icon]="!speakerTestAudioElem.paused ? 'pi pi-spinner pi-spin': 'icon-play'"></ng-button>
             </div>
             <ng-dropdown *ngIf="!speakerTestMessage" class="mt-2 d-block" [disabled]="sinkIsNotSupported()"
                          (onChange)="onChangeAudioOutput($event)"

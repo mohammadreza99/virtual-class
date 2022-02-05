@@ -47,6 +47,10 @@
       border-radius: 15px;
       margin-bottom: 1rem;
     }
+
+    ng-dropdown .wrapper > div {
+      width: 100%;
+    }
   }
 
   p {
