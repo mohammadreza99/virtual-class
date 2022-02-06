@@ -79,6 +79,7 @@ export class SessionService extends ApiService {
       }
     } catch (error) {
       console.error(error);
+      throw Error(error);
     }
   }
 
@@ -189,7 +190,7 @@ export class SessionService extends ApiService {
       }
       await this.toggleShareMedia(activate, 'video');
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw Error(error);
     }
   }
@@ -219,7 +220,7 @@ export class SessionService extends ApiService {
         if (this.talkingTimer != null) {
           return;
         }
-        if (value > 10) {
+        if (Math.round(value) > 20) {
           await this.isTalking(true).toPromise();
         } else {
           await this.isTalking(false).toPromise();
@@ -569,6 +570,9 @@ export class SessionService extends ApiService {
             // hand raise occur by student
             if (res.value && handRaiseIndex < 0) {
               this.raisedHands.push(user);
+              if (this.imTeacher) {
+                this.openToast('room.userRaisedHand', 'warn', user.last_name);
+              }
             } else {
               this.raisedHands.splice(handRaiseIndex, 1);
             }
@@ -661,6 +665,7 @@ export class SessionService extends ApiService {
           break;
 
         case 'deletedMessage':
+          this.updateViewService.setViewEvent({event: 'deletedMessage', data: res});
           break;
       }
     });

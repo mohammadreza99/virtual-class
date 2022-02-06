@@ -22,9 +22,10 @@
 
   <div class="footer d-flex align-items-center justify-content-between fixed-bottom">
     <div class="sidebar">
-      <ng-button icon="icon-user-groups" class="ml-3" [class.active]="membersSidebarVisible"
+      <ng-button [class.badge]="hasUnreadRaisedHands" icon="icon-user-groups" class="ml-3" [class.active]="membersSidebarVisible"
                  (click)="toggleMembersSidebar()"></ng-button>
-      <ng-button icon="icon-chat" [class.active]="chatSidebarVisible" (click)="toggleChatSidebar()"></ng-button>
+      <ng-button [class.badge]="hasUnreadMessage" icon="icon-chat" [class.active]="chatSidebarVisible"
+                 (click)="toggleChatSidebar()"></ng-button>
     </div>
     <div class="actions">
       <ng-button-async (clickAsync)="toggleCamera($event)"
@@ -56,7 +57,8 @@
 
 <p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
            [(visible)]="chatSidebarVisible">
-  <ng-chat [openPublicChat]="currentRoom.public_messages" (closeSidebar)="closeChatSidebar()"></ng-chat>
+  <ng-chat [openPublicChat]="currentRoom.public_messages" (closeSidebar)="closeChatSidebar()"
+           (newMessage)="onGetNewMessage()"></ng-chat>
 </p-sidebar>
 
 <p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"

@@ -22,6 +22,7 @@ export class ChatComponent extends LanguageChecker implements OnInit {
   @Input() openPublicChat: boolean = true;
   @Input() openPrivateChat: boolean = true;
   @Output() closeSidebar = new EventEmitter();
+  @Output() newMessage = new EventEmitter();
   @ViewChild('chatContainer', {static: true}) chatContainer: ElementRef;
 
   publicMessages: any[] = [];
@@ -45,15 +46,23 @@ export class ChatComponent extends LanguageChecker implements OnInit {
 
         case 'newPublicMessage':
           this.publicMessages.push({message: res.data.message, user: res.data.user});
+          if (this.sessionService.currentUser.id != res.data.user.id) {
+            this.newMessage.emit();
+          }
+          this.scrollDown();
           break;
 
         case 'deletedMessage':
+          const index = this.publicMessages.findIndex(p => p.message.id == res.data.message);
+          this.publicMessages.splice(index, 1);
           break;
 
         case 'publicChatState':
           this.openPublicChat = res.data.value;
           const message = this.openPublicChat ? this.translations.room.chatAccessOpened : this.translations.room.chatAccessClosed;
-          this.utilsService.showToast({detail: message, severity: 'warn'});
+          if (this.sessionService.imStudent) {
+            this.utilsService.showToast({detail: message, severity: 'warn'});
+          }
           break;
       }
     });

@@ -61,7 +61,7 @@ export class ScreenComponent implements OnInit {
           }
           break;
         case 'isTalking':
-          if (res.data.target != this.user.id) {
+          if (this.user && res.data.target != this.user.id) {
             return;
           }
           if (this.isTalkingUpdateTimer != null) {

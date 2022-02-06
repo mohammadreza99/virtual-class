@@ -1,4 +1,4 @@
-import {Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
+import {Component, ComponentFactoryResolver, OnDestroy, OnInit} from '@angular/core';
 import {Room, RoomUser, ViewMode} from '@core/models';
 import {RoomService, SessionService} from '@core/http';
 import {OverlayPanel} from 'primeng/overlaypanel';
@@ -8,7 +8,6 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {LocationStrategy} from '@angular/common';
 import {UpdateViewService} from '@core/http/update-view.service';
-import {MessageItemComponent} from '@modules/vc/components/message-item/message-item.component';
 
 @Component({
   selector: 'ng-virtual-class',
@@ -28,30 +27,24 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     super();
   }
 
-  // @ViewChild('chatItemContainer', {static: true, read: ViewContainerRef}) chatContainer: ViewContainerRef;
-
   allUsers: RoomUser[] = [];
   roomUsers: RoomUser[] = [];
   raisedHandsUsers: RoomUser[] = [];
   disableWebcam = false;
   disableMic = false;
-  // webcamFound: boolean;
-  // micFound: boolean;
   screenActivated = false;
   webcamActivated = false;
   micActivated = false;
   raiseHandActivated = false;
+  hasUnreadMessage = false;
+  hasUnreadRaisedHands = false;
   currentViewMode: ViewMode = 'thumbnail';
   currentRoom: Room;
   currentUser: RoomUser;
-  // allMuted: boolean = true;
-  // allMutedVideo: boolean = false;
-  // searchText: string;
   roomParticipantSubscription: Subscription;
   roomUsersSubscription: Subscription;
   raisedHandsSubscription: Subscription;
   updateViewSubscription: Subscription;
-  // chatText: string;
   membersSidebarVisible: boolean = true;
   chatSidebarVisible: boolean = false;
   sessionDuration: any;
@@ -70,22 +63,6 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     this.initUserData();
     this.sessionService.initRoom();
     this.calculateSessionDuration();
-    // this.roomParticipantSubscription = this.sessionService.onRoomParticipantsChange().subscribe(res => {
-    //   this.allUsers = res;
-    // });
-    // this.roomUsersSubscription = this.sessionService.onRoomUsersChange().subscribe(res => {
-    //   this.roomUsers = res;
-    // });
-    // this.raisedHandsSubscription = this.sessionService.onRaisedHandsChange().subscribe(res => {
-    //   const deletedIndex = this.raisedHandsUsers.findIndex(x => res.find(u => u.id == x.id) == undefined);
-    //   const addedIndex = res.findIndex(x => this.raisedHandsUsers.find(u => u.id == x.id) == undefined);
-    //   if (addedIndex > -1) {
-    //     this.raisedHandsUsers.push(res[addedIndex]);
-    //   }
-    //   if (deletedIndex > -1) {
-    //     this.raisedHandsUsers.splice(deletedIndex, 1);
-    //   }
-    // });
     this.updateViewSubscription = this.updateViewService.getViewEvent().subscribe(res => {
       switch (res.event) {
         case 'raisedHands':
@@ -128,6 +105,9 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
         case 'raiseHand':
           if (res.data.target == this.currentUser.id) {
             this.raiseHandActivated = res.data.value;
+          }
+          if (res.data.value && !this.membersSidebarVisible) {
+            this.hasUnreadRaisedHands = true;
           }
           break;
 
@@ -248,26 +228,6 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     });
   }
 
-  // async toggleMuteAll(event) {
-  //   try {
-  //     await this.sessionService.muteAll(!event.checked).toPromise();
-  //     this.allMuted = !event.checked;
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw error;
-  //   }
-  // }
-
-  // async toggleMuteVideoAll(event) {
-  //   try {
-  //     await this.sessionService.muteVideoAll(!event.checked).toPromise();
-  //     this.allMutedVideo = !event.checked;
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw error;
-  //   }
-  // }
-
   changeView(mode: ViewMode, viewModesOverlay: OverlayPanel) {
     this.currentViewMode = mode;
     viewModesOverlay.hide();
@@ -275,10 +235,16 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   toggleMembersSidebar() {
     this.membersSidebarVisible = !this.membersSidebarVisible;
+    if (this.membersSidebarVisible) {
+      this.hasUnreadRaisedHands = false;
+    }
   }
 
   toggleChatSidebar() {
     this.chatSidebarVisible = !this.chatSidebarVisible;
+    if (this.chatSidebarVisible) {
+      this.hasUnreadMessage = false;
+    }
   }
 
   closeMembersSidebar() {
@@ -289,44 +255,11 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     this.chatSidebarVisible = false;
   }
 
-  // async sendMessage(container: HTMLElement) {
-  //   if (this.chatText) {
-  //     const result = this.sessionService.sendPublicMessage(this.chatText).toPromise();
-  //     const factory = this.resolver.resolveComponentFactory(MessageItemComponent);
-  //     const cmpRef = this.chatContainer.createComponent(factory);
-  //     cmpRef.instance.position = 'right';
-  //     cmpRef.instance.message = {text: this.chatText, sender: this.currentUser.first_name, time: '12:23'};
-  //     this.chatText = '';
-  //     setTimeout(() => {
-  //       container.scrollTop = container.scrollHeight;
-  //     }, 0);
-  //   }
-  // }
-
   async copySessionLink(sessionInfoOverlay: OverlayPanel) {
     const data = await this.roomService.generateRoomLink(this.currentRoom.id).toPromise();
     await navigator.clipboard.writeText(data.data.link);
     sessionInfoOverlay.hide();
   }
-
-  // trackByFn(index: number, item: RoomUser): number {
-  //   return item.id;
-  // }
-  //
-  // getColumnTemplate() {
-  //   const usersCount = this.allUsers.length;
-  //   if (usersCount == 1) {
-  //     return 'g-full';
-  //   } else if (usersCount >= 2 && usersCount <= 4) {
-  //     return 'g-four';
-  //   } else if (usersCount >= 5 && usersCount <= 9) {
-  //     return 'g-nine';
-  //   } else if (usersCount >= 10 && usersCount <= 16) {
-  //     return 'g-sixteen';
-  //   } else if (usersCount >= 17) {
-  //     return 'g-twenty-five';
-  //   }
-  // }
 
   disableWindowBackButton() {
     history.pushState(null, null, location.href);
@@ -349,5 +282,11 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     this.raisedHandsSubscription.unsubscribe();
     this.updateViewSubscription.unsubscribe();
     this.roomParticipantSubscription.unsubscribe();
+  }
+
+  onGetNewMessage() {
+    if (!this.chatSidebarVisible) {
+      this.hasUnreadMessage = true;
+    }
   }
 }

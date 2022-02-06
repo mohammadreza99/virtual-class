@@ -15,6 +15,7 @@ export class RoomResolver implements Resolve<void> {
     try {
       await this.sessionService.checkSession(roomId);
     } catch (error) {
+      this.router.navigate(['vc/room-info', roomId]);
       console.error(error);
     }
   }

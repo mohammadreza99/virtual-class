@@ -228,6 +228,25 @@
         }
 
       }
+
+      &.badge {
+        position: relative;
+
+        &:before {
+          content: "";
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          min-width: 8px;
+          min-height: 8px;
+          border-radius: 50%;
+          top: 0;
+          right: 0;
+          transform: translate(50%, -50%);
+          z-index: 10;
+          background-color: red;
+        }
+      }
     }
 
     @include media-breakpoint-up(xl) {

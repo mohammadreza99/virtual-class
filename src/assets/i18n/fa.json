@@ -50,7 +50,8 @@
     "deletePublicMessageConfirm": "آیا از حذف پیام مطمئن هستید؟",
     "sendMessageBlocked": "امکان ارسال پیام وجود ندارد",
     "chatAccessClosed": "دسترسی چت بسته شد",
-    "chatAccessOpened": "دسترسی چت باز شد"
+    "chatAccessOpened": "دسترسی چت باز شد",
+    "userRaisedHand": "{{value}} درخواست تریبون داد"
   },
   "home": "خانه",
   "forgetPassword": "فراموشی رمزعبور",

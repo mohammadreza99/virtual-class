@@ -16,7 +16,7 @@
       </div>
       <div class="checkbox">
         <span class="mx-2">{{(allMuted ? 'room.off' : 'room.on') | translate}}</span>
-        <ng-switch (onChange)="toggleMuteAll($event)"></ng-switch>
+        <ng-switch [value]="true" (onChange)="toggleMuteAll($event)"></ng-switch>
       </div>
     </div>
     <div class="action-item">

@@ -54,7 +54,10 @@ export class CustomTableComponent implements OnInit {
   async toggleSearch() {
     const searchElement = this.el.nativeElement.querySelector('.table-search') as HTMLElement;
     const opened = searchElement.classList.toggle('open');
-    if (!opened) {
+    if (opened) {
+      searchElement.querySelector('input').focus();
+    } else {
+      searchElement.querySelector('input').blur();
       this.searchTerm = null;
       await this.reloadData();
     }

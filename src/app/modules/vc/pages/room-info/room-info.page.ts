@@ -260,6 +260,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
   }
 
   async enterRoom(callback: () => any) {
+    await this.checkEnterRoomStatus();
     const result = await this.getEnterRoomStatus();
     callback();
     if (result) {

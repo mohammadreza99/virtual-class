@@ -2,6 +2,10 @@
   direction: ltr;
   display: inline-block;
 
+  p-button {
+    display: block;
+  }
+
   &.full {
     &,
     & ::ng-deep .p-button {
