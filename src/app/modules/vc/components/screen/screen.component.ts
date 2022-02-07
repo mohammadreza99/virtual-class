@@ -19,6 +19,7 @@ export class ScreenComponent implements OnInit {
   isTalking: boolean = false;
   stream: MediaStream;
   isTalkingUpdateTimer: any;
+  activateRaiseHand: boolean = false;
 
   constructor(
     private sessionService: SessionService,
@@ -54,23 +55,37 @@ export class ScreenComponent implements OnInit {
             break;
         }
       }
+      if (!this.user) {
+        return;
+      }
       switch (res.event) {
-        case 'raiseHand':
-          if (this.user && res.data.target == this.user.id) {
+        case 'studentRaisedHand':
+          if (res.data.target == this.user.id) {
             this.user.raise_hand = res.data.value;
+            if (!res.data.value) {
+              this.activateRaiseHand = false;
+            }
           }
           break;
+
+        case 'teacherConfirmRaisedHand':
+          if (res.data.target == this.user.id) {
+            this.user.raise_hand = res.data.value;
+            this.activateRaiseHand = res.data.value;
+          }
+          break;
+
         case 'isTalking':
-          if (this.user && res.data.target != this.user.id) {
-            return;
-          }
-          if (this.isTalkingUpdateTimer != null) {
-            return;
-          }
-          this.isTalking = res.data.value;
-          this.isTalkingUpdateTimer = setTimeout(() => {
-            this.isTalkingUpdateTimer = null;
-          }, GlobalConfig.isTalkingCheckDelay);
+          // if (res.data.target != this.user.id) {
+          //   return;
+          // }
+          // if (this.isTalkingUpdateTimer != null) {
+          //   return;
+          // }
+          // this.isTalking = res.data.value;
+          // this.isTalkingUpdateTimer = setTimeout(() => {
+          //   this.isTalkingUpdateTimer = null;
+          // }, GlobalConfig.isTalkingCheckDelay);
           break;
       }
     });

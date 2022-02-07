@@ -15,7 +15,7 @@ const routes: Routes = [
     component: VirtualClassPage,
     canActivate: [EnterRoomGuard],
     resolve: {data: RoomResolver},
-    data: {title: 'virtualClass'}
+    data: {title: 'room.virtualClass'}
   },
 ];
 

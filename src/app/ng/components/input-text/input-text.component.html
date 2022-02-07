@@ -46,6 +46,7 @@
       [pKeyFilter]="keyFilter"
       [readonly]="readonly"
       pInputText
+      #inputElem
     />
     <label *ngIf="label && labelPos == 'float'" [attr.for]="inputId">{{
       label

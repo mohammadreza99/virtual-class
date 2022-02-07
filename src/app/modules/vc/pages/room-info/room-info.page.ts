@@ -102,14 +102,14 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     try {
       this.audioStream = await navigator.mediaDevices.getUserMedia(constraints);
       if (!this.audioStream) {
-        this.micTestMessage = 'micNotFound';
+        this.micTestMessage = 'room.micNotFound';
         return;
       }
     } catch (error) {
       if (error.name == 'NotAllowedError') {
-        this.micTestMessage = 'pleaseAllowMic';
+        this.micTestMessage = 'room.pleaseAllowMic';
       } else {
-        this.micTestMessage = 'micNotFound';
+        this.micTestMessage = 'room.micNotFound';
       }
       return;
     }
@@ -130,14 +130,14 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     try {
       this.videoStream = await navigator.mediaDevices.getUserMedia(constraints);
       if (!this.videoStream) {
-        this.webcamTestMessage = 'webcamNotFound';
+        this.webcamTestMessage = 'room.webcamNotFound';
         return;
       }
     } catch (error) {
       if (error.name == 'NotAllowedError') {
-        this.webcamTestMessage = 'pleaseAllowWebcam';
+        this.webcamTestMessage = 'room.pleaseAllowWebcam';
       } else {
-        this.webcamTestMessage = 'webcamNotFound';
+        this.webcamTestMessage = 'room.webcamNotFound';
       }
       return;
     }
@@ -151,21 +151,21 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
       value: d.deviceId
     }));
     if (this.videoInputDevices.length == 0) {
-      this.webcamTestMessage = 'webcamNotFound';
+      this.webcamTestMessage = 'room.webcamNotFound';
     }
     this.audioInputDevices = devices.filter(d => d.kind == 'audioinput').map((d, i) => ({
       label: d.label || `Microphone - ${i + 1}`,
       value: d.deviceId
     }));
     if (this.audioInputDevices.length == 0) {
-      this.micTestMessage = 'micNotFound';
+      this.micTestMessage = 'room.micNotFound';
     }
     this.audioOutputDevices = devices.filter(d => d.kind == 'audiooutput').map((d, i) => ({
       label: d.label || `Speaker - ${i + 1}`,
       value: d.deviceId
     }));
     if (this.audioOutputDevices.length == 0) {
-      this.speakerTestMessage = 'speakerNotFound';
+      this.speakerTestMessage = 'room.speakerNotFound';
     }
     this.selectedVideoInput = this.videoInputDevices[0]?.value;
     this.selectedAudioInput = this.audioInputDevices[0]?.value;
@@ -224,11 +224,11 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     if (checkEnterRoomStatus) {
       switch (checkEnterRoomStatus.enter_status) {
         case 'RoomNotStarted':
-          this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsNotStarted}];
+          this.roomStatusMessage = [{severity: 'warn', detail: this.translations.room.roomIsNotStarted}];
           this.disableEnterButton = true;
           break;
         default:
-          this.roomStatusMessage = [{severity: 'warn', detail: this.translations.roomIsInHold}];
+          this.roomStatusMessage = [{severity: 'warn', detail: this.translations.room.roomIsInHold}];
           this.disableEnterButton = false;
           break;
       }
@@ -266,11 +266,11 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     if (result) {
       switch (result.enter_status) {
         case 'Kicked':
-          this.utilsService.showDialog({message: this.translations.yourKicked});
+          this.utilsService.showDialog({message: this.translations.room.yourKicked});
           return;
         case 'TemporaryKicked':
           const kickTime = Math.round(+result.kick_time / 60);
-          const message = this.translationService.instant('yourTemporaryKicked', {value: kickTime}) as string;
+          const message = this.translationService.instant('room.yourTemporaryKicked', {value: kickTime}) as string;
           this.utilsService.showDialog({message});
           return;
         case 'RoomNotStarted':

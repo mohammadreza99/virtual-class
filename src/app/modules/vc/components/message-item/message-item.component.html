@@ -22,29 +22,27 @@
   </div>
 </div>
 
-<p-overlayPanel [baseZIndex]="2000" #messageActions styleClass="view-modes {{fa ? 'rtl' : null}}">
-  <ng-template pTemplate>
-    <ul class="list-unstyled p-0 m-0">
-      <!--      <li (click)="saveChat()">-->
-      <!--        <i class="icon-view-speaker"></i>-->
-      <!--        <span>{{'room.showSpeakerOnly' | translate}}</span>-->
-      <!--      </li>-->
-      <li (click)="onReply(messageActions)">
-        <i class="icon-forward"></i>
-        <span>{{'room.reply' | translate}}</span>
-      </li>
-      <li (click)="onDelete(messageActions)">
-        <i class="icon-delete"></i>
-        <span>{{'room.deleteMessage' | translate}}</span>
-      </li>
-<!--      <li (click)="onPin(messageActions)">-->
-<!--        <i class="icon-pin"></i>-->
-<!--        <span>{{'room.pinMessage' | translate}}</span>-->
-<!--      </li>-->
-      <!--      <li (click)="saveChat()">-->
-      <!--        <i class="icon-view-speaker"></i>-->
-      <!--        <span>{{(openPrivateChat ? 'closePrivateChat' : 'openPrivateChat') | translate}}</span>-->
-      <!--      </li>-->
-    </ul>
-  </ng-template>
+<p-overlayPanel [baseZIndex]="2000" #messageActions styleClass="actions {{fa ? 'rtl' : null}}">
+  <ul class="list-unstyled p-0 m-0">
+    <!--      <li (click)="saveChat()">-->
+    <!--        <i class="icon-view-speaker"></i>-->
+    <!--        <span>{{'room.showSpeakerOnly' | translate}}</span>-->
+    <!--      </li>-->
+    <li (click)="onReply(messageActions)">
+      <i class="icon-forward"></i>
+      <span>{{'room.reply' | translate}}</span>
+    </li>
+    <li (click)="onDelete(messageActions)">
+      <i class="icon-delete"></i>
+      <span>{{'room.deleteMessage' | translate}}</span>
+    </li>
+    <!--      <li (click)="onPin(messageActions)">-->
+    <!--        <i class="icon-pin"></i>-->
+    <!--        <span>{{'room.pinMessage' | translate}}</span>-->
+    <!--      </li>-->
+    <!--      <li (click)="saveChat()">-->
+    <!--        <i class="icon-view-speaker"></i>-->
+    <!--        <span>{{(openPrivateChat ? 'room.closePrivateChat' : 'room.openPrivateChat') | translate}}</span>-->
+    <!--      </li>-->
+  </ul>
 </p-overlayPanel>

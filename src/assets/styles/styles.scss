@@ -35,69 +35,70 @@ body {
   .p-overlaypanel {
     border-radius: 8px;
 
-    &:before {
-      display: none;
-    }
-
-    &:not(.p-overlaypanel-flipped) {
-      &:after {
-        border-bottom-color: #5F6069 !important;
+    &:not(.question-report) {
+      &:before {
+        display: none;
       }
-    }
 
-    &.p-overlaypanel-flipped {
-      &:after {
-        border-top-color: #5F6069 !important;
+      &:not(.p-overlaypanel-flipped) {
+        &:after {
+          border-bottom-color: #5F6069 !important;
+        }
       }
-    }
 
-    .p-overlaypanel-content {
-      overflow: hidden;
-      border-radius: 8px;
-      background-color: #5F6069;
-      color: #ffffff;
-      font-size: 14px;
-    }
+      &.p-overlaypanel-flipped {
+        &:after {
+          border-top-color: #5F6069 !important;
+        }
+      }
 
-    &.view-modes,
-    &.actions {
       .p-overlaypanel-content {
-        padding: 0;
+        overflow: hidden;
+        border-radius: 8px;
+        background-color: #5F6069;
+        color: #ffffff;
+        font-size: 14px;
       }
 
-      ul {
-        li {
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          padding: 0.75rem 1rem;;
-          transition: all .4s;
+      &.actions {
+        .p-overlaypanel-content {
+          padding: 0;
+        }
 
+        ul {
+          li {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;;
+            transition: all .4s;
+
+            i {
+              margin: 0 0.5rem
+            }
+
+            &:hover, &.active {
+              background-color: #848484;
+            }
+          }
+        }
+      }
+
+      &.session-info {
+        .room-info {
+          padding-bottom: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        .session-link {
           i {
-            margin: 0 0.5rem
-          }
-
-          &:hover, &.active {
-            background-color: #848484;
+            cursor: pointer;
           }
         }
       }
     }
 
-    &.session-info {
-      .room-info {
-        padding-bottom: 1rem;
-        margin-bottom: 1rem;
-      }
-
-      .session-link {
-        i {
-          cursor: pointer;
-        }
-      }
-    }
   }
-
 
   ::-webkit-scrollbar-track {
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
@@ -118,5 +119,9 @@ body {
     &:hover {
       background-color: rgb(114, 114, 114);
     }
+  }
+
+  .cdk-overlay-container {
+    z-index: 800000
   }
 }

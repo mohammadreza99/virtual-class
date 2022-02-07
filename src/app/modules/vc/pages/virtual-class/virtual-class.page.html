@@ -22,7 +22,8 @@
 
   <div class="footer d-flex align-items-center justify-content-between fixed-bottom">
     <div class="sidebar">
-      <ng-button [class.badge]="hasUnreadRaisedHands" icon="icon-user-groups" class="ml-3" [class.active]="membersSidebarVisible"
+      <ng-button [class.badge]="hasUnreadRaisedHands" icon="icon-user-groups" class="ml-3"
+                 [class.active]="membersSidebarVisible"
                  (click)="toggleMembersSidebar()"></ng-button>
       <ng-button [class.badge]="hasUnreadMessage" icon="icon-chat" [class.active]="chatSidebarVisible"
                  (click)="toggleChatSidebar()"></ng-button>
@@ -47,6 +48,7 @@
                        (clickAsync)="toggleScreen($event)"
                        newColor="success">
       </ng-button-async>
+      <ng-button icon="icon-more" (click)="otherActions.toggle($event)"></ng-button>
     </div>
     <ng-button class="d-none d-md-block" (click)="leaveRoom()" color="danger"
                [label]="'room.leaveSession' | translate"></ng-button>
@@ -68,23 +70,30 @@
   </ng-participants>
 </p-sidebar>
 
-<p-overlayPanel [baseZIndex]="2000" #viewModes styleClass="view-modes {{fa ? 'rtl' : null}}">
-  <ng-template pTemplate>
-    <ul class="list-unstyled p-0 m-0">
-      <li (click)="changeView('speaker',viewModes)" [class.active]="currentViewMode == 'speaker'">
-        <i class="icon-view-speaker"></i>
-        <span>{{'room.showSpeakerOnly' | translate}}</span>
-      </li>
-      <li (click)="changeView('grid',viewModes)" [class.active]="currentViewMode == 'grid'">
-        <i class="icon-view-grid"></i>
-        <span>{{'room.showAllParticipants' | translate}}</span>
-      </li>
-      <li (click)="changeView('thumbnail',viewModes)" [class.active]="currentViewMode == 'thumbnail'">
-        <i class="icon-view-thumbnail1"></i>
-        <span>{{'room.showSpeakerAndParticipants' | translate}}</span>
-      </li>
-    </ul>
-  </ng-template>
+<p-overlayPanel [baseZIndex]="2000" #viewModes styleClass="actions {{fa ? 'rtl' : null}}">
+  <ul class="list-unstyled p-0 m-0">
+    <li (click)="changeView('speaker',viewModes)" [class.active]="currentViewMode == 'speaker'">
+      <i class="icon-view-speaker"></i>
+      <span>{{'room.showSpeakerOnly' | translate}}</span>
+    </li>
+    <li (click)="changeView('grid',viewModes)" [class.active]="currentViewMode == 'grid'">
+      <i class="icon-view-grid"></i>
+      <span>{{'room.showAllParticipants' | translate}}</span>
+    </li>
+    <li (click)="changeView('thumbnail',viewModes)" [class.active]="currentViewMode == 'thumbnail'">
+      <i class="icon-view-thumbnail1"></i>
+      <span>{{'room.showSpeakerAndParticipants' | translate}}</span>
+    </li>
+  </ul>
+</p-overlayPanel>
+
+<p-overlayPanel [baseZIndex]="2000" #otherActions styleClass="actions {{fa ? 'rtl' : null}}">
+  <ul class="list-unstyled p-0 m-0">
+    <li (click)="openClassExam(otherActions)">
+      <i class="icon-view-speaker"></i>
+      <span>{{'room.classExam' | translate}}</span>
+    </li>
+  </ul>
 </p-overlayPanel>
 
 <!--<p-overlayPanel [baseZIndex]="2000" #sessionInfo styleClass="session-info {{fa ? 'rtl' : null}}">-->
@@ -102,3 +111,7 @@
 <!--    </div>-->
 <!--  </ng-template>-->
 <!--</p-overlayPanel>-->
+
+<p-dialog [header]="'room.classExam' | translate" [(visible)]="showClassExamDialog" [style]="{width: '50vw'}">
+  <ng-exam></ng-exam>
+</p-dialog>

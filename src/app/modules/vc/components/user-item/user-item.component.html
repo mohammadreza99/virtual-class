@@ -40,7 +40,6 @@
 </div>
 
 <p-overlayPanel #actions styleClass="actions {{fa ? 'rtl' : null}}">
-  <ng-template pTemplate>
     <ul class="list-unstyled p-0 m-0">
       <!--      <li (click)="actionClick('assignAdmin',actions)" *ngIf="user.role != 'Admin'">-->
       <!--        <i class="icon-assign-admin"></i>-->
@@ -55,5 +54,4 @@
         <span>{{'room.kickUser' | translate}}</span>
       </li>
     </ul>
-  </ng-template>
 </p-overlayPanel>

@@ -1,13 +1,13 @@
 import {
   ChangeDetectorRef,
-  Component,
+  Component, ElementRef,
   EventEmitter,
   forwardRef,
   InjectFlags,
   Injector,
   Input,
   OnInit,
-  Output
+  Output, ViewChild
 } from '@angular/core';
 import {
   AbstractControl,
@@ -68,6 +68,7 @@ export class InputTextComponent implements OnInit, ControlValueAccessor {
   @Output() onFocus = new EventEmitter();
   @Output() onBeforeBtnClick = new EventEmitter();
   @Output() onAfterBtnClick = new EventEmitter();
+  @ViewChild('inputElem', {static: true}) inputElem: ElementRef<HTMLInputElement>;
 
   inputId: string;
   controlContainer: FormGroupDirective;
@@ -210,5 +211,9 @@ export class InputTextComponent implements OnInit, ControlValueAccessor {
   setDisabledState(val: boolean) {
     this.disabled = val;
     this.cd.markForCheck();
+  }
+
+  focusInput() {
+    this.inputElem.nativeElement.focus();
   }
 }

@@ -15,7 +15,7 @@
   <!--    </p-tabPanel>-->
   <!--    <p-tabPanel header="چت عمومی" leftIcon="icon-user-groups">-->
   <section class="chat-wrapper">
-    <main class="chat-messages" #chatContainer>
+    <main class="chat-messages" #chatContainer (scroll)="scrolled()">
       <div class="pinned-container d-flex align-items-center justify-content-between py-2 mx-2 rounded"
            *ngIf="pinnedMessage">
         <i class="icon-pin text-warning"></i>
@@ -26,7 +26,7 @@
         </div>
       </div>
       <ng-container *ngIf="publicMessages.length != 0">
-        <ng-message-item *ngFor="let message of publicMessages;trackBy:trackByFn"
+        <ng-message-item #messageItem *ngFor="let message of publicMessages;trackBy:trackByFn"
                          [position]="message.user.id == currentUser.id ? 'right' : 'left'"
                          [message]="message.message"
                          [sender]="message.user"
@@ -64,8 +64,7 @@
 </div>
 
 
-<p-overlayPanel [baseZIndex]="2000" #chatActions styleClass="view-modes {{fa ? 'rtl' : null}}">
-  <ng-template pTemplate>
+<p-overlayPanel [baseZIndex]="2000" #chatActions styleClass="actions {{fa ? 'rtl' : null}}">
     <ul class="list-unstyled p-0 m-0">
       <!--      <li (click)="saveChat()">-->
       <!--        <i class="icon-view-speaker"></i>-->
@@ -73,12 +72,11 @@
       <!--      </li>-->
       <li (click)="togglePublicChatActivation(chatActions)">
         <i class="icon-error-toast"></i>
-        <span>{{(openPublicChat ? 'closePublicChat' : 'openPublicChat') | translate}}</span>
+        <span>{{(openPublicChat ? 'room.closePublicChat' : 'room.openPublicChat') | translate}}</span>
       </li>
       <!--      <li (click)="saveChat()">-->
       <!--        <i class="icon-view-speaker"></i>-->
-      <!--        <span>{{(openPrivateChat ? 'closePrivateChat' : 'openPrivateChat') | translate}}</span>-->
+      <!--        <span>{{(openPrivateChat ? 'room.closePrivateChat' : 'room.openPrivateChat') | translate}}</span>-->
       <!--      </li>-->
     </ul>
-  </ng-template>
 </p-overlayPanel>

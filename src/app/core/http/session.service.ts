@@ -128,7 +128,7 @@ export class SessionService extends ApiService {
       }
       this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
       this.raisedHands = this.roomUsers.filter(u => u.raise_hand);
-      this.updateViewService.setViewEvent({event: 'raisedHands', data: this.raisedHands});
+      this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
       this.setUpdateRoomUsersTimer();
     } catch (error) {
       console.error(error);
@@ -494,7 +494,7 @@ export class SessionService extends ApiService {
           }
           if (user.raise_hand == true && this.raisedHands.findIndex(u => u.id == user.id) < 0) {
             this.raisedHands.push(user);
-            this.updateViewService.setViewEvent({event: 'raisedHands', data: this.raisedHands});
+            this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
           }
           break;
 
@@ -529,7 +529,7 @@ export class SessionService extends ApiService {
           if (res.target == this.currentUser.id) {
             this.getMeOut();
           }
-          this.updateViewService.setViewEvent({event: 'raisedHands', data: this.raisedHands});
+          this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
           break;
 
         case 'userDisconnected':
@@ -552,13 +552,13 @@ export class SessionService extends ApiService {
             if (handRaiseIndex > -1) {
               this.raisedHands.splice(handRaiseIndex, 1);
             }
-            this.updateViewService.setViewEvent({event: 'raisedHands', data: this.raisedHands});
+            this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
           }
           if (res.event == 'leaveRoom') {
             if (res.target == this.currentUser.id) {
               this.getMeOut();
             } else if (res.target != this.currentUser.id && this.currentUser.role == 'Admin') {
-              this.openToast('userLeftTheRoom', 'warn', user.last_name);
+              this.openToast('room.userLeftTheRoom', 'warn', user.last_name);
             }
           }
           break;
@@ -576,15 +576,16 @@ export class SessionService extends ApiService {
             } else {
               this.raisedHands.splice(handRaiseIndex, 1);
             }
+            this.updateViewService.setViewEvent({event: 'studentRaisedHand', data: res});
           } else {
             // hand raise occur by teacher
             if (!res.value) {
               // the teacher reject student raise hand
               this.raisedHands.splice(this.raisedHands.findIndex(u => u.id == user.id), 1);
             }
+            this.updateViewService.setViewEvent({event: 'teacherConfirmRaisedHand', data: res});
           }
-          this.updateViewService.setViewEvent({event: 'raiseHand', data: res});
-          this.updateViewService.setViewEvent({event: 'raisedHands', data: this.raisedHands});
+          this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
           break;
 
         case 'mutePerson':

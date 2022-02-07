@@ -14,7 +14,7 @@ export class ParticipantsComponent extends LanguageChecker implements OnInit {
     super();
   }
 
-  allMuted: boolean = true;
+  allMuted: boolean = false;
   allMutedVideo: boolean = false;
   searchText: string;
 

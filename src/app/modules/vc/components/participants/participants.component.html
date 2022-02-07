@@ -16,7 +16,7 @@
       </div>
       <div class="checkbox">
         <span class="mx-2">{{(allMuted ? 'room.off' : 'room.on') | translate}}</span>
-        <ng-switch [value]="true" (onChange)="toggleMuteAll($event)"></ng-switch>
+        <ng-switch [value]="!allMuted" (onChange)="toggleMuteAll($event)"></ng-switch>
       </div>
     </div>
     <div class="action-item">
@@ -26,7 +26,7 @@
       </div>
       <div class="checkbox">
         <span class="mx-2">{{(allMutedVideo ? 'room.off' : 'room.on') | translate}}</span>
-        <ng-switch [value]="true" (onChange)="toggleMuteVideoAll($event)"></ng-switch>
+        <ng-switch [value]="!allMutedVideo" (onChange)="toggleMuteVideoAll($event)"></ng-switch>
       </div>
     </div>
   </div>

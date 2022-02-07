@@ -2,7 +2,7 @@
   <div class="row h-100 align-items-center justify-content-center">
     <div class="col-sm-8 col-md-7 col-lg-5 my-5">
       <div class="wrapper shadow border rounded p-3">
-        <ng-button appearance="text" size="sm" [label]="'goBack' | translate" color="secondary" (click)="goBack()"
+        <ng-button *ngIf="!showTestArea" appearance="text" size="sm" [label]="'goBack' | translate" color="secondary" (click)="goBack()"
                    class="d-block mr-auto mb-3"
                    icon="pi pi-angle-left"></ng-button>
         <div class="video-wrapper bg-dark mb-3">

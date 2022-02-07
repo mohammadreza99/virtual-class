@@ -5,6 +5,7 @@ import {RouterModule} from '@angular/router';
 import {NgAllModule} from '@ng/all.module';
 import {TranslateModule} from '@ngx-translate/core';
 import {COMPONENTS} from '.';
+import {OverlayModule} from '@angular/cdk/overlay';
 
 @NgModule({
   declarations: [...COMPONENTS],
@@ -22,7 +23,8 @@ import {COMPONENTS} from '.';
     ReactiveFormsModule,
     FormsModule,
     TranslateModule,
-    NgAllModule
+    NgAllModule,
+    OverlayModule
   ],
   providers: [],
 })

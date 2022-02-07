@@ -48,6 +48,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   membersSidebarVisible: boolean = true;
   chatSidebarVisible: boolean = false;
   sessionDuration: any;
+  showClassExamDialog: boolean = false;
 
   ngOnInit(): void {
     this.loadData();
@@ -65,7 +66,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     this.calculateSessionDuration();
     this.updateViewSubscription = this.updateViewService.getViewEvent().subscribe(res => {
       switch (res.event) {
-        case 'raisedHands':
+        case 'raisedHandsChange':
           const deletedIndex = this.raisedHandsUsers.findIndex(x => res.data.find(u => u.id == x.id) == undefined);
           const addedIndex = res.data.findIndex(x => this.raisedHandsUsers.find(u => u.id == x.id) == undefined);
           if (addedIndex > -1) {
@@ -102,7 +103,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           this.webcamActivated = false;
           break;
 
-        case 'raiseHand':
+        case 'studentRaisedHand':
           if (res.data.target == this.currentUser.id) {
             this.raiseHandActivated = res.data.value;
           }
@@ -111,13 +112,10 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           }
           break;
 
-        case 'activateWebcamButton':
-          this.webcamActivated = false;
-          break;
-
-
-        case 'activateMicButton':
-          this.micActivated = false;
+        case 'teacherConfirmRaisedHand':
+          if (res.data.target == this.currentUser.id) {
+            this.raiseHandActivated = res.data.value;
+          }
           break;
 
         // case 'webcamCheck':
@@ -288,5 +286,10 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     if (!this.chatSidebarVisible) {
       this.hasUnreadMessage = true;
     }
+  }
+
+  openClassExam(otherActions: OverlayPanel) {
+    this.showClassExamDialog = true;
+    otherActions.hide();
   }
 }

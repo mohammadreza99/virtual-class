@@ -34,7 +34,7 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
     this.currentUser = this.sessionService.currentUser;
     this.updateViewService.getViewEvent().subscribe(res => {
       switch (res.event) {
-        case 'raiseHand':
+        case 'studentRaisedHand':
           if (res.data.target == this.user.id) {
             this.activateRaiseHand = res.data.value;
           }
