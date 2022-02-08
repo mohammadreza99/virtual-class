@@ -49,6 +49,9 @@ export interface RoomUser {
   raise_hand: boolean;
   muted: boolean;
   muted_video: boolean;
+  has_mic: boolean;
+  has_cam: boolean;
+  device: string;
 }
 
 export interface Publisher {

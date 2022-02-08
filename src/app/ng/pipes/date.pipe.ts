@@ -1,4 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
+import * as moment from 'jalali-moment';
 
 @Pipe({
   name: 'ngDate',
@@ -9,7 +10,9 @@ export class DatePipe implements PipeTransform {
 
   transform(value: any, locale: 'fa-ir' | 'en-us'): string {
     if (value) {
-      return new Date(value).toLocaleDateString(locale);
+      const stillUtc = moment.utc(value).toDate();
+      const local = moment(stillUtc).local().format('YYYY-MM-DD HH:mm');
+      return new Date(local).toLocaleTimeString(locale, {hour: '2-digit', minute: '2-digit'});
     } else {
       return null;
     }

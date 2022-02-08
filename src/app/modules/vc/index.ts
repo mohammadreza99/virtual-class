@@ -11,7 +11,9 @@ import {ChatComponent} from '@modules/vc/components/chat/chat.component';
 import {ThumbnailViewComponent} from '@modules/vc/components/thumbnail-view/thumbnail-view.component';
 import {GridViewComponent} from '@modules/vc/components/grid-view/grid-view.component';
 import {SpeakerViewComponent} from '@modules/vc/components/speaker-view/speaker-view.component';
-import {ExamComponent} from '@modules/vc/components/exam/exam.component';
+import {ExamModifyComponent} from '@modules/vc/components/exam-modify/exam-modify.component';
+import {ExamResultComponent} from '@modules/vc/components/exam-result/exam-result.component';
+import {IncomeExamComponent} from '@modules/vc/components/income-exam/income-exam.component';
 
 export const COMPONENTS: Type<any>[] = [
   VirtualClassPage,
@@ -26,5 +28,7 @@ export const COMPONENTS: Type<any>[] = [
   ThumbnailViewComponent,
   GridViewComponent,
   SpeakerViewComponent,
-  ExamComponent
+  ExamModifyComponent,
+  ExamResultComponent,
+  IncomeExamComponent
 ];

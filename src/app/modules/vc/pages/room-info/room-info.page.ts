@@ -100,7 +100,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
       audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
     };
     try {
-      this.audioStream = await navigator.mediaDevices.getUserMedia(constraints);
+      this.audioStream = await this.sessionService.getUserMedia(constraints);
       if (!this.audioStream) {
         this.micTestMessage = 'room.micNotFound';
         return;
@@ -128,7 +128,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
       video: {deviceId: videoSource ? {exact: videoSource} : undefined}
     };
     try {
-      this.videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+      this.videoStream = await this.sessionService.getUserMedia(constraints);
       if (!this.videoStream) {
         this.webcamTestMessage = 'room.webcamNotFound';
         return;
@@ -233,9 +233,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
           break;
       }
     }
-    if (this.checkEnterRoomStatusInterval) {
-      clearInterval(this.checkEnterRoomStatusInterval);
-    }
+    this.clearCheckEnterRoomStatusInterval();
     this.checkEnterRoomStatusInterval = setInterval(() => {
       this.checkEnterRoomStatus();
     }, 10000);
@@ -260,7 +258,6 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
   }
 
   async enterRoom(callback: () => any) {
-    await this.checkEnterRoomStatus();
     const result = await this.getEnterRoomStatus();
     callback();
     if (result) {
@@ -280,6 +277,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     this.stopVideo();
     this.stopAudio();
     localStorage.setItem('roomEnterTime', Date.now().toString());
+    this.clearCheckEnterRoomStatusInterval();
     this.router.navigate(['/vc', this.room.id]);
   }
 
@@ -287,5 +285,11 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     this.stopAudio();
     this.stopVideo();
     this.router.navigateByUrl('/rooms/list');
+  }
+
+  clearCheckEnterRoomStatusInterval() {
+    if (this.checkEnterRoomStatusInterval) {
+      clearInterval(this.checkEnterRoomStatusInterval);
+    }
   }
 }

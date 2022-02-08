@@ -26,13 +26,6 @@
           padding: 0.15rem;
         }
       }
-
-      .avatar {
-        min-width: 40px;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%
-      }
     }
 
     .actions, .raise-hand {
@@ -43,5 +36,12 @@
         }
       }
     }
+  }
+
+  .avatar {
+    min-width: 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%
   }
 }

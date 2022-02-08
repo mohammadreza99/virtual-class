@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {ApiService} from '@core/http/api.service';
 import {Subject, Subscription} from 'rxjs';
-import {SocketEventTypes} from '@core/models';
+import {DeviceType, SocketEventTypes} from '@core/models';
 
 @Injectable({providedIn: 'root'})
 export class SocketService extends ApiService {
@@ -26,6 +26,7 @@ export class SocketService extends ApiService {
     if (this.started) {
       return;
     }
+
     this.roomId = roomId;
     this.started = true;
     this.close();
@@ -51,9 +52,9 @@ export class SocketService extends ApiService {
     return this.socketChannel.asObservable();
   }
 
-  private createSocketConnection() {
+  private async createSocketConnection() {
     this.webSocket = webSocket(this.socketBaseUrl);
-    this.sendConnect();
+    await this.sendConnect();
     console.log('connect sent');
     this.subscription = this.webSocket.subscribe((res) => {
       this.connected = true;
@@ -65,6 +66,7 @@ export class SocketService extends ApiService {
       this.close();
       this.webSocket = null;
       this.retryConnection();
+      console.error(err);
     }, () => {
       this.retryConnection();
     });
@@ -98,11 +100,14 @@ export class SocketService extends ApiService {
     });
   }
 
-  private sendConnect() {
+  private async sendConnect() {
+    const has_cam = await this.webcamConnected();
+    const has_mic = await this.micConnected();
+    const device = this.getDeviceType();
     this.webSocket.next({
       auth: this.token,
       method: 'connect',
-      data: {room_id: this.roomId}
+      data: {room_id: this.roomId, has_cam, has_mic, device}
     });
   }
 
@@ -117,5 +122,35 @@ export class SocketService extends ApiService {
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
     }
+  }
+
+  private async webcamConnected() {
+    const webcamDevices = await this.getConnectedDevices('videoinput');
+    return webcamDevices != [];
+  }
+
+  private async micConnected() {
+    const micDevices = await this.getConnectedDevices('audioinput');
+    return micDevices != [];
+  }
+
+  private async getConnectedDevices(type: DeviceType): Promise<MediaDeviceInfo[]> {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    return devices.filter(device => device.kind === type);
+  }
+
+  private getDeviceType() {
+    const ua = navigator.userAgent;
+    if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+      return 'Mobile';
+    }
+    if (
+      /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(
+        ua
+      )
+    ) {
+      return 'Mobile';
+    }
+    return 'Desktop';
   }
 }

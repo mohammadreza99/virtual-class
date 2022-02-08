@@ -48,11 +48,11 @@
                        (clickAsync)="toggleScreen($event)"
                        newColor="success">
       </ng-button-async>
-      <ng-button icon="icon-more" (click)="otherActions.toggle($event)"></ng-button>
+      <ng-button *ngPermission="'Admin'" icon="icon-more" (click)="otherActions.toggle($event)"></ng-button>
     </div>
-    <ng-button class="d-none d-md-block" (click)="leaveRoom()" color="danger"
+    <ng-button class="d-none d-lg-block" (click)="leaveRoom()" color="danger"
                [label]="'room.leaveSession' | translate"></ng-button>
-    <ng-button class="d-md-none" (click)="leaveRoom()" color="danger"
+    <ng-button class="d-lg-none" (click)="leaveRoom()" color="danger"
                icon="icon-log-out"></ng-button>
   </div>
 </div>
@@ -112,6 +112,21 @@
 <!--  </ng-template>-->
 <!--</p-overlayPanel>-->
 
-<p-dialog [header]="'room.classExam' | translate" [(visible)]="showClassExamDialog" [style]="{width: '50vw'}">
-  <ng-exam></ng-exam>
+<p-dialog [breakpoints]="{'960px': '75vw'}" [header]="'room.classExam' | translate" [(visible)]="showExamModifyDialog"
+          [style]="{width: '60vw'}">
+  <ng-exam (publish)="onPublishExam()"></ng-exam>
+</p-dialog>
+
+<p-dialog [breakpoints]="{'960px': '75vw'}" [header]="'room.classExam' | translate" [(visible)]="showExamResultDialog"
+          [style]="{width: '60vw'}">
+  <ng-exam-result></ng-exam-result>
+</p-dialog>
+
+<p-dialog [breakpoints]="{'960px': '75vw'}" [header]="'room.classExam' | translate" [(visible)]="showIncomeExamDialog"
+          [style]="{width: '60vw'}">
+  <p>بنظر شما کدام درست است؟</p>
+  <ng-single-checkbox [rtl]="fa" label="گزینه"></ng-single-checkbox>
+  <ng-single-checkbox [rtl]="fa" label="گزینه"></ng-single-checkbox>
+  <ng-single-checkbox [rtl]="fa" label="گزینه"></ng-single-checkbox>
+  <ng-single-checkbox [rtl]="fa" label="گزینه"></ng-single-checkbox>
 </p-dialog>

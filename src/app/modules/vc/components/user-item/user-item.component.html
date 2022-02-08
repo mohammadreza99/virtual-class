@@ -1,4 +1,4 @@
-<div class="participant-item justify-content-between" [class.rtl]="fa">
+<div #actionsButton class="participant-item justify-content-between" [class.rtl]="fa">
   <div class="info">
     <div [style.backgroundColor]="getColor()" class="avatar justify-content-center">
       {{user.first_name[0] + '.' + user.last_name[0]}}
@@ -34,24 +34,53 @@
                          (clickAsync)="muteUser($event)">
         </ng-button-async>
         <ng-button size="sm" icon="icon-more" (click)="actions.toggle($event)"></ng-button>
+
+        <p-overlayPanel #actions styleClass="actions {{fa ? 'rtl' : null}}">
+          <ul class="list-unstyled p-0 m-0">
+            <!--      <li (click)="assignAdmin(actions)" *ngIf="user.role != 'Admin'">-->
+            <!--        <i class="icon-assign-admin"></i>-->
+            <!--        <span>{{'room.upgradeRole' | translate}}</span>-->
+            <!--      </li>-->
+            <li (click)="showStatus($event,actions,userStatus,actionsButton)">
+              <i class="icon-info"></i>
+              <span>{{'room.userStatus' | translate}}</span>
+            </li>
+            <li (click)="kickUser(actions)" *ngIf="user.role != 'Admin'">
+              <i class="icon-remove-user"></i>
+              <span>{{'room.kickUser' | translate}}</span>
+            </li>
+          </ul>
+        </p-overlayPanel>
+        <p-overlayPanel #userStatus styleClass="actions {{fa ? 'rtl' : null}}">
+          <div class="info">
+            <div class="d-flex flex-column align-items-center justify-content-between py-4">
+              <div [style.backgroundColor]="getColor()"
+                   class="avatar d-flex align-items-center justify-content-center mb-2">{{user.first_name[0] + '.' + user.last_name[0]}}</div>
+              <small>{{user.first_name + ' ' + user.last_name}}</small>
+            </div>
+            <div class="row no-gutters p-3 bg-light text-dark">
+              <div class="col-6">
+                <p class="h6">{{'room.networkStatus' | translate}}</p>
+                <small class="text-muted">{{''}}</small>
+              </div>
+              <div class="col-6">
+                <p class="h6">{{'room.deviceType' | translate}}</p>
+                <small class="text-muted">{{user.device.toLowerCase() | translate}}</small>
+              </div>
+              <div class="col-6">
+                <p class="h6">{{'room.webcamStatus' | translate}}</p>
+                <small class="text-muted">{{(user.has_cam ? 'room.have' : 'room.notHave') | translate}}</small>
+              </div>
+              <div class="col-6">
+                <p class="h6">{{'room.micStatus' | translate}}</p>
+                <small class="text-muted">{{(user.has_mic ? 'room.have' : 'room.notHave') | translate}}</small>
+              </div>
+            </div>
+          </div>
+        </p-overlayPanel>
       </div>
     </ng-container>
   </ng-container>
 </div>
 
-<p-overlayPanel #actions styleClass="actions {{fa ? 'rtl' : null}}">
-    <ul class="list-unstyled p-0 m-0">
-      <!--      <li (click)="actionClick('assignAdmin',actions)" *ngIf="user.role != 'Admin'">-->
-      <!--        <i class="icon-assign-admin"></i>-->
-      <!--        <span>{{'room.upgradeRole' | translate}}</span>-->
-      <!--      </li>-->
-      <!--      <li (click)="actionClick('unassignAdmin',actions)" *ngIf="user.role == 'Admin'">-->
-      <!--        <i class="icon-unassign-admin"></i>-->
-      <!--        <span>{{'room.downgradeRole' | translate}}</span>-->
-      <!--      </li>-->
-      <li (click)="actionClick('kickUser',actions)" *ngIf="user.role != 'Admin'">
-        <i class="icon-remove-user"></i>
-        <span>{{'room.kickUser' | translate}}</span>
-      </li>
-    </ul>
-</p-overlayPanel>
+

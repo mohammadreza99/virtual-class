@@ -48,7 +48,9 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   membersSidebarVisible: boolean = true;
   chatSidebarVisible: boolean = false;
   sessionDuration: any;
-  showClassExamDialog: boolean = false;
+  showExamModifyDialog: boolean = false;
+  showExamResultDialog: boolean = false;
+  showIncomeExamDialog: boolean = false;
 
   ngOnInit(): void {
     this.loadData();
@@ -289,7 +291,12 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   openClassExam(otherActions: OverlayPanel) {
-    this.showClassExamDialog = true;
+    this.showExamModifyDialog = true;
     otherActions.hide();
+  }
+
+  onPublishExam() {
+    this.showExamModifyDialog = false;
+    this.showExamResultDialog = true;
   }
 }

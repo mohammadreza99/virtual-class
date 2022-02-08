@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {RoomUser} from '@core/models';
 import {RoomService, SessionService} from '@core/http';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
@@ -87,7 +87,7 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
     this.raiseHandConfirmed = false;
   }
 
-  async kickUser() {
+  async kickUser(actionsOverlay: OverlayPanel) {
     try {
       this.dialogService.open(KickUserConfirmComponent, {
         data: this.user,
@@ -102,13 +102,13 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
           await this.sessionService.kickUser(this.user.id, res).toPromise();
         }
       });
-
+      actionsOverlay.hide();
     } catch (error) {
       console.error(error);
     }
   }
 
-  // async assignAdmin() {
+  // async assignAdmin(actionsOverlay: OverlayPanel) {
   //   try {
   //     const upgradeMessage = this.translationService.instant('room.upgradeRoleConfirm', {value: this.user.last_name}) as string;
   //     const dialogRes = await this.utilsService.showConfirm({message: upgradeMessage, rtl: this.fa});
@@ -134,25 +134,15 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
   //   }
   // }
 
-  async actionClick(action: string, actionsOverlay: OverlayPanel) {
-    switch (action) {
-      case 'assignAdmin':
-        // await this.assignAdmin();
-        break;
-
-      case 'unassignAdmin':
-        // await this.unAssignAdmin();
-        break;
-
-      case 'kickUser':
-        await this.kickUser();
-        break;
-    }
-    actionsOverlay.hide();
-  }
 
   getColor() {
     return this.sessionService.getProfileColor(this.user.id);
   }
 
+  showStatus(event, actions: OverlayPanel, userStatus: OverlayPanel, actionsButton: any) {
+    actions.hide();
+    setTimeout(() => {
+      userStatus.toggle(event, actionsButton);
+    }, 150);
+  }
 }

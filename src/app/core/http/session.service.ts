@@ -47,7 +47,6 @@ export class SessionService extends ApiService {
   //                                    MAIN                                   //
   ///////////////////////////////////////////////////////////////////////////////
   async initRoom() {
-    await this.checkConnectedDevices();
     await this.updateRoomUsers();
     await this.updateRoomPublishers();
     await this.updateRoomPublicMessages();
@@ -167,15 +166,23 @@ export class SessionService extends ApiService {
   }
 
   async toggleMyAudio(activate: boolean): Promise<void> {
-    const myStream = this.myWebcam?.stream;
-    if (myStream?.getAudioTracks()?.length) {
-      this.toggleStreamAudio(myStream, activate);
-      if (!myStream.getTracks()?.find(t => t.enabled)) {
-        await this.toggleShareMedia(false, 'audio');
+    try {
+      const myStream = this.myWebcam?.stream;
+      if (myStream?.getAudioTracks()?.length) {
+        this.toggleStreamAudio(myStream, activate);
+        if (!myStream.getTracks()?.find(t => t.enabled)) {
+          await this.toggleShareMedia(false, 'audio');
+        }
+        return;
       }
-      return;
+      await this.toggleShareMedia(activate, 'audio');
+    } catch (error) {
+      console.error(error);
+      if (error.name == 'NotAllowedError') {
+        this.openToast('room.pleaseAllowMic', 'warn');
+      }
+      throw Error(error);
     }
-    await this.toggleShareMedia(activate, 'audio');
   }
 
   async toggleMyVideo(activate: boolean) {
@@ -191,6 +198,9 @@ export class SessionService extends ApiService {
       await this.toggleShareMedia(activate, 'video');
     } catch (error) {
       console.error(error);
+      if (error.name == 'NotAllowedError') {
+        this.openToast('room.pleaseAllowWebcam', 'warn');
+      }
       throw Error(error);
     }
   }
@@ -592,12 +602,16 @@ export class SessionService extends ApiService {
           user = this.getRoomUserById(res.target);
           user.muted = res.value;
           if (this.currentUser.id == res.target) {
-            this.openToast(res.value ? 'room.yourVoiceAccessIsClosed' : 'room.yourVoiceAccessIsOpened', 'warn');
+            if (res.value && !this.currentUser.muted) {
+              this.openToast('room.yourVoiceAccessIsClosed', 'warn');
+            }
+            if (!res.value && this.currentUser.muted) {
+              this.openToast('room.yourVoiceAccessIsOpened', 'warn');
+            }
             if (res.value == true) {
               this.toggleMyAudio(false);
             }
             this.updateViewService.setViewEvent({event: 'mutePerson', data: res});
-
           }
           break;
 
@@ -605,7 +619,12 @@ export class SessionService extends ApiService {
           user = this.getRoomUserById(res.target);
           user.muted_video = res.value;
           if (this.currentUser.id == res.target) {
-            this.openToast(res.value ? 'room.yourVideoAccessIsClosed' : 'room.yourVideoAccessIsOpened', 'warn');
+            if (res.value && !this.currentUser.muted_video) {
+              this.openToast('room.yourVideoAccessIsClosed', 'warn');
+            }
+            if (!res.value && this.currentUser.muted_video) {
+              this.openToast('room.yourVideoAccessIsOpened', 'warn');
+            }
             if (res.value == true) {
               this.toggleMyVideo(false);
             }
@@ -620,7 +639,12 @@ export class SessionService extends ApiService {
             }
           });
           if (this.imStudent) {
-            this.openToast(res.value ? 'room.yourVoiceAccessIsClosed' : 'room.yourVoiceAccessIsOpened', 'warn');
+            if (res.value && !this.currentUser.muted) {
+              this.openToast('room.yourVoiceAccessIsClosed', 'warn');
+            }
+            if (!res.value && this.currentUser.muted) {
+              this.openToast('room.yourVoiceAccessIsOpened', 'warn');
+            }
             this.updateViewService.setViewEvent({event: 'muteAll', data: res});
             if (res.value == true) {
               this.toggleMyAudio(false);
@@ -635,7 +659,12 @@ export class SessionService extends ApiService {
             }
           });
           if (this.imStudent) {
-            this.openToast(res.value ? 'room.yourVideoAccessIsClosed' : 'room.yourVideoAccessIsOpened', 'warn');
+            if (res.value && !this.currentUser.muted_video) {
+              this.openToast('room.yourVideoAccessIsClosed', 'warn');
+            }
+            if (!res.value && this.currentUser.muted_video) {
+              this.openToast('room.yourVideoAccessIsOpened', 'warn');
+            }
             this.updateViewService.setViewEvent({event: 'muteVideoAll', data: res});
             if (res.value == true) {
               this.toggleMyVideo(false);
@@ -817,23 +846,6 @@ export class SessionService extends ApiService {
     return colors[lastChar];
   }
 
-  private async checkConnectedDevices() {
-    const webcamConnected = await this.webcamConnected();
-    const micConnected = await this.micConnected();
-    this.updateViewService.setViewEvent({event: 'webcamCheck', data: {value: webcamConnected}});
-    this.updateViewService.setViewEvent({event: 'micCheck', data: {value: micConnected}});
-  }
-
-  async webcamConnected() {
-    const webcamDevices = await this.getConnectedDevices('videoinput');
-    return webcamDevices != [];
-  }
-
-  async micConnected() {
-    const micDevices = await this.getConnectedDevices('audioinput');
-    return micDevices != [];
-  }
-
   openToast(translateKey: string, severity: NgMessageSeverities = 'error', translateValue: any = null) {
     this.utilsService.showToast({
       detail: this.translationService.instant(translateKey, {value: translateValue}) as string || translateKey,
@@ -853,11 +865,6 @@ export class SessionService extends ApiService {
       return false;
     }
     return stream.getAudioTracks().findIndex(t => t.enabled) >= 0;
-  }
-
-  private async getConnectedDevices(type: DeviceType): Promise<MediaDeviceInfo[]> {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    return devices.filter(device => device.kind === type);
   }
 
   private toggleStreamAudio(stream: MediaStream, activate: boolean) {
