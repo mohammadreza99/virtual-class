@@ -255,6 +255,26 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     this.chatSidebarVisible = false;
   }
 
+  closeSidebar(key: string) {
+    this[`${key}SidebarVisible`] = false;
+  }
+
+  openSidebar(key: string) {
+    const sidebars = ['members', 'chat', 'classExam', 'poll'];
+    this[`${key}SidebarVisible`] = true;
+    if (key == 'chat') {
+      this.hasUnreadMessage = false;
+    }
+    if (key == 'members') {
+      this.hasUnreadRaisedHands = false;
+    }
+    sidebars.forEach(k => {
+      if (k != key) {
+        this.closeSidebar(k);
+      }
+    });
+  }
+
   async copySessionLink(sessionInfoOverlay: OverlayPanel) {
     const data = await this.roomService.generateRoomLink(this.currentRoom.id).toPromise();
     await navigator.clipboard.writeText(data.data.link);

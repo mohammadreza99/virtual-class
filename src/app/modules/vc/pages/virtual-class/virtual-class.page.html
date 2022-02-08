@@ -24,9 +24,9 @@
     <div class="sidebar">
       <ng-button [class.badge]="hasUnreadRaisedHands" icon="icon-user-groups" class="ml-3"
                  [class.active]="membersSidebarVisible"
-                 (click)="toggleMembersSidebar()"></ng-button>
+                 (click)="openSidebar('members')"></ng-button>
       <ng-button [class.badge]="hasUnreadMessage" icon="icon-chat" [class.active]="chatSidebarVisible"
-                 (click)="toggleChatSidebar()"></ng-button>
+                 (click)="openSidebar('chat')"></ng-button>
     </div>
     <div class="actions">
       <ng-button-async (clickAsync)="toggleCamera($event)"
@@ -59,14 +59,14 @@
 
 <p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
            [(visible)]="chatSidebarVisible">
-  <ng-chat [openPublicChat]="currentRoom.public_messages" (closeSidebar)="closeChatSidebar()"
+  <ng-chat [openPublicChat]="currentRoom.public_messages" (closeSidebar)="closeSidebar('chat')"
            (newMessage)="onGetNewMessage()"></ng-chat>
 </p-sidebar>
 
 <p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
            [(visible)]="membersSidebarVisible">
   <ng-participants [allUsers]="allUsers" [raisedHandsUsers]="raisedHandsUsers"
-                   (closeSidebar)="closeMembersSidebar()">
+                   (closeSidebar)="closeSidebar('members')">
   </ng-participants>
 </p-sidebar>
 
