@@ -1,0 +1,90 @@
+:host ::ng-deep {
+  .exam-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #50585F;
+    height: 63px;
+
+    .header-title {
+      display: flex;
+      align-items: center;
+    }
+
+    i {
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  p-accordion {
+    .p-accordion-header {
+      &.p-highlight {
+        .p-accordion-header-link {
+          background-color: #595a62 !important;
+          border-color: #595a62 !important
+        }
+      }
+
+      .p-accordion-header-link {
+        justify-content: space-between;
+        flex-direction: row-reverse;
+        background-color: #40414A !important;
+        border-color: #40414A #40414A #848484 #40414A !important;
+        transition: all .4s;
+        color: #f8f9fa !important;
+
+        &:focus {
+          box-shadow: none;
+        }
+
+        &:hover {
+          background-color: #595a62 !important;
+          border-color: #595a62 !important
+        }
+
+        .p-accordion-toggle-icon {
+          &:before {
+            content: "\e902";
+          }
+        }
+
+        &[aria-expanded="true"] {
+          .p-accordion-toggle-icon {
+            &:before {
+              content: "\e903";
+            }
+          }
+        }
+      }
+    }
+
+    .p-accordion-content {
+      background-color: #40414A;
+      border-color: #40414A;
+      color: #f8f9fa;
+      padding: 1.5rem 0.25rem;
+    }
+
+    .p-accordion-tab {
+      &:not(.p-accordion-tab-active) .p-toggleable-content {
+        height: 0;
+        overflow: hidden;
+      }
+    }
+  }
+
+  input, textarea {
+    background-color: #585A66;
+    border-color: #585A66;
+    border-radius: 8px;
+    color: #ffffff;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+}

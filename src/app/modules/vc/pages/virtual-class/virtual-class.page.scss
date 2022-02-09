@@ -33,49 +33,53 @@
       }
     }
 
-    ng-button {
-      &.active {
-        button.p-button-primary:enabled {
-          background-color: #5643C1;
-        }
-      }
-
-      button {
-        border-radius: 8px;
-        border-color: transparent;
-
-        &:focus {
-          box-shadow: none !important;
-        }
-
-        &.p-button-primary {
-          background-color: #40414A;
-
-          &:enabled:hover {
+    .header, .footer {
+      ng-button {
+        &.active {
+          button.p-button-primary:enabled {
             background-color: #5643C1;
-            border-color: #5643C1;
           }
         }
 
-      }
+        button {
+          border-color: transparent;
 
-      &.badge {
-        position: relative;
+          &.p-button-primary {
+            background-color: #40414A;
 
-        &:before {
-          content: "";
-          position: absolute;
-          width: 8px;
-          height: 8px;
-          min-width: 8px;
-          min-height: 8px;
-          border-radius: 50%;
-          top: 0;
-          right: 0;
-          transform: translate(50%, -50%);
-          z-index: 10;
-          background-color: red;
+            &:enabled:hover {
+              background-color: #5643C1;
+              border-color: #5643C1;
+            }
+          }
         }
+
+        &.badge {
+          position: relative;
+
+          &:before {
+            content: "";
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            min-width: 8px;
+            min-height: 8px;
+            border-radius: 50%;
+            top: 0;
+            right: 0;
+            transform: translate(50%, -50%);
+            z-index: 10;
+            background-color: red;
+          }
+        }
+      }
+    }
+
+    button {
+      border-radius: 8px;
+
+      &:focus {
+        box-shadow: none !important;
       }
     }
 

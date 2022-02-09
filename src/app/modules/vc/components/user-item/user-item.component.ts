@@ -39,6 +39,12 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
             this.activateRaiseHand = res.data.value;
           }
           break;
+
+        case 'teacherConfirmRaisedHand':
+          if (res.data.target == this.user.id) {
+            this.raiseHandConfirmed = res.data.value;
+          }
+          break;
       }
     });
   }

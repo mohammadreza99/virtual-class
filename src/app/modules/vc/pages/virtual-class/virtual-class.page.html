@@ -1,5 +1,5 @@
 <div class="virtual-class-wrapper" [class.rtl]="fa"
-     [class.sidebar-visible]="membersSidebarVisible || chatSidebarVisible"
+     [class.sidebar-visible]="anySidebarVisible()"
      #wrapper>
   <div class="header d-flex align-items-center justify-content-between fixed-top">
     <div class="actions d-flex align-items-center">
@@ -70,6 +70,11 @@
   </ng-participants>
 </p-sidebar>
 
+<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
+           [(visible)]="classExamSidebarVisible">
+  <ng-exam (closeSidebar)="closeSidebar('classExam')"></ng-exam>
+</p-sidebar>
+
 <p-overlayPanel [baseZIndex]="2000" #viewModes styleClass="actions {{fa ? 'rtl' : null}}">
   <ul class="list-unstyled p-0 m-0">
     <li (click)="changeView('speaker',viewModes)" [class.active]="currentViewMode == 'speaker'">
@@ -89,7 +94,7 @@
 
 <p-overlayPanel [baseZIndex]="2000" #otherActions styleClass="actions {{fa ? 'rtl' : null}}">
   <ul class="list-unstyled p-0 m-0">
-    <li (click)="openClassExam(otherActions)">
+    <li (click)="openSidebar('classExam',otherActions)">
       <i class="icon-view-speaker"></i>
       <span>{{'room.classExam' | translate}}</span>
     </li>
@@ -111,16 +116,6 @@
 <!--    </div>-->
 <!--  </ng-template>-->
 <!--</p-overlayPanel>-->
-
-<p-dialog [breakpoints]="{'960px': '75vw'}" [header]="'room.classExam' | translate" [(visible)]="showExamModifyDialog"
-          [style]="{width: '60vw'}">
-  <ng-exam (publish)="onPublishExam()"></ng-exam>
-</p-dialog>
-
-<p-dialog [breakpoints]="{'960px': '75vw'}" [header]="'room.classExam' | translate" [(visible)]="showExamResultDialog"
-          [style]="{width: '60vw'}">
-  <ng-exam-result></ng-exam-result>
-</p-dialog>
 
 <p-dialog [breakpoints]="{'960px': '75vw'}" [header]="'room.classExam' | translate" [(visible)]="showIncomeExamDialog"
           [style]="{width: '60vw'}">

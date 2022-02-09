@@ -16,7 +16,7 @@
   <!--    <p-tabPanel header="چت عمومی" leftIcon="icon-user-groups">-->
   <section class="chat-wrapper">
     <main class="chat-messages" #chatContainer (scroll)="scrolled()">
-      <div class="pinned-container d-flex align-items-center justify-content-between py-2 mx-2 rounded"
+      <div class="pinned-container d-flex align-items-center justify-content-between py-2 m-2 rounded"
            *ngIf="pinnedMessage">
         <i class="icon-pin text-warning"></i>
         <div class="message-info flex-grow-1">
@@ -38,7 +38,7 @@
       </ng-container>
     </main>
     <div class="chat-footer">
-      <div class="reply-container d-flex align-items-center justify-content-between py-2 mx-2 rounded"
+      <div class="reply-container d-flex align-items-center justify-content-between py-2 m-2 rounded"
            *ngIf="replyMessage">
         <div class="message-info">
           <small

@@ -6,7 +6,7 @@ import {NgDropdownItem} from '@ng/models/forms';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {AddGroupFormComponent} from '@modules/panel/components/add-group-form/add-group-form.component';
 import {DialogService} from 'primeng/dynamicdialog';
-import {GroupRelationsComponent} from "@modules/panel/components/group-relations/group-relations.component";
+import {GroupRelationsComponent} from '@modules/panel/components/group-relations/group-relations.component';
 
 @Component({
   selector: 'ng-group-list',

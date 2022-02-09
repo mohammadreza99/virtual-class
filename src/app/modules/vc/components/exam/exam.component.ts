@@ -1,19 +1,20 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, OnDestroy} from '@angular/core';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 
 @Component({
   selector: 'ng-exam',
-  templateUrl: './exam-modify.component.html',
-  styleUrls: ['./exam-modify.component.scss']
+  templateUrl: './exam.component.html',
+  styleUrls: ['./exam.component.scss']
 })
-export class ExamModifyComponent extends LanguageChecker implements OnInit {
+export class ExamComponent extends LanguageChecker implements OnInit, OnDestroy {
 
   constructor() {
     super();
   }
 
   @Output() publish = new EventEmitter();
+  @Output() closeSidebar = new EventEmitter();
 
   form = new FormGroup({
     question: new FormControl(),
@@ -144,13 +145,10 @@ export class ExamModifyComponent extends LanguageChecker implements OnInit {
       ]
     }
   ];
-  questionsActiveStates: boolean[] = [];
-  isOpen = false;
+  currentState: 'modify' | 'result' | 'archive' = 'modify';
+  examStarted: boolean = false;
 
   ngOnInit(): void {
-    this.questions.forEach(a => {
-      this.questionsActiveStates.push(false);
-    });
   }
 
   createAnswerControl() {
@@ -173,5 +171,18 @@ export class ExamModifyComponent extends LanguageChecker implements OnInit {
   deleteAnswer(i) {
     const answers = this.form.get('answers') as FormArray;
     answers.removeAt(i);
+  }
+
+  goBack() {
+    this.currentState = this.examStarted ? 'result' : 'modify';
+  }
+
+
+  showArchive() {
+    this.currentState = 'archive';
+  }
+
+  ngOnDestroy() {
+    console.log(123);
   }
 }

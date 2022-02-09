@@ -48,7 +48,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   membersSidebarVisible: boolean = true;
   chatSidebarVisible: boolean = false;
   sessionDuration: any;
-  showExamModifyDialog: boolean = false;
+  classExamSidebarVisible: boolean = false;
   showExamResultDialog: boolean = false;
   showIncomeExamDialog: boolean = false;
 
@@ -233,33 +233,11 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     viewModesOverlay.hide();
   }
 
-  toggleMembersSidebar() {
-    this.membersSidebarVisible = !this.membersSidebarVisible;
-    if (this.membersSidebarVisible) {
-      this.hasUnreadRaisedHands = false;
-    }
-  }
-
-  toggleChatSidebar() {
-    this.chatSidebarVisible = !this.chatSidebarVisible;
-    if (this.chatSidebarVisible) {
-      this.hasUnreadMessage = false;
-    }
-  }
-
-  closeMembersSidebar() {
-    this.membersSidebarVisible = false;
-  }
-
-  closeChatSidebar() {
-    this.chatSidebarVisible = false;
-  }
-
   closeSidebar(key: string) {
     this[`${key}SidebarVisible`] = false;
   }
 
-  openSidebar(key: string) {
+  openSidebar(key: string, overlay?: OverlayPanel) {
     const sidebars = ['members', 'chat', 'classExam', 'poll'];
     this[`${key}SidebarVisible`] = true;
     if (key == 'chat') {
@@ -273,6 +251,10 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
         this.closeSidebar(k);
       }
     });
+
+    if (overlay) {
+      overlay.hide();
+    }
   }
 
   async copySessionLink(sessionInfoOverlay: OverlayPanel) {
@@ -296,8 +278,8 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   ngOnDestroy(): void {
-    this.chatSidebarVisible = false;
-    this.membersSidebarVisible = false;
+    this.closeSidebar('chat');
+    this.closeSidebar('members');
     this.roomUsersSubscription.unsubscribe();
     this.raisedHandsSubscription.unsubscribe();
     this.updateViewSubscription.unsubscribe();
@@ -311,12 +293,11 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   openClassExam(otherActions: OverlayPanel) {
-    this.showExamModifyDialog = true;
+    this.classExamSidebarVisible = true;
     otherActions.hide();
   }
 
-  onPublishExam() {
-    this.showExamModifyDialog = false;
-    this.showExamResultDialog = true;
+  anySidebarVisible() {
+    return this.membersSidebarVisible || this.chatSidebarVisible || this.classExamSidebarVisible;
   }
 }

@@ -19,4 +19,10 @@ export interface UserOrGroup {
   role: 'Admin' | 'Viewer';
 }
 
+export interface ClassExamOption {
+  question_no?: number;
+  description: string;
+  correct_answer: boolean;
+}
+
 export type ViewMode = 'speaker' | 'grid' | 'thumbnail';

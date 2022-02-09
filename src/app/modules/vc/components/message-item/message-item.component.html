@@ -17,7 +17,8 @@
          [style.backgroundColor]="getColor()">{{sender.first_name[0] + '.' + sender.last_name[0]}}</div>
     <ng-button *ngPermission="'Viewer'" (onClick)="onReply()" class="mt-2" [rounded]="true"
                icon="icon-forward"></ng-button>
-    <ng-button *ngPermission="'Admin'" (onClick)="messageActions.toggle($event)" class="mt-2" [rounded]="true"
+    <ng-button *ngPermission="'Admin'" appearance="text" (onClick)="messageActions.toggle($event)" class="mt-2"
+               [rounded]="true"
                icon="icon-more"></ng-button>
   </div>
 </div>

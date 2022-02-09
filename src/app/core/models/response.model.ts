@@ -13,10 +13,6 @@ type StatusType =
   | 'JANUS_ERROR'
   | 'SESSION_ERROR';
 
-interface OutputMeta {
-  total?: number;
-}
-
 export interface SearchParam {
   search?: string;
   page?: number;
@@ -29,6 +25,10 @@ export interface BaseRes<T> {
   data: T;
   status: StatusType;
   status_det: string;
+}
+
+interface OutputMeta {
+  total?: number;
 }
 
 export interface ListRes<T> {

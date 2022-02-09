@@ -9,7 +9,7 @@
     </div>
   </div>
   <ng-container *ngPermission="'Viewer'">
-    <i class="icon-hand-raise" [class.text-success]="activateRaiseHand" *ngIf="user.raise_hand && raiseHand"></i>
+    <i class="icon-hand-raise" [class.text-success]="raiseHandConfirmed" *ngIf="user.raise_hand && raiseHand"></i>
   </ng-container>
   <ng-container *ngIf="user.id != currentUser.id">
     <ng-container *ngPermission="'Admin'">

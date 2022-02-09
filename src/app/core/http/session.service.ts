@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {
+  ClassExamOption,
   DeviceType,
   DisplayName,
   PeerConnection,
@@ -1045,12 +1046,6 @@ export class SessionService extends ApiService {
     });
   }
 
-  private getPublicMessages(data: SearchParam | {} = {}) {
-    return this._post<any>('', {
-      method: 'getPublicMessages',
-      data: {room_id: this.currentRoom.id, ...data},
-    });
-  }
 
   deletePublicMessage(message_id: number) {
     return this._post<any>('', {
@@ -1063,6 +1058,20 @@ export class SessionService extends ApiService {
     return this._post<any>('', {
       method: 'isTalking',
       data: {room_id: this.currentRoom.id, talking},
+    });
+  }
+
+  addClassExam(description: string, state: 'Draft' | 'InProgress', options: ClassExamOption) {
+    return this._post<any>('', {
+      method: 'addQuestion',
+      data: {room_id: this.currentRoom.id, description, state, options},
+    });
+  }
+
+  private getPublicMessages(data: SearchParam | {} = {}) {
+    return this._post<any>('', {
+      method: 'getPublicMessages',
+      data: {room_id: this.currentRoom.id, ...data},
     });
   }
 

@@ -6,7 +6,6 @@ import {UtilsService} from '@ng/services';
 import {PagerRes, TableConfig, User} from '@core/models';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {AddGroupUserFormComponent} from '@modules/panel/components/add-group-user-form/add-group-user-form.component';
-import {debounceTime} from 'rxjs/operators';
 
 @Component({
   selector: 'ng-group-setting',
