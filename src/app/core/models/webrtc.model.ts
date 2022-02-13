@@ -91,4 +91,13 @@ export enum SocketEventTypes {
   PublicChatState = 'publicChatState',
   NewMessage = 'newMessage',
   DeletedMessage = 'deletedMessage',
+  NewQuestion = 'newQuestion',
+  FinishedQuestion = 'finishedQuestion',
+  CanceledQuestion = 'canceledQuestion',
+  NewQuestionReply = 'newQuestionReply',
+  NewPoll = 'newPoll',
+  FinishedPoll = 'finishedPoll',
+  CanceledPoll = 'canceledPoll',
+  NewPollReply = 'newPollReply'
 }
+

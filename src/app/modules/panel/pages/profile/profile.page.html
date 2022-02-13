@@ -5,7 +5,8 @@
     </div>
     <div class="col-12 mb-4">
       <div class="profile d-flex align-items-center">
-        <div class="avatar rounded-circle p-3 text-light font-bold" [style.backgroundColor]="getColor()">
+        <div class="avatar rounded-circle p-3 text-light font-bold" [style.backgroundColor]="getColor()"
+             (click)="changeAvatar()">
           <span>{{currentUser.first_name[0].toUpperCase()}}.{{currentUser.last_name[0].toUpperCase()}}</span>
         </div>
         <div class="info mx-3">

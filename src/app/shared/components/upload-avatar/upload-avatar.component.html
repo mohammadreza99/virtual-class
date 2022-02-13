@@ -1,0 +1,31 @@
+<div class="wrapper">
+  <div class="header my-3 d-flex">
+    <ng-button [disabled]="imageChangedEvent" icon="pi pi-plus" [full]="true" (onClick)="uploader.click()"
+               [label]="'choose' | translate"></ng-button>
+    <ng-button *ngIf="imageChangedEvent" class="mr-2" appearance="outlined" color="danger" icon="pi pi-trash"
+               (onClick)="deleteImage()"></ng-button>
+  </div>
+  <div class="image-placeholder" *ngIf="!imageChangedEvent">
+    <i class="pi pi-camera display-3"></i>
+    <small class="text-muted d-block">{{'noFileSelected' | translate}}</small>
+  </div>
+  <div class="border">
+    <image-cropper
+      *ngIf="imageChangedEvent"
+      [imageChangedEvent]="imageChangedEvent"
+      [maintainAspectRatio]="true"
+      [aspectRatio]="4 / 3"
+      (imageCropped)="imageCropped($event)"
+    ></image-cropper>
+  </div>
+  <ng-button class="mt-3 mr-auto d-block" (onClick)="onSubmit()" [label]="'submit' | translate"
+             [disabled]="!imageChangedEvent">
+  </ng-button>
+  <input
+    #uploader
+    (change)="onSelect($event)"
+    onclick="this.value = null"
+    accept="image/jpeg, image/png"
+    type="file"
+  />
+</div>

@@ -11,6 +11,8 @@ export interface Room {
   online_users?: number;
   session_duration?: number;
   public_messages?: boolean;
+  active_question?: number;
+  active_poll?: number;
 }
 
 export interface UserOrGroup {
@@ -19,10 +21,14 @@ export interface UserOrGroup {
   role: 'Admin' | 'Viewer';
 }
 
-export interface ClassExamOption {
+export interface QuestionOption {
   question_no?: number;
   description: string;
   correct_answer: boolean;
+}
+
+export interface PollOption {
+  description: string;
 }
 
 export type ViewMode = 'speaker' | 'grid' | 'thumbnail';

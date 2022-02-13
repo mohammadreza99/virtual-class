@@ -71,7 +71,7 @@ export class MultiCheckboxComponent implements OnInit, ControlValueAccessor {
     this.inputId = this.getId();
     this.groupname = this.getId();
     this.options.forEach((item) => {
-      Object.assign(item, { id: this.getId() });
+      Object.assign(item, { __id: this.getId() });
     });
     this.controlContainer = this.injector.get(
       ControlContainer,

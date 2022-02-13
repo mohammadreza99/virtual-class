@@ -11,7 +11,6 @@ import {AddRoomGroupFormComponent} from '@modules/panel/components/add-room-grou
 import {AddRoomUserFormComponent} from '@modules/panel/components/add-room-user-form/add-room-user-form.component';
 import {AddGroupFormComponent} from '@modules/panel/components/add-group-form/add-group-form.component';
 import {AddGroupUserFormComponent} from '@modules/panel/components/add-group-user-form/add-group-user-form.component';
-import {CustomTableComponent} from '@modules/panel/components/custom-table/custom-table.component';
 import {NavbarMenuComponent} from '@modules/panel/components/navbar-menu/navbar-menu.component';
 import {GroupRelationsComponent} from '@modules/panel/components/group-relations/group-relations.component';
 import {UserRelationsComponent} from '@modules/panel/components/user-relations/user-relations.component';
@@ -23,7 +22,6 @@ export const COMPONENTS: Type<any>[] = [
   AddGroupFormComponent,
   GroupRelationsComponent,
   UserRelationsComponent,
-  CustomTableComponent,
   NavbarMenuComponent,
   PanelPage,
   DashboardPage,

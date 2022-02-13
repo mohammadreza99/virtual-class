@@ -11,6 +11,6 @@ export class ToastComponent {
   options: NgToastOptions = {
     rtl: true,
     position: 'top-right',
-    preventDuplicates: false
+    preventDuplicates: false,
   };
 }

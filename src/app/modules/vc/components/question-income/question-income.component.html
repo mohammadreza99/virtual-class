@@ -1,0 +1,8 @@
+<div class="wrapper">
+  <p class="mb-4">{{question.description}}</p>
+  <ng-radio [rtl]="fa" class="d-block" [options]="question.options" optionValue="id" optionLabel="description"
+            [(ngModel)]="selectedOption">
+  </ng-radio>
+  <ng-button class="d-block mt-3 mr-auto" [disabled]="!selectedOption" (onClick)="onSubmit()"
+             [label]="'submit' | translate"></ng-button>
+</div>

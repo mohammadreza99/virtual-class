@@ -1,0 +1,19 @@
+input {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  opacity: 1e-5;
+  pointer-events: none;
+  width: 100%;
+  z-index: 2000;
+}
+
+.image-placeholder {
+  border: 1px dashed #bdbdbd;
+  color: #bdbdbd;
+  border-radius: 3px;
+  text-align: center;
+  padding: 3rem;
+}

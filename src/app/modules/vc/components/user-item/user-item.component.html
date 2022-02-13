@@ -41,6 +41,10 @@
             <!--        <i class="icon-assign-admin"></i>-->
             <!--        <span>{{'room.upgradeRole' | translate}}</span>-->
             <!--      </li>-->
+            <li (click)="changeAvatar()">
+              <i class="icon-info"></i>
+              <span>{{'room.changeAvatar' | translate}}</span>
+            </li>
             <li (click)="showStatus($event,actions,userStatus,actionsButton)">
               <i class="icon-info"></i>
               <span>{{'room.userStatus' | translate}}</span>

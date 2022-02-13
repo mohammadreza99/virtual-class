@@ -68,9 +68,11 @@
     "closePrivateChat": "بستن چت خصوصی",
     "openPrivateChat": "بازکردن چت خصوصی",
     "virtualClass": "کلاس مجازی",
-    "classExam": "پرسش کلاسی",
+    "question": "پرسش کلاسی",
+    "poll": "نظرسنجی",
     "publish": "انتشار",
-    "endExam": "پایان پرسش",
+    "endQuestion": "پایان پرسش",
+    "endPoll": "پایان نظرسنجی",
     "revoke": "لغو",
     "enterYourQuestion": "سوال خود را وارد کنید",
     "enterYourOption": "گزینه خود را وارد کنید",
@@ -78,6 +80,7 @@
     "percent": "درصد",
     "people": "نفرات",
     "questionsArchive": "آرشیو سوالات",
+    "pollsArchive": "آرشیو نظرسنجی",
     "userStatus": "وضعیت کاربر",
     "webcamStatus": "وضعیت دوربین",
     "micStatus": "وضعیت میکروفن",
@@ -86,7 +89,17 @@
     "mobile": "موبایل",
     "desktop": "دسکتاپ",
     "have": "دارد",
-    "notHave": "ندارد"
+    "notHave": "ندارد",
+    "changeAvatar": "تغییر آواتار",
+    "alreadyHaveOpenQuestionnaire": "یک پرسشنامه باز وجود دارد",
+    "revokeQuestion": "لغو پرسش کلاسی",
+    "revokeQuestionConfirm": "آیا از لغو پرسش مطمئن هستید؟",
+    "revokePoll": "لغو نظرسنجی",
+    "revokePollConfirm": "آیا از لغو نظرسنجی مطمئن هستید؟",
+    "questionCanceled": "پرسش کلاسی لغو شد",
+    "questionFinished": "پرسش کلاسی به پایان رسید",
+    "pollCanceled": "نظرسنجی لغو شد",
+    "pollFinished": "نظرسنجی به پایان رسید"
   },
   "home": "خانه",
   "forgetPassword": "فراموشی رمزعبور",
@@ -231,5 +244,6 @@
   "notEmptyError": "مورد خالی نیست",
   "unAuthenticatedError": "لطفا دوباره وارد شوید",
   "accessDeniedError": "دسترسی غیرمجاز",
-  "wrongCredential": "اطلاعات نادرست است"
+  "wrongCredential": "اطلاعات نادرست است",
+  "noFileSelected": "تصویری انتخاب نشده است"
 }

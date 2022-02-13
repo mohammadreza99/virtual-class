@@ -45,6 +45,14 @@ export class AuthService extends ApiService {
     return this._post('', {method: 'updateProfile', data});
   }
 
+  getUploadLink(): Observable<BaseRes<any>> {
+    return this._post('', {method: 'uploadAvatar', data: {}});
+  }
+
+  uploadAvatar(url: string, image: File) {
+    return this.http.put(url, image);
+  }
+
   logout(): void {
     localStorage.removeItem('token');
   }

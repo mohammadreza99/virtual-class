@@ -20,7 +20,7 @@ export class ApiService {
     this.socketBaseUrl = this.envService.socketUrl;
   }
 
-  private http: HttpClient;
+  protected http: HttpClient;
   private envService: EnvService;
   private baseUrl: string;
   protected socketBaseUrl: string;
@@ -41,12 +41,13 @@ export class ApiService {
     );
   }
 
-  protected _delete<T>(
+  protected _put<T>(
     endpoint: string,
+    data: any,
     options: RequestOptions = null,
     mappingKey: string = null
   ): Observable<T> {
-    return this.http.delete<T>(`${this.baseUrl}`, {
+    return this.http.put(`${this.baseUrl}/${endpoint}`, data, {
       ...options,
       params: this.getHttpParams(options?.params)
     }).pipe(

@@ -71,8 +71,21 @@
 </p-sidebar>
 
 <p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
-           [(visible)]="classExamSidebarVisible">
-  <ng-exam (closeSidebar)="closeSidebar('classExam')"></ng-exam>
+           [(visible)]="questionSidebarVisible" *ngPermission="'Admin'">
+  <ng-question-management [activeQuestionId]="currentRoom.active_question"
+                          (published)="questionPublished($event)"
+                          (finished)="questionRevoked()"
+                          (canceled)="questionRevoked()"
+                          (closeSidebar)="closeSidebar('question')"></ng-question-management>
+</p-sidebar>
+
+<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
+           [(visible)]="pollSidebarVisible" *ngPermission="'Admin'">
+  <ng-poll-management [activePollId]="currentRoom.active_poll"
+                      (published)="pollPublished($event)"
+                      (finished)="pollRevoked()"
+                      (canceled)="pollRevoked()"
+                      (closeSidebar)="closeSidebar('poll')"></ng-poll-management>
 </p-sidebar>
 
 <p-overlayPanel [baseZIndex]="2000" #viewModes styleClass="actions {{fa ? 'rtl' : null}}">
@@ -94,9 +107,13 @@
 
 <p-overlayPanel [baseZIndex]="2000" #otherActions styleClass="actions {{fa ? 'rtl' : null}}">
   <ul class="list-unstyled p-0 m-0">
-    <li (click)="openSidebar('classExam',otherActions)">
+    <li (click)="openQuestionSidebar(otherActions)">
       <i class="icon-view-speaker"></i>
-      <span>{{'room.classExam' | translate}}</span>
+      <span>{{'room.question' | translate}}</span>
+    </li>
+    <li (click)="openPollSidebar(otherActions)">
+      <i class="icon-view-speaker"></i>
+      <span>{{'room.poll' | translate}}</span>
     </li>
   </ul>
 </p-overlayPanel>
@@ -116,12 +133,3 @@
 <!--    </div>-->
 <!--  </ng-template>-->
 <!--</p-overlayPanel>-->
-
-<p-dialog [breakpoints]="{'960px': '75vw'}" [header]="'room.classExam' | translate" [(visible)]="showIncomeExamDialog"
-          [style]="{width: '60vw'}">
-  <p>بنظر شما کدام درست است؟</p>
-  <ng-single-checkbox [rtl]="fa" label="گزینه"></ng-single-checkbox>
-  <ng-single-checkbox [rtl]="fa" label="گزینه"></ng-single-checkbox>
-  <ng-single-checkbox [rtl]="fa" label="گزینه"></ng-single-checkbox>
-  <ng-single-checkbox [rtl]="fa" label="گزینه"></ng-single-checkbox>
-</p-dialog>

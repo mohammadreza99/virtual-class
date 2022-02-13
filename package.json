@@ -23,6 +23,7 @@
     "@ngx-translate/core": "^13.0.0",
     "@ngx-translate/http-loader": "^6.0.0",
     "ng2-jalali-date-picker": "^2.4.2",
+    "ngx-image-cropper": "^6.1.0",
     "node-sass": "^4.14.1",
     "primeicons": "^4.1.0",
     "primeng": "^12.2.2",

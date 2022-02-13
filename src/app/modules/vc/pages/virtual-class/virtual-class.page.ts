@@ -8,6 +8,9 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {LocationStrategy} from '@angular/common';
 import {UpdateViewService} from '@core/http/update-view.service';
+import {DialogService} from 'primeng/dynamicdialog';
+import {QuestionIncomeComponent} from '@modules/vc/components/question-income/question-income.component';
+import {PollIncomeComponent} from '@modules/vc/components/poll-income/poll-income.component';
 
 @Component({
   selector: 'ng-virtual-class',
@@ -21,6 +24,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
               private roomService: RoomService,
               private location: LocationStrategy,
               private route: ActivatedRoute,
+              private dialogService: DialogService,
               private updateViewService: UpdateViewService,
               private resolver: ComponentFactoryResolver,
               private router: Router) {
@@ -47,10 +51,9 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   updateViewSubscription: Subscription;
   membersSidebarVisible: boolean = true;
   chatSidebarVisible: boolean = false;
+  questionSidebarVisible: boolean = false;
+  pollSidebarVisible: boolean = false;
   sessionDuration: any;
-  classExamSidebarVisible: boolean = false;
-  showExamResultDialog: boolean = false;
-  showIncomeExamDialog: boolean = false;
 
   ngOnInit(): void {
     this.loadData();
@@ -120,23 +123,39 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           }
           break;
 
-        // case 'webcamCheck':
-        //   this.webcamFound = res.data.value;
-        //   break;
-        //
-        // case 'micCheck':
-        //   this.micFound = res.data.value;
-        //   break;
+        case 'newQuestion':
+          if (this.sessionService.imStudent) {
+            this.openIncomeQuestion(res.data.question);
+          }
+          break;
+
+        case 'newPoll':
+          if (this.sessionService.imStudent) {
+            this.openIncomePoll(res.data.poll);
+          }
+          break;
       }
     });
   }
 
-  initUserData() {
+  async initUserData() {
     this.currentRoom = this.sessionService.currentRoom;
     this.currentUser = this.sessionService.currentUser;
     this.disableWebcam = this.currentUser.muted_video;
     this.disableMic = this.currentUser.muted;
     this.raiseHandActivated = this.currentUser.raise_hand;
+    if (this.currentRoom.active_question && this.sessionService.imStudent) {
+      const result = await this.sessionService.getQuestionById(this.currentRoom.active_question).toPromise();
+      if (result.status == 'OK') {
+        this.openIncomeQuestion(result.data.question);
+      }
+    }
+    if (this.currentRoom.active_poll && this.sessionService.imStudent) {
+      const result = await this.sessionService.getPollById(this.currentRoom.active_poll).toPromise();
+      if (result.status == 'OK') {
+        this.openIncomePoll(result.data.poll);
+      }
+    }
   }
 
   async toggleCamera(callback: (toggleState?: boolean) => any) {
@@ -238,7 +257,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   openSidebar(key: string, overlay?: OverlayPanel) {
-    const sidebars = ['members', 'chat', 'classExam', 'poll'];
+    const sidebars = ['members', 'chat', 'question', 'poll'];
     this[`${key}SidebarVisible`] = true;
     if (key == 'chat') {
       this.hasUnreadMessage = false;
@@ -255,6 +274,24 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     if (overlay) {
       overlay.hide();
     }
+  }
+
+  openQuestionSidebar(overlay: OverlayPanel) {
+    if (this.currentRoom.active_poll) {
+      this.utilsService.showToast({detail: this.translations.room.alreadyHaveOpenQuestionnaire, severity: 'warn'});
+      overlay.hide();
+      return;
+    }
+    this.openSidebar('question', overlay);
+  }
+
+  openPollSidebar(overlay: OverlayPanel) {
+    if (this.currentRoom.active_question) {
+      this.utilsService.showToast({detail: this.translations.room.alreadyHaveOpenQuestionnaire, severity: 'warn'});
+      overlay.hide();
+      return;
+    }
+    this.openSidebar('poll', overlay);
   }
 
   async copySessionLink(sessionInfoOverlay: OverlayPanel) {
@@ -292,12 +329,51 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     }
   }
 
-  openClassExam(otherActions: OverlayPanel) {
-    this.classExamSidebarVisible = true;
-    otherActions.hide();
+  anySidebarVisible() {
+    return this.membersSidebarVisible || this.chatSidebarVisible || this.questionSidebarVisible || this.pollSidebarVisible;
   }
 
-  anySidebarVisible() {
-    return this.membersSidebarVisible || this.chatSidebarVisible || this.classExamSidebarVisible;
+  openIncomeQuestion(question: any) {
+    this.dialogService.open(QuestionIncomeComponent, {
+      data: question,
+      header: this.translations.room.question,
+      width: '600px',
+      closable: false,
+      rtl: this.fa
+    }).onClose.subscribe(res => {
+      if (res) {
+        this.sessionService.replyQuestion(question.id, res).toPromise();
+      }
+    });
+  }
+
+  openIncomePoll(poll: any) {
+    this.dialogService.open(PollIncomeComponent, {
+      data: poll,
+      header: this.translations.room.poll,
+      width: '600px',
+      closable: false,
+      rtl: this.fa
+    }).onClose.subscribe(res => {
+      if (res) {
+        this.sessionService.replyPoll(poll.id, res).toPromise();
+      }
+    });
+  }
+
+  questionRevoked() {
+    this.currentRoom.active_question = null;
+  }
+
+  pollRevoked() {
+    this.currentRoom.active_poll = null;
+  }
+
+  questionPublished(event: number) {
+    this.currentRoom.active_question = event;
+  }
+
+  pollPublished(event: number) {
+    this.currentRoom.active_poll = event;
   }
 }

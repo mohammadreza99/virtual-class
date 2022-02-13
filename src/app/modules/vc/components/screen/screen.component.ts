@@ -85,7 +85,7 @@ export class ScreenComponent implements OnInit {
           // this.isTalking = res.data.value;
           // this.isTalkingUpdateTimer = setTimeout(() => {
           //   this.isTalkingUpdateTimer = null;
-          // }, GlobalConfig.isTalkingCheckDelay);
+          // }, GlobalConfig.isTalkingDisplayTime);
           break;
       }
     });

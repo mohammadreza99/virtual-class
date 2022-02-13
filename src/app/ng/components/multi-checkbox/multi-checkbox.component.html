@@ -32,7 +32,7 @@
         (onChange)="_onChange()"
         [(ngModel)]="value"
         [disabled]="item[optionDisabled]"
-        [inputId]="item.id"
+        [inputId]="item.__id"
         [name]="groupname"
         [ngClass]="{
           'ng-invalid ng-dirty': ngControl
@@ -42,18 +42,18 @@
         [value]="item[optionValue]"
       ></p-checkbox>
       <label
-        [attr.for]="item.id"
+        [attr.for]="item.__id"
         [ngClass]="{
           'ml-2': !rtl,
           'mr-2': rtl
         }"
         class="mb-0"
-        >{{ item[optionLabel] }}</label
+      >{{ item[optionLabel] }}</label
       >
     </div>
     <ng-container *ngFor="let error of errors | keyvalue">
       <small *ngIf="showError(error.key)" [class.mt-4]="hint"
-        class="error p-invalid p-error">
+             class="error p-invalid p-error">
         {{ error.value }}
       </small>
     </ng-container>
@@ -68,7 +68,7 @@
       'text-muted': disabled
     }"
     [style.width.px]="labelWidth"
-    >{{ label }}</label
+  >{{ label }}</label
   >
 </div>
 

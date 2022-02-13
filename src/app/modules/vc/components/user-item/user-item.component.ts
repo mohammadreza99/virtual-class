@@ -1,13 +1,13 @@
-import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {RoomUser} from '@core/models';
 import {RoomService, SessionService} from '@core/http';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {UtilsService} from '@ng/services';
 import {UpdateViewService} from '@core/http/update-view.service';
-import {GroupRelationsComponent} from '@modules/panel/components/group-relations/group-relations.component';
 import {DialogService} from 'primeng/dynamicdialog';
 import {KickUserConfirmComponent} from '@modules/vc/components/kick-user-confirm/kick-user-confirm.component';
+import {UploadAvatarComponent} from '@shared/components/upload-avatar/upload-avatar.component';
 
 @Component({
   selector: 'ng-user-item',
@@ -150,5 +150,21 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
     setTimeout(() => {
       userStatus.toggle(event, actionsButton);
     }, 150);
+  }
+
+  async changeAvatar() {
+    try {
+      this.dialogService.open(UploadAvatarComponent, {
+        data: this.user,
+        header: this.translations.room.changeAvatar,
+        width: '400px',
+        rtl: this.fa
+      }).onClose.subscribe(async res => {
+        if (res !== false) {
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

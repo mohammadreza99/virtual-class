@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {
-  ClassExamOption,
+  QuestionOption,
   DeviceType,
   DisplayName,
   PeerConnection,
@@ -10,7 +10,7 @@ import {
   PublishType,
   RoomUser,
   SearchParam,
-  TrackPosition
+  TrackPosition, PollOption
 } from '@core/models';
 import {ApiService, SocketService} from '@core/http';
 import {UtilsService} from '@ng/services';
@@ -695,8 +695,44 @@ export class SessionService extends ApiService {
           this.updateViewService.setViewEvent({event: 'newPublicMessage', data: res});
           break;
 
-        case 'deletedMessage':
-          this.updateViewService.setViewEvent({event: 'deletedMessage', data: res});
+        case 'newQuestion':
+          this.updateViewService.setViewEvent({event: 'newQuestion', data: res});
+          break;
+
+        case 'finishedQuestion':
+          if (this.imStudent) {
+            this.openToast('room.questionFinished', 'warn');
+          }
+          this.updateViewService.setViewEvent({event: 'finishedQuestion', data: res});
+          break;
+
+        case 'canceledQuestion':
+          if (this.imStudent) {
+            this.openToast('room.questionCanceled', 'warn');
+          }
+          this.updateViewService.setViewEvent({event: 'canceledQuestion', data: res});
+          break;
+
+        case 'newQuestionReply':
+          this.updateViewService.setViewEvent({event: 'newQuestionReply', data: res});
+          break;
+
+        case 'newPoll':
+          this.updateViewService.setViewEvent({event: 'newPoll', data: res});
+          break;
+
+        case 'finishedPoll':
+          if (this.imStudent) {
+            this.openToast('room.pollFinished', 'warn');
+          }
+          this.updateViewService.setViewEvent({event: 'finishedPoll', data: res});
+          break;
+
+        case 'canceledPoll':
+          if (this.imStudent) {
+            this.openToast('room.pollCanceled', 'warn');
+          }
+          this.updateViewService.setViewEvent({event: 'canceledPoll', data: res});
           break;
       }
     });
@@ -1061,10 +1097,101 @@ export class SessionService extends ApiService {
     });
   }
 
-  addClassExam(description: string, state: 'Draft' | 'InProgress', options: ClassExamOption) {
+  addQuestion(description: string, options: QuestionOption) {
     return this._post<any>('', {
       method: 'addQuestion',
-      data: {room_id: this.currentRoom.id, description, state, options},
+      data: {room_id: this.currentRoom.id, description, state: 'InProgress', options},
+    });
+  }
+
+  getQuestionById(question_id: number) {
+    return this._post<any>('', {
+      method: 'getQuestion',
+      data: {question_id},
+    });
+  }
+
+  getArchivedQuestions() {
+    return this._post<any>('', {
+      method: 'getArchivedQuestions',
+      data: {room_id: this.currentRoom.id},
+    });
+  }
+
+  getQuestionResult(question_id: number) {
+    return this._post<any>('', {
+      method: 'getQuestionResult',
+      data: {question_id},
+    });
+  }
+
+  getQuestionOptionReplies(question_option_id: number) {
+    return this._post<any>('', {
+      method: 'getQuestionOptionReplies',
+      data: {question_option_id},
+    });
+  }
+
+  changeQuestionPublishState(question_id: number, state: string) {
+    return this._post<any>('', {
+      method: 'changeQuestionPublishState',
+      data: {question_id, state},
+    });
+  }
+
+  replyQuestion(question_id: number, replies: { question_option_id }[]) {
+    return this._post<any>('', {
+      method: 'replyQuestion',
+      data: {question_id, replies},
+    });
+  }
+
+  addPoll(description: string, options: PollOption) {
+    return this._post<any>('', {
+      method: 'addPoll',
+      data: {room_id: this.currentRoom.id, description, state: 'InProgress', options},
+    });
+  }
+
+  getPollById(poll_id: number) {
+    return this._post<any>('', {
+      method: 'getPoll',
+      data: {poll_id},
+    });
+  }
+
+  getArchivedPolls() {
+    return this._post<any>('', {
+      method: 'getArchivedPolls',
+      data: {room_id: this.currentRoom.id},
+    });
+  }
+
+  getPollResult(poll_id: number) {
+    return this._post<any>('', {
+      method: 'getPollResult',
+      data: {poll_id},
+    });
+  }
+
+  getPollOptionReplies(poll_option_id: number) {
+    return this._post<any>('', {
+      method: 'getPollOptionReplies',
+      data: {poll_option_id},
+    });
+  }
+
+  changePollPublishState(poll_id: number, state: string) {
+    return this._post<any>('', {
+      method: 'changePollPublishState',
+      data: {poll_id, state},
+    });
+  }
+
+  replyPoll(poll_id: number, replies: { poll_option_id }[]) {
+    return this._post<any>('', {
+      method: 'submitPoll',
+      data: {poll_id, replies},
     });
   }
 

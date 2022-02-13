@@ -4,6 +4,8 @@ import {User} from '@core/models';
 import {AuthService, SessionService} from '@core/http';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {UtilsService} from '@ng/services';
+import {UploadAvatarComponent} from '@shared/components/upload-avatar/upload-avatar.component';
+import {DialogService} from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'ng-profile',
@@ -12,7 +14,10 @@ import {UtilsService} from '@ng/services';
 })
 export class ProfilePage extends LanguageChecker implements OnInit {
 
-  constructor(private authService: AuthService, private sessionService: SessionService, private utilsService: UtilsService) {
+  constructor(private authService: AuthService,
+              private sessionService: SessionService,
+              private dialogService: DialogService,
+              private utilsService: UtilsService) {
     super();
   }
 
@@ -140,5 +145,25 @@ export class ProfilePage extends LanguageChecker implements OnInit {
 
   getColor() {
     return this.sessionService.getProfileColor(this.currentUser.id);
+  }
+
+  async changeAvatar() {
+    try {
+      this.dialogService.open(UploadAvatarComponent, {
+        data: this.currentUser,
+        header: this.translations.room.changeAvatar,
+        width: '400px',
+        rtl: this.fa
+      }).onClose.subscribe(async res => {
+        if (res !== false) {
+          const result = await this.authService.getUploadLink().toPromise();
+          if (result.status == 'OK') {
+            this.authService.uploadAvatar(result.data.upload_url, res).toPromise();
+          }
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

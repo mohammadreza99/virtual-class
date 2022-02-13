@@ -61,11 +61,14 @@ export class RadioComponent implements OnInit, ControlValueAccessor {
   controlContainer: FormGroupDirective;
   ngControl: NgControl;
 
-  constructor(private cd: ChangeDetectorRef, private injector: Injector) {}
+  constructor(private cd: ChangeDetectorRef, private injector: Injector) {
+  }
 
-  onModelChange: any = (_: any) => {};
+  onModelChange: any = (_: any) => {
+  };
 
-  onModelTouched: any = () => {};
+  onModelTouched: any = () => {
+  };
 
   ngOnInit() {
     let parentForm: FormGroup;
@@ -73,9 +76,10 @@ export class RadioComponent implements OnInit, ControlValueAccessor {
     let currentControl: AbstractControl;
     this.inputId = this.getId();
     this.groupname = this.getId();
-    this.options.forEach((item) => {
-      Object.assign(item, { id: this.getId() });
-    });
+    // this.options.forEach((item) => {
+    //   Object.assign(item, {_id: this.getId()});
+    // });
+    // this.cd.detectChanges();
     this.controlContainer = this.injector.get(
       ControlContainer,
       null,
@@ -86,7 +90,7 @@ export class RadioComponent implements OnInit, ControlValueAccessor {
       this.ngControl.valueAccessor = this;
     }
     if (this.controlContainer && this.ngControl) {
-     parentForm = this.controlContainer.control;
+      parentForm = this.controlContainer.control;
       rootForm = this.controlContainer.formDirective as FormGroupDirective;
       if (this.ngControl instanceof NgModel) {
         currentControl = this.ngControl.control;
@@ -117,6 +121,7 @@ export class RadioComponent implements OnInit, ControlValueAccessor {
     this.onBlur.emit();
     this.onModelTouched();
   }
+
   emitter(name: string, event: any) {
     (this[name] as EventEmitter<any>).emit(event);
   }
@@ -156,8 +161,8 @@ export class RadioComponent implements OnInit, ControlValueAccessor {
   }
 
   writeValue(value: any) {
-        this.value = value;
-      this.cd.markForCheck();
+    this.value = value;
+    this.cd.markForCheck();
   }
 
   registerOnChange(fn) {
