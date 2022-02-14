@@ -52,6 +52,7 @@ export interface RoomUser {
   has_mic: boolean;
   has_cam: boolean;
   device: string;
+  avatar: string;
 }
 
 export interface Publisher {

@@ -4,20 +4,28 @@ import {LanguageChecker} from '@shared/components/language-checker/language-chec
 import {SessionService} from '@core/http';
 import {Subscription} from 'rxjs';
 import {UtilsService} from '@ng/services';
+import {QuestionItem, QuestionState} from '@core/models';
 
 @Component({
   selector: 'ng-question-management',
   templateUrl: './question-management.component.html',
   styleUrls: ['./question-management.component.scss']
 })
-export class QuestionManagementComponent extends LanguageChecker implements OnInit, OnDestroy {
+export class QuestionManagementComponent extends LanguageChecker implements OnInit {
 
-  constructor(private sessionService: SessionService, private utilsService: UtilsService) {
+  constructor(private sessionService: SessionService,
+              private utilsService: UtilsService) {
     super();
   }
 
+  @Input('visible') set setVisible(v: number) {
+    if (!v) {
+      this.resetForm();
+    }
+  };
+
   @Input() activeQuestionId: number;
-  @Output() closeSidebar = new EventEmitter();
+  @Output() visibleChange = new EventEmitter();
   @Output() published = new EventEmitter();
   @Output() finished = new EventEmitter();
   @Output() canceled = new EventEmitter();
@@ -26,12 +34,10 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
     description: new FormControl(null, Validators.required),
     options: new FormArray([this.createOptionControl(), this.createOptionControl()], this.questionValidator)
   });
-  archiveQuestions: any[] = [];
+  archiveQuestions: QuestionItem[] = [];
   currentState: 'modify' | 'result' | 'archive' = 'modify';
   questionStarted: boolean = false;
-  activeQuestion: any;
-
-  // updateQuestionTimer: any;
+  activeQuestion: QuestionItem;
 
   ngOnInit(): void {
     this.loadData();
@@ -41,10 +47,7 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
     if (this.activeQuestionId) {
       this.questionStarted = true;
       await this.updateQuestionResult();
-      this.currentState = 'result';
-      // this.updateQuestionTimer = setTimeout(() => {
-      //   this.updateQuestionResult();
-      // }, 5000);
+      this.goToState('result');
     }
     this.getArchiveQuestions();
   }
@@ -78,11 +81,7 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
   }
 
   goBack() {
-    this.currentState = this.questionStarted ? 'result' : 'modify';
-  }
-
-  showArchive() {
-    this.currentState = 'archive';
+    this.goToState(this.questionStarted ? 'result' : 'modify');
   }
 
   questionValidator(array: FormArray) {
@@ -101,32 +100,28 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
         if (questionResult.status == 'OK') {
           this.activeQuestion = questionResult.data.question;
         }
-        this.currentState = 'result';
-        this.form.reset({options: [{correct_answer: false}, {correct_answer: false}]});
+        this.goToState('result');
+        this.resetForm();
         this.published.emit(this.activeQuestion.id);
-        // this.updateQuestionTimer = setTimeout(() => {
-        //   this.updateQuestionResult();
-        // }, 5000);
-        callback();
       }
+      callback();
     } catch (e) {
       console.error(e);
       callback();
     }
   }
 
-  async changeQuestionState(state: string, callback?: any) {
+  async changeQuestionState(state: QuestionState, callback?: any) {
     try {
       const result = await this.sessionService.changeQuestionPublishState(this.activeQuestion.id, state).toPromise();
       if (result.status == 'OK') {
-        if (callback) {
-          callback();
-        }
         this.questionStarted = false;
-        this.currentState = 'result';
-        // clearTimeout(this.updateQuestionTimer);
+        this.activeQuestion.state = state;
         this[state.toLowerCase()].emit();
         this.getArchiveQuestions();
+      }
+      if (callback) {
+        callback();
       }
     } catch (e) {
       console.error(e);
@@ -140,10 +135,10 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
     try {
       const result = await this.sessionService.getQuestionResult(this.activeQuestionId).toPromise();
       if (result.status == 'OK') {
-        if (callback) {
-          callback();
-        }
         this.activeQuestion = result.data.question;
+      }
+      if (callback) {
+        callback();
       }
     } catch (error) {
       console.error(error);
@@ -151,10 +146,6 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
         callback();
       }
     }
-  }
-
-  ngOnDestroy() {
-    // clearTimeout(this.updateQuestionTimer);
   }
 
   async revokeQuestion() {
@@ -166,5 +157,35 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
     if (dialogRes) {
       this.changeQuestionState('Canceled');
     }
+  }
+
+  goToState(state: 'modify' | 'result' | 'archive') {
+    this.currentState = state;
+  }
+
+  async getArchiveDetail(event: any) {
+    const q = this.archiveQuestions[event.index];
+    const result = await this.sessionService.getQuestionResult(q.id).toPromise();
+    if (result.status == 'OK') {
+      q.options = result.data.question.options;
+    }
+  }
+
+  close() {
+    this.resetForm();
+    if (!this.questionStarted) {
+      this.goToState('modify');
+    }
+    this.visibleChange.emit();
+  }
+
+  resetForm() {
+    const array = this.form.get('options') as FormArray;
+    while (array.length !== 0) {
+      array.removeAt(0);
+    }
+    array.push(this.createOptionControl());
+    array.push(this.createOptionControl());
+    this.form.reset({options: [{correct_answer: false}, {correct_answer: false}]});
   }
 }

@@ -9,6 +9,10 @@
       flex-grow: 1;
       max-width: 60%;
 
+      .p-avatar-text {
+        font-size: 1rem;
+      }
+
       .name {
         flex-grow: 1;
 
@@ -36,12 +40,5 @@
         }
       }
     }
-  }
-
-  .avatar {
-    min-width: 40px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%
   }
 }

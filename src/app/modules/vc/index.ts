@@ -15,6 +15,7 @@ import {QuestionManagementComponent} from '@modules/vc/components/question-manag
 import {PollManagementComponent} from '@modules/vc/components/poll-management/poll-management.component';
 import {QuestionIncomeComponent} from '@modules/vc/components/question-income/question-income.component';
 import {PollIncomeComponent} from '@modules/vc/components/poll-income/poll-income.component';
+import {ResultTableComponent} from '@modules/vc/components/result-table/result-table.component';
 
 export const COMPONENTS: Type<any>[] = [
   VirtualClassPage,
@@ -33,4 +34,5 @@ export const COMPONENTS: Type<any>[] = [
   PollManagementComponent,
   QuestionIncomeComponent,
   PollIncomeComponent,
+  ResultTableComponent
 ];

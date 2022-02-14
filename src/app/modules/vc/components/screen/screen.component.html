@@ -3,7 +3,10 @@
   <video preload="none" #videoElem autoplay muted playsinline [hidden]="!hasVideo()"></video>
   <ng-container *ngIf="user">
     <div class="avatar" *ngIf="!hasVideo()">
-      <div class="avatar-info">{{user.first_name[0].toUpperCase()}}.{{user.last_name[0].toUpperCase()}}</div>
+      <p-avatar shape="circle" size="large"
+                class="mb-3"
+                [image]="user.avatar"
+                [label]="user.avatar ? null : user.first_name[0].toUpperCase()+'.'+user.last_name[0].toUpperCase()"></p-avatar>
       <small>{{user.first_name + ' ' + user.last_name}}</small>
     </div>
     <div *ngIf="hasVideo()" class="user-fullname">

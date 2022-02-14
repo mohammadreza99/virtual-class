@@ -3,35 +3,42 @@ import {LanguageChecker} from '@shared/components/language-checker/language-chec
 import {SessionService} from '@core/http';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {UtilsService} from '@ng/services';
+import {PollItem, QuestionState} from '@core/models';
 
 @Component({
   selector: 'ng-poll-management',
   templateUrl: './poll-management.component.html',
   styleUrls: ['./poll-management.component.scss']
 })
-export class PollManagementComponent extends LanguageChecker implements OnInit, OnDestroy {
+export class PollManagementComponent extends LanguageChecker implements OnInit {
 
   constructor(private sessionService: SessionService,
               private utilsService: UtilsService) {
     super();
   }
 
+  @Input('visible') set setVisible(v: number) {
+    if (!v) {
+      this.resetForm();
+    }
+  };
+
   @Input() activePollId: number;
-  @Output() closeSidebar = new EventEmitter();
+  @Output() visibleChange = new EventEmitter();
   @Output() published = new EventEmitter();
   @Output() finished = new EventEmitter();
   @Output() canceled = new EventEmitter();
 
   form = new FormGroup({
     description: new FormControl(null, Validators.required),
+    multiple_choice: new FormControl(false),
+    publish_result: new FormControl(false),
     options: new FormArray([this.createOptionControl(), this.createOptionControl()], this.pollValidator)
   });
   archivePolls: any[] = [];
   currentState: 'modify' | 'result' | 'archive' = 'modify';
   pollStarted: boolean = false;
-  activePoll: any;
-
-  // updatePollTimer: any;
+  activePoll: PollItem;
 
   ngOnInit(): void {
     this.loadData();
@@ -41,18 +48,19 @@ export class PollManagementComponent extends LanguageChecker implements OnInit, 
     if (this.activePollId) {
       this.pollStarted = true;
       await this.updatePollResult();
-      this.currentState = 'result';
-      // this.updatePollTimer = setTimeout(() => {
-      //   this.updatePollResult();
-      // }, 5000);
+      this.goToState('result');
     }
     this.getArchivePolls();
   }
 
   async getArchivePolls() {
-    const result = await this.sessionService.getArchivedPolls().toPromise();
-    if (result.status == 'OK') {
-      this.archivePolls = result.data.items;
+    try {
+      const result = await this.sessionService.getArchivedPolls().toPromise();
+      if (result.status == 'OK') {
+        this.archivePolls = result.data.items;
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -73,11 +81,7 @@ export class PollManagementComponent extends LanguageChecker implements OnInit, 
   }
 
   goBack() {
-    this.currentState = this.pollStarted ? 'result' : 'modify';
-  }
-
-  showArchive() {
-    this.currentState = 'archive';
+    this.goToState(this.pollStarted ? 'result' : 'modify');
   }
 
   pollValidator(array: FormArray) {
@@ -88,40 +92,35 @@ export class PollManagementComponent extends LanguageChecker implements OnInit, 
 
   async onSubmit(callback: any) {
     try {
-      const formValue = this.form.value;
-      const result = await this.sessionService.addPoll(formValue.description, formValue.options).toPromise();
+      const result = await this.sessionService.addPoll(this.form.value).toPromise();
       if (result.status == 'OK') {
         this.pollStarted = true;
         const pollResult = await this.sessionService.getPollResult(result.data.poll.id).toPromise();
         if (pollResult.status == 'OK') {
           this.activePoll = pollResult.data.poll;
         }
-        this.currentState = 'result';
-        this.form.reset();
+        this.goToState('result');
+        this.resetForm();
         this.published.emit(this.activePoll.id);
-        // this.updatePollTimer = setTimeout(() => {
-        //   this.updatePollResult();
-        // }, 5000);
-        callback();
       }
+      callback();
     } catch (e) {
       console.error(e);
       callback();
     }
   }
 
-  async changePollState(state: string, callback?: any) {
+  async changePollState(state: QuestionState, callback?: any) {
     try {
       const result = await this.sessionService.changePollPublishState(this.activePoll.id, state).toPromise();
       if (result.status == 'OK') {
-        if (callback) {
-          callback();
-        }
         this.pollStarted = false;
-        this.currentState = 'modify';
-        // clearTimeout(this.updatePollTimer);
+        this.activePoll.state = state;
         this[state.toLowerCase()].emit();
         this.getArchivePolls();
+      }
+      if (callback) {
+        callback();
       }
     } catch (e) {
       console.error(e);
@@ -135,10 +134,10 @@ export class PollManagementComponent extends LanguageChecker implements OnInit, 
     try {
       const result = await this.sessionService.getPollResult(this.activePollId).toPromise();
       if (result.status == 'OK') {
-        if (callback) {
-          callback();
-        }
         this.activePoll = result.data.poll;
+      }
+      if (callback) {
+        callback();
       }
     } catch (error) {
       console.error(error);
@@ -147,11 +146,6 @@ export class PollManagementComponent extends LanguageChecker implements OnInit, 
       }
     }
   }
-
-  ngOnDestroy() {
-    // clearTimeout(this.updatePollTimer);
-  }
-
 
   async revokePoll() {
     const dialogRes = await this.utilsService.showConfirm({
@@ -162,5 +156,35 @@ export class PollManagementComponent extends LanguageChecker implements OnInit, 
     if (dialogRes) {
       this.changePollState('Canceled');
     }
+  }
+
+  goToState(state: 'modify' | 'result' | 'archive') {
+    this.currentState = state;
+  }
+
+  async getArchiveDetail(event: any) {
+    const p = this.archivePolls[event.index];
+    const result = await this.sessionService.getPollResult(p.id).toPromise();
+    if (result.status == 'OK') {
+      p.options = result.data.poll.options;
+    }
+  }
+
+  close() {
+    this.resetForm();
+    if (!this.pollStarted) {
+      this.goToState('modify');
+    }
+    this.visibleChange.emit();
+  }
+
+  resetForm() {
+    const array = this.form.get('options') as FormArray;
+    while (array.length !== 0) {
+      array.removeAt(0);
+    }
+    array.push(this.createOptionControl());
+    array.push(this.createOptionControl());
+    this.form.reset({multiple_choice: false, publish_result: false});
   }
 }

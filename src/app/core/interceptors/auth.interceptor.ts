@@ -27,7 +27,7 @@ export class AuthInterceptor implements HttpInterceptor {
     }
     return next.handle(request).pipe(filter(e => e instanceof HttpResponse),
       tap((e: any) => {
-        if (e.body.status === 'UNAUTHENTICATED') {
+        if (e.body?.status === 'UNAUTHENTICATED') {
           this.authService.logout();
           this.router.navigate(['/auth/login'], {queryParams: {returnUrl: this.router.url}});
         }

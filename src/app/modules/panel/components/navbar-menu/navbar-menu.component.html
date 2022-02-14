@@ -22,12 +22,12 @@
       <!--        <i class="icon-notification"></i>-->
       <!--      </li>-->
       <li
-        class="nav-item p{{ fa ? 'r' : 'l' }}-4 m{{
-          fa ? 'r' : 'l'
-        }}-4 border-{{ fa ? 'right' : 'left' }}"
+        class="nav-item pr-4 mr-4 border-right"
         (click)="accountMenu.toggle($event)"
       >
-        <p-avatar shape="circle" size="large" icon="pi pi-user"></p-avatar>
+        <p-avatar shape="circle" size="large"
+                  [icon]="'pi pi-user'"></p-avatar>
+        <!--                  [image]="user.avatar"-->
       </li>
     </ul>
   </div>

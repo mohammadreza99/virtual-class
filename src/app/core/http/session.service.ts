@@ -10,7 +10,7 @@ import {
   PublishType,
   RoomUser,
   SearchParam,
-  TrackPosition, PollOption
+  TrackPosition, PollOption, PollItem
 } from '@core/models';
 import {ApiService, SocketService} from '@core/http';
 import {UtilsService} from '@ng/services';
@@ -69,7 +69,10 @@ export class SessionService extends ApiService {
         session: data.current_session,
       };
       if (this.currentUser.open_session) {
-        const dialogRes = await this.utilsService.showConfirm({message: this.translationService.translations.room.openSessionConfirm});
+        const dialogRes = await this.utilsService.showConfirm({
+          message: this.translationService.translations.room.openSessionConfirm,
+          header: this.translationService.translations.room.openSession
+        });
         if (dialogRes) {
           const newSession = await this.newSession().toPromise();
           this.currentUser.session = newSession.data.session;
@@ -675,7 +678,10 @@ export class SessionService extends ApiService {
 
         case 'assignAdmin':
           if (this.currentUser.id == res.target) {
-            this.utilsService.showConfirm({message: this.translationService.translations.room.myRoleChangedConfirm}).then(dialogRes => {
+            this.utilsService.showConfirm({
+              message: this.translationService.translations.room.myRoleChangedConfirm,
+              header: this.translationService.translations.room.roleChanged
+            }).then(dialogRes => {
               if (dialogRes) {
                 document.location.reload();
               }
@@ -1146,10 +1152,10 @@ export class SessionService extends ApiService {
     });
   }
 
-  addPoll(description: string, options: PollOption) {
+  addPoll(poll: PollItem) {
     return this._post<any>('', {
       method: 'addPoll',
-      data: {room_id: this.currentRoom.id, description, state: 'InProgress', options},
+      data: {room_id: this.currentRoom.id, state: 'InProgress', ...poll},
     });
   }
 
@@ -1192,6 +1198,13 @@ export class SessionService extends ApiService {
     return this._post<any>('', {
       method: 'submitPoll',
       data: {poll_id, replies},
+    });
+  }
+
+  exportAttendance() {
+    return this._post<any>('', {
+      method: 'exportAttendance',
+      data: {room_id: this.currentRoom.id},
     });
   }
 

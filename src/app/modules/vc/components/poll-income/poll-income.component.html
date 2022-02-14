@@ -1,8 +1,13 @@
 <div class="wrapper">
   <p class="mb-4">{{poll.description}}</p>
-  <ng-multi-checkbox [rtl]="fa" class="d-block" [options]="poll.options" optionValue="id" optionLabel="description"
-            [(ngModel)]="selectedOptions">
+  <ng-multi-checkbox *ngIf="poll.multiple_choice" [rtl]="fa" class="d-block" [options]="poll.options" optionValue="id"
+                     optionLabel="description"
+                     [(ngModel)]="selectedOptions">
   </ng-multi-checkbox>
+  <ng-radio *ngIf="!poll.multiple_choice" [rtl]="fa" class="d-block" [options]="poll.options" optionValue="id"
+            optionLabel="description"
+            [(ngModel)]="selectedOptions">
+  </ng-radio>
   <ng-button class="d-block mt-3 mr-auto" [disabled]="!selectedOptions" (onClick)="onSubmit()"
              [label]="'submit' | translate"></ng-button>
 </div>

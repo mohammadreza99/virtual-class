@@ -109,6 +109,7 @@ export class ChatComponent extends LanguageChecker implements OnInit, AfterViewI
 
   async onDelete(message: any) {
     const dialogRes = await this.utilsService.showConfirm({
+      header: this.translations.room.deleteMessage,
       message: this.translations.room.deletePublicMessageConfirm,
       rtl: this.fa
     });

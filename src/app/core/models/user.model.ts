@@ -15,6 +15,7 @@ export interface User {
   hashed_password?: string;
   active?: boolean;
   state?: string;
+  avatar?: string;
 }
 
 interface UserGroupRelItem {

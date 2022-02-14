@@ -155,10 +155,12 @@ export class ProfilePage extends LanguageChecker implements OnInit {
         width: '400px',
         rtl: this.fa
       }).onClose.subscribe(async res => {
-        if (res !== false) {
+        if (res) {
           const result = await this.authService.getUploadLink().toPromise();
           if (result.status == 'OK') {
-            this.authService.uploadAvatar(result.data.upload_url, res).toPromise();
+            await this.authService.uploadAvatar(result.data.upload_url, res).toPromise();
+            const data = await this.authService.getSelfUser().toPromise();
+            this.currentUser = data.data.user;
           }
         }
       });

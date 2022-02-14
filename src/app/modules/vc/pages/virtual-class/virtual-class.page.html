@@ -73,19 +73,21 @@
 <p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
            [(visible)]="questionSidebarVisible" *ngPermission="'Admin'">
   <ng-question-management [activeQuestionId]="currentRoom.active_question"
+                          [visible]="questionSidebarVisible"
                           (published)="questionPublished($event)"
                           (finished)="questionRevoked()"
                           (canceled)="questionRevoked()"
-                          (closeSidebar)="closeSidebar('question')"></ng-question-management>
+                          (visibleChange)="closeSidebar('question')"></ng-question-management>
 </p-sidebar>
 
 <p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
            [(visible)]="pollSidebarVisible" *ngPermission="'Admin'">
   <ng-poll-management [activePollId]="currentRoom.active_poll"
+                      [visible]="pollSidebarVisible"
                       (published)="pollPublished($event)"
                       (finished)="pollRevoked()"
                       (canceled)="pollRevoked()"
-                      (closeSidebar)="closeSidebar('poll')"></ng-poll-management>
+                      (visibleChange)="closeSidebar('poll')"></ng-poll-management>
 </p-sidebar>
 
 <p-overlayPanel [baseZIndex]="2000" #viewModes styleClass="actions {{fa ? 'rtl' : null}}">
@@ -114,6 +116,10 @@
     <li (click)="openPollSidebar(otherActions)">
       <i class="icon-view-speaker"></i>
       <span>{{'room.poll' | translate}}</span>
+    </li>
+    <li (click)="exportAttendance(otherActions)">
+      <i class="icon-download"></i>
+      <span>{{'room.downloadAttendance' | translate}}</span>
     </li>
   </ul>
 </p-overlayPanel>

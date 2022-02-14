@@ -11,6 +11,7 @@ import {UpdateViewService} from '@core/http/update-view.service';
 import {DialogService} from 'primeng/dynamicdialog';
 import {QuestionIncomeComponent} from '@modules/vc/components/question-income/question-income.component';
 import {PollIncomeComponent} from '@modules/vc/components/poll-income/poll-income.component';
+import {ResultTableComponent} from '@modules/vc/components/result-table/result-table.component';
 
 @Component({
   selector: 'ng-virtual-class',
@@ -134,6 +135,30 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
             this.openIncomePoll(res.data.poll);
           }
           break;
+
+        case 'finishedPoll':
+          if (this.sessionService.imStudent && res.data.poll) {
+            this.dialogService.open(ResultTableComponent, {
+              data: res.data.poll,
+              header: this.translations.room.poll,
+              width: '500px',
+              closable: true,
+              rtl: this.fa
+            });
+          }
+          break;
+
+        case 'finishedQuestion':
+        // if (this.sessionService.imStudent && res.data.question) {
+        //   this.dialogService.open(ResultTableComponent, {
+        //     data: res.data.question,
+        //     header: this.translations.room.question,
+        //     width: '500px',
+        //     closable: true,
+        //     rtl: this.fa
+        //   });
+        // }
+        // break;
       }
     });
   }
@@ -231,6 +256,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   async openTeacherLeaveRoomDialog() {
     return await this.utilsService.showConfirm({
+      header: this.translations.room.leaveSession,
       message: this.translations.room.speakerLeaveConfirm,
       rtl: this.fa,
       acceptLabel: this.translations.room.leaveSession,
@@ -242,6 +268,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   async openStudentLeaveRoomDialog() {
     return await this.utilsService.showConfirm({
+      header: this.translations.room.leaveSession,
       message: this.translations.room.studentLeaveConfirm,
       rtl: this.fa,
     });
@@ -375,5 +402,18 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   pollPublished(event: number) {
     this.currentRoom.active_poll = event;
+  }
+
+  async exportAttendance(otherActions: OverlayPanel) {
+    const result = await this.sessionService.exportAttendance().toPromise();
+    if (result.status == 'OK') {
+      const a = document.createElement('a');
+      a.href = result.data.url;
+      a.download = result.data.url.split('/').pop();
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    otherActions.hide();
   }
 }

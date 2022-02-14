@@ -49,8 +49,8 @@ export class AuthService extends ApiService {
     return this._post('', {method: 'uploadAvatar', data: {}});
   }
 
-  uploadAvatar(url: string, image: File) {
-    return this.http.put(url, image);
+  uploadAvatar(url: string, image: File): Observable<BaseRes<any>> {
+    return this.http.put<any>(url, image);
   }
 
   logout(): void {

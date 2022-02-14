@@ -1,0 +1,23 @@
+<p-table [class.read-only]="!clickableRows" [value]="item.options" responsiveLayout="scroll">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>{{'room.answers' | translate}}</th>
+      <th>{{'room.people' | translate}}</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-option>
+    <tr (click)="showDetails($event,option,details)">
+      <td [class.text-success]="option.correct_answer">{{option.description}}</td>
+      <td [class.text-success]="option.correct_answer">{{option.count}}</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+
+<p-overlayPanel [baseZIndex]="2000" #details styleClass="{{fa ? 'rtl' : null}}">
+  <div class="d-flex align-items-center" *ngFor="let u of replies">
+    <p-avatar [style]="{backgroundColor:getColor(u)}" shape="circle"
+              [label]="u.first_name[0].toUpperCase()+'.'+u.last_name[0].toUpperCase()"></p-avatar>
+    <span class="mr-2">{{u.first_name + ' ' + u.last_name}}</span>
+  </div>
+</p-overlayPanel>

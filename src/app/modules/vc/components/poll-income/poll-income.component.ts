@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {UpdateViewService} from '@core/http/update-view.service';
+import {PollItem} from '@core/models';
 
 @Component({
   selector: 'ng-poll-income',
@@ -16,8 +17,8 @@ export class PollIncomeComponent extends LanguageChecker implements OnInit {
     super();
   }
 
-  poll: any;
-  selectedOptions: number[];
+  poll: PollItem;
+  selectedOptions: number[] | number;
 
   ngOnInit(): void {
     this.poll = this.dialogConfig.data;
@@ -32,7 +33,10 @@ export class PollIncomeComponent extends LanguageChecker implements OnInit {
   }
 
   onSubmit() {
-    const result = this.selectedOptions.map(o => ({poll_option_id: o}));
+    let result: any = [{poll_option_id: this.selectedOptions}];
+    if (Array.isArray(this.selectedOptions)) {
+      result = this.selectedOptions.map(o => ({poll_option_id: o}));
+    }
     this.dialogRef.close(result);
   }
 }

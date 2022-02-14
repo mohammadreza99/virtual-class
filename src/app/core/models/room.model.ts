@@ -1,3 +1,6 @@
+export type ViewMode = 'speaker' | 'grid' | 'thumbnail';
+export type QuestionState = 'Draft' | 'InProgress' | 'Canceled' | 'Finished';
+
 export interface Room {
   id: number;
   name: string;
@@ -28,7 +31,21 @@ export interface QuestionOption {
 }
 
 export interface PollOption {
+  id: number;
   description: string;
 }
 
-export type ViewMode = 'speaker' | 'grid' | 'thumbnail';
+export interface QuestionItem {
+  id: number;
+  state: QuestionState;
+  description: string;
+  options: any[];
+}
+
+export interface PollItem {
+  id: number;
+  state: QuestionState;
+  description: string;
+  multiple_choice: boolean;
+  options: any[];
+}
