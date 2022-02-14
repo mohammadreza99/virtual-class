@@ -107,6 +107,7 @@
     "allowMultipleChoice": "امکان انتخاب چند گزینه باشد؟",
     "downloadAttendance": "دانلود لیست حضور و غیاب"
   },
+  "none": "---",
   "home": "خانه",
   "forgetPassword": "فراموشی رمزعبور",
   "notRegisterYet": "هنوز ثبت نام نکرده اید؟",

@@ -79,6 +79,7 @@ import {Type} from '@angular/core';
 import {AccordionModule} from 'primeng/accordion';
 import {FieldsetModule} from 'primeng/fieldset';
 import {PanelModule} from 'primeng/panel';
+import {StyleClassModule} from 'primeng/styleclass';
 
 export const MODULES: Type<any>[] = [
   AutoCompleteModule,
@@ -160,5 +161,6 @@ export const MODULES: Type<any>[] = [
   SkeletonModule,
   TagModule,
   FieldsetModule,
-  PanelModule
+  PanelModule,
+  StyleClassModule
 ];

@@ -21,6 +21,10 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
   @Input('visible') set setVisible(v: number) {
     if (!v) {
       this.resetForm();
+
+      if (!this.questionStarted) {
+        this.goToState('modify');
+      }
     }
   };
 
@@ -56,7 +60,7 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
     try {
       const result = await this.sessionService.getArchivedQuestions().toPromise();
       if (result.status == 'OK') {
-        this.archiveQuestions = result.data.items;
+        this.archiveQuestions = result.data.items.reverse();
       }
     } catch (e) {
       console.error(e);
@@ -118,6 +122,7 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
         this.questionStarted = false;
         this.activeQuestion.state = state;
         this[state.toLowerCase()].emit();
+        this.updateQuestionResult();
         this.getArchiveQuestions();
       }
       if (callback) {

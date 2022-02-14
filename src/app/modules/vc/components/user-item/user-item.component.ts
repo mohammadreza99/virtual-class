@@ -98,10 +98,10 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
       this.dialogService.open(KickUserConfirmComponent, {
         data: this.user,
         header: this.translations.kickUser,
-        width: '900px',
+        width: '400px',
         rtl: this.fa
       }).onClose.subscribe(async res => {
-        if (res !== false) {
+        if (res) {
           if (this.user.role == 'Admin') {
             return;
           }

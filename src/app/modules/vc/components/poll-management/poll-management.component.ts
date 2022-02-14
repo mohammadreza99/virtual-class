@@ -20,6 +20,10 @@ export class PollManagementComponent extends LanguageChecker implements OnInit {
   @Input('visible') set setVisible(v: number) {
     if (!v) {
       this.resetForm();
+
+      if (!this.pollStarted) {
+        this.goToState('modify');
+      }
     }
   };
 
@@ -57,7 +61,7 @@ export class PollManagementComponent extends LanguageChecker implements OnInit {
     try {
       const result = await this.sessionService.getArchivedPolls().toPromise();
       if (result.status == 'OK') {
-        this.archivePolls = result.data.items;
+        this.archivePolls = result.data.items.reverse();
       }
     } catch (e) {
       console.error(e);
@@ -117,6 +121,7 @@ export class PollManagementComponent extends LanguageChecker implements OnInit {
         this.pollStarted = false;
         this.activePoll.state = state;
         this[state.toLowerCase()].emit();
+        this.updatePollResult();
         this.getArchivePolls();
       }
       if (callback) {
