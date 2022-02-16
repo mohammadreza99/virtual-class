@@ -701,6 +701,10 @@ export class SessionService extends ApiService {
           this.updateViewService.setViewEvent({event: 'newPublicMessage', data: res});
           break;
 
+        case 'deletedMessage':
+          this.updateViewService.setViewEvent({event: 'deletedMessage', data: res});
+          break;
+
         case 'newQuestion':
           this.updateViewService.setViewEvent({event: 'newQuestion', data: res});
           break;
