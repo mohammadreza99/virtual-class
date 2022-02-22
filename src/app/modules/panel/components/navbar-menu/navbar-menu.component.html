@@ -25,9 +25,7 @@
         class="nav-item pr-4 mr-4 border-right"
         (click)="accountMenu.toggle($event)"
       >
-        <p-avatar shape="circle" size="large"
-                  [icon]="'pi pi-user'"></p-avatar>
-        <!--                  [image]="user.avatar"-->
+        <ng-avatar [user]="user"></ng-avatar>
       </li>
     </ul>
   </div>

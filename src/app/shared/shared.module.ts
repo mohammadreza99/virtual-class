@@ -7,6 +7,8 @@ import {TranslateModule} from '@ngx-translate/core';
 import {COMPONENTS} from '.';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {ImageCropperModule} from 'ngx-image-cropper';
+import {CanvasWhiteboardModule} from 'ng2-canvas-whiteboard';
+import {NgWhiteboardModule} from 'ng-whiteboard';
 
 @NgModule({
   declarations: [...COMPONENTS],
@@ -17,7 +19,9 @@ import {ImageCropperModule} from 'ngx-image-cropper';
     TranslateModule.forChild(),
     RouterModule,
     NgAllModule.forRoot({ripple: true}),
-    ImageCropperModule
+    ImageCropperModule,
+    CanvasWhiteboardModule,
+    NgWhiteboardModule
   ],
   exports: [
     ...COMPONENTS,
@@ -26,7 +30,9 @@ import {ImageCropperModule} from 'ngx-image-cropper';
     FormsModule,
     TranslateModule,
     NgAllModule,
-    OverlayModule
+    OverlayModule,
+    CanvasWhiteboardModule,
+    NgWhiteboardModule
   ],
   providers: [],
 })

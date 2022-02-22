@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {GroupService} from '@core/http';
 import {ActivatedRoute} from '@angular/router';
 import {DialogService} from 'primeng/dynamicdialog';
@@ -6,13 +6,15 @@ import {UtilsService} from '@ng/services';
 import {PagerRes, TableConfig, User} from '@core/models';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {AddGroupUserFormComponent} from '@modules/panel/components/add-group-user-form/add-group-user-form.component';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'ng-group-setting',
   templateUrl: './group-setting.page.html',
   styleUrls: ['./group-setting.page.scss']
 })
-export class GroupSettingPage extends LanguageChecker implements OnInit {
+export class GroupSettingPage extends LanguageChecker implements OnInit, OnDestroy {
 
   constructor(private groupService: GroupService,
               private route: ActivatedRoute,
@@ -24,6 +26,7 @@ export class GroupSettingPage extends LanguageChecker implements OnInit {
   groupUsers: PagerRes<User>;
   groupUsersConfig: TableConfig;
   groupId: number;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   ngOnInit(): void {
     this.loadData();
@@ -59,7 +62,7 @@ export class GroupSettingPage extends LanguageChecker implements OnInit {
       header: this.translations.addMember,
       width: '900px',
       rtl: this.fa
-    }).onClose.subscribe(async res => {
+    }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
       try {
         if (res) {
           const result = await this.groupService.addUserToGroup(this.groupId, res).toPromise();
@@ -89,5 +92,10 @@ export class GroupSettingPage extends LanguageChecker implements OnInit {
       }
     } catch {
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

@@ -1,9 +1,6 @@
 <div #actionsButton class="participant-item justify-content-between" [class.rtl]="fa">
   <div class="info">
-    <p-avatar shape="circle" size="large"
-              [style]="{backgroundColor:getColor()}"
-              [image]="user.avatar"
-              [label]="user.avatar ? null : user.first_name[0].toUpperCase()+'.'+user.last_name[0].toUpperCase()"></p-avatar>
+    <ng-avatar [user]="user"></ng-avatar>
     <div class="name mx-2">
       <p>{{user.first_name + ' ' + user.last_name}}</p>
       <small class="role" *ngIf="user.role == 'Admin'">{{('room.' + user.role.toLowerCase()) | translate}}</small>
@@ -59,11 +56,7 @@
         <p-overlayPanel #userStatus styleClass="actions {{fa ? 'rtl' : null}}">
           <div class="info">
             <div class="d-flex flex-column align-items-center justify-content-between py-4">
-              <p-avatar shape="circle" size="xlarge"
-                        class="mb-3"
-                        [style]="{backgroundColor:getColor()}"
-                        [image]="user.avatar"
-                        [label]="user.avatar ? null : user.first_name[0].toUpperCase()+'.'+user.last_name[0].toUpperCase()"></p-avatar>
+              <ng-avatar [user]="user"></ng-avatar>
               <small>{{user.first_name + ' ' + user.last_name}}</small>
             </div>
             <div class="row no-gutters p-3 bg-light text-dark">

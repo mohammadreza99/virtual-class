@@ -1,20 +1,23 @@
-import {Component, ElementRef, Input, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {SessionService, SocketService} from '@core/http';
 import {RoomUser, StreamActionEvent, TrackPosition} from '@core/models';
 import {UpdateViewService} from '@core/http/update-view.service';
 import {GlobalConfig} from '../../../../global.config';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'ng-screen',
   templateUrl: './screen.component.html',
   styleUrls: ['./screen.component.scss']
 })
-export class ScreenComponent implements OnInit {
+export class ScreenComponent implements OnInit, OnDestroy {
 
   @Input() user: RoomUser;
   @Input() position: TrackPosition;
   @ViewChild('videoElem', {static: true}) videoElem: ElementRef<HTMLMediaElement>;
 
+  destroy$: Subject<boolean> = new Subject<boolean>();
   streamActivated: boolean = false;
   isTalking: boolean = false;
   stream: MediaStream;
@@ -31,7 +34,7 @@ export class ScreenComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.updateViewService.getViewEvent().subscribe((res: any) => {
+    this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
       if (['onTrack', 'onDisconnect'].findIndex(e => e == res.event) > -1) {
         if (this.position !== res.data.position) {
           return;
@@ -76,16 +79,16 @@ export class ScreenComponent implements OnInit {
           break;
 
         case 'isTalking':
-          // if (res.data.target != this.user.id) {
-          //   return;
-          // }
-          // if (this.isTalkingUpdateTimer != null) {
-          //   return;
-          // }
-          // this.isTalking = res.data.value;
-          // this.isTalkingUpdateTimer = setTimeout(() => {
-          //   this.isTalkingUpdateTimer = null;
-          // }, GlobalConfig.isTalkingDisplayTime);
+          if (res.data.target != this.user.id) {
+            return;
+          }
+          if (this.isTalkingUpdateTimer != null) {
+            return;
+          }
+          this.isTalking = res.data.value;
+          this.isTalkingUpdateTimer = setTimeout(() => {
+            this.isTalkingUpdateTimer = null;
+          }, GlobalConfig.isTalkingDisplayTime);
           break;
       }
     });
@@ -164,4 +167,8 @@ export class ScreenComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }

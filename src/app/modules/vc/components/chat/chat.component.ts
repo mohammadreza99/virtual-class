@@ -3,7 +3,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Input,
+  Input, OnDestroy,
   OnInit,
   Output, QueryList,
   ViewChild,
@@ -17,13 +17,15 @@ import {OverlayPanel} from 'primeng/overlaypanel';
 import {UpdateViewService} from '@core/http/update-view.service';
 import {UtilsService} from '@ng/services';
 import {InputTextComponent} from '@ng/components/input-text/input-text.component';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'ng-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent extends LanguageChecker implements OnInit, AfterViewInit {
+export class ChatComponent extends LanguageChecker implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private sessionService: SessionService,
               private updateViewService: UpdateViewService,
@@ -39,6 +41,7 @@ export class ChatComponent extends LanguageChecker implements OnInit, AfterViewI
   @ViewChild(InputTextComponent, {static: false}) inputTextComponent: InputTextComponent;
   @ViewChildren('messageItem') messageItems: QueryList<any>;
 
+  destroy$: Subject<boolean> = new Subject<boolean>();
   publicMessages: any[] = [];
   currentUser: RoomUser;
   chatText: string;
@@ -51,12 +54,12 @@ export class ChatComponent extends LanguageChecker implements OnInit, AfterViewI
   }
 
   ngAfterViewInit() {
-    this.messageItems.changes.subscribe(_ => this.onItemElementsChanged());
+    this.messageItems.changes.pipe(takeUntil(this.destroy$)).subscribe(_ => this.onItemElementsChanged());
   }
 
   loadData() {
     this.currentUser = this.sessionService.currentUser;
-    this.updateViewService.getViewEvent().subscribe(res => {
+    this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe(res => {
       switch (res.event) {
         case 'publicMessages':
           this.publicMessages = res.data;
@@ -180,5 +183,10 @@ export class ChatComponent extends LanguageChecker implements OnInit, AfterViewI
 
   focusInput() {
     this.inputTextComponent.focusInput();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

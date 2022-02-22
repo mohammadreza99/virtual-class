@@ -42,7 +42,7 @@ export class SwitchComponent implements OnInit, ControlValueAccessor {
   @Input() hint: string;
   @Input() rtl: boolean = false;
   @Input() showRequiredStar: boolean = true;
-  @Input() labelPos: NgLabelPosition;
+  @Input() labelPos: NgLabelPosition = 'fix-side';
   @Input() errors: NgError;
   @Input() disabled: boolean = false;
   @Input() readonly: boolean = false;
@@ -52,11 +52,14 @@ export class SwitchComponent implements OnInit, ControlValueAccessor {
   controlContainer: FormGroupDirective;
   ngControl: NgControl;
 
-  constructor(private cd: ChangeDetectorRef, private injector: Injector) {}
+  constructor(private cd: ChangeDetectorRef, private injector: Injector) {
+  }
 
-  onModelChange: any = (_: any) => {};
+  onModelChange: any = (_: any) => {
+  };
 
-  onModelTouched: any = () => {};
+  onModelTouched: any = () => {
+  };
 
   ngOnInit() {
     let parentForm: FormGroup;
@@ -73,8 +76,8 @@ export class SwitchComponent implements OnInit, ControlValueAccessor {
       this.ngControl.valueAccessor = this;
     }
     if (this.controlContainer && this.ngControl) {
-     parentForm = this.controlContainer.control;
-     rootForm = this.controlContainer.formDirective as FormGroupDirective;
+      parentForm = this.controlContainer.control;
+      rootForm = this.controlContainer.formDirective as FormGroupDirective;
       if (this.ngControl instanceof NgModel) {
         currentControl = this.ngControl.control;
       } else if (this.ngControl instanceof FormControlName) {
@@ -99,7 +102,7 @@ export class SwitchComponent implements OnInit, ControlValueAccessor {
     let parentForm: FormGroup;
     let currentControl: AbstractControl;
     if (this.controlContainer && this.ngControl) {
-     parentForm = this.controlContainer.control;
+      parentForm = this.controlContainer.control;
       if (this.ngControl instanceof NgModel) {
         currentControl = this.ngControl.control;
       } else if (this.ngControl instanceof FormControlName) {

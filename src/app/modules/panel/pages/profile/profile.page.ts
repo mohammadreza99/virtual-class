@@ -1,18 +1,19 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, ValidationErrors} from '@angular/forms';
 import {User} from '@core/models';
 import {AuthService, SessionService} from '@core/http';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {UtilsService} from '@ng/services';
-import {UploadAvatarComponent} from '@shared/components/upload-avatar/upload-avatar.component';
 import {DialogService} from 'primeng/dynamicdialog';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'ng-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss']
 })
-export class ProfilePage extends LanguageChecker implements OnInit {
+export class ProfilePage extends LanguageChecker implements OnInit, OnDestroy {
 
   constructor(private authService: AuthService,
               private sessionService: SessionService,
@@ -21,6 +22,7 @@ export class ProfilePage extends LanguageChecker implements OnInit {
     super();
   }
 
+  destroy$: Subject<boolean> = new Subject<boolean>();
   form = new FormGroup({
     last_name: new FormControl(),
     first_name: new FormControl(),
@@ -85,7 +87,7 @@ export class ProfilePage extends LanguageChecker implements OnInit {
           },
         ], {width: '900px', rtl: this.fa}
       );
-      dialogRef.onClose.subscribe(async (res: any) => {
+      dialogRef.onClose.pipe(takeUntil(this.destroy$)).subscribe(async (res: any) => {
         if (res) {
           const result = await this.authService.updateProfile(res).toPromise();
           if (result.status == 'OK') {
@@ -136,36 +138,16 @@ export class ProfilePage extends LanguageChecker implements OnInit {
           message: this.translations.passwordNotMatch
         }
       });
-    dialogRef.onClose.subscribe(async (res: any) => {
+    dialogRef.onClose.pipe(takeUntil(this.destroy$)).subscribe(async (res: any) => {
       if (res) {
         await this.authService.updatePassword(res).toPromise();
       }
     });
   }
 
-  getColor() {
-    return this.sessionService.getProfileColor(this.currentUser.id);
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
-  async changeAvatar() {
-    try {
-      this.dialogService.open(UploadAvatarComponent, {
-        data: this.currentUser,
-        header: this.translations.room.changeAvatar,
-        width: '400px',
-        rtl: this.fa
-      }).onClose.subscribe(async res => {
-        if (res) {
-          const result = await this.authService.getUploadLink().toPromise();
-          if (result.status == 'OK') {
-            await this.authService.uploadAvatar(result.data.upload_url, res).toPromise();
-            const data = await this.authService.getSelfUser().toPromise();
-            this.currentUser = data.data.user;
-          }
-        }
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
 }

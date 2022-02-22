@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {ActivatedRoute} from '@angular/router';
 
@@ -8,13 +8,15 @@ import {DialogService} from 'primeng/dynamicdialog';
 import {AddRoomUserFormComponent} from '@modules/panel/components/add-room-user-form/add-room-user-form.component';
 import {AddRoomGroupFormComponent} from '@modules/panel/components/add-room-group-form/add-room-group-form.component';
 import {UtilsService} from '@ng/services';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'ng-room-setting',
   templateUrl: './room-setting.page.html',
   styleUrls: ['./room-setting.page.scss']
 })
-export class RoomSettingPage extends LanguageChecker implements OnInit {
+export class RoomSettingPage extends LanguageChecker implements OnInit, OnDestroy {
 
   constructor(private roomService: RoomService,
               private route: ActivatedRoute,
@@ -24,6 +26,7 @@ export class RoomSettingPage extends LanguageChecker implements OnInit {
     super();
   }
 
+  destroy$: Subject<boolean> = new Subject<boolean>();
   roomUsers: PagerRes<User>;
   roomGroups: PagerRes<Group>;
   roomUsersConfig: TableConfig;
@@ -93,7 +96,7 @@ export class RoomSettingPage extends LanguageChecker implements OnInit {
       header: this.translations.addMember,
       width: '900px',
       rtl: this.fa
-    }).onClose.subscribe(async res => {
+    }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
       try {
         if (res) {
           const result = await this.roomService.addUserOrGroupToRoom(this.roomId, res).toPromise();
@@ -112,7 +115,7 @@ export class RoomSettingPage extends LanguageChecker implements OnInit {
       header: this.translations.addMember,
       width: '900px',
       rtl: this.fa
-    }).onClose.subscribe(async res => {
+    }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
       try {
         if (res) {
           const result = await this.roomService.addUserOrGroupToRoom(this.roomId, res).toPromise();
@@ -196,4 +199,8 @@ export class RoomSettingPage extends LanguageChecker implements OnInit {
     item.editing = false;
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }

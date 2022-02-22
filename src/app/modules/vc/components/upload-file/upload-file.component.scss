@@ -1,0 +1,10 @@
+.uploader {
+  cursor: pointer;
+  position: relative;
+
+  ng-button {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+  }
+}

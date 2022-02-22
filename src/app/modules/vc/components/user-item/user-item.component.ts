@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {RoomUser} from '@core/models';
 import {RoomService, SessionService} from '@core/http';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
@@ -8,13 +8,15 @@ import {UpdateViewService} from '@core/http/update-view.service';
 import {DialogService} from 'primeng/dynamicdialog';
 import {KickUserConfirmComponent} from '@modules/vc/components/kick-user-confirm/kick-user-confirm.component';
 import {UploadAvatarComponent} from '@shared/components/upload-avatar/upload-avatar.component';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'ng-user-item',
   templateUrl: './user-item.component.html',
   styleUrls: ['./user-item.component.scss']
 })
-export class UserItemComponent extends LanguageChecker implements OnInit {
+export class UserItemComponent extends LanguageChecker implements OnInit, OnDestroy {
 
   constructor(private sessionService: SessionService,
               private roomService: RoomService,
@@ -26,13 +28,15 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
 
   @Input() user: RoomUser;
   @Input() raiseHand: boolean;
+
+  destroy$: Subject<boolean> = new Subject<boolean>();
   activateRaiseHand: boolean = false;
   raiseHandConfirmed: boolean = false;
   currentUser: RoomUser;
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.currentUser;
-    this.updateViewService.getViewEvent().subscribe(res => {
+    this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe(res => {
       switch (res.event) {
         case 'studentRaisedHand':
           if (res.data.target == this.user.id) {
@@ -100,8 +104,8 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
         header: this.translations.kickUser,
         width: '400px',
         rtl: this.fa
-      }).onClose.subscribe(async res => {
-        if (res) {
+      }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
+        if (res !== false) {
           if (this.user.role == 'Admin') {
             return;
           }
@@ -140,11 +144,6 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
   //   }
   // }
 
-
-  getColor() {
-    return this.sessionService.getProfileColor(this.user.id);
-  }
-
   showStatus(event, actions: OverlayPanel, userStatus: OverlayPanel, actionsButton: any) {
     actions.hide();
     setTimeout(() => {
@@ -159,12 +158,17 @@ export class UserItemComponent extends LanguageChecker implements OnInit {
         header: this.translations.room.changeAvatar,
         width: '400px',
         rtl: this.fa
-      }).onClose.subscribe(async res => {
+      }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
         if (res !== false) {
         }
       });
     } catch (error) {
       console.error(error);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

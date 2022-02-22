@@ -121,24 +121,5 @@
         }
       }
     }
-
-    .search-box {
-      input[type=text] {
-        background-color: #585A66;
-        border-color: #585A66;
-        border-radius: 8px;
-        color: #ffffff;
-
-        &::placeholder {
-          color: rgba(255, 255, 255, 0.5);
-        }
-      }
-
-      i {
-        color: rgba(255, 255, 255, 0.5);
-        margin-top: 0;
-        transform: translateY(-50%);
-      }
-    }
   }
 }

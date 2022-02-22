@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {RoomService, SessionService, UserService} from '@core/http';
 import {UtilsService} from '@ng/services';
@@ -6,13 +6,15 @@ import {Group, PagerRes, Room, SearchParam, TableConfig} from '@core/models';
 import * as moment from 'jalali-moment';
 import {Router} from '@angular/router';
 import {UpdateViewService} from '@core/http/update-view.service';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'ng-room-list',
   templateUrl: './room-list.page.html',
   styleUrls: ['./room-list.page.scss']
 })
-export class RoomListPage extends LanguageChecker implements OnInit {
+export class RoomListPage extends LanguageChecker implements OnInit, OnDestroy {
 
   constructor(private roomService: RoomService,
               private sessionService: SessionService,
@@ -23,6 +25,7 @@ export class RoomListPage extends LanguageChecker implements OnInit {
     super();
   }
 
+  destroy$: Subject<boolean> = new Subject<boolean>();
   rowData: PagerRes<Room>;
   tableConfig: TableConfig;
 
@@ -138,7 +141,7 @@ export class RoomListPage extends LanguageChecker implements OnInit {
         },
       ], {width: '900px', rtl: this.fa}
     );
-    dialogRef.onClose.subscribe(async (res: any) => {
+    dialogRef.onClose.pipe(takeUntil(this.destroy$)).subscribe(async (res: any) => {
       if (res) {
         const result = await this.roomService.updateRoom(res).toPromise();
         if (result.status == 'OK') {
@@ -198,7 +201,7 @@ export class RoomListPage extends LanguageChecker implements OnInit {
           }
         ], {width: '900px', rtl: this.fa}
       );
-      dialogRef.onClose.subscribe(async (res: any) => {
+      dialogRef.onClose.pipe(takeUntil(this.destroy$)).subscribe(async (res: any) => {
         if (res) {
           const result = await this.roomService.addRoom(res).toPromise();
           if (result.status == 'OK') {
@@ -217,9 +220,14 @@ export class RoomListPage extends LanguageChecker implements OnInit {
   }
 
   getTranslated(status: string) {
-    const str = status.toLowerCase().replace(/_([a-z])/g, function (g) {
+    const str = status.toLowerCase().replace(/_([a-z])/g, function(g) {
       return g[1].toUpperCase();
     });
     return this.translations[str];
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

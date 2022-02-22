@@ -234,10 +234,10 @@ export class SessionService extends ApiService {
         if (this.talkingTimer != null) {
           return;
         }
-        if (Math.round(value) > 20) {
-          await this.isTalking(true).toPromise();
+        if (value > 20) {
+          this.isTalking(true).toPromise();
         } else {
-          await this.isTalking(false).toPromise();
+          this.isTalking(false).toPromise();
         }
         this.talkingTimer = setTimeout(() => {
           this.talkingTimer = null;
@@ -763,6 +763,11 @@ export class SessionService extends ApiService {
     }
   }
 
+  selectRandomUser() {
+    const randomIndex = Math.floor(Math.random() * this.roomUsers.length);
+    return this.roomUsers[randomIndex];
+  }
+
   ///////////////////////////////////////////////////////////////////////////////
   //                                  GENERAL                                  //
   ///////////////////////////////////////////////////////////////////////////////
@@ -849,7 +854,7 @@ export class SessionService extends ApiService {
         values += (array[i]);
       }
       const average = values / length;
-      callback(average);
+      callback(Math.round(average));
     };
   }
 
@@ -953,7 +958,7 @@ export class SessionService extends ApiService {
     return (navigator.mediaDevices as any).getDisplayMedia({audio: false});
   }
 
-  private getRoomUsersDifference(base: RoomUser[], secondary: RoomUser[]) {
+  getRoomUsersDifference(base: RoomUser[], secondary: RoomUser[]) {
     if (!base || !secondary) {
       return;
     }
@@ -962,7 +967,7 @@ export class SessionService extends ApiService {
     return {added, deleted};
   }
 
-  private getPublishersDifference(base: Publisher[], secondary: PeerConnection[]) {
+  getPublishersDifference(base: Publisher[], secondary: PeerConnection[]) {
     if (!base || !secondary) {
       return;
     }
@@ -1117,7 +1122,14 @@ export class SessionService extends ApiService {
   getQuestionById(question_id: number) {
     return this._post<any>('', {
       method: 'getQuestion',
-      data: {question_id},
+      data: {room_id: this.currentRoom.id, question_id},
+    });
+  }
+
+  getQuestionSelfReplies(question_id: number) {
+    return this._post<any>('', {
+      method: 'getQuestionSelfReplies',
+      data: {room_id: this.currentRoom.id, question_id},
     });
   }
 
@@ -1131,28 +1143,28 @@ export class SessionService extends ApiService {
   getQuestionResult(question_id: number) {
     return this._post<any>('', {
       method: 'getQuestionResult',
-      data: {question_id},
+      data: {room_id: this.currentRoom.id, question_id},
     });
   }
 
   getQuestionOptionReplies(question_option_id: number) {
     return this._post<any>('', {
       method: 'getQuestionOptionReplies',
-      data: {question_option_id},
+      data: {room_id: this.currentRoom.id, question_option_id},
     });
   }
 
   changeQuestionPublishState(question_id: number, state: string) {
     return this._post<any>('', {
       method: 'changeQuestionPublishState',
-      data: {question_id, state},
+      data: {room_id: this.currentRoom.id, question_id, state},
     });
   }
 
   replyQuestion(question_id: number, replies: { question_option_id }[]) {
     return this._post<any>('', {
       method: 'replyQuestion',
-      data: {question_id, replies},
+      data: {room_id: this.currentRoom.id, question_id, replies},
     });
   }
 
@@ -1166,7 +1178,7 @@ export class SessionService extends ApiService {
   getPollById(poll_id: number) {
     return this._post<any>('', {
       method: 'getPoll',
-      data: {poll_id},
+      data: {room_id: this.currentRoom.id, poll_id},
     });
   }
 
@@ -1180,34 +1192,27 @@ export class SessionService extends ApiService {
   getPollResult(poll_id: number) {
     return this._post<any>('', {
       method: 'getPollResult',
-      data: {poll_id},
-    });
-  }
-
-  getPollOptionReplies(poll_option_id: number) {
-    return this._post<any>('', {
-      method: 'getPollOptionReplies',
-      data: {poll_option_id},
+      data: {room_id: this.currentRoom.id, poll_id},
     });
   }
 
   changePollPublishState(poll_id: number, state: string) {
     return this._post<any>('', {
       method: 'changePollPublishState',
-      data: {poll_id, state},
+      data: {room_id: this.currentRoom.id, poll_id, state},
     });
   }
 
   replyPoll(poll_id: number, replies: { poll_option_id }[]) {
     return this._post<any>('', {
       method: 'submitPoll',
-      data: {poll_id, replies},
+      data: {room_id: this.currentRoom.id, poll_id, replies},
     });
   }
 
-  exportAttendance() {
+  exportSessionAttendance() {
     return this._post<any>('', {
-      method: 'exportAttendance',
+      method: 'exportSessionAttendance',
       data: {room_id: this.currentRoom.id},
     });
   }

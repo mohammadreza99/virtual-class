@@ -1,0 +1,50 @@
+:host ::ng-deep {
+  * {
+    opacity: 1;
+  }
+
+  p-radioButton {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  label {
+    margin: 0 0.5rem 0 0;
+  }
+
+  .mine, .correct {
+    .p-radiobutton-icon {
+      transform: scale(1);
+      visibility: visible;
+      border-radius: 50%;
+    }
+  }
+
+  .mine {
+    .p-radiobutton-box {
+      border-color: #E83E59;
+    }
+
+    label {
+      color: #E83E59
+    }
+
+    .p-radiobutton-icon {
+      background-color: #E83E59;
+    }
+  }
+
+  .correct {
+    .p-radiobutton-box {
+      border-color: #00CC70;
+    }
+
+    label {
+      color: #00CC70
+    }
+
+    .p-radiobutton-icon {
+      background-color: #00CC70;
+    }
+  }
+}

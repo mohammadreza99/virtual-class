@@ -1,13 +1,13 @@
 :host ::ng-deep {
   p-table {
     tr, td, th {
-      text-align: right !important;
+      text-align: center !important;
       background-color: transparent !important;
       border-color: transparent !important;
       cursor: default;
     }
 
-    &:not(.read-only) {
+    &:not(.dark-text) {
       .p-datatable-wrapper {
         border-radius: 8px;
         border: 1px solid #6d6d6d;

@@ -9,10 +9,6 @@
       flex-grow: 1;
       max-width: 60%;
 
-      .p-avatar-text {
-        font-size: 1rem;
-      }
-
       .name {
         flex-grow: 1;
 
@@ -28,6 +24,7 @@
           background-color: #5643C1;
           border-radius: 4px;
           padding: 0.15rem;
+          color: #ffffff;
         }
       }
     }

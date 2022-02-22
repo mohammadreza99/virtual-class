@@ -1,4 +1,4 @@
-<p-table [class.read-only]="!clickableRows" [value]="item.options" responsiveLayout="scroll">
+<p-table [class.dark-text]="darkText" [value]="item.options" responsiveLayout="scroll">
   <ng-template pTemplate="header">
     <tr>
       <th>{{'room.answers' | translate}}</th>
@@ -6,17 +6,24 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-option>
-    <tr (click)="showDetails($event,option,details)">
-      <td [class.text-success]="option.correct_answer">{{option.description}}</td>
+    <tr (click)="showDetails($event,option)">
+      <td
+        [class.text-success]="option.correct_answer">{{option.id != null ? option.description : ('room.notAnswered' | translate) }}</td>
       <td [class.text-success]="option.correct_answer">{{option.count}}</td>
     </tr>
   </ng-template>
 </p-table>
-
-<p-overlayPanel [baseZIndex]="2000" #details styleClass="{{fa ? 'rtl' : null}}">
-  <div class="d-flex align-items-center" *ngFor="let u of replies">
-    <p-avatar [style]="{backgroundColor:getColor(u)}" shape="circle"
-              [label]="u.first_name[0].toUpperCase()+'.'+u.last_name[0].toUpperCase()"></p-avatar>
-    <span class="mr-2">{{u.first_name + ' ' + u.last_name}}</span>
+<p-overlayPanel appendTo="body" [baseZIndex]="2000" styleClass="{{fa ? 'rtl' : null}}">
+  <div class="wrapper">
+    <ng-input-text [rtl]="fa" class="" [placeholder]="'search' | translate" [(ngModel)]="searchTerm"></ng-input-text>
+    <div class="d-flex align-items-center mt-3" *ngFor="let u of replies | ngFilter:'first_name,last_name':searchTerm">
+      <ng-avatar size="small" [editable]="false" [user]="u"></ng-avatar>
+      <span class="mr-2">{{u.first_name + ' ' + u.last_name}}</span>
+    </div>
+    <ng-empty *ngIf="(replies | ngFilter:'first_name,last_name':searchTerm).length == 0"
+              [message]="'nothingFound' | translate"></ng-empty>
   </div>
 </p-overlayPanel>
+
+
+

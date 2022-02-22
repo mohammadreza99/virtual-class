@@ -50,7 +50,7 @@
         <p-accordionTab transitionOptions="0ms" *ngFor="let p of archivePolls;let i = index"
                         [header]="p.description">
           <ng-template pTemplate="content">
-            <ng-result-table type="poll" [item]="p"></ng-result-table>
+            <ng-result-table [clickableRows]="false" [item]="p"></ng-result-table>
           </ng-template>
         </p-accordionTab>
       </p-accordion>
@@ -65,7 +65,7 @@
                          icon="pi pi-refresh"
                          (clickAsync)="updatePollResult($event)"></ng-button-async>
       </div>
-      <ng-result-table type="poll" [item]="activePoll"></ng-result-table>
+      <ng-result-table  [clickableRows]="false" [item]="activePoll"></ng-result-table>
       <div class="actions d-flex align-items-center justify-content-between mt-4">
         <ng-container *ngIf="activePoll.state == 'InProgress'">
           <ng-button color="danger" [label]="'room.revoke' | translate" appearance="outlined"
@@ -77,7 +77,10 @@
       <ng-container *ngIf="activePoll.state != 'InProgress'">
         <ng-button [full]="true" [label]="'room.restart' | translate"
                    (click)="goToState('modify')"></ng-button>
-        <p class="mt-3 text-center">{{'room.poll' + activePoll.state | translate}}</p>
+        <p class="mt-3 text-center"
+           [ngClass]="{'text-success': activePoll.state == 'Finished','text-danger':activePoll.state == 'Canceled'}">
+          {{'room.poll' + activePoll.state | translate}}
+        </p>
       </ng-container>
     </div>
   </div>

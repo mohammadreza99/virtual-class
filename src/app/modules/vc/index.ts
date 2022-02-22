@@ -16,6 +16,9 @@ import {PollManagementComponent} from '@modules/vc/components/poll-management/po
 import {QuestionIncomeComponent} from '@modules/vc/components/question-income/question-income.component';
 import {PollIncomeComponent} from '@modules/vc/components/poll-income/poll-income.component';
 import {ResultTableComponent} from '@modules/vc/components/result-table/result-table.component';
+import {QuestionResultComponent} from '@modules/vc/components/question-result/question-result.component';
+import {UploadFileComponent} from '@modules/vc/components/upload-file/upload-file.component';
+import {SelectRandomUserComponent} from '@modules/vc/components/select-random-user/select-random-user.component';
 
 export const COMPONENTS: Type<any>[] = [
   VirtualClassPage,
@@ -33,6 +36,9 @@ export const COMPONENTS: Type<any>[] = [
   QuestionManagementComponent,
   PollManagementComponent,
   QuestionIncomeComponent,
+  QuestionResultComponent,
   PollIncomeComponent,
-  ResultTableComponent
+  ResultTableComponent,
+  UploadFileComponent,
+  SelectRandomUserComponent
 ];

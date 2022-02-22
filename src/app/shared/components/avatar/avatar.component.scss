@@ -1,0 +1,22 @@
+:host ::ng-deep {
+  p-avatar {
+    display: flex;
+
+    .p-avatar {
+      //border: 1px solid #dadada;
+    }
+
+    img {
+      height: auto;
+    }
+
+    &.editable {
+      cursor: pointer;
+    }
+
+    .p-avatar-text {
+      font-size: 1rem;
+      color: #303030;
+    }
+  }
+}

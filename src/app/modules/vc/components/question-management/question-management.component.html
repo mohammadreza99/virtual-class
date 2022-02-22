@@ -47,7 +47,7 @@
         <p-accordionTab transitionOptions="0ms" *ngFor="let q of archiveQuestions;let i = index"
                         [header]="q.description">
           <ng-template pTemplate="content">
-            <ng-result-table type="question" [item]="q"></ng-result-table>
+            <ng-result-table [clickableRows]="true" [item]="q"></ng-result-table>
           </ng-template>
         </p-accordionTab>
       </p-accordion>
@@ -62,7 +62,7 @@
                          icon="pi pi-refresh"
                          (clickAsync)="updateQuestionResult($event)"></ng-button-async>
       </div>
-      <ng-result-table type="question" [item]="activeQuestion"></ng-result-table>
+      <ng-result-table [clickableRows]="true" [item]="activeQuestion"></ng-result-table>
       <div class="actions d-flex align-items-center justify-content-between mt-4">
         <ng-container *ngIf="activeQuestion.state == 'InProgress'">
           <ng-button color="danger" [label]="'room.revoke' | translate" appearance="outlined"
@@ -74,9 +74,11 @@
       <ng-container *ngIf="activeQuestion.state != 'InProgress'">
         <ng-button [full]="true" [label]="'room.restart' | translate"
                    (click)="goToState('modify')"></ng-button>
-        <p class="mt-3 text-center">{{'room.question' + activeQuestion.state | translate}}</p>
+        <p class="mt-3 text-center"
+           [ngClass]="{'text-success': activeQuestion.state == 'Finished','text-danger':activeQuestion.state == 'Canceled'}">
+          {{'room.question' + activeQuestion.state | translate}}
+        </p>
       </ng-container>
     </div>
-
   </div>
 </div>

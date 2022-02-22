@@ -22,7 +22,7 @@ export class UploadAvatarComponent extends LanguageChecker implements OnInit {
   ngOnInit(): void {
   }
 
-  async onSelect(event) {
+  onSelect(event) {
     if (event.target.files[0]) {
       this.imageChangedEvent = event;
     }

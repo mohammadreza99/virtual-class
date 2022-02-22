@@ -1,17 +1,19 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UserService} from '@core/http';
 import {UtilsService} from '@ng/services';
 import {DialogService} from 'primeng/dynamicdialog';
 import {PagerRes, SearchParam, TableConfig, User, UserRelation} from '@core/models';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {UserRelationsComponent} from '@modules/panel/components/user-relations/user-relations.component';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'ng-user-list',
   templateUrl: './user-list.page.html',
   styleUrls: ['./user-list.page.scss']
 })
-export class UserListPage extends LanguageChecker implements OnInit {
+export class UserListPage extends LanguageChecker implements OnInit, OnDestroy {
 
   constructor(private userService: UserService,
               private utilsService: UtilsService,
@@ -19,6 +21,7 @@ export class UserListPage extends LanguageChecker implements OnInit {
     super();
   }
 
+  destroy$: Subject<boolean> = new Subject<boolean>();
   rowData: PagerRes<User>;
   tableConfig: TableConfig;
   relations: UserRelation;
@@ -75,7 +78,7 @@ export class UserListPage extends LanguageChecker implements OnInit {
         header: this.translations.deleteUserConfirm,
         width: '900px',
         rtl: this.fa
-      }).onClose.subscribe(async res => {
+      }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
         if (res) {
           await this.deleteUserFromList(user);
         }
@@ -130,7 +133,7 @@ export class UserListPage extends LanguageChecker implements OnInit {
         },
       ], {width: '900px', rtl: this.fa}
     );
-    dialogRef.onClose.subscribe(async (res: any) => {
+    dialogRef.onClose.pipe(takeUntil(this.destroy$)).subscribe(async (res: any) => {
       if (res) {
         const result = await this.userService.addUser(res).toPromise();
         if (result.status == 'OK') {
@@ -187,7 +190,7 @@ export class UserListPage extends LanguageChecker implements OnInit {
         },
       ], {width: '900px', rtl: this.fa}
     );
-    dialogRef.onClose.subscribe(async (res: any) => {
+    dialogRef.onClose.pipe(takeUntil(this.destroy$)).subscribe(async (res: any) => {
       if (res) {
         const result = await this.userService.updateUser(res).toPromise();
         if (result.status == 'OK') {
@@ -244,5 +247,10 @@ export class UserListPage extends LanguageChecker implements OnInit {
   getTranslated(state: string) {
     const str = state.charAt(0).toLowerCase() + state.slice(1);
     return this.translations[str];
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

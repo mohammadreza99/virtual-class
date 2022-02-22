@@ -8,6 +8,11 @@
             optionLabel="description"
             [(ngModel)]="selectedOptions">
   </ng-radio>
-  <ng-button class="d-block mt-3 mr-auto" [disabled]="!selectedOptions" (onClick)="onSubmit()"
-             [label]="'submit' | translate"></ng-button>
+  <div class="d-flex align-items-center justify-content-between mt-3">
+    <small class="text-muted" *ngIf="poll.multiple_choice">({{'room.multipleChoiceAllowed' | translate}})</small>
+    <ng-button class="d-block mr-auto"
+               [disabled]="!selectedOptions || selectedOptions?.length == 0"
+               (onClick)="onSubmit()"
+               [label]="'submit' | translate"></ng-button>
+  </div>
 </div>

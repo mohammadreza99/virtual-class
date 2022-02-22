@@ -13,7 +13,7 @@ export class KickUserConfirmComponent extends LanguageChecker implements OnInit 
     {label: this.translations.room.temporaryKick, value: 600},
     {label: this.translations.room.kickFromCurrentRoom, value: null},
   ];
-  kickMode: number = null;
+  kickTime: number = null;
 
   constructor(private dialogConfig: DynamicDialogConfig,
               private dialogRef: DynamicDialogRef) {
@@ -29,6 +29,6 @@ export class KickUserConfirmComponent extends LanguageChecker implements OnInit 
   }
 
   onSubmit() {
-    this.dialogRef.close(this.kickMode);
+    this.dialogRef.close(this.kickTime);
   }
 }

@@ -1,0 +1,9 @@
+<div class="wrapper" *ngIf="question">
+  <p class="mb-4">{{question.description}}</p>
+  <p-radioButton [class.correct]="option.correct" [class.mine]="option.myAnswer" [disabled]="true"
+                 *ngFor="let option of question.options"
+                 name="groupName" [label]="option.description"
+                 [(ngModel)]="selected"
+                 [value]="option.id">
+  </p-radioButton>
+</div>

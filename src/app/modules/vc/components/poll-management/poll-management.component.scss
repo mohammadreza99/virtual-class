@@ -20,20 +20,6 @@
     }
   }
 
-  //p-table {
-  //  .p-datatable-wrapper {
-  //    border-radius: 8px;
-  //    border: 1px solid #6d6d6d;
-  //
-  //    tr, td, th {
-  //      color: #ffffff;
-  //      text-align: right !important;
-  //      background-color: transparent;
-  //      border-color: transparent;
-  //    }
-  //  }
-  //}
-
   p-accordion {
     .p-accordion-header {
       &.p-highlight {
@@ -88,17 +74,6 @@
         height: 0;
         overflow: hidden;
       }
-    }
-  }
-
-  input, textarea {
-    background-color: #585A66;
-    border-color: #585A66;
-    border-radius: 8px;
-    color: #ffffff;
-
-    &::placeholder {
-      color: rgba(255, 255, 255, 0.5);
     }
   }
 }

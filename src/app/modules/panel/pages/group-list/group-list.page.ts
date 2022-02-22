@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {GroupService, UserService} from '@core/http';
 import {UtilsService} from '@ng/services';
 import {Group, GroupRelation, PagerRes, SearchParam, TableConfig} from '@core/models';
@@ -7,13 +7,15 @@ import {LanguageChecker} from '@shared/components/language-checker/language-chec
 import {AddGroupFormComponent} from '@modules/panel/components/add-group-form/add-group-form.component';
 import {DialogService} from 'primeng/dynamicdialog';
 import {GroupRelationsComponent} from '@modules/panel/components/group-relations/group-relations.component';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'ng-group-list',
   templateUrl: './group-list.page.html',
   styleUrls: ['./group-list.page.scss']
 })
-export class GroupListPage extends LanguageChecker implements OnInit {
+export class GroupListPage extends LanguageChecker implements OnInit, OnDestroy {
   constructor(private groupService: GroupService,
               private userService: UserService,
               private utilsService: UtilsService,
@@ -21,6 +23,7 @@ export class GroupListPage extends LanguageChecker implements OnInit {
     super();
   }
 
+  destroy$: Subject<boolean> = new Subject<boolean>();
   rowData: PagerRes<Group>;
   tableConfig: TableConfig;
   admins: NgDropdownItem[];
@@ -88,7 +91,7 @@ export class GroupListPage extends LanguageChecker implements OnInit {
         },
       ], {width: '900px', rtl: this.fa}
     );
-    dialogRef.onClose.subscribe(async (res: any) => {
+    dialogRef.onClose.pipe(takeUntil(this.destroy$)).subscribe(async (res: any) => {
       if (res) {
         const result = await this.groupService.updateGroup(res.group_id, res.name).toPromise();
         if (result.status == 'OK') {
@@ -107,7 +110,7 @@ export class GroupListPage extends LanguageChecker implements OnInit {
           header: this.translations.deleteGroupConfirm,
           width: '900px',
           rtl: this.fa
-        }).onClose.subscribe(async res => {
+        }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
           if (res) {
             await this.deleteGroupFromList(group);
           }
@@ -131,7 +134,7 @@ export class GroupListPage extends LanguageChecker implements OnInit {
       header: this.translations.addGroup,
       width: '900px',
       rtl: this.fa
-    }).onClose.subscribe(async res => {
+    }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
       try {
         if (res) {
           const result = await this.groupService.addGroup(res).toPromise();
@@ -150,4 +153,10 @@ export class GroupListPage extends LanguageChecker implements OnInit {
     const index = this.rowData.items.findIndex(it => it.id === group.id);
     this.rowData.items.splice(index, 1);
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+
 }

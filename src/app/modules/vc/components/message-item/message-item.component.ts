@@ -11,7 +11,7 @@ import {LanguageChecker} from '@shared/components/language-checker/language-chec
 })
 export class MessageItemComponent extends LanguageChecker implements OnInit {
 
-  constructor(private sessionService: SessionService) {
+  constructor() {
     super();
   }
 
@@ -24,10 +24,6 @@ export class MessageItemComponent extends LanguageChecker implements OnInit {
   @Output() pin = new EventEmitter();
 
   ngOnInit(): void {
-  }
-
-  getColor() {
-    return this.sessionService.getProfileColor(+this.sender.id);
   }
 
   onReply(messageActions?: OverlayPanel) {

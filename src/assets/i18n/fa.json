@@ -71,7 +71,9 @@
     "openPrivateChat": "بازکردن چت خصوصی",
     "virtualClass": "کلاس مجازی",
     "question": "پرسش کلاسی",
+    "questionResult": "نتیجه پرسش کلاسی",
     "poll": "نظرسنجی",
+    "pollResult": "نتیجه نظرسنجی",
     "publish": "انتشار",
     "restart": "شروع مجدد",
     "endQuestion": "پایان پرسش",
@@ -82,6 +84,7 @@
     "answers": "جواب ها",
     "percent": "درصد",
     "people": "نفرات",
+    "notAnswered": "بی جواب",
     "questionsArchive": "آرشیو سوالات",
     "pollsArchive": "آرشیو نظرسنجی",
     "userStatus": "وضعیت کاربر",
@@ -105,7 +108,12 @@
     "pollFinished": "نظرسنجی به پایان رسید",
     "showResultToUser": "نتیجه برای دانش اموز منتشر شود؟",
     "allowMultipleChoice": "امکان انتخاب چند گزینه باشد؟",
-    "downloadAttendance": "دانلود لیست حضور و غیاب"
+    "downloadAttendance": "دانلود لیست حضور و غیاب",
+    "multipleChoiceAllowed": "امکان انتخاب چند گزینه وجود دارد",
+    "sendFile": "ارسال فایل کلاسی",
+    "selectRandomUser": "انتخاب تصادفی دانش آموز",
+    "chooseAnotherUser": "انتخاب فرد دیگر",
+    "pleaseUploadYourFile": "فایل مورد نظر خود را برای ارائه در کلاس بارگذاری کنید"
   },
   "none": "---",
   "home": "خانه",
@@ -252,5 +260,8 @@
   "unAuthenticatedError": "لطفا دوباره وارد شوید",
   "accessDeniedError": "دسترسی غیرمجاز",
   "wrongCredential": "اطلاعات نادرست است",
-  "noFileSelected": "تصویری انتخاب نشده است"
+  "noFileSelected": "فایلی انتخاب نشده است",
+  "fileSizeLimit": "حداکثر حجم مجاز بارگذاری 25 مگ میباشد",
+  "fileTypeLimit": "فرمت های قابل پشتیبانی png و jpg است",
+  "usersCanDownloadFile": "شرکت کنندگان قابلیت دانلود فایل را داشته باشند"
 }

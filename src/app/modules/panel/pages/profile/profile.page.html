@@ -5,11 +5,7 @@
     </div>
     <div class="col-12 mb-4">
       <div class="profile d-flex align-items-center">
-        <p-avatar shape="circle" size="xlarge"
-                  (click)="changeAvatar()"
-                  [style]="{backgroundColor : getColor()}"
-                  [image]="currentUser.avatar"
-                  [label]="currentUser.avatar ? null : currentUser.first_name[0].toUpperCase()+'.'+currentUser.last_name[0].toUpperCase()"></p-avatar>
+        <ng-avatar size="xlarge" [user]="currentUser" [editable]="true"></ng-avatar>
         <div class="info mx-3">
           <p class="h5">{{currentUser.first_name + ' ' + currentUser.last_name}}</p>
           <small class="text-muted">{{currentUser.email}}</small>
