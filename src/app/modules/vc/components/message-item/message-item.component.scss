@@ -1,5 +1,4 @@
 :host ::ng-deep {
-
   .message {
     display: flex;
     align-items: flex-start;
@@ -43,18 +42,12 @@
     }
 
     .reply {
-      .message-img, button {
+      text-align: center;
+
+      button {
         width: 2.5rem;
         min-width: 2.5rem;
         height: 2.5rem;
-      }
-
-      .message-img {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #dddddd;
-        border-radius: 50%;
       }
     }
 
@@ -63,14 +56,8 @@
         border-bottom-left-radius: 0;
       }
 
-      .message-img {
-        margin-right: 0.5rem;
-      }
-
       .reply {
-        ng-button {
-          margin-right: 0.5rem
-        }
+        margin-right: 0.5rem
       }
     }
 
@@ -82,14 +69,8 @@
         border-bottom-right-radius: 0;
       }
 
-      .message-img {
-        margin-left: 0.5rem;
-      }
-
       .reply {
-        ng-button {
-          margin-left: 0.5rem
-        }
+        margin-left: 0.5rem
       }
     }
   }

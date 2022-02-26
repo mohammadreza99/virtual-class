@@ -1,21 +1,26 @@
 <div class="virtual-class-wrapper" [class.rtl]="fa"
      [class.sidebar-visible]="anySidebarVisible()"
      #wrapper>
-  <div class="header d-flex align-items-center justify-content-between fixed-top">
-    <div class="actions d-flex align-items-center">
-      <ng-logo></ng-logo>
-      <ng-button class="mx-3" icon="icon-view" (click)="viewModes.toggle($event)"></ng-button>
-      <div class="profile d-flex align-items-center">
+  <div class="header d-flex align-items-center justify-content-lg-between fixed-top">
+    <div class="actions d-flex flex-grow-1 align-items-center justify-content-between justify-content-lg-start">
+      <ng-logo width="40"></ng-logo>
+      <ng-button class="mx-lg-3" icon="icon-view" (click)="viewModes.toggle($event)"></ng-button>
+      <ng-button [class.badge]="hasUnreadRaisedHands" icon="icon-user-groups" class="d-lg-none"
+                 [class.active]="membersSidebarVisible"
+                 (click)="openSidebar('members')"></ng-button>
+      <ng-button [class.badge]="hasUnreadMessage" icon="icon-chat" class="d-lg-none" [class.active]="chatSidebarVisible"
+                 (click)="openSidebar('chat')"></ng-button>
+      <ng-button class="d-lg-none" icon="icon-more" (click)="sessionInfo.toggle($event)"></ng-button>
+      <div class="profile d-none d-lg-flex align-items-center">
         <ng-avatar [editable]="true" [user]="currentUser"></ng-avatar>
         <div class="info mx-3">
           <h6 class="m-0">{{currentUser.first_name + ' ' + currentUser.last_name}}</h6>
         </div>
       </div>
     </div>
-    <div class="info d-flex align-items-center">
+    <div class="info d-none d-lg-flex align-items-center">
       <small class="mx-1">({{sessionDuration}})</small>
       <div>{{currentRoom.name}}</div>
-      <!--      <ng-button [label]="'room.sessionInfo' | translate" (click)="sessionInfo.toggle($event)"></ng-button>-->
     </div>
   </div>
 
@@ -27,14 +32,14 @@
   </div>
 
   <div class="footer d-flex align-items-center justify-content-between fixed-bottom">
-    <div>
+    <div class="d-none d-lg-block">
       <ng-button [class.badge]="hasUnreadRaisedHands" icon="icon-user-groups" class="ml-3"
                  [class.active]="membersSidebarVisible"
                  (click)="openSidebar('members')"></ng-button>
       <ng-button [class.badge]="hasUnreadMessage" icon="icon-chat" [class.active]="chatSidebarVisible"
                  (click)="openSidebar('chat')"></ng-button>
     </div>
-    <div class="actions">
+    <div class="actions d-flex d-lg-block align-items-center justify-content-between">
       <ng-button-async (clickAsync)="toggleCamera($event)"
                        newColor="success"
                        [disabled]="disableWebcam"
@@ -57,11 +62,11 @@
       </ng-button-async>
       <ng-button *ngPermission="'Admin'" icon="icon-more" (click)="otherActions.toggle($event)"></ng-button>
       <!--      <ng-button *ngPermission="'Admin'" icon="icon-add" (click)="mediaActions.toggle($event)"></ng-button>-->
+      <ng-button class="d-lg-none" (click)="leaveRoom()" color="danger"
+                 icon="icon-log-out"></ng-button>
     </div>
     <ng-button class="d-none d-lg-block" (click)="leaveRoom()" color="danger"
                [label]="'room.leaveSession' | translate"></ng-button>
-    <ng-button class="d-lg-none" (click)="leaveRoom()" color="danger"
-               icon="icon-log-out"></ng-button>
   </div>
 </div>
 
@@ -150,18 +155,19 @@
   </ul>
 </p-overlayPanel>
 
-<!--<p-overlayPanel [baseZIndex]="2000" #sessionInfo styleClass="session-info {{fa ? 'rtl' : null}}">-->
-<!--  <ng-template pTemplate>-->
-<!--    <div class="room-info d-flex align-items-center border-bottom">-->
-<!--      <ng-logo></ng-logo>-->
-<!--      <div class="info {{fa ? 'mr-3' : 'ml-3'}}">-->
-<!--        <div>{{currentRoom.name}}</div>-->
-<!--        <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="session-link d-flex align-items-center justify-content-between">-->
-<!--      <span>{{'room.sessionLink' | translate}}</span>-->
-<!--      <i class="icon-copy" (click)="copySessionLink(sessionInfo)"></i>-->
-<!--    </div>-->
-<!--  </ng-template>-->
-<!--</p-overlayPanel>-->
+<p-overlayPanel [baseZIndex]="2000" #sessionInfo styleClass="session-info {{fa ? 'rtl' : null}}">
+  <ng-template pTemplate>
+    <div class="border-bottom pb-3 mb-3">
+      <div class="profile d-flex align-items-center">
+        <ng-avatar [editable]="true" [user]="currentUser"></ng-avatar>
+        <div class="info mx-3">
+          <h6 class="m-0">{{currentUser.first_name + ' ' + currentUser.last_name}}</h6>
+        </div>
+      </div>
+    </div>
+    <div class="info d-flex align-items-center justify-content-between">
+      <div>{{currentRoom.name}}</div>
+      <small>{{sessionDuration}}</small>
+    </div>
+  </ng-template>
+</p-overlayPanel>

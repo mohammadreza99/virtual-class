@@ -26,9 +26,15 @@
 
     .footer {
       .actions {
+        flex-grow: 1;
+
         > * {
           display: inline-block;
           margin: 0 0.5rem;
+        }
+
+        @include media-breakpoint-up(lg) {
+          flex-grow: 0;
         }
       }
     }

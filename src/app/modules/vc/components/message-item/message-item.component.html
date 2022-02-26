@@ -14,7 +14,7 @@
   </div>
   <div class="reply">
     <ng-avatar [user]="sender"></ng-avatar>
-    <ng-button *ngPermission="'Viewer'" (onClick)="onReply()" class="mt-2" [rounded]="true"
+    <ng-button *ngPermission="'Viewer'" appearance="text" (onClick)="onReply()" class="mt-2" [rounded]="true"
                icon="icon-forward"></ng-button>
     <ng-button *ngPermission="'Admin'" appearance="text" (onClick)="messageActions.toggle($event)" class="mt-2"
                [rounded]="true"

@@ -9,7 +9,7 @@
       align-items: center;
       justify-content: space-between;
       background-color: #50585F;
-      height: 63px;
+      height: 70px;
 
       .header-title {
         display: flex;
@@ -66,7 +66,7 @@
       .p-tabview-panels {
         background-color: #40414A;
         padding: 0;
-        height: calc(100vh - 60px - 63px);
+        height: calc(100vh - 60px - 70px);
 
         .p-tabview-panel {
           height: 100%;
@@ -75,7 +75,7 @@
     }
 
     .chat-wrapper {
-      height: calc(100% - 63px);
+      height: calc(100% - 70px);
       display: flex;
       flex-direction: column;
 
@@ -117,6 +117,7 @@
           input {
             background-color: transparent;
             color: #ffffff;
+            border-color: #E0E0E0 !important;
           }
         }
       }
