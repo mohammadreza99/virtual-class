@@ -99,6 +99,9 @@ export enum SocketEventTypes {
   NewPoll = 'newPoll',
   FinishedPoll = 'finishedPoll',
   CanceledPoll = 'canceledPoll',
-  NewPollReply = 'newPollReply'
+  NewPollReply = 'newPollReply',
+  ChangePresentationPage = 'changePresentationPage',
+  OpenPresentation = 'openPresentation',
+  ClosePresentation = 'closePresentation',
 }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'ng-speaker-view',
@@ -7,9 +7,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SpeakerViewComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+  }
+
+  hideScreen: boolean = false;
 
   ngOnInit(): void {
+  }
+
+
+  toggleScreen() {
+    this.hideScreen = !this.hideScreen;
   }
 
 }

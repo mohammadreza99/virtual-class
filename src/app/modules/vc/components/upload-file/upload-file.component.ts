@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {SessionService} from '@core/http';
 
 @Component({
   selector: 'ng-upload-file',
@@ -10,24 +11,33 @@ import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 export class UploadFileComponent extends LanguageChecker implements OnInit {
 
   constructor(public dialogConfig: DynamicDialogConfig,
-              private dialogRef: DynamicDialogRef) {
+              private dialogRef: DynamicDialogRef,
+              private sessionService: SessionService) {
     super();
   }
 
   allowDownload: boolean = false;
-  selected: any;
+  selected: File;
   validFileTypes: string = '.pdf,.doc,.docx,.pptx,.jpg,.png,.jpeg,.xlsx';
-  maxFileSize: number = 2000;
+  maxFileSize: number = 30000;
+  invalidSize: boolean;
+  invalidType: boolean;
 
   ngOnInit(): void {
   }
 
-  onSelect(event) {
-    if (event.target.files[0]) {
-      this.selected = event.target.files[0];
+  onSelect(event: any) {
+    if (!event.target.files) {
+      return;
     }
-    console.log(this.isFileTypeValid(this.selected));
-    console.log(this.isFileSizeValid(this.selected));
+    this.selected = event.target.files[0];
+    this.invalidSize = !this.isFileSizeValid(this.selected);
+    this.invalidType = !this.isFileTypeValid(this.selected);
+    if (!this.invalidType || this.invalidSize) {
+      this.sessionService.uploadPresentation('file').subscribe(res => {
+
+      });
+    }
   }
 
   onSubmit() {
@@ -41,6 +51,8 @@ export class UploadFileComponent extends LanguageChecker implements OnInit {
   removeFile(event) {
     event.stopPropagation();
     this.selected = null;
+    this.invalidSize = false;
+    this.invalidType = false;
   }
 
   isFileTypeValid(file: File): boolean {
@@ -48,12 +60,10 @@ export class UploadFileComponent extends LanguageChecker implements OnInit {
     for (const type of acceptableTypes) {
       const acceptable = this.isWildcard(type) ? this.getTypeClass(file.type) === this.getTypeClass(type)
         : file.type == type || this.getFileExtension(file).toLowerCase() === type.toLowerCase();
-
       if (acceptable) {
         return true;
       }
     }
-
     return false;
   }
 

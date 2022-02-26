@@ -19,16 +19,80 @@
     ng-screen {
       @include restoreFullAspectRatio();
 
+      &[position="mainThumbPosition"] {
+        position: relative;
+
+        &.screen-hided {
+          .screen-wrapper {
+            display: none;
+          }
+        }
+
+        .screen-toggler {
+          > ng-button, > span {
+            display: none;
+          }
+
+          > ng-button {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            z-index: 200;
+
+            button {
+              width: 2rem;
+              padding: 0.25rem 0;
+            }
+          }
+
+          > span {
+            text-align: center;
+            background: #40414A80;
+            border-radius: 4px;
+            cursor: pointer;
+          }
+        }
+      }
+
       &.teacher-screen-shared + .teacher-webcam-shared {
         position: absolute;
-        width: 250px;
+        width: 170px;
         height: auto;
-        right: 0.5rem;
+        right: 1rem;
         bottom: 1rem;
 
         .screen-wrapper {
           padding-bottom: 56.25%;
         }
+
+        .user-fullname {
+          display: none
+        }
+
+        &:not(.screen-hided) {
+          .screen-toggler {
+            > ng-button {
+              display: block;
+            }
+
+            > span {
+              display: none;
+            }
+          }
+        }
+
+        &.screen-hided {
+          .screen-toggler {
+            > ng-button {
+              display: none;
+            }
+
+            > span {
+              display: block;
+            }
+          }
+        }
+
       }
 
       &.teacher-webcam-shared,
@@ -37,6 +101,8 @@
           display: none
         }
       }
+
+
     }
   }
 }

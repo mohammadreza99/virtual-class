@@ -1,29 +1,45 @@
 <p>{{'room.pleaseUploadYourFile' | translate}}</p>
 
 <div class="uploader text-center rounded bg-light border border-dashed text-muted px-3 py-4 mb-3"
-     (click)="uploader.click()">
+     (click)="!selected ? uploader.click() : null">
   <i class="icon-add-File"></i>
-  <small class="d-block">{{'noFileSelected' | translate}}</small>
+  <small class="d-block" *ngIf="!selected">{{'noFileSelected' | translate}}</small>
+  <small class="d-block" *ngIf="selected">{{selected.name | translate}}</small>
   <ng-button *ngIf="selected" icon="pi pi-times" [rounded]="true" appearance="text"
              (onClick)="removeFile($event)"></ng-button>
 </div>
 
-<div class="d-flex align-items-center text-muted mb-2">
+<div class="alert-box d-flex align-items-center rounded p-1"
+     [ngClass]="{'text-white bg-danger': invalidSize,'text-muted':!invalidSize}">
   <i class="icon-info-Circle"></i>
-  <small class="mr-2">{{'fileSizeLimit' | translate}}</small>
+  <small class="mr-2">{{'fileSizeLimit' | translate:{value: maxFileSize} }}</small>
 </div>
-<div class="d-flex align-items-center text-muted">
+<div class="alert-box d-flex align-items-center rounded p-1"
+     [ngClass]="{'text-white bg-danger': invalidType,'text-muted':!invalidType}">
   <i class="icon-info-Circle"></i>
-  <small class="mr-2">{{'fileTypeLimit' | translate}}</small>
+  <small class="mr-2">{{'fileTypeLimit' | translate:{value: validFileTypes} }}</small>
 </div>
 
 <ng-switch class="mt-3 ml-auto d-inline-block" [(ngModel)]="allowDownload" [label]="'usersCanDownloadFile' | translate"
            [rtl]="!fa"></ng-switch>
 
+<div class="archives my-2">
+  <small>{{'room.presentationArchive' | translate}}</small>
+  <ul class="list-unstyled p-1 border rounded">
+    <li class="d-flex align-items-center justify-content-between rounded px-1">
+      <div class="d-flex align-items-center">
+        <i class="icon-file ml-2"></i>
+        <span>{{'asdasd'}}</span>
+      </div>
+      <ng-button appearance="text" color="danger" [rounded]="true" icon="icon-delete"></ng-button>
+    </li>
+  </ul>
+</div>
+
 <div class="actions text-left mt-4">
   <ng-button class="mx-2" appearance="outlined" color="secondary" [label]="'cancel' | translate"
              (click)="onClose()"></ng-button>
-  <ng-button class="mx-2" [label]="'verify' | translate"
+  <ng-button [disabled]="!selected || invalidSize || invalidType" class="mx-2" [label]="'verify' | translate"
              (click)="onSubmit()"></ng-button>
 </div>
 <input

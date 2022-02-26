@@ -111,7 +111,8 @@
       <i class="icon-view-grid"></i>
       <span>{{'room.showAllParticipants' | translate}}</span>
     </li>
-    <li (click)="changeView('thumbnail',viewModes)" [class.active]="currentViewMode == 'thumbnail'">
+    <li class="d-none d-lg-block" (click)="changeView('thumbnail',viewModes)"
+        [class.active]="currentViewMode == 'thumbnail'">
       <i class="icon-view-thumbnail1"></i>
       <span>{{'room.showSpeakerAndParticipants' | translate}}</span>
     </li>

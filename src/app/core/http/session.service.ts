@@ -1217,6 +1217,66 @@ export class SessionService extends ApiService {
     });
   }
 
+  uploadPresentation(file_name: string) {
+    return this._post<any>('', {
+      method: 'uploadPresentation',
+      data: {room_id: this.currentRoom.id, file_name},
+    });
+  }
+
+
+  changePresentationPage(presentation_id: number, page: number) {
+    return this._post<any>('', {
+      method: 'changePresentationPage',
+      data: {room_id: this.currentRoom.id, presentation_id, page},
+    });
+  }
+
+
+  changePresentationState(presentation_id: number, state: 'Open' | 'Close') {
+    return this._post<any>('', {
+      method: 'changePresentationState',
+      data: {room_id: this.currentRoom.id, presentation_id, state},
+    });
+  }
+
+
+  deletePresentation(presentation_id: number) {
+    return this._post<any>('', {
+      method: 'deletePresentation',
+      data: {room_id: this.currentRoom.id, presentation_id},
+    });
+  }
+
+
+  getUploadStatus(presentation_id: number) {
+    return this._post<any>('', {
+      method: 'getUploadStatus',
+      data: {room_id: this.currentRoom.id, presentation_id},
+    });
+  }
+
+  getPresentation(presentation_id: number) {
+    return this._post<any>('', {
+      method: 'getPresentation',
+      data: {room_id: this.currentRoom.id, presentation_id},
+    });
+  }
+
+  getActivePresentations(presentation_id: number) {
+    return this._post<any>('', {
+      method: 'getActivePresentations',
+      data: {room_id: this.currentRoom.id, presentation_id},
+    });
+  }
+
+  uploadPresentationFile(presentation_id: number) {
+    return this._post<any>('', {
+      method: 'uploadPresentationFile',
+      data: {room_id: this.currentRoom.id, presentation_id},
+    });
+  }
+
   private getPublicMessages(data: SearchParam | {} = {}) {
     return this._post<any>('', {
       method: 'getPublicMessages',

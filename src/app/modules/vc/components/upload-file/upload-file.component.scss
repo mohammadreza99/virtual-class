@@ -8,3 +8,23 @@
     left: 0.5rem;
   }
 }
+
+.alert-box {
+  transition: all .3s;
+}
+
+.archives {
+  ul {
+    max-height: 100px;
+    overflow: auto;
+
+    li {
+      transition: all .3s;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #dee2e6;
+      }
+    }
+  }
+}

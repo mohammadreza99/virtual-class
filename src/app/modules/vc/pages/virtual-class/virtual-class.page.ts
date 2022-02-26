@@ -5,7 +5,7 @@ import {OverlayPanel} from 'primeng/overlaypanel';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {UtilsService} from '@ng/services';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Subject, Subscription} from 'rxjs';
+import {Subject} from 'rxjs';
 import {LocationStrategy} from '@angular/common';
 import {UpdateViewService} from '@core/http/update-view.service';
 import {DialogService} from 'primeng/dynamicdialog';
@@ -48,7 +48,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   raiseHandActivated = false;
   hasUnreadMessage = false;
   hasUnreadRaisedHands = false;
-  currentViewMode: ViewMode = 'thumbnail';
+  currentViewMode: ViewMode;
   currentRoom: Room;
   currentUser: RoomUser;
   currentQuestion: QuestionItem;
@@ -67,8 +67,10 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   async loadData() {
     if (window.innerWidth <= 767) {
       this.membersSidebarVisible = false;
+      this.currentViewMode = 'speaker';
     } else {
       this.membersSidebarVisible = true;
+      this.currentViewMode = 'thumbnail';
     }
     this.disableWindowBackButton();
     this.initUserData();

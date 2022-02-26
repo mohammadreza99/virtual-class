@@ -1,3 +1,4 @@
+<ng-content></ng-content>
 <div class="screen-wrapper" [style.backgroundColor]="hasVideo() ? '#1f1f1f' :  getColor()"
      [class.is-talking]="isTalking">
   <video preload="none" #videoElem autoplay muted playsinline [hidden]="!hasVideo()"></video>
@@ -6,7 +7,7 @@
       <ng-avatar [colorFull]="false" class="mb-3" [user]="user" size="xlarge"></ng-avatar>
       <small>{{user.first_name + ' ' + user.last_name}}</small>
     </div>
-    <div *ngIf="hasVideo()" class="user-fullname">
+    <div *ngIf="hasVideo()" class="user-fullname text-truncate">
       {{user.first_name + ' ' + user.last_name}}
     </div>
     <span class="hand-raise" *ngIf="user.raise_hand">

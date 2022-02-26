@@ -85,6 +85,7 @@
     "percent": "درصد",
     "people": "نفرات",
     "notAnswered": "بی جواب",
+    "presentationArchive": "آرشیو ارائه ها",
     "questionsArchive": "آرشیو سوالات",
     "pollsArchive": "آرشیو نظرسنجی",
     "userStatus": "وضعیت کاربر",
@@ -113,7 +114,8 @@
     "sendFile": "ارسال فایل کلاسی",
     "selectRandomUser": "انتخاب تصادفی دانش آموز",
     "chooseAnotherUser": "انتخاب فرد دیگر",
-    "pleaseUploadYourFile": "فایل مورد نظر خود را برای ارائه در کلاس بارگذاری کنید"
+    "pleaseUploadYourFile": "فایل مورد نظر خود را برای ارائه در کلاس بارگذاری کنید",
+    "showTeacherScreen": "نمایش تصویر معلم"
   },
   "none": "---",
   "home": "خانه",
@@ -261,7 +263,7 @@
   "accessDeniedError": "دسترسی غیرمجاز",
   "wrongCredential": "اطلاعات نادرست است",
   "noFileSelected": "فایلی انتخاب نشده است",
-  "fileSizeLimit": "حداکثر حجم مجاز بارگذاری 25 مگ میباشد",
-  "fileTypeLimit": "فرمت های قابل پشتیبانی png و jpg است",
+  "fileSizeLimit": "حداکثر حجم مجاز بارگذاری {{value}} مگ میباشد",
+  "fileTypeLimit": "فرمت های قابل پشتیبانی : {{value}}",
   "usersCanDownloadFile": "شرکت کنندگان قابلیت دانلود فایل را داشته باشند"
 }
