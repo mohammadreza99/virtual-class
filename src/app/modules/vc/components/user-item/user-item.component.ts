@@ -101,7 +101,7 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
     try {
       this.dialogService.open(KickUserConfirmComponent, {
         data: this.user,
-        header: this.translations.kickUser,
+        header: this.translations.room.kickUser,
         width: '400px',
         rtl: this.fa
       }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
@@ -155,7 +155,7 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
     try {
       this.dialogService.open(UploadAvatarComponent, {
         data: this.user,
-        header: this.translations.room.changeAvatar,
+        header: this.translations.changeAvatar,
         width: '400px',
         rtl: this.fa
       }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {

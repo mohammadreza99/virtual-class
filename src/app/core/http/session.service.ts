@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {
   QuestionOption,
   DeviceType,
@@ -10,7 +10,7 @@ import {
   PublishType,
   RoomUser,
   SearchParam,
-  TrackPosition, PollOption, PollItem
+  TrackPosition, PollOption, PollItem, BaseRes
 } from '@core/models';
 import {ApiService, SocketService} from '@core/http';
 import {UtilsService} from '@ng/services';
@@ -1275,6 +1275,18 @@ export class SessionService extends ApiService {
       method: 'uploadPresentationFile',
       data: {room_id: this.currentRoom.id, presentation_id},
     });
+  }
+
+  getUserUploadLink(user_id: number): Observable<BaseRes<any>> {
+    return this._post('', {method: 'uploadAvatar', data: {user_id}});
+  }
+
+  uploadUserAvatar(url: string, image: File): Observable<BaseRes<any>> {
+    return this.http.put<any>(url, image);
+  }
+
+  deleteUserAvatar(user_id: number): Observable<BaseRes<any>> {
+    return this._post('', {method: 'deleteUserAvatar', data: {user_id}});
   }
 
   private getPublicMessages(data: SearchParam | {} = {}) {

@@ -94,16 +94,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           break;
 
         case 'roomParticipants':
-          const {added, deleted} = this.sessionService.getRoomUsersDifference(res.data, this.allUsers);
-          if (added.length !== 0) {
-            this.allUsers.push(...added);
-          }
-          if (deleted.length !== 0) {
-            deleted?.forEach(d => {
-              const index = this.allUsers.findIndex(p => p.id === d.id);
-              this.allUsers.splice(index, 1);
-            });
-          }
+          this.allUsers = res.data;
           break;
 
         case 'mutePerson':

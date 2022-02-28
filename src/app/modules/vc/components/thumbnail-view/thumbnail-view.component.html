@@ -7,7 +7,14 @@
     </div>
     <div class="main-area flex-grow-1">
       <ng-screen position="mainPosition"></ng-screen>
-      <ng-screen position="mainThumbPosition"></ng-screen>
+      <ng-screen position="mainThumbPosition" [class.screen-hided]="hideScreen">
+        <div class="screen-toggler">
+          <ng-button *ngIf="!hideScreen" color="secondary" icon="pi pi-times"
+                     (click)="toggleScreen()">
+          </ng-button>
+          <span class="p-1" *ngIf="hideScreen" (click)="toggleScreen()">{{'room.showTeacherScreen' | translate}}</span>
+        </div>
+      </ng-screen>
       <div class="no-stream h-100">
         <ng-main-placeholder></ng-main-placeholder>
       </div>

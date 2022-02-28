@@ -41,7 +41,7 @@
             <!--      </li>-->
             <li (click)="changeAvatar()">
               <i class="icon-info"></i>
-              <span>{{'room.changeAvatar' | translate}}</span>
+              <span>{{'changeAvatar' | translate}}</span>
             </li>
             <li (click)="showStatus($event,actions,userStatus,actionsButton)">
               <i class="icon-info"></i>
@@ -53,10 +53,10 @@
             </li>
           </ul>
         </p-overlayPanel>
-        <p-overlayPanel #userStatus styleClass="actions {{fa ? 'rtl' : null}}">
+        <p-overlayPanel [showCloseIcon]="true" #userStatus styleClass="actions {{fa ? 'rtl' : null}}">
           <div class="info">
             <div class="d-flex flex-column align-items-center justify-content-between py-4">
-              <ng-avatar [user]="user"></ng-avatar>
+              <ng-avatar class="mb-2" [user]="user"></ng-avatar>
               <small>{{user.first_name + ' ' + user.last_name}}</small>
             </div>
             <div class="row no-gutters p-3 bg-light text-dark">
@@ -66,7 +66,7 @@
               </div>
               <div class="col-6">
                 <p class="h6">{{'room.deviceType' | translate}}</p>
-                <small class="text-muted">{{user.device.toLowerCase() | translate}}</small>
+                <small class="text-muted">{{('room.' + user.device.toLowerCase()) | translate}}</small>
               </div>
               <div class="col-6">
                 <p class="h6">{{'room.webcamStatus' | translate}}</p>

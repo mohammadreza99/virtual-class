@@ -44,4 +44,8 @@ export class ParticipantsComponent extends LanguageChecker implements OnInit {
       throw error;
     }
   }
+
+  trackByFn(item: RoomUser, index: number) {
+    return item.id;
+  }
 }

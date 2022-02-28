@@ -12,8 +12,13 @@ export class ThumbnailViewComponent implements OnInit {
   }
 
   @Input() users: RoomUser[];
+  hideScreen: boolean = false;
 
   ngOnInit(): void {
+  }
+
+  toggleScreen() {
+    this.hideScreen = !this.hideScreen;
   }
 
   trackByFn(index: number, item: RoomUser): number {

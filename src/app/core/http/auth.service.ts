@@ -53,6 +53,10 @@ export class AuthService extends ApiService {
     return this.http.put<any>(url, image);
   }
 
+  deleteAvatar(): Observable<BaseRes<any>> {
+    return this._post('', {method: 'deleteAvatar', data: {}});
+  }
+
   logout(): void {
     localStorage.removeItem('token');
   }

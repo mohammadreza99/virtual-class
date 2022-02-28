@@ -51,7 +51,7 @@
     </p-accordionTab>
     <p-accordionTab [header]="'room.participants' | translate" [selected]="true">
       <ng-user-item [user]="user"
-                    *ngFor="let user of allUsers | ngFilter:'first_name,last_name':searchText">
+                    *ngFor="let user of (allUsers | ngFilter:'first_name,last_name':searchText);trackBy:trackByFn">
       </ng-user-item>
       <ng-empty *ngIf="(allUsers | ngFilter:'first_name,last_name':searchText).length == 0"
                 [message]="'nothingFound' | translate"></ng-empty>

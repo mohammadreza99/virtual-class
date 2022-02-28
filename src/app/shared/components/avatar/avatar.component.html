@@ -1,9 +1,7 @@
 <p-avatar shape="circle" [size]="size"
           [class.editable]="editable"
-          [class.editable]="editable"
           (click)="changeAvatar()"
           [style]="{backgroundColor: colorFull ? getColor() : (user.avatar ? '#363636' : '#ffffff')}"
           [image]="user.avatar || null"
           [label]="user.avatar ? null : user.first_name[0].toUpperCase()+'.'+user.last_name[0].toUpperCase()">
 </p-avatar>
-<!--          [style]="{backgroundColor: user.avatar || !colorFull ? '#363636' : getColor() }"-->

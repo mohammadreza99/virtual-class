@@ -1,6 +1,7 @@
 <ng-content></ng-content>
 <div class="screen-wrapper" [style.backgroundColor]="hasVideo() ? '#1f1f1f' :  getColor()"
      [class.is-talking]="isTalking">
+  <ng-button appearance="outlined" class="btn-fullscreen" icon="icon-fullscreen" (click)="toggleFullScreen()"></ng-button>
   <video preload="none" #videoElem autoplay muted playsinline [hidden]="!hasVideo()"></video>
   <ng-container *ngIf="user">
     <div class="avatar" *ngIf="!hasVideo()">

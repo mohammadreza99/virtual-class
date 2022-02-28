@@ -51,23 +51,30 @@ export class AvatarComponent extends LanguageChecker implements OnInit {
     try {
       this.dialogService.open(UploadAvatarComponent, {
         data: this.user,
-        header: this.translations.room.changeAvatar,
+        header: this.translations.changeAvatar,
         width: '400px',
         rtl: this.fa
       }).onClose.subscribe(async res => {
-        if (res) {
-          const result = await this.authService.getUploadLink().toPromise();
-          if (result.status == 'OK') {
-            await this.authService.uploadAvatar(result.data.upload_url, res).toPromise();
-            const data = await this.authService.getSelfUser().toPromise();
-            this.user = data.data.user;
-            this.updateViewService.setViewEvent({event: 'updateAvatar', data: this.user});
-          }
+        if (!res) {
+          return;
         }
+        if (res == 'delete') {
+          await this.authService.deleteAvatar().toPromise();
+          this.user.avatar = null;
+          this.updateViewService.setViewEvent({event: 'updateAvatar', data: this.user});
+          return;
+        }
+        const result = await this.authService.getUploadLink().toPromise();
+        if (result.status == 'OK') {
+          await this.authService.uploadAvatar(result.data.upload_url, res).toPromise();
+          const data = await this.authService.getSelfUser().toPromise();
+          this.user = data.data.user;
+          this.updateViewService.setViewEvent({event: 'updateAvatar', data: this.user});
+        }
+
       });
     } catch (error) {
       console.error(error);
     }
   }
-
 }
