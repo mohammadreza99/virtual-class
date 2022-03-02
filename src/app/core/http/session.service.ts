@@ -744,6 +744,9 @@ export class SessionService extends ApiService {
           }
           this.updateViewService.setViewEvent({event: 'canceledPoll', data: res});
           break;
+
+        case 'randomUser':
+          break;
       }
     });
   }
@@ -763,9 +766,13 @@ export class SessionService extends ApiService {
     }
   }
 
-  selectRandomUser() {
+  async getRandomUser() {
     const randomIndex = Math.floor(Math.random() * this.roomUsers.length);
-    return this.roomUsers[randomIndex];
+    const user = this.roomUsers[randomIndex];
+    const result = await this.selectRandomUser(user.id).toPromise();
+    if (result.status == 'OK') {
+      return user;
+    }
   }
 
   ///////////////////////////////////////////////////////////////////////////////
@@ -1278,7 +1285,7 @@ export class SessionService extends ApiService {
   }
 
   getUserUploadLink(user_id: number): Observable<BaseRes<any>> {
-    return this._post('', {method: 'uploadAvatar', data: {user_id}});
+    return this._post('', {method: 'uploadUserAvatar', data: {user_id}});
   }
 
   uploadUserAvatar(url: string, image: File): Observable<BaseRes<any>> {
@@ -1287,6 +1294,10 @@ export class SessionService extends ApiService {
 
   deleteUserAvatar(user_id: number): Observable<BaseRes<any>> {
     return this._post('', {method: 'deleteUserAvatar', data: {user_id}});
+  }
+
+  selectRandomUser(user_id: number): Observable<BaseRes<any>> {
+    return this._post('', {method: 'selectRandomUser', data: {user_id}});
   }
 
   private getPublicMessages(data: SearchParam | {} = {}) {

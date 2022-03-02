@@ -61,7 +61,7 @@
                        newColor="success">
       </ng-button-async>
       <ng-button *ngPermission="'Admin'" icon="icon-more" (click)="otherActions.toggle($event)"></ng-button>
-      <!--      <ng-button *ngPermission="'Admin'" icon="icon-add" (click)="mediaActions.toggle($event)"></ng-button>-->
+      <ng-button *ngPermission="'Admin'" icon="icon-add" (click)="mediaActions.toggle($event)"></ng-button>
       <ng-button class="d-lg-none" (click)="leaveRoom()" color="danger"
                  icon="icon-log-out"></ng-button>
     </div>
@@ -138,10 +138,6 @@
       <i class="icon-download"></i>
       <span>{{'room.downloadAttendance' | translate}}</span>
     </li>
-    <li (click)="sendFile(otherActions)">
-      <i class="icon-download"></i>
-      <span>{{'room.sendFile' | translate}}</span>
-    </li>
     <li (click)="selectRandomUser(otherActions)">
       <i class="icon-download"></i>
       <span>{{'room.selectRandomUser' | translate}}</span>
@@ -151,7 +147,10 @@
 
 <p-overlayPanel [baseZIndex]="2000" #mediaActions styleClass="actions {{fa ? 'rtl' : null}}">
   <ul class="list-unstyled p-0 m-0">
-
+    <li (click)="sendFile(otherActions)">
+      <i class="icon-download"></i>
+      <span>{{'room.sendFile' | translate}}</span>
+    </li>
   </ul>
 </p-overlayPanel>
 

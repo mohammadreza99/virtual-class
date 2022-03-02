@@ -159,7 +159,18 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
         width: '400px',
         rtl: this.fa
       }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
-        if (res !== false) {
+        if (!res) {
+          return;
+        }
+        if (res == 'delete') {
+          await this.sessionService.deleteUserAvatar(this.user.id).toPromise();
+          this.user.avatar = null;
+          this.updateViewService.setViewEvent({event: 'updateAvatar', data: this.user});
+          return;
+        }
+        const result = await this.sessionService.getUserUploadLink(this.user.id).toPromise();
+        if (result.status == 'OK') {
+          await this.sessionService.uploadUserAvatar(result.data.upload_url, res).toPromise();
         }
       });
     } catch (error) {

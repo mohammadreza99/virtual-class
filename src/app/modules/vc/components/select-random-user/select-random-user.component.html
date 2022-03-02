@@ -1,7 +1,9 @@
-<ng-user-item [user]="user"></ng-user-item>
+<ng-user-item *ngIf="user" [user]="user"></ng-user-item>
 
 <div class="footer text-left mt-4">
-  <ng-button class="mr-2" (click)="onClose()" appearance="outlined" color="secondary" [label]="'cancel' | translate"></ng-button>
-  <ng-button class="mr-2" (click)="selectRandomUser()" color="secondary" [label]="'room.chooseAnotherUser' | translate"></ng-button>
+  <ng-button class="mr-2" (click)="onClose()" appearance="outlined" color="secondary"
+             [label]="'cancel' | translate"></ng-button>
+  <ng-button class="mr-2" (click)="selectRandomUser()" color="secondary"
+             [label]="'room.chooseAnotherUser' | translate"></ng-button>
   <ng-button class="mr-2" (click)="onSubmit()" [label]="'verify' | translate"></ng-button>
 </div>

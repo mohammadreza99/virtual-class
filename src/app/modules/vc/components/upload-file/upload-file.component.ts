@@ -33,7 +33,7 @@ export class UploadFileComponent extends LanguageChecker implements OnInit {
     this.selected = event.target.files[0];
     this.invalidSize = !this.isFileSizeValid(this.selected);
     this.invalidType = !this.isFileTypeValid(this.selected);
-    if (!this.invalidType || this.invalidSize) {
+    if (!this.invalidType && !this.invalidSize) {
       this.sessionService.uploadPresentation('file').subscribe(res => {
 
       });

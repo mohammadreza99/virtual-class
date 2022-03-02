@@ -23,8 +23,8 @@ export class SelectRandomUserComponent extends LanguageChecker implements OnInit
     this.selectRandomUser();
   }
 
-  selectRandomUser() {
-    this.user = this.sessionService.selectRandomUser();
+  async selectRandomUser() {
+    this.user = await this.sessionService.getRandomUser();
   }
 
   onSubmit() {

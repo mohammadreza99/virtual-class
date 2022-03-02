@@ -116,7 +116,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     this.micVideoElem.nativeElement.srcObject = this.audioStream;
     this.sessionService.checkIsTalking(this.audioStream, (value: number) => {
       this.volumeMeterElem.toArray().forEach(el => {
-        el.nativeElement.value = value / 100;
+        el.nativeElement.value = value;
       });
     });
   }
