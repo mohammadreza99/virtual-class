@@ -1,5 +1,5 @@
 <ng-user-item *ngIf="user" [user]="user"></ng-user-item>
-
+<ng-empty *ngIf="!user" [message]="'nothingFound' | translate"></ng-empty>
 <div class="footer text-left mt-4">
   <ng-button class="mr-2" (click)="onClose()" appearance="outlined" color="secondary"
              [label]="'cancel' | translate"></ng-button>

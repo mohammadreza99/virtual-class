@@ -51,6 +51,7 @@ export interface RoomUser {
   muted_video: boolean;
   has_mic: boolean;
   has_cam: boolean;
+  kicked: boolean;
   device: string;
   avatar: string;
 }

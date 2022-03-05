@@ -1,5 +1,5 @@
 <div #actionsButton class="participant-item justify-content-between" [class.rtl]="fa">
-  <div class="info">
+  <div class="info" [class.kicked]="user.kicked">
     <ng-avatar [user]="user"></ng-avatar>
     <div class="name mx-2">
       <p>{{user.first_name + ' ' + user.last_name}}</p>
@@ -80,6 +80,7 @@
           </div>
         </p-overlayPanel>
       </div>
+      <ng-button *ngIf="!raiseHand && user.kicked" [label]="'room.restore' | translate"></ng-button>
     </ng-container>
   </ng-container>
 </div>

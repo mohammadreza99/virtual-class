@@ -443,7 +443,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     overlay.hide();
   }
 
-  sendFile(overlay: OverlayPanel) {
+  uploadFile(overlay: OverlayPanel) {
     this.dialogService.open(UploadFileComponent, {
       header: this.translations.room.sendFile,
       width: '500px',
@@ -456,14 +456,16 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
 
   selectRandomUser(overlay: OverlayPanel) {
-    // if (this.roomUsers.length > 1) {
     this.dialogService.open(SelectRandomUserComponent, {
       header: this.translations.room.selectRandomUser,
       width: '500px',
       closable: true,
       rtl: this.fa
+    }).onClose.pipe(takeUntil(this.destroy$)).subscribe(res => {
+      if (res) {
+        this.sessionService.selectRandomUser(res.id).toPromise();
+      }
     });
-    // }
     overlay.hide();
   }
 }

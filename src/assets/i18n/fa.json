@@ -98,6 +98,7 @@
     "desktop": "دسکتاپ",
     "have": "دارد",
     "notHave": "ندارد",
+    "restore": "بازگردانی",
     "alreadyHaveOpenQuestionnaire": "یک پرسشنامه باز وجود دارد",
     "revokeQuestion": "لغو پرسش کلاسی",
     "revokeQuestionConfirm": "آیا از لغو پرسش مطمئن هستید؟",
@@ -115,7 +116,9 @@
     "selectRandomUser": "انتخاب تصادفی دانش آموز",
     "chooseAnotherUser": "انتخاب فرد دیگر",
     "pleaseUploadYourFile": "فایل مورد نظر خود را برای ارائه در کلاس بارگذاری کنید",
-    "showTeacherScreen": "نمایش تصویر معلم"
+    "showTeacherScreen": "نمایش تصویر معلم",
+    "youHaveBeenSelected": "شما انتخاب شدید",
+    "anotherUserSelected": "کاربر {{value}} انتخاب شد"
   },
   "home": "خانه",
   "forgetPassword": "فراموشی رمزعبور",
@@ -265,7 +268,7 @@
   "accessDeniedError": "دسترسی غیرمجاز",
   "wrongCredential": "اطلاعات نادرست است",
   "noFileSelected": "فایلی انتخاب نشده است",
-  "fileSizeLimit": "حداکثر حجم مجاز بارگذاری {{value}} مگ میباشد",
+  "fileSizeLimit": "حداکثر حجم مجاز بارگذاری {{value}} میباشد",
   "fileTypeLimit": "فرمت های قابل پشتیبانی : {{value}}",
   "usersCanDownloadFile": "شرکت کنندگان قابلیت دانلود فایل را داشته باشند"
 }

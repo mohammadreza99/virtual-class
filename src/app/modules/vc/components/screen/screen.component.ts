@@ -173,9 +173,13 @@ export class ScreenComponent implements OnInit, OnDestroy {
   }
 
   toggleFullScreen() {
-    const video = this.videoElem.nativeElement;
+    const video = this.videoElem.nativeElement as any;
     if (video.requestFullscreen) {
       video.requestFullscreen();
+    } else if (video.webkitRequestFullscreen) {
+      video.webkitRequestFullscreen();
+    } else if (video.msRequestFullscreen) {
+      video.msRequestFullscreen();
     }
   }
 }

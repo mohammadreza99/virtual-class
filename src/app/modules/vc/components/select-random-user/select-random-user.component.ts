@@ -28,7 +28,7 @@ export class SelectRandomUserComponent extends LanguageChecker implements OnInit
   }
 
   onSubmit() {
-    this.dialogRef.close();
+    this.dialogRef.close(this.user);
   }
 
   onClose() {

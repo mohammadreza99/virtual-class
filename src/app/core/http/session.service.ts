@@ -538,7 +538,8 @@ export class SessionService extends ApiService {
             this.raisedHands.splice(handRaiseIndex, 1);
           }
           if (userIndex > -1) {
-            this.roomUsers.splice(userIndex, 1);
+            //   this.roomUsers.splice(userIndex, 1);
+            this.roomUsers[userIndex].kicked = true;
           }
           if (res.target == this.currentUser.id) {
             this.getMeOut();
@@ -565,8 +566,8 @@ export class SessionService extends ApiService {
             const handRaiseIndex = this.raisedHands.findIndex(p => p.id == res.target);
             if (handRaiseIndex > -1) {
               this.raisedHands.splice(handRaiseIndex, 1);
+              this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
             }
-            this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
           }
           if (res.event == 'leaveRoom') {
             if (res.target == this.currentUser.id) {
@@ -746,6 +747,11 @@ export class SessionService extends ApiService {
           break;
 
         case 'randomUser':
+          if (this.imStudent && res.target == this.currentUser.id) {
+            this.openToast('room.youHaveBeenSelected', 'warn', null, true);
+          } else if (this.imStudent && res.target != this.currentUser.id) {
+            this.openToast('room.anotherUserSelected', 'warn', res.user.first_name + ' ' + res.user.last_name);
+          }
           break;
       }
     });
@@ -767,12 +773,12 @@ export class SessionService extends ApiService {
   }
 
   async getRandomUser() {
-    const randomIndex = Math.floor(Math.random() * this.roomUsers.length);
-    const user = this.roomUsers[randomIndex];
-    const result = await this.selectRandomUser(user.id).toPromise();
-    if (result.status == 'OK') {
-      return user;
+    const availableUsers = this.roomUsers.filter(u => u.role != 'Admin');
+    if (availableUsers.length == 0) {
+      return;
     }
+    const randomIndex = Math.floor(Math.random() * availableUsers.length);
+    return availableUsers[randomIndex];
   }
 
   ///////////////////////////////////////////////////////////////////////////////
@@ -905,10 +911,11 @@ export class SessionService extends ApiService {
     return colors[lastChar];
   }
 
-  openToast(translateKey: string, severity: NgMessageSeverities = 'error', translateValue: any = null) {
+  openToast(translateKey: string, severity: NgMessageSeverities = 'error', translateValue: any = null, sticky?: boolean) {
     this.utilsService.showToast({
       detail: this.translationService.instant(translateKey, {value: translateValue}) as string || translateKey,
-      severity
+      severity,
+      sticky: sticky || false
     });
   }
 
@@ -1297,7 +1304,7 @@ export class SessionService extends ApiService {
   }
 
   selectRandomUser(user_id: number): Observable<BaseRes<any>> {
-    return this._post('', {method: 'selectRandomUser', data: {user_id}});
+    return this._post('', {method: 'selectRandomUser', data: {room_id: this.currentRoom.id, user_id}});
   }
 
   private getPublicMessages(data: SearchParam | {} = {}) {

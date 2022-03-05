@@ -12,7 +12,7 @@
 <div class="alert-box d-flex align-items-center rounded p-1"
      [ngClass]="{'text-white bg-danger': invalidSize,'text-muted':!invalidSize}">
   <i class="icon-info-Circle"></i>
-  <small class="mr-2">{{'fileSizeLimit' | translate:{value: maxFileSize} }}</small>
+  <small class="mr-2">{{'fileSizeLimit' | translate:{value: (maxFileSize | fileSize)} }}</small>
 </div>
 <div class="alert-box d-flex align-items-center rounded p-1"
      [ngClass]="{'text-white bg-danger': invalidType,'text-muted':!invalidType}">

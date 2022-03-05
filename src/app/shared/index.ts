@@ -6,6 +6,7 @@ import {UploadAvatarComponent} from '@shared/components/upload-avatar/upload-ava
 import {CustomTableComponent} from '@shared/components/custom-table/custom-table.component';
 import {AvatarComponent} from '@shared/components/avatar/avatar.component';
 import {CanvasWhiteboardComponent} from '@shared/components/canvas-whiteboard/canvas-whiteboard.component';
+import {FileSizePipe} from '@shared/pipe/file-size.pipe';
 
 export const COMPONENTS: Type<any>[] = [
   LogoComponent,
@@ -14,5 +15,6 @@ export const COMPONENTS: Type<any>[] = [
   UploadAvatarComponent,
   AvatarComponent,
   CustomTableComponent,
-  CanvasWhiteboardComponent
+  CanvasWhiteboardComponent,
+  FileSizePipe
 ];

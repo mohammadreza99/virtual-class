@@ -147,7 +147,7 @@
 
 <p-overlayPanel [baseZIndex]="2000" #mediaActions styleClass="actions {{fa ? 'rtl' : null}}">
   <ul class="list-unstyled p-0 m-0">
-    <li (click)="sendFile(otherActions)">
+    <li (click)="uploadFile(otherActions)">
       <i class="icon-download"></i>
       <span>{{'room.sendFile' | translate}}</span>
     </li>

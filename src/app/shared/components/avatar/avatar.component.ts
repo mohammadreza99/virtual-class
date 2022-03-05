@@ -66,9 +66,8 @@ export class AvatarComponent extends LanguageChecker implements OnInit {
         }
         const result = await this.authService.getUploadLink().toPromise();
         if (result.status == 'OK') {
-          await this.authService.uploadAvatar(result.data.upload_url, res).toPromise();
-          const data = await this.authService.getSelfUser().toPromise();
-          this.user = data.data.user;
+          await this.authService.uploadAvatar(result.data.upload_url, res.file).toPromise();
+          this.user.avatar = res.base64;
           this.updateViewService.setViewEvent({event: 'updateAvatar', data: this.user});
         }
 

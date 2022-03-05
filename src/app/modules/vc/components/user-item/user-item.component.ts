@@ -170,7 +170,9 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
         }
         const result = await this.sessionService.getUserUploadLink(this.user.id).toPromise();
         if (result.status == 'OK') {
-          await this.sessionService.uploadUserAvatar(result.data.upload_url, res).toPromise();
+          await this.sessionService.uploadUserAvatar(result.data.upload_url, res.file).toPromise();
+          this.user.avatar = res.base64;
+          this.updateViewService.setViewEvent({event: 'updateAvatar', data: this.user});
         }
       });
     } catch (error) {

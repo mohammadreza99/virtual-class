@@ -96,6 +96,7 @@ export class SocketService extends ApiService {
   private sendPing() {
     this.webSocket.next({
       auth: this.token,
+      room_id: this.roomId,
       method: 'ping'
     });
   }

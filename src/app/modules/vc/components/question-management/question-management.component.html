@@ -54,7 +54,7 @@
       <ng-empty *ngIf="archiveQuestions.length == 0" [message]="'nothingFound' | translate"></ng-empty>
     </div>
 
-    <div class="wrapper" *ngIf="currentState == 'result'">
+    <div class="wrapper" *ngIf="currentState == 'result' && activeQuestion">
       <div class="d-flex align-items-center justify-content-between mb-3">
         <p class="mb-0">{{activeQuestion.description}}</p>
         <ng-button-async *ngIf="activeQuestion.state == 'InProgress'" class="mr-2" [rounded]="true" color="success"

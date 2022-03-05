@@ -57,7 +57,7 @@
       <ng-empty *ngIf="archivePolls.length == 0" [message]="'nothingFound' | translate"></ng-empty>
     </div>
 
-    <div class="wrapper" *ngIf="currentState == 'result'">
+    <div class="wrapper" *ngIf="currentState == 'result' && activePoll">
       <div class="d-flex align-items-center justify-content-between mb-3">
         <p class="mb-0">{{activePoll.description}}</p>
         <ng-button-async *ngIf="activePoll.state == 'InProgress'" class="mr-2" [rounded]="true" color="success"
@@ -65,7 +65,7 @@
                          icon="pi pi-refresh"
                          (clickAsync)="updatePollResult($event)"></ng-button-async>
       </div>
-      <ng-result-table  [clickableRows]="false" [item]="activePoll"></ng-result-table>
+      <ng-result-table [clickableRows]="false" [item]="activePoll"></ng-result-table>
       <div class="actions d-flex align-items-center justify-content-between mt-4">
         <ng-container *ngIf="activePoll.state == 'InProgress'">
           <ng-button color="danger" [label]="'room.revoke' | translate" appearance="outlined"

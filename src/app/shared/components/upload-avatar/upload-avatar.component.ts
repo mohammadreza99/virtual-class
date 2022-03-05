@@ -16,25 +16,17 @@ export class UploadAvatarComponent extends LanguageChecker implements OnInit {
   }
 
   imageChangedEvent: any = '';
-  croppedImage: any;
+  croppedBase64: any;
   imageURL: any;
 
   ngOnInit(): void {
-    this.imageURL = this.dialogConfig.data.avatar;
-  }
-
-  onSelect(event) {
-    if (event.target.files[0]) {
-      this.imageChangedEvent = event;
+    if (this.dialogConfig.data?.avatar) {
+      this.imageURL = this.dialogConfig.data.avatar;
     }
   }
 
-  onSubmit() {
-    this.dialogRef.close(this.croppedImage);
-  }
-
   imageCropped(event: ImageCroppedEvent) {
-    this.croppedImage = this.base64toFile(event.base64, event.base64.split('/').pop());
+    this.croppedBase64 = event.base64;
   }
 
   base64toFile(dataurl: any, filename: string): File {
@@ -51,6 +43,19 @@ export class UploadAvatarComponent extends LanguageChecker implements OnInit {
 
   onDelete() {
     this.dialogRef.close('delete');
+  }
+
+  onSelect(event) {
+    if (event.target.files[0]) {
+      this.imageChangedEvent = event;
+    }
+  }
+
+  onSubmit() {
+    this.dialogRef.close({
+      base64: this.croppedBase64,
+      file: this.base64toFile(this.croppedBase64, this.croppedBase64.split('/').pop()),
+    });
   }
 
   loadImageFailed() {
