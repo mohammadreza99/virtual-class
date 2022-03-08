@@ -123,21 +123,21 @@ body {
     pointer-events: auto;
   }
 
-  .virtual-class-wrapper,
+  ng-virtual-class,
   .p-overlaypanel {
     ng-input-text, ng-input-textarea {
       input, textarea {
-        background-color: #585A66;
-        border-color: #585A66;
-        border-radius: 8px;
-        color: #ffffff;
+        background-color: #585A66 !important;
+        border-color: #585A66 !important;
+        border-radius: 8px !important;
+        color: #ffffff !important;
 
         &::placeholder {
-          color: rgba(255, 255, 255, 0.5);
+          color: rgba(255, 255, 255, 0.5) !important;
         }
 
         i {
-          color: rgba(255, 255, 255, 0.5);
+          color: rgba(255, 255, 255, 0.5) !important;
           margin-top: 0;
           transform: translateY(-50%);
         }

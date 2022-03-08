@@ -81,7 +81,7 @@ export class ChatComponent extends LanguageChecker implements OnInit, AfterViewI
 
         case 'publicChatState':
           this.openPublicChat = res.data.value;
-          const message = this.openPublicChat ? this.translations.room.chatAccessOpened : this.translations.room.chatAccessClosed;
+          const message = this.openPublicChat ? this.instant('room.chatAccessOpened') : this.instant('room.chatAccessClosed');
           if (this.sessionService.imStudent) {
             this.utilsService.showToast({detail: message, severity: 'warn'});
           }
@@ -92,6 +92,7 @@ export class ChatComponent extends LanguageChecker implements OnInit, AfterViewI
 
   async sendMessage(callback?: () => any) {
     if (!this.chatText) {
+      callback();
       return;
     }
     const result = await this.sessionService.sendPublicMessage(this.chatText, this.replyMessage?.message?.id).toPromise();
@@ -112,8 +113,8 @@ export class ChatComponent extends LanguageChecker implements OnInit, AfterViewI
 
   async onDelete(message: any) {
     const dialogRes = await this.utilsService.showConfirm({
-      header: this.translations.room.deleteMessage,
-      message: this.translations.room.deletePublicMessageConfirm,
+      header: this.instant('room.deleteMessage'),
+      message: this.instant('room.deletePublicMessageConfirm'),
       rtl: this.fa
     });
     if (dialogRes) {

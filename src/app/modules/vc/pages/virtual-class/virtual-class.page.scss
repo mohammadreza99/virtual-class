@@ -15,6 +15,10 @@
       max-height: 70px;
       padding: 0 1rem;
       transition: all 150ms;
+
+      button {
+        color: #ffffff;
+      }
     }
 
     .content {
@@ -39,7 +43,7 @@
       }
     }
 
-    .header, .footer {
+    .footer {
       ng-button {
         &.active {
           button.p-button-primary:enabled {
@@ -110,21 +114,45 @@
     }
   }
 
-  .p-sidebar {
-    background-color: #40414A;
-    width: $sidebarWidth;
 
-    .p-sidebar-content, .p-tabview-panels {
+  .sidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    width: $sidebarWidth;
+    background-color: #40414A;
+    z-index: 1050;
+    transition: all 150ms;
+    transform: translateX(100%);
+    color: #f8f9fa;
+    overflow-y: auto;
+
+    &.visible {
+      transform: translateX(0);
+    }
+
+    .p-tabview-panels {
       color: #f8f9fa;
     }
-
-    .p-sidebar-content {
-      height: 100%;
-      padding: 0;
-    }
-
-    .p-sidebar-header {
-      display: none
-    }
   }
+
+  //
+  //.p-sidebar {
+  //  background-color: #40414A;
+  //  width: $sidebarWidth;
+  //
+  //  .p-sidebar-content, .p-tabview-panels {
+  //    color: #f8f9fa;
+  //  }
+  //
+  //  .p-sidebar-content {
+  //    height: 100%;
+  //    padding: 0;
+  //  }
+  //
+  //  .p-sidebar-header {
+  //    display: none
+  //  }
+  //}
 }

@@ -1,14 +1,18 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {SessionService} from '@core/http';
+import {HttpEvent, HttpEventType} from '@angular/common/http';
+import {error} from 'protractor';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'ng-upload-file',
   templateUrl: './upload-file.component.html',
   styleUrls: ['./upload-file.component.scss']
 })
-export class UploadFileComponent extends LanguageChecker implements OnInit {
+export class UploadFileComponent extends LanguageChecker implements OnInit, OnDestroy {
 
   constructor(public dialogConfig: DynamicDialogConfig,
               private dialogRef: DynamicDialogRef,
@@ -22,6 +26,8 @@ export class UploadFileComponent extends LanguageChecker implements OnInit {
   maxFileSize: number = 10485760;
   invalidSize: boolean;
   invalidType: boolean;
+  uploadProgress: number;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   ngOnInit(): void {
   }
@@ -33,15 +39,36 @@ export class UploadFileComponent extends LanguageChecker implements OnInit {
     this.selected = event.target.files[0];
     this.invalidSize = !this.isFileSizeValid(this.selected);
     this.invalidType = !this.isFileTypeValid(this.selected);
-    if (!this.invalidType && !this.invalidSize) {
-      this.sessionService.uploadPresentation('file').subscribe(res => {
-
-      });
-    }
   }
 
-  onSubmit() {
-
+  async onSubmit() {
+    const {
+      data,
+      status
+    } = await this.sessionService.getPresentationPolicy(this.selected.name).toPromise();
+    if (status == 'OK') {
+      this.uploadProgress = 1;
+      this.sessionService.uploadPresentation(data.upload_policy.main_url, {
+        ...data.upload_policy,
+        file: this.selected
+      }).pipe(takeUntil(this.destroy$)).subscribe(async (event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.Response:
+            const uploadRes = await this.sessionService.uploadPresentationCompleted(data.presentation_id).toPromise();
+            if (uploadRes.status == 'OK') {
+              await this.sessionService.changePresentationState(data.presentation_id, 'Open').toPromise();
+              this.uploadProgress = 0;
+              this.selected = null;
+              this.dialogRef.close();
+              this.destroy$.next(true);
+            }
+            break;
+        }
+      }, (error) => {
+        this.uploadProgress = 0;
+        this.selected = null;
+      });
+    }
   }
 
   onClose() {
@@ -81,5 +108,10 @@ export class UploadFileComponent extends LanguageChecker implements OnInit {
 
   getFileExtension(file: File): string {
     return '.' + file.name.split('.').pop();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

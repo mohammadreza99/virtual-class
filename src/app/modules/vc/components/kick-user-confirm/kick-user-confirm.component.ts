@@ -10,8 +10,8 @@ import {LanguageChecker} from '@shared/components/language-checker/language-chec
 })
 export class KickUserConfirmComponent extends LanguageChecker implements OnInit {
   kickOptions: SelectItem[] = [
-    {label: this.translations.room.temporaryKick, value: 600},
-    {label: this.translations.room.kickFromCurrentRoom, value: null},
+    {label: this.instant('room.temporaryKick'), value: 600},
+    {label: this.instant('room.kickFromCurrentRoom'), value: null},
   ];
   kickTime: number = null;
 

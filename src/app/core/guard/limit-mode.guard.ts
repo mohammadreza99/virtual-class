@@ -43,7 +43,6 @@ export class LimitModeGuard implements CanActivate, CanActivateChild, CanLoad {
     if (!this.authService.isLimitMode()) {
       return true;
     } else {
-
       this.router.navigate(['/404']);
       return false;
     }

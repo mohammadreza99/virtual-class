@@ -54,19 +54,19 @@ export class RoomSettingPage extends LanguageChecker implements OnInit, OnDestro
       this.roomUsersConfig = {
         total: this.roomUsers.total,
         colDef: [
-          {header: this.translations.fullName},
-          {header: this.translations.email},
-          {header: this.translations.access},
-          {header: this.translations.operations},
+          {header: this.instant('fullName')},
+          {header: this.instant('email')},
+          {header: this.instant('access')},
+          {header: this.instant('operations')},
         ],
       };
       this.roomGroupsConfig = {
         total: this.roomGroups.total,
         colDef: [
-          {header: this.translations.name},
-          {header: this.translations.membersCount},
-          {header: this.translations.access},
-          {header: this.translations.operations},
+          {header: this.instant('name')},
+          {header: this.instant('membersCount')},
+          {header: this.instant('access')},
+          {header: this.instant('operations')},
         ],
       };
     } catch (error) {
@@ -93,7 +93,7 @@ export class RoomSettingPage extends LanguageChecker implements OnInit, OnDestro
 
   async showAddUserModal() {
     this.dialogService.open(AddRoomUserFormComponent, {
-      header: this.translations.addMember,
+      header: this.instant('addMember'),
       width: '900px',
       rtl: this.fa
     }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
@@ -112,7 +112,7 @@ export class RoomSettingPage extends LanguageChecker implements OnInit, OnDestro
 
   async showAddGroupModal() {
     this.dialogService.open(AddRoomGroupFormComponent, {
-      header: this.translations.addMember,
+      header: this.instant('addMember'),
       width: '900px',
       rtl: this.fa
     }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
@@ -132,8 +132,8 @@ export class RoomSettingPage extends LanguageChecker implements OnInit, OnDestro
   async removeUser(user: User) {
     try {
       const dialogResult = await this.utilsService.showConfirm({
-        header: this.translations.deleteUserConfirm,
-        message: this.translations.deleteUserConfirmBody,
+        header: this.instant('deleteUserConfirm'),
+        message: this.instant('deleteUserConfirmBody'),
         rtl: this.fa
       });
       if (dialogResult) {
@@ -150,8 +150,8 @@ export class RoomSettingPage extends LanguageChecker implements OnInit, OnDestro
   async removeGroup(group: Group) {
     try {
       const dialogResult = await this.utilsService.showConfirm({
-        header: this.translations.deleteGroupConfirm,
-        message: this.translations.deleteGroupConfirmBody,
+        header: this.instant('deleteGroupConfirm'),
+        message: this.instant('deleteGroupConfirmBody'),
         rtl: this.fa
       });
       if (dialogResult) {

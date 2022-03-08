@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {RoomService, SessionService} from '@core/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Room, RoomUser} from '@core/models';
@@ -12,7 +12,7 @@ import {NgDropdownItem} from '@ng/models/forms';
   templateUrl: './room-info.page.html',
   styleUrls: ['./room-info.page.scss']
 })
-export class RoomInfoPage extends LanguageChecker implements OnInit {
+export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
   constructor(private roomService: RoomService,
               private sessionService: SessionService,
               private utilsService: UtilsService,
@@ -64,6 +64,8 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
         localStorage.setItem('token', token);
         localStorage.setItem('limitMode', 'true');
         this.limitMode = true;
+      } else {
+        localStorage.removeItem('limitMode');
       }
       await this.loadDevices();
       await this.checkEnterRoomStatus();
@@ -224,11 +226,11 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     if (checkEnterRoomStatus) {
       switch (checkEnterRoomStatus.enter_status) {
         case 'RoomNotStarted':
-          this.roomStatusMessage = [{severity: 'warn', detail: this.translations.room.roomIsNotStarted}];
+          this.roomStatusMessage = [{severity: 'warn', detail: this.instant('room.roomIsNotStarted')}];
           this.disableEnterButton = true;
           break;
         default:
-          this.roomStatusMessage = [{severity: 'warn', detail: this.translations.room.roomIsInHold}];
+          this.roomStatusMessage = [{severity: 'warn', detail: this.instant('room.roomIsInHold')}];
           this.disableEnterButton = false;
           break;
       }
@@ -263,7 +265,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     if (result) {
       switch (result.enter_status) {
         case 'Kicked':
-          this.utilsService.showDialog({message: this.translations.room.yourKicked});
+          this.utilsService.showDialog({message: this.instant('room.yourKickedUntilEndSession')});
           return;
         case 'TemporaryKicked':
           const kickTime = Math.round(+result.kick_time / 60);
@@ -291,5 +293,9 @@ export class RoomInfoPage extends LanguageChecker implements OnInit {
     if (this.checkEnterRoomStatusInterval) {
       clearInterval(this.checkEnterRoomStatusInterval);
     }
+  }
+
+  ngOnDestroy() {
+    this.clearCheckEnterRoomStatusInterval();
   }
 }

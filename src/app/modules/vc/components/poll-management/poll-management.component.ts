@@ -154,8 +154,8 @@ export class PollManagementComponent extends LanguageChecker implements OnInit {
 
   async revokePoll() {
     const dialogRes = await this.utilsService.showConfirm({
-      header: this.translations.room.revokePoll,
-      message: this.translations.room.revokePollConfirm,
+      header: this.instant('room.revokePoll'),
+      message: this.instant('room.revokePollConfirm'),
       rtl: this.fa
     });
     if (dialogRes) {

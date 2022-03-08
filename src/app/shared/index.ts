@@ -5,8 +5,8 @@ import {PanelPermissionDirective} from '@shared/directives/panel-permission.dire
 import {UploadAvatarComponent} from '@shared/components/upload-avatar/upload-avatar.component';
 import {CustomTableComponent} from '@shared/components/custom-table/custom-table.component';
 import {AvatarComponent} from '@shared/components/avatar/avatar.component';
-import {CanvasWhiteboardComponent} from '@shared/components/canvas-whiteboard/canvas-whiteboard.component';
 import {FileSizePipe} from '@shared/pipe/file-size.pipe';
+import {NoInternetComponent} from '@shared/components/no-internet/no-internet.component';
 
 export const COMPONENTS: Type<any>[] = [
   LogoComponent,
@@ -15,6 +15,6 @@ export const COMPONENTS: Type<any>[] = [
   UploadAvatarComponent,
   AvatarComponent,
   CustomTableComponent,
-  CanvasWhiteboardComponent,
-  FileSizePipe
+  FileSizePipe,
+  NoInternetComponent
 ];

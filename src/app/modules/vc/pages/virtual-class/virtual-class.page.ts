@@ -1,4 +1,4 @@
-import {Component, ComponentFactoryResolver, OnDestroy, OnInit} from '@angular/core';
+import {Component, ComponentFactoryResolver, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {PollItem, QuestionItem, Room, RoomUser, ViewMode} from '@core/models';
 import {AuthService, RoomService, SessionService} from '@core/http';
 import {OverlayPanel} from 'primeng/overlaypanel';
@@ -59,20 +59,28 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   pollSidebarVisible: boolean = false;
   sessionDuration: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  sidebarKeys = ['members', 'chat', 'question', 'poll'];
+
+  @HostListener('window:resize', ['$event']) onResize(e) {
+    this.handleResize();
+  }
+
+  handleResize() {
+    if (window.innerWidth <= 992) {
+      this.closeAllSidebars();
+      this.currentViewMode = 'speaker';
+    } else {
+      this.currentViewMode = 'thumbnail';
+    }
+  }
 
   ngOnInit(): void {
     this.loadData();
   }
 
   async loadData() {
-    if (window.innerWidth <= 767) {
-      this.membersSidebarVisible = false;
-      this.currentViewMode = 'speaker';
-    } else {
-      this.membersSidebarVisible = true;
-      this.currentViewMode = 'thumbnail';
-    }
-    this.disableWindowBackButton();
+    this.handleResize();
+    this.utilsService.disableWindowBackButton();
     this.initUserData();
     this.sessionService.initRoom();
     this.calculateSessionDuration();
@@ -107,6 +115,9 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           break;
 
         case 'onDisconnect':
+          if (res.target != this.currentUser.id) {
+            return;
+          }
           if (res.data.publishType == 'Screen') {
             this.screenActivated = false;
           } else if (res.data.publishType == 'Webcam') {
@@ -155,7 +166,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           if (this.sessionService.imStudent && res.data.poll) {
             this.dialogService.open(ResultTableComponent, {
               data: res.data.poll,
-              header: this.translations.room.pollResult,
+              header: this.instant('room.pollResult'),
               width: '500px',
               closable: true,
               rtl: this.fa
@@ -179,7 +190,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
             }
             this.dialogService.open(QuestionResultComponent, {
               data: {question, correctAnswers: res.data.correct_answers, myAnswers},
-              header: this.translations.room.questionResult,
+              header: this.instant('room.questionResult'),
               width: '500px',
               closable: true,
               rtl: this.fa
@@ -284,11 +295,11 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   async openTeacherLeaveRoomDialog() {
     return await this.utilsService.showConfirm({
-      header: this.translations.room.leaveSession,
-      message: this.translations.room.speakerLeaveConfirm,
+      header: this.instant('room.leaveSession'),
+      message: this.instant('room.speakerLeaveConfirm'),
       rtl: this.fa,
-      acceptLabel: this.translations.room.leaveSession,
-      rejectLabel: this.translations.room.leaveAndCloseSession,
+      acceptLabel: this.instant('room.leaveSession'),
+      rejectLabel: this.instant('room.leaveAndCloseSession'),
       rejectColor: 'danger',
       rejectAppearance: 'basic'
     });
@@ -296,22 +307,12 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   async openStudentLeaveRoomDialog() {
     return await this.utilsService.showConfirm({
-      header: this.translations.room.leaveSession,
-      message: this.translations.room.studentLeaveConfirm,
+      header: this.instant('room.leaveSession'),
+      message: this.instant('room.studentLeaveConfirm'),
       rtl: this.fa,
     });
   }
 
-  closeSidebar(key: string) {
-    this[`${key}SidebarVisible`] = false;
-  }
-
-  disableWindowBackButton() {
-    history.pushState(null, null, location.href);
-    this.location.onPopState(() => {
-      history.pushState(null, null, location.href);
-    });
-  }
 
   calculateSessionDuration() {
     this.sessionDuration = this.utilsService.convertToTimeFormat(this.currentRoom.session_duration++);
@@ -321,10 +322,22 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   ngOnDestroy(): void {
-    this.closeSidebar('chat');
-    this.closeSidebar('members');
+    this.closeAllSidebars();
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+  }
+
+  closeAllSidebars(exceptionKey?: string) {
+    for (const key of this.sidebarKeys) {
+      if (exceptionKey && key == exceptionKey) {
+        continue;
+      }
+      this.closeSidebar(key);
+    }
+  }
+
+  closeSidebar(key: string) {
+    this[`${key}SidebarVisible`] = false;
   }
 
   anySidebarVisible() {
@@ -334,7 +347,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   openIncomeQuestion(question: QuestionItem) {
     this.dialogService.open(QuestionIncomeComponent, {
       data: question,
-      header: this.translations.room.question,
+      header: this.instant('room.question'),
       width: '600px',
       closable: false,
       rtl: this.fa
@@ -348,7 +361,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   openIncomePoll(poll: any) {
     this.dialogService.open(PollIncomeComponent, {
       data: poll,
-      header: this.translations.room.poll,
+      header: this.instant('room.poll'),
       width: '600px',
       closable: false,
       rtl: this.fa
@@ -387,7 +400,6 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   openSidebar(key: string, overlay?: OverlayPanel) {
-    const sidebars = ['members', 'chat', 'question', 'poll'];
     this[`${key}SidebarVisible`] = true;
     if (key == 'chat') {
       this.hasUnreadMessage = false;
@@ -395,11 +407,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     if (key == 'members') {
       this.hasUnreadRaisedHands = false;
     }
-    sidebars.forEach(k => {
-      if (k != key) {
-        this.closeSidebar(k);
-      }
-    });
+    this.closeAllSidebars(key);
 
     if (overlay) {
       overlay.hide();
@@ -408,7 +416,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   openQuestionSidebar(overlay: OverlayPanel) {
     if (this.currentRoom.active_poll) {
-      this.utilsService.showToast({detail: this.translations.room.alreadyHaveOpenQuestionnaire, severity: 'warn'});
+      this.utilsService.showToast({detail: this.instant('room.alreadyHaveOpenQuestionnaire'), severity: 'warn'});
       overlay.hide();
       return;
     }
@@ -417,7 +425,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   openPollSidebar(overlay: OverlayPanel) {
     if (this.currentRoom.active_question) {
-      this.utilsService.showToast({detail: this.translations.room.alreadyHaveOpenQuestionnaire, severity: 'warn'});
+      this.utilsService.showToast({detail: this.instant('room.alreadyHaveOpenQuestionnaire'), severity: 'warn'});
       overlay.hide();
       return;
     }
@@ -445,7 +453,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   uploadFile(overlay: OverlayPanel) {
     this.dialogService.open(UploadFileComponent, {
-      header: this.translations.room.sendFile,
+      header: this.instant('room.sendFile'),
       width: '500px',
       closable: true,
       rtl: this.fa
@@ -457,7 +465,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   selectRandomUser(overlay: OverlayPanel) {
     this.dialogService.open(SelectRandomUserComponent, {
-      header: this.translations.room.selectRandomUser,
+      header: this.instant('room.selectRandomUser'),
       width: '500px',
       closable: true,
       rtl: this.fa

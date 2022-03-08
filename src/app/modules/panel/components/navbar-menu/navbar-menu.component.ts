@@ -17,15 +17,15 @@ export class NavbarMenuComponent
 
   accountItems: MenuItem[] = [
     {
-      label: this.translations.exit,
+      label: this.instant('exit'),
       icon: 'pi pi-sign-out',
       command: async (event) => {
         const dialogRes = await this.utilsService.showConfirm(
           {
-            header: this.translations.exit,
-            message: this.translations.exitConfirmBody,
-            acceptLabel: this.translations.yes,
-            rejectLabel: this.translations.no,
+            header: this.instant('exit'),
+            message: this.instant('exitConfirmBody'),
+            acceptLabel: this.instant('yes'),
+            rejectLabel: this.instant('no'),
             rtl: this.fa
           },
         );
@@ -67,22 +67,22 @@ export class NavbarMenuComponent
     this.user = this.authService.currentUser;
     const allSidebarItems = [
       {
-        label: this.translations.userList,
+        label: this.instant('userList'),
         routerLink: '/user-list',
         icon: 'icon-user-groups'
       },
       {
-        label: this.translations.groupList,
+        label: this.instant('groupList'),
         routerLink: 'groups',
         icon: 'icon-user-groups'
       },
       {
-        label: this.translations.roomList,
+        label: this.instant('roomList'),
         routerLink: 'rooms',
         icon: 'icon-camera'
       },
       {
-        label: this.translations.profile,
+        label: this.instant('profile'),
         routerLink: 'profile',
         icon: 'icon-profile'
       }
@@ -90,12 +90,12 @@ export class NavbarMenuComponent
     if (this.user.role == 'User') {
       this.sidebarItems = [
         {
-          label: this.translations.roomList,
+          label: this.instant('roomList'),
           routerLink: 'rooms',
           icon: 'icon-camera'
         },
         {
-          label: this.translations.profile,
+          label: this.instant('profile'),
           routerLink: 'profile',
           icon: 'icon-profile'
         }

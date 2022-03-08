@@ -3,17 +3,20 @@
      #wrapper>
   <div class="header d-flex align-items-center justify-content-lg-between fixed-top">
     <div class="actions d-flex flex-grow-1 align-items-center justify-content-between justify-content-lg-start">
-      <ng-logo width="40"></ng-logo>
-      <ng-button class="mx-lg-3" icon="icon-view" (click)="viewModes.toggle($event)"></ng-button>
-      <ng-button [class.badge]="hasUnreadRaisedHands" icon="icon-user-groups" class="d-lg-none"
+      <ng-logo width="40" class="ml-3"></ng-logo>
+
+      <ng-button appearance="text" [class.badge]="hasUnreadRaisedHands" icon="icon-user-groups" class="d-lg-none"
                  [class.active]="membersSidebarVisible"
                  (click)="openSidebar('members')"></ng-button>
-      <ng-button [class.badge]="hasUnreadMessage" icon="icon-chat" class="d-lg-none" [class.active]="chatSidebarVisible"
+      <ng-button appearance="text" [class.badge]="hasUnreadMessage" icon="icon-chat" class="d-lg-none"
+                 [class.active]="chatSidebarVisible"
                  (click)="openSidebar('chat')"></ng-button>
-      <ng-button class="d-lg-none" icon="icon-more" (click)="sessionInfo.toggle($event)"></ng-button>
+      <ng-button appearance="text" class="d-lg-none" icon="icon-view" (click)="viewModes.toggle($event)"></ng-button>
+      <ng-button appearance="text" class="d-lg-none" icon="icon-info-Circle"
+                 (click)="sessionInfo.toggle($event)"></ng-button>
       <div class="profile d-none d-lg-flex align-items-center">
         <ng-avatar [editable]="true" [user]="currentUser"></ng-avatar>
-        <div class="info mx-3">
+        <div class="info mx-2">
           <h6 class="m-0">{{currentUser.first_name + ' ' + currentUser.last_name}}</h6>
         </div>
       </div>
@@ -21,6 +24,7 @@
     <div class="info d-none d-lg-flex align-items-center">
       <small class="mx-1">({{sessionDuration}})</small>
       <div>{{currentRoom.name}}</div>
+      <ng-button appearance="text" class="mr-lg-3" icon="icon-view" (click)="viewModes.toggle($event)"></ng-button>
     </div>
   </div>
 
@@ -28,7 +32,6 @@
     <ng-speaker-view [hidden]="currentViewMode != 'speaker'"></ng-speaker-view>
     <ng-grid-view [users]="roomUsers" [allUsers]="allUsers" [hidden]="currentViewMode != 'grid'"></ng-grid-view>
     <ng-thumbnail-view [users]="roomUsers" [hidden]="currentViewMode != 'thumbnail'"></ng-thumbnail-view>
-    <!--    <ng-canvas-whiteboard></ng-canvas-whiteboard>-->
   </div>
 
   <div class="footer d-flex align-items-center justify-content-between fixed-bottom">
@@ -70,22 +73,34 @@
   </div>
 </div>
 
-<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
-           [(visible)]="chatSidebarVisible">
+
+<div class="sidebar" [class.visible]="chatSidebarVisible">
   <ng-chat [openPublicChat]="currentRoom.public_messages" (closeSidebar)="closeSidebar('chat')"
            (newMessage)="onGetNewMessage()">
   </ng-chat>
-</p-sidebar>
+</div>
 
-<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
-           [(visible)]="membersSidebarVisible">
+<!--<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"-->
+<!--           [(visible)]="chatSidebarVisible">-->
+<!--  <ng-chat [openPublicChat]="currentRoom.public_messages" (closeSidebar)="closeSidebar('chat')"-->
+<!--           (newMessage)="onGetNewMessage()">-->
+<!--  </ng-chat>-->
+<!--</p-sidebar>-->
+
+<div class="sidebar" [class.visible]="membersSidebarVisible">
   <ng-participants [allUsers]="allUsers" [raisedHandsUsers]="raisedHandsUsers"
                    (closeSidebar)="closeSidebar('members')">
   </ng-participants>
-</p-sidebar>
+</div>
+<!--<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false"-->
+<!--           [showCloseIcon]="false"-->
+<!--           [(visible)]="membersSidebarVisible">-->
+<!--  <ng-participants [allUsers]="allUsers" [raisedHandsUsers]="raisedHandsUsers"-->
+<!--                   (closeSidebar)="closeSidebar('members')">-->
+<!--  </ng-participants>-->
+<!--</p-sidebar>-->
 
-<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
-           [(visible)]="questionSidebarVisible" *ngPermission="'Admin'">
+<div class="sidebar" [class.visible]="questionSidebarVisible" *ngPermission="'Admin'">
   <ng-question-management [activeQuestionId]="currentRoom.active_question"
                           [visible]="questionSidebarVisible"
                           (published)="onQuestionPublished($event)"
@@ -93,10 +108,20 @@
                           (canceled)="onQuestionRevoked()"
                           (visibleChange)="closeSidebar('question')">
   </ng-question-management>
-</p-sidebar>
+</div>
 
-<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"
-           [(visible)]="pollSidebarVisible" *ngPermission="'Admin'">
+<!--<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"-->
+<!--           [(visible)]="questionSidebarVisible" *ngPermission="'Admin'">-->
+<!--  <ng-question-management [activeQuestionId]="currentRoom.active_question"-->
+<!--                          [visible]="questionSidebarVisible"-->
+<!--                          (published)="onQuestionPublished($event)"-->
+<!--                          (finished)="onQuestionRevoked()"-->
+<!--                          (canceled)="onQuestionRevoked()"-->
+<!--                          (visibleChange)="closeSidebar('question')">-->
+<!--  </ng-question-management>-->
+<!--</p-sidebar>-->
+
+<div class="sidebar" [class.visible]="pollSidebarVisible" *ngPermission="'Admin'">
   <ng-poll-management [activePollId]="currentRoom.active_poll"
                       [visible]="pollSidebarVisible"
                       (published)="onPollPublished($event)"
@@ -104,7 +129,17 @@
                       (canceled)="onPollRevoked()"
                       (visibleChange)="closeSidebar('poll')">
   </ng-poll-management>
-</p-sidebar>
+</div>
+<!--<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"-->
+<!--           [(visible)]="pollSidebarVisible" *ngPermission="'Admin'">-->
+<!--  <ng-poll-management [activePollId]="currentRoom.active_poll"-->
+<!--                      [visible]="pollSidebarVisible"-->
+<!--                      (published)="onPollPublished($event)"-->
+<!--                      (finished)="onPollRevoked()"-->
+<!--                      (canceled)="onPollRevoked()"-->
+<!--                      (visibleChange)="closeSidebar('poll')">-->
+<!--  </ng-poll-management>-->
+<!--</p-sidebar>-->
 
 <p-overlayPanel [baseZIndex]="2000" #viewModes styleClass="actions {{fa ? 'rtl' : null}}">
   <ul class="list-unstyled p-0 m-0">

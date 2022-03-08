@@ -59,7 +59,8 @@
     "speakerNotFound": "اسپیکر یافت نشد",
     "pleaseAllowWebcam": "لطفا دسترسی دوربین را باز کنید",
     "pleaseAllowMic": "لطفا دسترسی میکروفن را باز کنید",
-    "yourKicked": "شما تا پایان این جلسه از کلاس اخراج شدید",
+    "yourKicked": "شما از کلاس اخراج شدید",
+    "yourKickedUntilEndSession": "شما تا پایان این جلسه از کلاس اخراج شدید",
     "yourTemporaryKicked": "شما موقتا از کلاس اخراج شده اید. لطفا {{value}} دقیقه دیگر وارد شوید",
     "userLeftTheRoom": "{{value}} کلاس را ترک کرد",
     "roomIsNotStarted": "کلاس هنوز شروع نشده است",
@@ -118,7 +119,8 @@
     "pleaseUploadYourFile": "فایل مورد نظر خود را برای ارائه در کلاس بارگذاری کنید",
     "showTeacherScreen": "نمایش تصویر معلم",
     "youHaveBeenSelected": "شما انتخاب شدید",
-    "anotherUserSelected": "کاربر {{value}} انتخاب شد"
+    "anotherUserSelected": "کاربر {{value}} انتخاب شد",
+    "noInternet": "لطفا اتصال اینترنت خود را بررسی و دوباره تلاش کنید"
   },
   "home": "خانه",
   "forgetPassword": "فراموشی رمزعبور",

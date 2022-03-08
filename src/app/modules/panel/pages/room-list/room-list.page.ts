@@ -39,25 +39,25 @@ export class RoomListPage extends LanguageChecker implements OnInit, OnDestroy {
       this.tableConfig = {
         total: this.rowData.total,
         colDef: [{
-          header: this.translations.name,
+          header: this.instant('name'),
           sortField: 'name'
         }, {
-          header: this.translations.access,
+          header: this.instant('access'),
           sortField: 'role'
         }, {
-          header: this.translations.startDate,
+          header: this.instant('startDate'),
           sortField: 'start_datetime'
         }, {
-          header: this.translations.endDate,
+          header: this.instant('endDate'),
           sortField: 'end_datetime'
         }, {
-          header: this.translations.roomStatus,
+          header: this.instant('roomStatus'),
           sortField: 'status'
         }, {
-          header: this.translations.status,
+          header: this.instant('status'),
           sortField: 'active'
         }, {
-          header: this.translations.operations,
+          header: this.instant('operations'),
         }],
         onAdd: this.addRoom,
         onFetch: (data: SearchParam) => this.roomService.getRooms(data).toPromise()
@@ -79,8 +79,8 @@ export class RoomListPage extends LanguageChecker implements OnInit, OnDestroy {
 
   async deleteRoom(room: Group) {
     try {
-      const header = this.translations.deleteRoomConfirm;
-      const message = this.translations.roomDeleteConfirmBody;
+      const header = this.instant('deleteRoomConfirm');
+      const message = this.instant('roomDeleteConfirmBody');
       const dialogRes = await this.utilsService.showConfirm({header, message, rtl: this.fa});
       if (dialogRes) {
         const result = await this.roomService.deleteRoom(room.id).toPromise();
@@ -94,7 +94,7 @@ export class RoomListPage extends LanguageChecker implements OnInit, OnDestroy {
   }
 
   editRoom(room: Room, index: number) {
-    const dialogRef = this.utilsService.showDialogForm(this.translations.editRoom,
+    const dialogRef = this.utilsService.showDialogForm(this.instant('editRoom'),
       [
         {
           type: 'hidden',
@@ -104,38 +104,38 @@ export class RoomListPage extends LanguageChecker implements OnInit, OnDestroy {
         {
           type: 'text',
           formControlName: 'name',
-          label: this.translations.name,
+          label: this.instant('name'),
           className: 'col-md-6',
-          errors: [{type: 'required', message: this.translations.requiredField}],
+          errors: [{type: 'required', message: this.instant('requiredField')}],
           value: room.name
         },
         {
           type: 'text',
           formControlName: 'max_user',
-          label: this.translations.membersCount,
+          label: this.instant('membersCount'),
           className: 'col-md-6',
           keyFilter: 'num',
-          errors: [{type: 'required', message: this.translations.requiredField}],
+          errors: [{type: 'required', message: this.instant('requiredField')}],
           value: room.max_user
         },
         {
           type: 'date-picker',
           formControlName: 'start_datetime',
-          label: this.translations.startDate,
+          label: this.instant('startDate'),
           className: 'col-md-6',
           value: moment(new Date(room.start_datetime))
         },
         {
           type: 'date-picker',
           formControlName: 'end_datetime',
-          label: this.translations.endDate,
+          label: this.instant('endDate'),
           className: 'col-md-6',
           value: moment(new Date(room.end_datetime))
         },
         {
           type: 'switch',
           formControlName: 'private',
-          label: this.translations.private,
+          label: this.instant('private'),
           className: 'col-md-6',
           value: room.private
         },
@@ -155,46 +155,46 @@ export class RoomListPage extends LanguageChecker implements OnInit, OnDestroy {
     try {
       const usersData = await this.userService.getUsers({limit: 1000}).toPromise();
       const admins = usersData.items.map(a => ({label: `${a.first_name} ${a.last_name}`, value: a.id}));
-      const dialogRef = this.utilsService.showDialogForm(this.translations.addRoom,
+      const dialogRef = this.utilsService.showDialogForm(this.instant('addRoom'),
         [
           {
             type: 'text',
             formControlName: 'name',
-            label: this.translations.name,
+            label: this.instant('name'),
             className: 'col-md-6',
-            errors: [{type: 'required', message: this.translations.requiredField}]
+            errors: [{type: 'required', message: this.instant('requiredField')}]
           },
           {
             type: 'dropdown',
             formControlName: 'admin_user_id',
             options: admins,
-            label: this.translations.selectAdmin,
+            label: this.instant('selectAdmin'),
             className: 'col-md-6',
-            errors: [{type: 'required', message: this.translations.requiredField}]
+            errors: [{type: 'required', message: this.instant('requiredField')}]
           },
           {
             type: 'date-picker',
             formControlName: 'start_datetime',
-            label: this.translations.startDate,
+            label: this.instant('startDate'),
             className: 'col-md-6'
           },
           {
             type: 'date-picker',
             formControlName: 'end_datetime',
-            label: this.translations.endDate,
+            label: this.instant('endDate'),
             className: 'col-md-6'
           },
           {
             type: 'number',
             formControlName: 'max_user',
-            label: this.translations.membersCount,
+            label: this.instant('membersCount'),
             className: 'col-md-6',
-            errors: [{type: 'required', message: this.translations.requiredField}]
+            errors: [{type: 'required', message: this.instant('requiredField')}]
           },
           {
             type: 'switch',
             formControlName: 'private',
-            label: this.translations.private,
+            label: this.instant('private'),
             className: 'col-md-6 align-self-center',
             labelPos: 'fix-side',
             value: false
@@ -223,7 +223,7 @@ export class RoomListPage extends LanguageChecker implements OnInit, OnDestroy {
     const str = status.toLowerCase().replace(/_([a-z])/g, function(g) {
       return g[1].toUpperCase();
     });
-    return this.translations[str];
+    return this.instant(str);
   }
 
   ngOnDestroy(): void {

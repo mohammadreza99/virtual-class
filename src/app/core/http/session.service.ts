@@ -19,7 +19,7 @@ import {Router} from '@angular/router';
 import {TranslationService} from '@core/utils';
 import {UpdateViewService} from '@core/http/update-view.service';
 import {NgMessageSeverities} from '@ng/models/overlay';
-import {GlobalConfig} from '../../global.config';
+import {GlobalConfig} from '@core/global.config';
 
 @Injectable({providedIn: 'root'})
 export class SessionService extends ApiService {
@@ -70,8 +70,8 @@ export class SessionService extends ApiService {
       };
       if (this.currentUser.open_session) {
         const dialogRes = await this.utilsService.showConfirm({
-          message: this.translationService.translations.room.openSessionConfirm,
-          header: this.translationService.translations.room.openSession
+          message: this.translationService.instant('room.openSessionConfirm') as string,
+          header: this.translationService.instant('room.openSession') as string
         });
         if (dialogRes) {
           const newSession = await this.newSession().toPromise();
@@ -538,11 +538,11 @@ export class SessionService extends ApiService {
             this.raisedHands.splice(handRaiseIndex, 1);
           }
           if (userIndex > -1) {
-            //   this.roomUsers.splice(userIndex, 1);
-            this.roomUsers[userIndex].kicked = true;
+            this.roomUsers.splice(userIndex, 1);
+            // this.roomUsers[userIndex].kicked = true;
           }
           if (res.target == this.currentUser.id) {
-            this.getMeOut();
+            this.getMeOut(this.translationService.instant('room.yourKicked') as string);
           }
           this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
           break;
@@ -550,6 +550,10 @@ export class SessionService extends ApiService {
         case 'userDisconnected':
         case 'leaveRoom':
           user = this.getRoomUserById(res.target);
+          // if (user?.kicked) {
+          //   // don't do anything if user has been kicked
+          //   return;
+          // }
           if (res.target != this.currentUser.id) {
             const connection = this.getPeerConnectionById(res.target);
             if (connection) {
@@ -680,8 +684,8 @@ export class SessionService extends ApiService {
         case 'assignAdmin':
           if (this.currentUser.id == res.target) {
             this.utilsService.showConfirm({
-              message: this.translationService.translations.room.myRoleChangedConfirm,
-              header: this.translationService.translations.room.roleChanged
+              message: this.translationService.instant('room.myRoleChangedConfirm') as string,
+              header: this.translationService.instant('room.roleChanged') as string
             }).then(dialogRes => {
               if (dialogRes) {
                 document.location.reload();
@@ -752,6 +756,22 @@ export class SessionService extends ApiService {
           } else if (this.imStudent && res.target != this.currentUser.id) {
             this.openToast('room.anotherUserSelected', 'warn', res.user.first_name + ' ' + res.user.last_name);
           }
+          break;
+
+        case 'changePresentationPage':
+          this.updateViewService.setViewEvent({event: 'changePresentationPage', data: res});
+          break;
+
+        case 'openPresentation':
+          this.updateViewService.setViewEvent({event: 'openPresentation', data: res});
+          break;
+
+        case 'closePresentation':
+          this.updateViewService.setViewEvent({event: 'closePresentation', data: res});
+          break;
+
+        case 'deletePresentation':
+          this.updateViewService.setViewEvent({event: 'deletePresentation', data: res});
           break;
       }
     });
@@ -871,7 +891,7 @@ export class SessionService extends ApiService {
     };
   }
 
-  async getMeOut(message?: any) {
+  async getMeOut(message?: any, reload: boolean = true) {
     if (this.myConnection.webcam) {
       this.stopStreamTrack(this.myConnection.webcam.stream);
     } else if (this.myConnection.screen) {
@@ -883,14 +903,17 @@ export class SessionService extends ApiService {
     if (this.updateRoomUsersTimer) {
       clearInterval(this.updateRoomUsersTimer);
     }
-    this.socketService.tryConnection = false;
     this.socketService.clearPingTimer();
     this.socketService.close();
-    this.socketSubscription.unsubscribe();
-    if (message) {
-      await this.utilsService.showDialog({message});
+    if (this.socketSubscription) {
+      this.socketSubscription.unsubscribe();
     }
-    document.location.reload();
+    if (message) {
+      await this.utilsService.showDialog({message, closable: false});
+    }
+    if (reload) {
+      document.location.reload();
+    }
   }
 
   getProfileColor(userId: number) {
@@ -1231,13 +1254,26 @@ export class SessionService extends ApiService {
     });
   }
 
-  uploadPresentation(file_name: string) {
+  getPresentationPolicy(file_name: string) {
     return this._post<any>('', {
-      method: 'uploadPresentation',
+      method: 'getPresentationUploadForm',
       data: {room_id: this.currentRoom.id, file_name},
     });
   }
 
+  uploadPresentation(url: string, policy: any) {
+    const formData = new FormData();
+    for (const key in policy) {
+      if (key == 'main_url') {
+        continue;
+      }
+      formData.append(key, policy[key]);
+    }
+    return this.http.post(url, formData, {
+      reportProgress: true,
+      observe: 'events',
+    });
+  }
 
   changePresentationPage(presentation_id: number, page: number) {
     return this._post<any>('', {
@@ -1284,9 +1320,9 @@ export class SessionService extends ApiService {
     });
   }
 
-  uploadPresentationFile(presentation_id: number) {
+  uploadPresentationCompleted(presentation_id: number) {
     return this._post<any>('', {
-      method: 'uploadPresentationFile',
+      method: 'presentationUploadCompleted',
       data: {room_id: this.currentRoom.id, presentation_id},
     });
   }

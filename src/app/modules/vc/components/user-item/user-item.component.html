@@ -23,7 +23,7 @@
         <ng-button icon="icon-close" *ngIf="raiseHandConfirmed" class="ml-1"
                    (click)="rejectRaiseHand(false)"></ng-button>
       </div>
-      <div class="actions" *ngIf="!raiseHand">
+      <div class="actions" *ngIf="!raiseHand && !user.kicked">
         <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm"
                          [icon]="user.muted_video ? 'icon-camera-off' : 'icon-camera'"
                          (clickAsync)="muteUserCamera($event)">
@@ -33,7 +33,7 @@
         </ng-button-async>
         <ng-button size="sm" icon="icon-more" (click)="actions.toggle($event)"></ng-button>
 
-        <p-overlayPanel #actions styleClass="actions {{fa ? 'rtl' : null}}">
+        <p-overlayPanel baseZIndex="2000" #actions styleClass="actions {{fa ? 'rtl' : null}}">
           <ul class="list-unstyled p-0 m-0">
             <!--      <li (click)="assignAdmin(actions)" *ngIf="user.role != 'Admin'">-->
             <!--        <i class="icon-assign-admin"></i>-->
@@ -53,7 +53,7 @@
             </li>
           </ul>
         </p-overlayPanel>
-        <p-overlayPanel [showCloseIcon]="true" #userStatus styleClass="actions {{fa ? 'rtl' : null}}">
+        <p-overlayPanel baseZIndex="2000" [showCloseIcon]="true" #userStatus styleClass="actions {{fa ? 'rtl' : null}}">
           <div class="info">
             <div class="d-flex flex-column align-items-center justify-content-between py-4">
               <ng-avatar class="mb-2" [user]="user"></ng-avatar>
@@ -80,7 +80,7 @@
           </div>
         </p-overlayPanel>
       </div>
-      <ng-button *ngIf="!raiseHand && user.kicked" [label]="'room.restore' | translate"></ng-button>
+      <ng-button size="sm" *ngIf="!raiseHand && user.kicked" [label]="'room.restore' | translate"></ng-button>
     </ng-container>
   </ng-container>
 </div>

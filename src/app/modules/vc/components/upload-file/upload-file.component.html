@@ -2,11 +2,14 @@
 
 <div class="uploader text-center rounded bg-light border border-dashed text-muted px-3 py-4 mb-3"
      (click)="!selected ? uploader.click() : null">
-  <i class="icon-add-File"></i>
-  <small class="d-block" *ngIf="!selected">{{'noFileSelected' | translate}}</small>
-  <small class="d-block" *ngIf="selected">{{selected.name | translate}}</small>
-  <ng-button *ngIf="selected" icon="pi pi-times" [rounded]="true" appearance="text"
-             (onClick)="removeFile($event)"></ng-button>
+  <p-progressSpinner [style]="{width: '50px', height: '50px'}" *ngIf="uploadProgress"></p-progressSpinner>
+  <ng-container *ngIf="!uploadProgress">
+    <i class="icon-add-File"></i>
+    <small class="d-block" *ngIf="!selected">{{'noFileSelected' | translate}}</small>
+    <small class="d-block" *ngIf="selected">{{selected.name | translate}}</small>
+    <ng-button *ngIf="selected" icon="pi pi-times" [rounded]="true" appearance="text"
+               (onClick)="removeFile($event)"></ng-button>
+  </ng-container>
 </div>
 
 <div class="alert-box d-flex align-items-center rounded p-1"

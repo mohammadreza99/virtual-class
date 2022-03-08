@@ -31,7 +31,7 @@ export class LoginPage extends LanguageChecker implements OnInit {
         const {data} = await this.authService.login({...this.form.value, company_id: companyId || 8}).toPromise();
         if (data.token) {
           localStorage.setItem('token', data.token);
-          this.router.navigate([returnUrl || '/rooms']);
+          this.router.navigateByUrl(returnUrl || '/rooms');
         }
       }
       callback();

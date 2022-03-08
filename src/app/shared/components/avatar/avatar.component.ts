@@ -51,7 +51,7 @@ export class AvatarComponent extends LanguageChecker implements OnInit {
     try {
       this.dialogService.open(UploadAvatarComponent, {
         data: this.user,
-        header: this.translations.changeAvatar,
+        header: this.instant('changeAvatar'),
         width: '400px',
         rtl: this.fa
       }).onClose.subscribe(async res => {

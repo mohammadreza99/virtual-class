@@ -48,40 +48,40 @@ export class ProfilePage extends LanguageChecker implements OnInit, OnDestroy {
 
   async updateProfile() {
     try {
-      const dialogRef = this.utilsService.showDialogForm(this.translations.editProfile,
+      const dialogRef = this.utilsService.showDialogForm(this.instant('editProfile'),
         [
           {
             type: 'text',
             formControlName: 'first_name',
-            label: this.translations.name,
+            label: this.instant('name'),
             className: 'col-md-6',
-            errors: [{type: 'required', message: this.translations.requiredField}],
+            errors: [{type: 'required', message: this.instant('requiredField')}],
             value: this.currentUser.first_name
           },
           {
             type: 'text',
             formControlName: 'last_name',
-            label: this.translations.lastName,
+            label: this.instant('lastName'),
             className: 'col-md-6',
-            errors: [{type: 'required', message: this.translations.requiredField}],
+            errors: [{type: 'required', message: this.instant('requiredField')}],
             value: this.currentUser.last_name
           },
           {
             type: 'text',
             formControlName: 'nick_name',
-            label: this.translations.nickName,
+            label: this.instant('nickName'),
             className: 'col-md-6',
-            errors: [{type: 'required', message: this.translations.requiredField}],
+            errors: [{type: 'required', message: this.instant('requiredField')}],
             value: this.currentUser.nick_name
           },
           {
             type: 'text',
             formControlName: 'email',
-            label: this.translations.email,
+            label: this.instant('email'),
             className: 'col-md-6',
-            errors: [{type: 'required', message: this.translations.requiredField}, {
+            errors: [{type: 'required', message: this.instant('requiredField')}, {
               type: 'email',
-              message: this.translations.emailPattern
+              message: this.instant('emailPattern')
             }],
             value: this.currentUser.email
           },
@@ -106,28 +106,28 @@ export class ProfilePage extends LanguageChecker implements OnInit, OnDestroy {
   }
 
   updatePassword() {
-    const dialogRef = this.utilsService.showDialogForm(this.translations.changePassword,
+    const dialogRef = this.utilsService.showDialogForm(this.instant('changePassword'),
       [
         {
           type: 'password',
           formControlName: 'current_password',
-          label: this.translations.currentPassword,
+          label: this.instant('currentPassword'),
           className: 'col-12',
-          errors: [{type: 'required', message: this.translations.requiredField}]
+          errors: [{type: 'required', message: this.instant('requiredField')}]
         },
         {
           type: 'password',
           formControlName: 'new_password',
-          label: this.translations.newPassword,
+          label: this.instant('newPassword'),
           className: 'col-12',
-          errors: [{type: 'required', message: this.translations.requiredField}]
+          errors: [{type: 'required', message: this.instant('requiredField')}]
         },
         {
           type: 'password',
           formControlName: 'confirm_password',
-          label: this.translations.repeatNewPassword,
+          label: this.instant('repeatNewPassword'),
           className: 'col-12',
-          errors: [{type: 'required', message: this.translations.requiredField}]
+          errors: [{type: 'required', message: this.instant('requiredField')}]
         },
       ], {
         width: '600px',
@@ -135,7 +135,7 @@ export class ProfilePage extends LanguageChecker implements OnInit, OnDestroy {
         formValidator: {
           validatorFn: this.checkPasswords,
           error: 'notSame',
-          message: this.translations.passwordNotMatch
+          message: this.instant('passwordNotMatch')
         }
       });
     dialogRef.onClose.pipe(takeUntil(this.destroy$)).subscribe(async (res: any) => {

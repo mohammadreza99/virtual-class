@@ -52,7 +52,7 @@ export class BreadcrumbService extends LanguageChecker {
 
   private getLabel(data: Data) {
     // The breadcrumb can be defined as a static string or as a function to construct the breadcrumb element out of the route data
-    return typeof data.breadcrumb === 'function' ? data.breadcrumb(data) : this.translations[data.breadcrumb];
+    return typeof data.breadcrumb === 'function' ? data.breadcrumb(data) : this.instant(data.breadcrumb);
   }
 
 }

@@ -1,8 +1,8 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {SessionService, SocketService} from '@core/http';
+import {SessionService} from '@core/http';
 import {RoomUser, StreamActionEvent, TrackPosition} from '@core/models';
 import {UpdateViewService} from '@core/http/update-view.service';
-import {GlobalConfig} from '../../../../global.config';
+import {GlobalConfig} from '@core/global.config';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 
@@ -27,7 +27,6 @@ export class ScreenComponent implements OnInit, OnDestroy {
   constructor(
     private sessionService: SessionService,
     private updateViewService: UpdateViewService,
-    private socketService: SocketService,
     private elementRef: ElementRef,
     private renderer: Renderer2,
   ) {
@@ -146,7 +145,6 @@ export class ScreenComponent implements OnInit, OnDestroy {
       this.removeClass(`my-${res.publishType.toLowerCase()}-shared`);
     }
   }
-
 
   private addClass(className: string) {
     this.renderer.addClass(this.elementRef.nativeElement, className);

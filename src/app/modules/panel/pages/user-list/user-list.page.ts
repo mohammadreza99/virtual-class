@@ -36,25 +36,25 @@ export class UserListPage extends LanguageChecker implements OnInit, OnDestroy {
       this.tableConfig = {
         total: this.rowData.total,
         colDef: [{
-          header: this.translations.name,
+          header: this.instant('name'),
           sortField: 'first_name'
         }, {
-          header: this.translations.lastName,
+          header: this.instant('lastName'),
           sortField: 'last_name'
         }, {
-          header: this.translations.email,
+          header: this.instant('email'),
           sortField: 'email'
         }, {
-          header: this.translations.mobile,
+          header: this.instant('mobile'),
           sortField: 'phone_number'
         }, {
-          header: this.translations.sendEmail,
+          header: this.instant('sendEmail'),
           sortField: 'state'
         }, {
-          header: this.translations.status,
+          header: this.instant('status'),
           sortField: 'active'
         }, {
-          header: this.translations.operations,
+          header: this.instant('operations'),
         }],
         onAdd: this.addUser,
         onFetch: (data: SearchParam) => this.userService.getUsers(data).toPromise()
@@ -75,7 +75,7 @@ export class UserListPage extends LanguageChecker implements OnInit, OnDestroy {
     if (this.relations.rooms.length || this.relations.groups.length) {
       this.dialogService.open(UserRelationsComponent, {
         data: this.relations,
-        header: this.translations.deleteUserConfirm,
+        header: this.instant('deleteUserConfirm'),
         width: '900px',
         rtl: this.fa
       }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
@@ -85,8 +85,8 @@ export class UserListPage extends LanguageChecker implements OnInit, OnDestroy {
       });
     } else {
       const dialogRes = await this.utilsService.showConfirm({
-        header: this.translations.deleteUserConfirm,
-        message: this.translations.deleteUserConfirmBody,
+        header: this.instant('deleteUserConfirm'),
+        message: this.instant('deleteUserConfirmBody'),
         rtl: this.fa
       });
       if (dialogRes) {
@@ -96,40 +96,40 @@ export class UserListPage extends LanguageChecker implements OnInit, OnDestroy {
   }
 
   addUser = async () => {
-    const dialogRef = this.utilsService.showDialogForm(this.translations.addUser,
+    const dialogRef = this.utilsService.showDialogForm(this.instant('addUser'),
       [
         {
           type: 'text',
           formControlName: 'first_name',
-          label: this.translations.name,
+          label: this.instant('name'),
           className: 'col-md-6',
-          errors: [{type: 'required', message: this.translations.requiredField}]
+          errors: [{type: 'required', message: this.instant('requiredField')}]
         },
         {
           type: 'text',
           formControlName: 'last_name',
-          label: this.translations.lastName,
+          label: this.instant('lastName'),
           className: 'col-md-6',
-          errors: [{type: 'required', message: this.translations.requiredField}]
+          errors: [{type: 'required', message: this.instant('requiredField')}]
         },
         {
           type: 'text',
           formControlName: 'email',
-          label: this.translations.email,
+          label: this.instant('email'),
           className: 'col-md-6',
-          errors: [{type: 'required', message: this.translations.requiredField}, {
+          errors: [{type: 'required', message: this.instant('requiredField')}, {
             type: 'email',
-            message: this.translations.emailPattern
+            message: this.instant('emailPattern')
           }]
         },
         {
           type: 'text',
           formControlName: 'phone_number',
-          label: this.translations.mobile,
+          label: this.instant('mobile'),
           className: 'col-md-6',
           maxlength: 11,
           keyFilter: 'num',
-          errors: [{type: 'required', message: this.translations.requiredField}]
+          errors: [{type: 'required', message: this.instant('requiredField')}]
         },
       ], {width: '900px', rtl: this.fa}
     );
@@ -144,7 +144,7 @@ export class UserListPage extends LanguageChecker implements OnInit, OnDestroy {
   };
 
   editUser(user: User, index: number) {
-    const dialogRef = this.utilsService.showDialogForm(this.translations.editUser,
+    const dialogRef = this.utilsService.showDialogForm(this.instant('editUser'),
       [
         {
           type: 'hidden',
@@ -154,38 +154,38 @@ export class UserListPage extends LanguageChecker implements OnInit, OnDestroy {
         {
           type: 'text',
           formControlName: 'first_name',
-          label: this.translations.name,
+          label: this.instant('name'),
           className: 'col-md-6',
-          errors: [{type: 'required', message: this.translations.requiredField}],
+          errors: [{type: 'required', message: this.instant('requiredField')}],
           value: user.first_name
         },
         {
           type: 'text',
           formControlName: 'last_name',
-          label: this.translations.lastName,
+          label: this.instant('lastName'),
           className: 'col-md-6',
-          errors: [{type: 'required', message: this.translations.requiredField}],
+          errors: [{type: 'required', message: this.instant('requiredField')}],
           value: user.last_name
         },
         {
           type: 'text',
           formControlName: 'email',
-          label: this.translations.email,
+          label: this.instant('email'),
           className: 'col-md-6',
-          errors: [{type: 'required', message: this.translations.requiredField}, {
+          errors: [{type: 'required', message: this.instant('requiredField')}, {
             type: 'email',
-            message: this.translations.emailPattern
+            message: this.instant('emailPattern')
           }],
           value: user.email
         },
         {
           type: 'text',
           formControlName: 'phone_number',
-          label: this.translations.mobile,
+          label: this.instant('mobile'),
           className: 'col-md-6',
           maxlength: 11,
           keyFilter: 'num',
-          errors: [{type: 'required', message: this.translations.requiredField}],
+          errors: [{type: 'required', message: this.instant('requiredField')}],
           value: user.phone_number
         },
       ], {width: '900px', rtl: this.fa}
@@ -211,13 +211,13 @@ export class UserListPage extends LanguageChecker implements OnInit, OnDestroy {
   async resetPassword(user: User) {
     try {
       const dialogRes = await this.utilsService.showConfirm({
-        header: this.translations.passwordResetConfirmTitle,
-        message: this.translations.passwordResetConfirmBody,
+        header: this.instant('passwordResetConfirmTitle'),
+        message: this.instant('passwordResetConfirmBody'),
         rtl: this.fa
       });
       if (dialogRes) {
         const password = await this.userService.resetPassword(user.email).toPromise();
-        await this.utilsService.showDialogForm(this.translations.newPassword, [
+        await this.utilsService.showDialogForm(this.instant('newPassword'), [
           {
             type: 'text',
             formControlName: 'email',
@@ -235,7 +235,7 @@ export class UserListPage extends LanguageChecker implements OnInit, OnDestroy {
           }
         ], {
           rejectVisible: false,
-          acceptLabel: this.translations.verify,
+          acceptLabel: this.instant('verify'),
           acceptIcon: null,
           rtl: this.fa
         });
@@ -246,7 +246,7 @@ export class UserListPage extends LanguageChecker implements OnInit, OnDestroy {
 
   getTranslated(state: string) {
     const str = state.charAt(0).toLowerCase() + state.slice(1);
-    return this.translations[str];
+    return this.instant(str);
   }
 
   ngOnDestroy(): void {

@@ -3,6 +3,8 @@ import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {ApiService} from '@core/http/api.service';
 import {Subject, Subscription} from 'rxjs';
 import {DeviceType, SocketEventTypes} from '@core/models';
+import {GlobalConfig} from '@core/global.config';
+import {Router} from '@angular/router';
 
 @Injectable({providedIn: 'root'})
 export class SocketService extends ApiService {
@@ -10,16 +12,14 @@ export class SocketService extends ApiService {
   private socketChannel = new Subject<{ event: SocketEventTypes, [key: string]: any }>();
   private subscription: Subscription;
   private roomId: number;
-  private token: string;
   private reconnectTimer: any;
   private pingTimer: any;
   private started = false;
   private connected = false;
-  tryConnection = true;
+  private retryCount: number = GlobalConfig.socketConnectRetryCount;
 
-  constructor() {
+  constructor(private router: Router) {
     super();
-    this.token = localStorage.getItem('token');
   }
 
   start(roomId: number) {
@@ -30,9 +30,6 @@ export class SocketService extends ApiService {
     this.roomId = roomId;
     this.started = true;
     this.close();
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
     this.createSocketConnection();
   }
 
@@ -43,8 +40,11 @@ export class SocketService extends ApiService {
 
   close() {
     if (this.connected) {
-      this.webSocket.complete();
-      this.subscription.unsubscribe();
+      this.webSocket?.complete();
+      this.webSocket = null;
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+      }
     }
   }
 
@@ -56,47 +56,68 @@ export class SocketService extends ApiService {
     this.webSocket = webSocket(this.socketBaseUrl);
     await this.sendConnect();
     console.log('connect sent');
-    this.subscription = this.webSocket.subscribe((res) => {
-      this.connected = true;
-      this.socketChannel.next({event: res.method, ...res.data});
-      this.retryConnection(true);
-      this.pingWithDelay();
-    }, (err) => {
-      this.connected = false;
-      this.close();
-      this.webSocket = null;
-      this.retryConnection();
-      console.error(err);
-    }, () => {
-      this.retryConnection();
-    });
+    this.subscription = this.webSocket.subscribe(
+      async (res) => {
+        this.socketChannel.next({event: res.method, ...res.data});
+        if (res.method == 'FAILURE') {
+          this.connected = false;
+          if (this.retryCount > 0) {
+            await this.sendConnect();
+            this.retryCount--;
+            return;
+          }
+
+          if (this.retryCount == 0 && !this.connected) {
+            this.router.navigate(['/no-internet'], {queryParams: {returnUrl: `/vc/room-info/${this.roomId}`}});
+            return;
+          }
+        } else {
+          this.connected = true;
+          this.retryCount = GlobalConfig.socketConnectRetryCount;
+        }
+        this.clearReconnectTimer();
+        this.pingWithDelay();
+      },
+      (err) => {
+        if (this.webSocket) {
+          this.handleSocketFailure();
+        }
+        console.error(err);
+      },
+      () => {
+        if (this.webSocket) {
+          this.retryConnection(GlobalConfig.socketConnectOnErrorRetryDelay);
+        }
+      });
   }
 
-  private retryConnection(clear?: boolean, delay?: number) {
+  private handleSocketFailure() {
+    this.connected = false;
+    this.close();
+    this.retryConnection(GlobalConfig.socketConnectOnErrorRetryDelay);
+  }
+
+  private retryConnection(delay: number) {
     this.clearReconnectTimer();
-    if (!this.tryConnection) {
-      return;
-    }
-    if (clear) {
-      return;
-    }
     this.reconnectTimer = setTimeout(() => {
       this.createSocketConnection();
-    }, (delay || 5) * 1000);
+    }, delay);
   }
 
   private pingWithDelay() {
     this.clearPingTimer();
     this.pingTimer = setTimeout(() => {
       this.sendPing();
-      this.retryConnection(false, 20);
-    }, 30000);
+      this.retryConnection(GlobalConfig.socketConnectRetryDelay);
+    }, GlobalConfig.socketPingRetryDelay);
   }
 
   private sendPing() {
     this.webSocket.next({
-      auth: this.token,
-      room_id: this.roomId,
+      auth: localStorage.getItem('token'),
+      data: {
+        room_id: this.roomId,
+      },
       method: 'ping'
     });
   }
@@ -106,7 +127,7 @@ export class SocketService extends ApiService {
     const has_mic = await this.micConnected();
     const device = this.getDeviceType();
     this.webSocket.next({
-      auth: this.token,
+      auth: localStorage.getItem('token'),
       method: 'connect',
       data: {room_id: this.roomId, has_cam, has_mic, device}
     });
@@ -117,7 +138,6 @@ export class SocketService extends ApiService {
       clearTimeout(this.pingTimer);
     }
   }
-
 
   clearReconnectTimer() {
     if (this.reconnectTimer) {

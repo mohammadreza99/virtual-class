@@ -39,10 +39,10 @@ export class GroupSettingPage extends LanguageChecker implements OnInit, OnDestr
       this.groupUsersConfig = {
         total: this.groupUsers.total,
         colDef: [
-          {header: this.translations.fullName},
-          {header: this.translations.email},
-          {header: this.translations.access},
-          {header: this.translations.operations},
+          {header: this.instant('fullName')},
+          {header: this.instant('email')},
+          {header: this.instant('access')},
+          {header: this.instant('operations')},
         ],
       };
     } catch {
@@ -59,7 +59,7 @@ export class GroupSettingPage extends LanguageChecker implements OnInit, OnDestr
 
   async showAddUserModal() {
     this.dialogService.open(AddGroupUserFormComponent, {
-      header: this.translations.addMember,
+      header: this.instant('addMember'),
       width: '900px',
       rtl: this.fa
     }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
@@ -79,8 +79,8 @@ export class GroupSettingPage extends LanguageChecker implements OnInit, OnDestr
   async removeUser(user: User) {
     try {
       const dialogResult = await this.utilsService.showConfirm({
-        header: this.translations.deleteUserConfirm,
-        message: this.translations.deleteUserConfirmBody,
+        header: this.instant('deleteUserConfirm'),
+        message: this.instant('deleteUserConfirmBody'),
         rtl: this.fa
       });
       if (dialogResult) {

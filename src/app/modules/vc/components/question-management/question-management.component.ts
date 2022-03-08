@@ -155,8 +155,8 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
 
   async revokeQuestion() {
     const dialogRes = await this.utilsService.showConfirm({
-      header: this.translations.room.revokeQuestion,
-      message: this.translations.room.revokeQuestionConfirm,
+      header: this.instant('room.revokeQuestion'),
+      message: this.instant('room.revokeQuestionConfirm'),
       rtl: this.fa
     });
     if (dialogRes) {

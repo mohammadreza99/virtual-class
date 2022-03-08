@@ -39,19 +39,19 @@ export class GroupListPage extends LanguageChecker implements OnInit, OnDestroy 
       this.tableConfig = {
         total: this.rowData.total,
         colDef: [{
-          header: this.translations.name,
+          header: this.instant('name'),
           sortField: 'name'
         }, {
-          header: this.translations.membersCount,
+          header: this.instant('membersCount'),
           sortField: 'user_count'
         }, {
-          header: this.translations.joinedInClassOrGroup,
+          header: this.instant('joinedInClassOrGroup'),
           sortField: 'room_count'
         }, {
-          header: this.translations.status,
+          header: this.instant('status'),
           sortField: 'active'
         }, {
-          header: this.translations.operations,
+          header: this.instant('operations'),
         }],
         onAdd: this.addGroup,
         onFetch: (data: SearchParam) => this.groupService.getGroups(data).toPromise()
@@ -74,7 +74,7 @@ export class GroupListPage extends LanguageChecker implements OnInit, OnDestroy 
   }
 
   editGroup(group: Group, index: number) {
-    const dialogRef = this.utilsService.showDialogForm(this.translations.editGroup,
+    const dialogRef = this.utilsService.showDialogForm(this.instant('editGroup'),
       [
         {
           type: 'hidden',
@@ -84,9 +84,9 @@ export class GroupListPage extends LanguageChecker implements OnInit, OnDestroy 
         {
           type: 'text',
           formControlName: 'name',
-          label: this.translations.name,
+          label: this.instant('name'),
           className: 'col-12',
-          errors: [{type: 'required', message: this.translations.requiredField}],
+          errors: [{type: 'required', message: this.instant('requiredField')}],
           value: group.name
         },
       ], {width: '900px', rtl: this.fa}
@@ -107,7 +107,7 @@ export class GroupListPage extends LanguageChecker implements OnInit, OnDestroy 
       if (this.relations.rooms.length) {
         this.dialogService.open(GroupRelationsComponent, {
           data: this.relations,
-          header: this.translations.deleteGroupConfirm,
+          header: this.instant('deleteGroupConfirm'),
           width: '900px',
           rtl: this.fa
         }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
@@ -117,8 +117,8 @@ export class GroupListPage extends LanguageChecker implements OnInit, OnDestroy 
         });
       } else {
         const dialogRes = await this.utilsService.showConfirm({
-          header: this.translations.deleteGroupConfirm,
-          message: this.translations.deleteGroupConfirmBody,
+          header: this.instant('deleteGroupConfirm'),
+          message: this.instant('deleteGroupConfirmBody'),
           rtl: this.fa
         });
         if (dialogRes) {
@@ -131,7 +131,7 @@ export class GroupListPage extends LanguageChecker implements OnInit, OnDestroy 
 
   addGroup = async () => {
     this.dialogService.open(AddGroupFormComponent, {
-      header: this.translations.addGroup,
+      header: this.instant('addGroup'),
       width: '900px',
       rtl: this.fa
     }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {

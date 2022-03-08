@@ -19,6 +19,7 @@ import {ResultTableComponent} from '@modules/vc/components/result-table/result-t
 import {QuestionResultComponent} from '@modules/vc/components/question-result/question-result.component';
 import {UploadFileComponent} from '@modules/vc/components/upload-file/upload-file.component';
 import {SelectRandomUserComponent} from '@modules/vc/components/select-random-user/select-random-user.component';
+import {CanvasWhiteboardComponent} from '@modules/vc/components/canvas-whiteboard/canvas-whiteboard.component';
 
 export const COMPONENTS: Type<any>[] = [
   VirtualClassPage,
@@ -40,5 +41,6 @@ export const COMPONENTS: Type<any>[] = [
   PollIncomeComponent,
   ResultTableComponent,
   UploadFileComponent,
-  SelectRandomUserComponent
+  SelectRandomUserComponent,
+  CanvasWhiteboardComponent,
 ];

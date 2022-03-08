@@ -5,6 +5,7 @@ import {filter} from 'rxjs/operators';
 import {UtilsService} from '@ng/services';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {MessageService} from '@core/utils';
+import {SessionService, SocketService} from '@core/http';
 
 @Component({
   selector: 'app-root',
@@ -14,12 +15,16 @@ import {MessageService} from '@core/utils';
 export class AppComponent extends LanguageChecker implements OnInit {
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private title: Title,
     private utilsService: UtilsService,
+    private sessionService: SessionService,
+    private socketService: SocketService,
     private messageService: MessageService,
   ) {
     super();
   }
+
 
   ngOnInit() {
     this.checkNetworkStatus();
@@ -28,7 +33,7 @@ export class AppComponent extends LanguageChecker implements OnInit {
       .subscribe((event: ActivatedRoute) => {
         const data = event.snapshot.data;
         if (data?.title) {
-          this.title.setTitle(this.translations[data.title]);
+          this.title.setTitle(this.instant(data.title));
         }
       });
 
@@ -36,7 +41,7 @@ export class AppComponent extends LanguageChecker implements OnInit {
       if (res.detail) {
         this.utilsService.showToast({
           severity: res.severity,
-          detail: this.translations[res.detail] || '',
+          detail: this.instant(res.detail) || '',
         });
       }
     });
@@ -45,7 +50,10 @@ export class AppComponent extends LanguageChecker implements OnInit {
   checkNetworkStatus() {
     this.utilsService.checkConnection().subscribe(status => {
       if (status == false) {
-        // this.router.navigateByUrl('/error');
+        console.log('......NETWORK DISCONNECTED......');
+        this.sessionService.getMeOut(null, false);
+        const returnUrl = this.router.url == '/no-internet' ? null : this.router.url;
+        this.router.navigate(['/no-internet'], {queryParams: {returnUrl}});
       }
     });
   }

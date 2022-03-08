@@ -23,9 +23,9 @@ export class AddGroupFormComponent extends LanguageChecker implements OnInit {
   groupName: string;
   config: TableConfig = {
     colDef: [
-      {header: this.translations.fullName},
-      {header: this.translations.email},
-      {header: this.translations.operations},
+      {header: this.instant('fullName')},
+      {header: this.instant('email')},
+      {header: this.instant('operations')},
     ]
   };
 
@@ -51,8 +51,8 @@ export class AddGroupFormComponent extends LanguageChecker implements OnInit {
   async removeUser(item: User) {
     const dialogRes = await this.utilsService.showConfirm({
       rtl: this.fa,
-      header: this.translations.deleteUserConfirm,
-      message: this.translations.deleteUserConfirmBody
+      header: this.instant('deleteUserConfirm'),
+      message: this.instant('deleteUserConfirmBody')
     });
     if (dialogRes) {
       const idx = this.selectedUsers.findIndex(u => u.id == item.id);

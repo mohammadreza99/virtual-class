@@ -30,7 +30,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
             this.showFailureToast(status);
           }
           if (status == 'NOT_FOUND') {
-            this.router.navigateByUrl('/404');
+            // this.router.navigateByUrl('/404');
           }
         }
         return event;

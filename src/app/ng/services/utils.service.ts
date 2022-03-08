@@ -7,7 +7,6 @@ import {
   Injector,
   Type
 } from '@angular/core';
-import {FormGroup} from '@angular/forms';
 import {ConfirmPopupComponent} from '@ng/components/confirm-popup/confirm-popup.component';
 import {ConfirmComponent} from '@ng/components/confirm/confirm.component';
 import {DialogFormComponent} from '@ng/components/dialog-form/dialog-form.component';
@@ -28,6 +27,7 @@ import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {fromEvent, merge, Observable, Observer} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {DialogComponent} from '@ng/components/dialog/dialog.component';
+import {LocationStrategy} from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +46,8 @@ export class UtilsService {
     private resolver: ComponentFactoryResolver,
     private filterService: FilterService,
     private injector: Injector,
-    private appRef: ApplicationRef
+    private appRef: ApplicationRef,
+    private location: LocationStrategy,
   ) {
   }
 
@@ -258,5 +259,12 @@ export class UtilsService {
     result += '' + mins + ':' + (secs < 10 ? '0' : '');
     result += '' + secs;
     return result;
+  }
+
+  disableWindowBackButton() {
+    history.pushState(null, null, location.href);
+    this.location.onPopState(() => {
+      history.pushState(null, null, location.href);
+    });
   }
 }
