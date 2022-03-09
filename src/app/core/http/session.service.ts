@@ -1254,10 +1254,10 @@ export class SessionService extends ApiService {
     });
   }
 
-  getPresentationPolicy(file_name: string) {
+  getPresentationPolicy(file_name: string, is_downloadable: boolean) {
     return this._post<any>('', {
       method: 'getPresentationUploadForm',
-      data: {room_id: this.currentRoom.id, file_name},
+      data: {room_id: this.currentRoom.id, file_name, is_downloadable},
     });
   }
 
@@ -1313,10 +1313,10 @@ export class SessionService extends ApiService {
     });
   }
 
-  getActivePresentations(presentation_id: number) {
+  getActivePresentations() {
     return this._post<any>('', {
       method: 'getActivePresentations',
-      data: {room_id: this.currentRoom.id, presentation_id},
+      data: {room_id: this.currentRoom.id, limit: 10},
     });
   }
 

@@ -48,11 +48,12 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   raiseHandActivated = false;
   hasUnreadMessage = false;
   hasUnreadRaisedHands = false;
-  currentViewMode: ViewMode;
+  currentViewMode: ViewMode = 'thumbnail';
   currentRoom: Room;
   currentUser: RoomUser;
   currentQuestion: QuestionItem;
   currentPoll: PollItem;
+  currentPresentation: any;
   membersSidebarVisible: boolean = true;
   chatSidebarVisible: boolean = false;
   questionSidebarVisible: boolean = false;
@@ -68,9 +69,12 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   handleResize() {
     if (window.innerWidth <= 992) {
       this.closeAllSidebars();
+      if (this.currentViewMode != 'thumbnail') {
+        return;
+      }
       this.currentViewMode = 'speaker';
     } else {
-      this.currentViewMode = 'thumbnail';
+      this.openSidebar('members');
     }
   }
 
@@ -196,6 +200,15 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
               rtl: this.fa
             });
           }
+          break;
+
+        case 'openPresentation':
+          this.currentViewMode = 'speaker';
+          this.currentPresentation = res.data.presentation_id;
+          break;
+
+        case 'closePresentation':
+          this.currentPresentation = null;
           break;
       }
     });

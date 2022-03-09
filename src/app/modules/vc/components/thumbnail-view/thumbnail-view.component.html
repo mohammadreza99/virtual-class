@@ -1,5 +1,5 @@
-<div class="thumbnail-view xx">
-  <div class="d-flex flex-column-reverse flex-xl-row h-100">
+<div class="thumbnail-view">
+  <div class="d-flex flex-column-reverse flex-lg-row h-100">
     <div class="participants" [class.d-none]="users.length == 0">
       <ng-screen position="sideThumbPosition"
                  *ngFor="let u of users;trackBy:trackByFn" [user]="u">

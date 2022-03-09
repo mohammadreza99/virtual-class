@@ -1,25 +1,55 @@
+@import "mixins";
+
 $button-bg-color: #348aa7;
 $button-border-color: #166e84;
 $timing: 0.3s;
 :host {
   display: block;
+  height: 100%;
 
   &:not(.open-presentation) {
     display: none;
   }
 }
 
-img {
-  width: 100%;
-  background: #fff;
-}
 
 .white-board {
   background: #fff;
-  overflow: hidden;
   height: 100%;
   display: flex;
-  align-items: center
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  img {
+    background: #fff;
+    max-height: 100%;
+    max-width: 100%;
+    //width: 80%;
+    //@include media-breakpoint-down(lg) {
+    //  width: 100%;
+    //}
+  }
+
+  .btn-fullscreen, .btn-close {
+    position: absolute;
+    z-index: 30;
+    top: 1.15rem;
+  }
+
+  .btn-fullscreen {
+    right: 1.15rem;
+  }
+
+  .btn-close {
+    left: 1.15rem;
+  }
+
+  .actions {
+    position: absolute;
+    bottom: 0.5rem;
+  }
 }
 
 .tools {

@@ -161,7 +161,7 @@
       }
     }
 
-    @include media-breakpoint-down(xl) {
+    @include media-breakpoint-down(lg) {
       height: 100%;
 
       ng-screen:not(:last-child) {

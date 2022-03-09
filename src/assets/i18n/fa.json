@@ -120,7 +120,10 @@
     "showTeacherScreen": "نمایش تصویر معلم",
     "youHaveBeenSelected": "شما انتخاب شدید",
     "anotherUserSelected": "کاربر {{value}} انتخاب شد",
-    "noInternet": "لطفا اتصال اینترنت خود را بررسی و دوباره تلاش کنید"
+    "noInternet": "لطفا اتصال اینترنت خود را بررسی و دوباره تلاش کنید",
+    "disabledViewModeChange": "دراین حالت امکان تغییر وجود ندارد",
+    "deletePresentationConfirm": "تاییدیه حذف ارائه",
+    "deletePresentationConfirmBody": "آیا از حذف ارائه مطمئن هستید؟"
   },
   "home": "خانه",
   "forgetPassword": "فراموشی رمزعبور",
@@ -217,6 +220,7 @@
   "roomMemberManagement": "مدیریت اعضای اتاق",
   "roomGroupManagement": "مدیریت گروه های اتاق",
   "no": "خیر",
+  "chooseFile": "انتخاب فایل",
   "deleteUser": "حذف کاربر",
   "deleteGroup": "حذف گروه",
   "yes": "بله",
@@ -270,7 +274,7 @@
   "accessDeniedError": "دسترسی غیرمجاز",
   "wrongCredential": "اطلاعات نادرست است",
   "noFileSelected": "فایلی انتخاب نشده است",
-  "fileSizeLimit": "حداکثر حجم مجاز بارگذاری {{value}} میباشد",
+  "fileSizeLimit": "حداقل حجم مجاز بارگذاری {{min}} و حداکثر {{max}} میباشد",
   "fileTypeLimit": "فرمت های قابل پشتیبانی : {{value}}",
   "usersCanDownloadFile": "شرکت کنندگان قابلیت دانلود فایل را داشته باشند"
 }

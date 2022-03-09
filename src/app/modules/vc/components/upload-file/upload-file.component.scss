@@ -1,30 +1,63 @@
-.uploader {
-  cursor: pointer;
-  position: relative;
+:host ::ng-deep {
 
-  ng-button {
-    position: absolute;
-    top: 0.5rem;
-    left: 0.5rem;
+  .uploader {
+    cursor: pointer;
+    position: relative;
+
+    ng-button {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+    }
   }
-}
 
-.alert-box {
-  transition: all .3s;
-}
+  .alert-box {
+    transition: all .3s;
+  }
 
-.archives {
-  ul {
-    max-height: 100px;
-    overflow: auto;
+  .archives {
+    p-listbox {
+      display: block;
+      max-height: 150px;
+      overflow: auto;
 
-    li {
-      transition: all .3s;
-      cursor: pointer;
+      .p-listbox-item {
+        padding: 0.5rem 1rem;
 
-      &:hover {
-        background-color: #dee2e6;
+        .circle {
+          min-width: 18px;
+          min-height: 18px;
+          border: 1px solid #b7b7b7;
+          border-radius: 50%;
+          display: inline-block;
+          transition: all .4s;
+        }
+
+        ng-button {
+          z-index: 30000;
+          position: relative;
+        }
+
+        &.p-highlight {
+          .circle {
+            background-color: #b7b7b7;
+          }
+        }
       }
     }
+
+    //ul {
+    //  max-height: 100px;
+    //  overflow: auto;
+    //
+    //  li {
+    //    transition: all .3s;
+    //    cursor: pointer;
+    //
+    //    &:hover {
+    //      background-color: #dee2e6;
+    //    }
+    //  }
+    //}
   }
 }

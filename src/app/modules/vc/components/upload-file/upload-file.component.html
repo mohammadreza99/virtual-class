@@ -1,13 +1,14 @@
 <p>{{'room.pleaseUploadYourFile' | translate}}</p>
 
 <div class="uploader text-center rounded bg-light border border-dashed text-muted px-3 py-4 mb-3"
-     (click)="!selected ? uploader.click() : null">
+     (click)="!selectedFile ? uploader.click() : null">
   <p-progressSpinner [style]="{width: '50px', height: '50px'}" *ngIf="uploadProgress"></p-progressSpinner>
   <ng-container *ngIf="!uploadProgress">
     <i class="icon-add-File"></i>
-    <small class="d-block" *ngIf="!selected">{{'noFileSelected' | translate}}</small>
-    <small class="d-block" *ngIf="selected">{{selected.name | translate}}</small>
-    <ng-button *ngIf="selected" icon="pi pi-times" [rounded]="true" appearance="text"
+    <small class="d-block" *ngIf="!selectedFile">{{'noFileSelected' | translate}}</small>
+    <a class="text-primary font-bold" *ngIf="!selectedFile">{{'chooseFile' | translate}}</a>
+    <small class="d-block" *ngIf="selectedFile">{{selectedFile.name | translate}}</small>
+    <ng-button *ngIf="selectedFile" icon="pi pi-times" [rounded]="true" appearance="text"
                (onClick)="removeFile($event)"></ng-button>
   </ng-container>
 </div>
@@ -15,7 +16,10 @@
 <div class="alert-box d-flex align-items-center rounded p-1"
      [ngClass]="{'text-white bg-danger': invalidSize,'text-muted':!invalidSize}">
   <i class="icon-info-Circle"></i>
-  <small class="mr-2">{{'fileSizeLimit' | translate:{value: (maxFileSize | fileSize)} }}</small>
+  <small class="mr-2">{{'fileSizeLimit' | translate:{
+    min: (minFileSize | fileSize),
+    max: (maxFileSize | fileSize)
+  } }}</small>
 </div>
 <div class="alert-box d-flex align-items-center rounded p-1"
      [ngClass]="{'text-white bg-danger': invalidType,'text-muted':!invalidType}">
@@ -26,24 +30,42 @@
 <ng-switch class="mt-3 ml-auto d-inline-block" [(ngModel)]="allowDownload" [label]="'usersCanDownloadFile' | translate"
            [rtl]="!fa"></ng-switch>
 
-<div class="archives my-2">
+<div class="archives my-2" *ngIf="activePresentations?.length > 0">
   <small>{{'room.presentationArchive' | translate}}</small>
-  <ul class="list-unstyled p-1 border rounded">
-    <li class="d-flex align-items-center justify-content-between rounded px-1">
-      <div class="d-flex align-items-center">
-        <i class="icon-file ml-2"></i>
-        <span>{{'asdasd'}}</span>
+  <p-listbox (onClick)="onSelectPresentation($event)" [options]="activePresentations"
+             [ngModel]="selectedPresentation"
+             optionLabel="file_name">
+    <ng-template let-presentation pTemplate="item">
+      <div class="d-flex w-100 align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+          <i class="icon-file ml-2"></i>
+          <span>{{presentation.file_name}}</span>
+        </div>
+        <div class="d-flex align-items-center">
+          <ng-button (click)="deletePresentation(presentation)" appearance="text" color="danger" [rounded]="true"
+                     icon="icon-delete"></ng-button>
+          <span class="circle"></span>
+        </div>
       </div>
-      <ng-button appearance="text" color="danger" [rounded]="true" icon="icon-delete"></ng-button>
-    </li>
-  </ul>
+    </ng-template>
+  </p-listbox>
+  <!--  <ul class="list-unstyled p-1 border rounded">-->
+  <!--    <li class="d-flex align-items-center justify-content-between rounded px-1" *ngFor="let item of activePresentations">-->
+  <!--      <div class="d-flex align-items-center">-->
+  <!--        <i class="icon-file ml-2"></i>-->
+  <!--        <span>{{item.file_name}}</span>-->
+  <!--      </div>-->
+  <!--      <ng-button appearance="text" color="danger" [rounded]="true" icon="icon-delete"></ng-button>-->
+  <!--    </li>-->
+  <!--  </ul>-->
 </div>
 
 <div class="actions text-left mt-4">
   <ng-button class="mx-2" appearance="outlined" color="secondary" [label]="'cancel' | translate"
              (click)="onClose()"></ng-button>
-  <ng-button [disabled]="!selected || invalidSize || invalidType" class="mx-2" [label]="'verify' | translate"
-             (click)="onSubmit()"></ng-button>
+  <ng-button-async [disabled]="(!selectedFile && !selectedPresentation) || invalidSize || invalidType" class="mx-2"
+                   [label]="'verify' | translate"
+                   (clickAsync)="onSubmit($event)"></ng-button-async>
 </div>
 <input
   class="p-sr-only"

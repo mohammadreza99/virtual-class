@@ -101,5 +101,48 @@
         }
       }
     }
+
+    ng-canvas-whiteboard.open-presentation {
+
+      ~ .teacher-webcam-shared {
+        position: absolute;
+        width: 170px;
+        height: auto;
+        right: 1rem;
+        bottom: 1rem;
+
+        .screen-wrapper {
+          padding-bottom: 56.25%;
+        }
+
+        &:not(.screen-hided) {
+          .screen-toggler {
+            > ng-button {
+              display: block;
+            }
+
+            > span {
+              display: none;
+            }
+          }
+        }
+
+        &.screen-hided {
+          .screen-toggler {
+            > ng-button {
+              display: none;
+            }
+
+            > span {
+              display: block;
+            }
+          }
+        }
+      }
+
+      ~ .no-stream {
+        display: none
+      }
+    }
   }
 }
