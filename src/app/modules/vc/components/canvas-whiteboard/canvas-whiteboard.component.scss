@@ -24,31 +24,8 @@ $timing: 0.3s;
 
   img {
     background: #fff;
-    max-height: 100%;
+    max-height: calc(100% - 104px);
     max-width: 100%;
-    //width: 80%;
-    //@include media-breakpoint-down(lg) {
-    //  width: 100%;
-    //}
-  }
-
-  .btn-fullscreen, .btn-close {
-    position: absolute;
-    z-index: 30;
-    top: 1.15rem;
-  }
-
-  .btn-fullscreen {
-    right: 1.15rem;
-  }
-
-  .btn-close {
-    left: 1.15rem;
-  }
-
-  .actions {
-    position: absolute;
-    bottom: 0.5rem;
   }
 }
 

@@ -40,6 +40,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   allUsers: RoomUser[] = [];
   roomUsers: RoomUser[] = [];
   raisedHandsUsers: RoomUser[] = [];
+  kickedUsers: RoomUser[] = [];
   disableWebcam = false;
   disableMic = false;
   screenActivated = false;
@@ -101,17 +102,21 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           }
           break;
 
-        case 'roomUsers':
-          this.roomUsers = res.data;
-          break;
-
         case 'roomParticipants':
           this.allUsers = res.data;
           break;
 
+        case 'roomUsers':
+          this.roomUsers = res.data.filter(u => !u.kicked);
+          break;
+
+        case 'kickedUsers':
+          this.kickedUsers = res.data;
+          break;
+
         case 'mutePerson':
         case 'muteAll':
-          if (this.sessionService.currentUser.role == 'Admin') {
+          if (this.sessionService.imTeacher) {
             return;
           }
           this.disableMic = res.data.value;
@@ -131,7 +136,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
         case 'muteVideo':
         case 'muteVideoAll':
-          if (this.sessionService.currentUser.role == 'Admin') {
+          if (this.sessionService.imTeacher) {
             return;
           }
           this.disableWebcam = res.data.value;
@@ -233,6 +238,12 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
         this.openIncomePoll(result.data.poll);
       }
     }
+    if (this.currentRoom.presentation) {
+      setTimeout(() => {
+        this.updateViewService.setViewEvent({event: 'openPresentation', data: this.currentRoom.presentation});
+      });
+    }
+
   }
 
   async toggleCamera(callback: (toggleState?: boolean) => any) {

@@ -30,6 +30,7 @@ export class SessionService extends ApiService {
   private myConnection: { webcam: PeerConnection, screen: PeerConnection } = {webcam: null, screen: null};
   private peerConnections: PeerConnection[] = [];
   private roomUsers: RoomUser[] = [];
+  private kickedUsers: RoomUser[] = [];
   private raisedHands: RoomUser[] = [];
   private mainPositionUser: RoomUser;
   private socketSubscription: Subscription;
@@ -117,8 +118,9 @@ export class SessionService extends ApiService {
   private async updateRoomUsers() {
     try {
       const data = await this.getRoomActiveUsers().toPromise();
-      this.roomUsers = data?.data?.items || [];
-      const {added, deleted} = this.getRoomUsersDifference(data?.data?.items, this.roomUsers);
+      const allUsers = data?.data?.items || [];
+      this.roomUsers = allUsers;
+      const {added, deleted} = this.getRoomUsersDifference(allUsers, this.roomUsers);
       if (added.length !== 0 || deleted.length !== 0) {
         this.roomUsers.push(...added);
         deleted?.forEach(d => {
@@ -126,12 +128,16 @@ export class SessionService extends ApiService {
           this.roomUsers.splice(index, 1);
         });
       }
+
+      // by default, roomUsers not include current user, so we push self user manually.
       if (this.roomUsers.findIndex(u => u.id == this.currentUser.id) < 0) {
         this.roomUsers.unshift(this.currentUser);
       }
       this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
       this.raisedHands = this.roomUsers.filter(u => u.raise_hand);
       this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
+      this.kickedUsers = this.roomUsers.filter(u => u.kicked);
+      this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.kickedUsers});
       this.setUpdateRoomUsersTimer();
     } catch (error) {
       console.error(error);
@@ -478,7 +484,7 @@ export class SessionService extends ApiService {
 
   private getSortedUsers() {
     this.updateViewService.setViewEvent({event: 'roomParticipants', data: this.roomUsers});
-    let sortedUsers = [...this.roomUsers];
+    let sortedUsers = [...this.roomUsers.filter(u => !u.kicked)];
     const meIndex = sortedUsers.findIndex(u => u.id == this.currentUser.id);
     const me = sortedUsers[meIndex];
     sortedUsers.splice(meIndex, 1);
@@ -532,19 +538,24 @@ export class SessionService extends ApiService {
           break;
 
         case 'kickUser':
-          const handRaiseIndex = this.raisedHands.findIndex(p => p.id == res.target);
-          const userIndex = this.roomUsers.findIndex(u => u.id == res.target);
-          if (handRaiseIndex > -1) {
-            this.raisedHands.splice(handRaiseIndex, 1);
-          }
-          if (userIndex > -1) {
-            this.roomUsers.splice(userIndex, 1);
-            // this.roomUsers[userIndex].kicked = true;
-          }
+          user = this.getRoomUserById(res.target);
           if (res.target == this.currentUser.id) {
             this.getMeOut(this.translationService.instant('room.yourKicked') as string);
+          } else {
+            const handRaiseIndex = this.raisedHands.findIndex(p => p.id == res.target);
+            const userIndex = this.roomUsers.findIndex(u => u.id == res.target);
+            if (handRaiseIndex > -1) {
+              this.raisedHands.splice(handRaiseIndex, 1);
+              this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
+            }
+            if (userIndex > -1) {
+              // this.roomUsers.splice(userIndex, 1);
+            }
+            this.roomUsers[userIndex].kicked = true;
+            this.kickedUsers.push(user);
+            this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
+            this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.kickedUsers});
           }
-          this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
           break;
 
         case 'userDisconnected':
@@ -576,7 +587,7 @@ export class SessionService extends ApiService {
           if (res.event == 'leaveRoom') {
             if (res.target == this.currentUser.id) {
               this.getMeOut();
-            } else if (res.target != this.currentUser.id && this.currentUser.role == 'Admin') {
+            } else if (res.target != this.currentUser.id && this.imTeacher) {
               this.openToast('room.userLeftTheRoom', 'warn', user.last_name);
             }
           }
@@ -772,6 +783,15 @@ export class SessionService extends ApiService {
 
         case 'deletePresentation':
           this.updateViewService.setViewEvent({event: 'deletePresentation', data: res});
+          break;
+
+        case 'restoreUser':
+          const idx = this.kickedUsers.findIndex(u => u.id == res.target);
+          if (idx > -1) {
+            this.kickedUsers.splice(idx, 1);
+          }
+          this.updateViewService.setViewEvent({event: 'restoreUser', data: res});
+          this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.kickedUsers});
           break;
       }
     });
@@ -1107,6 +1127,10 @@ export class SessionService extends ApiService {
       method: 'newSession',
       data: {room_id: this.currentRoom.id}
     });
+  }
+
+  restoreKickedUser(user_id: number) {
+    return this._post<any>('', {method: 'restoreKickedUser', data: {room_id: this.currentRoom.id, user_id}});
   }
 
   getRoomInfo(room_id: number) {

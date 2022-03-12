@@ -106,5 +106,6 @@ export enum SocketEventTypes {
   ClosePresentation = 'closePresentation',
   DeletePresentation = 'deletePresentation',
   RandomUser = 'randomUser',
+  RestoreUser = 'restoreUser',
 }
 

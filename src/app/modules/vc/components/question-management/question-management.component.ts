@@ -18,7 +18,7 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
     super();
   }
 
-  @Input('visible') set setVisible(v: number) {
+  @Input('visible') set setVisible(v: boolean) {
     if (!v) {
       this.resetForm();
 

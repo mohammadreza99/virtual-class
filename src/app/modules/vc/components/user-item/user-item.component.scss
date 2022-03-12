@@ -7,15 +7,15 @@
 
     .info {
       flex-grow: 1;
-      max-width: 60%;
+      //max-width: 60%;
 
       .name {
         flex-grow: 1;
 
         p {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+          //overflow: hidden;
+          //text-overflow: ellipsis;
+          //white-space: nowrap;
           margin: 0;
         }
 

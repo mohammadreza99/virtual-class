@@ -18,8 +18,9 @@ export class ParticipantsComponent extends LanguageChecker implements OnInit {
   allMutedVideo: boolean = false;
   searchText: string;
 
-  @Input() allUsers: RoomUser[];
+  @Input() roomUsers: RoomUser[];
   @Input() raisedHandsUsers: RoomUser[];
+  @Input() kickedUsers: RoomUser[];
   @Output() closeSidebar = new EventEmitter();
 
   ngOnInit(): void {

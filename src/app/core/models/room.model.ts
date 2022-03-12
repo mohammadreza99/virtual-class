@@ -16,6 +16,7 @@ export interface Room {
   public_messages?: boolean;
   active_question?: number;
   active_poll?: number;
+  presentation?: any;
 }
 
 export interface UserOrGroup {

@@ -10,10 +10,6 @@ export const routes: Routes = [
     component: NoInternetComponent,
   },
   {
-    path: '404',
-    component: NotFoundComponent,
-  },
-  {
     path: 'auth',
     loadChildren: (): Promise<Type<any>> =>
       import('./modules/auth/auth.module').then((m) => m.AuthModule),
@@ -31,6 +27,10 @@ export const routes: Routes = [
   {
     path: 'error',
     component: ErrorComponent,
+  },
+  {
+    path: '404',
+    component: NotFoundComponent,
   },
   {
     path: '',

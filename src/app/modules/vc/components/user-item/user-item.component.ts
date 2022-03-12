@@ -151,6 +151,13 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
     }, 150);
   }
 
+  async restoreKickedUser() {
+    const res = await this.sessionService.restoreKickedUser(this.user.id).toPromise();
+    if (res.status == 'OK') {
+      this.user.kicked = false;
+    }
+  }
+
   async changeAvatar() {
     try {
       this.dialogService.open(UploadAvatarComponent, {

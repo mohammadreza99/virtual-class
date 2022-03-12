@@ -80,7 +80,8 @@
           </div>
         </p-overlayPanel>
       </div>
-      <ng-button size="sm" *ngIf="!raiseHand && user.kicked" [label]="'room.restore' | translate"></ng-button>
+      <ng-button (click)="restoreKickedUser()" size="sm" *ngIf="!raiseHand && user.kicked"
+                 [label]="'room.restore' | translate"></ng-button>
     </ng-container>
   </ng-container>
 </div>

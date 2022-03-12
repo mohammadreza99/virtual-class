@@ -18,13 +18,10 @@ export class CanvasWhiteboardComponent implements OnInit {
   isSaveActive = false;
   formatType = FormatType;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  currentPresentationId: any;
+  presentationData: any;
   currentImageUrl: string;
-  currentPage: number = 1;
-  pages: { [x: number]: string };
   disableNextBtn: boolean;
   disablePrevBtn: boolean;
-  originalFileUrl: string;
 
   constructor(private whiteboardService: NgWhiteboardService,
               private sessionService: SessionService,
@@ -37,27 +34,22 @@ export class CanvasWhiteboardComponent implements OnInit {
     this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
       switch (res.event) {
         case 'changePresentationPage':
-          this.currentPage = res.data.page_number;
-          this.currentImageUrl = this.pages[this.currentPage];
+          this.presentationData.active_page = res.data.page_number;
+          this.currentImageUrl = this.presentationData.pages[res.data.page_number];
           this.handleButtonsState();
           break;
 
         case 'openPresentation':
           this.addClass('open-presentation');
-          this.currentPresentationId = res.data.presentation_id;
-          this.pages = res.data.pages;
-          this.currentPage = res.data.active_page;
-          this.originalFileUrl = res.data.file_url;
-          this.currentImageUrl = this.pages[this.currentPage];
+          this.presentationData = res.data;
+          this.currentImageUrl = this.presentationData.pages[res.data.active_page];
           this.handleButtonsState();
           break;
 
         case 'closePresentation':
           this.removeClass('open-presentation');
+          this.presentationData = null;
           this.currentImageUrl = null;
-          this.currentPresentationId = null;
-          this.currentPage = null;
-          this.pages = null;
           break;
 
         case 'deletePresentation':
@@ -134,13 +126,13 @@ export class CanvasWhiteboardComponent implements OnInit {
   }
 
   async nextPage() {
-    this.currentPage++;
-    await this.sessionService.changePresentationPage(this.currentPresentationId, this.currentPage).toPromise();
+    this.presentationData.active_page++;
+    await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.presentationData.active_page).toPromise();
   }
 
   async prevPage() {
-    this.currentPage--;
-    await this.sessionService.changePresentationPage(this.currentPresentationId, this.currentPage).toPromise();
+    this.presentationData.active_page--;
+    await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.presentationData.active_page).toPromise();
   }
 
   toggleFullScreen(element) {
@@ -153,22 +145,22 @@ export class CanvasWhiteboardComponent implements OnInit {
 
 
   handleButtonsState() {
-    const pages = Object.keys(this.pages).map(k => +k);
+    const pages = Object.keys(this.presentationData.pages).map(k => +k);
     const maxPage = Math.max(...pages);
     const minPage = Math.min(...pages);
-    this.disableNextBtn = maxPage == 1 || this.currentPage == maxPage;
-    this.disablePrevBtn = maxPage == 1 || this.currentPage == minPage;
+    this.disableNextBtn = maxPage == 1 || this.presentationData.active_page == maxPage;
+    this.disablePrevBtn = maxPage == 1 || this.presentationData.active_page == minPage;
   }
 
   closePresentation() {
-    this.sessionService.changePresentationState(this.currentPresentationId, 'Close').toPromise();
+    this.sessionService.changePresentationState(this.presentationData.presentation_id, 'Close').toPromise();
   }
 
   downloadFile() {
     const a = document.createElement('a');
-    a.href = this.originalFileUrl;
+    a.href = this.presentationData.file_url;
     a.target = '_blank';
-    a.download = this.originalFileUrl.split('/').pop();
+    a.download = this.presentationData.file_url.split('/').pop();
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
