@@ -7,15 +7,11 @@
 
     .info {
       flex-grow: 1;
-      //max-width: 60%;
 
       .name {
         flex-grow: 1;
 
         p {
-          //overflow: hidden;
-          //text-overflow: ellipsis;
-          //white-space: nowrap;
           margin: 0;
         }
 
@@ -38,6 +34,14 @@
       ng-button-async {
         button.p-button-primary {
           background-color: #5F6069;
+        }
+      }
+    }
+
+    ng-avatar {
+      &.is-talking {
+        .p-avatar {
+          border: 5px solid #fec144 !important;
         }
       }
     }

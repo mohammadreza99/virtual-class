@@ -1,6 +1,6 @@
 <div #actionsButton class="participant-item justify-content-between" [class.rtl]="fa">
   <div class="info" [class.kicked]="user.kicked">
-    <ng-avatar [user]="user"></ng-avatar>
+    <ng-avatar [class.is-talking]="isTalking" [user]="user"></ng-avatar>
     <div class="name mx-2">
       <p>{{user.first_name + ' ' + user.last_name}}</p>
       <small class="role" *ngIf="user.role == 'Admin'">{{('room.' + user.role.toLowerCase()) | translate}}</small>

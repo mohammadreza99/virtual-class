@@ -10,6 +10,7 @@ import {KickUserConfirmComponent} from '@modules/vc/components/kick-user-confirm
 import {UploadAvatarComponent} from '@shared/components/upload-avatar/upload-avatar.component';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import {GlobalConfig} from '@core/global.config';
 
 @Component({
   selector: 'ng-user-item',
@@ -33,6 +34,8 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
   activateRaiseHand: boolean = false;
   raiseHandConfirmed: boolean = false;
   currentUser: RoomUser;
+  isTalkingUpdateTimer: any;
+  isTalking: boolean = false;
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.currentUser;
@@ -48,6 +51,19 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
           if (res.data.target == this.user.id) {
             this.raiseHandConfirmed = res.data.value;
           }
+          break;
+
+        case 'isTalking':
+          if (res.data.target != this.user.id) {
+            return;
+          }
+          if (this.isTalkingUpdateTimer != null) {
+            return;
+          }
+          this.isTalking = res.data.value;
+          this.isTalkingUpdateTimer = setTimeout(() => {
+            this.isTalkingUpdateTimer = null;
+          }, GlobalConfig.isTalkingDisplayTime);
           break;
       }
     });

@@ -270,6 +270,9 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     try {
       this.micActivated = !this.micActivated;
       await this.sessionService.toggleMyAudio(this.micActivated);
+      if (!this.micActivated) {
+        this.updateViewService.setViewEvent({event: 'isTalking', data: {value: false}});
+      }
       callback();
     } catch (error) {
       console.error(error);
