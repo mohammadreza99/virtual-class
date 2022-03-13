@@ -90,7 +90,7 @@
 <!--</p-sidebar>-->
 
 <div class="sidebar" [class.visible]="membersSidebarVisible">
-  <ng-participants [roomUsers]="roomUsers"
+  <ng-participants [allUsers]="allUsers"
                    [kickedUsers]="kickedUsers"
                    [raisedHandsUsers]="raisedHandsUsers"
                    (closeSidebar)="closeSidebar('members')">
@@ -146,8 +146,8 @@
 <!--</p-sidebar>-->
 
 <p-overlayPanel [baseZIndex]="2000" #viewModes styleClass="actions {{fa ? 'rtl' : null}}">
-  <!--  <span *ngIf="currentPresentation" class="p-2 d-block">{{'room.disabledViewModeChange' | translate}}</span>-->
-  <ul class="list-unstyled p-0 m-0">
+  <span *ngIf="currentPresentation" class="p-2 d-block">{{'room.disabledViewModeChange' | translate}}</span>
+  <ul class="list-unstyled p-0 m-0" *ngIf="!currentPresentation">
     <li (click)="changeView('speaker',viewModes)" [class.active]="currentViewMode == 'speaker'">
       <i class="icon-view-speaker"></i>
       <span>{{'room.showSpeakerOnly' | translate}}</span>

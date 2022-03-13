@@ -52,8 +52,10 @@ export class AppComponent extends LanguageChecker implements OnInit {
       if (status == false) {
         console.log('......NETWORK DISCONNECTED......');
         this.sessionService.getMeOut(null, false);
-        const returnUrl = this.router.url == '/no-internet' ? null : this.router.url;
-        this.router.navigate(['/no-internet'], {queryParams: {returnUrl}});
+        if (this.router.url == '/no-internet') {
+          return;
+        }
+        this.router.navigate(['/no-internet'], {queryParams: {returnUrl: this.router.url}});
       }
     });
   }

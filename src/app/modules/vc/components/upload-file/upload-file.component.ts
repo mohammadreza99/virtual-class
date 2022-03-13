@@ -24,8 +24,8 @@ export class UploadFileComponent extends LanguageChecker implements OnInit, OnDe
   allowDownload: boolean = false;
   selectedFile: File;
   validFileTypes: string = '.pdf,.doc,.docx,.pptx,.jpg,.png,.jpeg,.xlsx';
-  minFileSize: number = 10240;
-  maxFileSize: number = 10485760;
+  minFileSize: number = 5120;
+  maxFileSize: number = 524288000;
   invalidSize: boolean;
   invalidType: boolean;
   uploadProgress: boolean;

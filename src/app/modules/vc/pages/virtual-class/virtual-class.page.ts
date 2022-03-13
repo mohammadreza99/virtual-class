@@ -70,12 +70,20 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   handleResize() {
     if (window.innerWidth <= 992) {
       this.closeAllSidebars();
+      if (this.currentPresentation) {
+        this.currentViewMode = 'speaker';
+        return;
+      }
       if (this.currentViewMode != 'thumbnail') {
         return;
       }
       this.currentViewMode = 'speaker';
     } else {
       this.openSidebar('members');
+      if (this.currentPresentation) {
+        this.currentViewMode = 'thumbnail';
+        return;
+      }
     }
   }
 
@@ -103,7 +111,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           break;
 
         case 'roomParticipants':
-          this.allUsers = res.data;
+          this.allUsers = res.data.filter(u => !u.kicked);
           break;
 
         case 'roomUsers':
@@ -208,7 +216,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           break;
 
         case 'openPresentation':
-          this.currentViewMode = 'speaker';
+
           this.currentPresentation = res.data.presentation_id;
           break;
 

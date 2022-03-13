@@ -22,6 +22,7 @@ export class CanvasWhiteboardComponent implements OnInit {
   currentImageUrl: string;
   disableNextBtn: boolean;
   disablePrevBtn: boolean;
+  fullscreenEnabled: boolean = false;
 
   constructor(private whiteboardService: NgWhiteboardService,
               private sessionService: SessionService,
@@ -135,12 +136,34 @@ export class CanvasWhiteboardComponent implements OnInit {
     await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.presentationData.active_page).toPromise();
   }
 
-  toggleFullScreen(element) {
-    const requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
-
-    if (requestMethod) {
-      requestMethod.call(element);
+  openFullscreen(elem) {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
     }
+  }
+
+  closeFullscreen() {
+    const doc = document as any;
+    if (doc.exitFullscreen) {
+      doc.exitFullscreen();
+    } else if (doc.webkitExitFullscreen) {
+      doc.webkitExitFullscreen();
+    } else if (doc.msExitFullscreen) {
+      doc.msExitFullscreen();
+    }
+  }
+
+  toggleFullScreen(element) {
+    if (this.fullscreenEnabled) {
+      this.closeFullscreen();
+    } else {
+      this.openFullscreen(element);
+    }
+    this.fullscreenEnabled = !this.fullscreenEnabled;
   }
 
 
@@ -165,4 +188,5 @@ export class CanvasWhiteboardComponent implements OnInit {
     a.click();
     document.body.removeChild(a);
   }
+
 }

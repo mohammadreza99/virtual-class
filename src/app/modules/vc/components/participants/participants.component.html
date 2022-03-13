@@ -2,7 +2,7 @@
   <div class="participants-header py-4">
     <div class="header-title">
       <i class="icon-participant mx-2"></i>
-      <div>{{'room.participantsCount' | translate:{value: roomUsers.length} }}</div>
+      <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>
     </div>
     <div class="actions">
       <i class="icon-close mx-2" (click)="closeSidebar.emit()"></i>
@@ -39,9 +39,9 @@
   <p-accordion [class.rtl]="fa" [multiple]="true">
     <p-accordionTab [header]="'room.participants' | translate" [selected]="true">
       <ng-user-item [user]="user"
-                    *ngFor="let user of (roomUsers | ngFilter:'first_name,last_name':searchText);trackBy:trackByFn">
+                    *ngFor="let user of (allUsers | ngFilter:'first_name,last_name':searchText);trackBy:trackByFn">
       </ng-user-item>
-      <ng-empty *ngIf="(roomUsers | ngFilter:'first_name,last_name':searchText).length == 0"
+      <ng-empty *ngIf="(allUsers | ngFilter:'first_name,last_name':searchText).length == 0"
                 [message]="'nothingFound' | translate"></ng-empty>
     </p-accordionTab>
     <p-accordionTab [selected]="true">
@@ -56,7 +56,7 @@
       </ng-user-item>
       <ng-empty *ngIf="raisedHandsUsers.length == 0" [message]="'nothingFound' | translate"></ng-empty>
     </p-accordionTab>
-    <p-accordionTab [header]="'room.kickedUsers' | translate" [selected]="true">
+    <p-accordionTab *ngPermission="'Admin'" [header]="'room.kickedUsers' | translate" [selected]="true">
       <ng-user-item [user]="user"
                     *ngFor="let user of kickedUsers;trackBy:trackByFn">
       </ng-user-item>

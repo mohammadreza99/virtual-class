@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {UtilsService} from '@ng/services';
 
 @Component({
   selector: 'ng-no-internet',
@@ -9,12 +10,13 @@ import {ActivatedRoute, Router} from '@angular/router';
 export class NoInternetComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
+              private utilsService: UtilsService,
               private router: Router) {
   }
 
 
   ngOnInit(): void {
-    // this.utilsService.disableWindowBackButton();
+    this.utilsService.disableWindowBackButton();
   }
 
   navigate() {

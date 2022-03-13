@@ -38,7 +38,7 @@ export class LanguageChecker {
     return this.translationService.translations;
   }
 
-  instant(key: string) {
-    return this.translationService.instant(key) as any;
+  instant(key: string, params?: any) {
+    return this.translationService.instant(key, params) as any;
   }
 }

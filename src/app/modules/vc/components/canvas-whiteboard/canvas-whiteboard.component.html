@@ -1,7 +1,7 @@
-<div class="white-board" *ngIf="presentationData">
+<div class="white-board" *ngIf="presentationData" #presentation>
   <div class="top-actions bg-white w-100 d-flex align-items-center justify-content-between p-1 border-bottom">
     <ng-button class="btn-fullscreen" appearance="outlined" icon="icon-fullscreen"
-               (click)="toggleFullScreen(imageElement)"></ng-button>
+               (click)="toggleFullScreen(presentation)"></ng-button>
     <ng-container *ngIf="presentationData.is_downloadable">
       <ng-button *ngPermission="'Viewer'" class="btn-close" icon="icon-download"
                  color="secondary"
@@ -11,7 +11,7 @@
                color="secondary"
                (click)="closePresentation()"></ng-button>
   </div>
-  <img #imageElement class="border shadow flex-grow-1" [src]="currentImageUrl" alt="presentation">
+  <img class="border shadow flex-grow-1" [src]="currentImageUrl" alt="presentation">
   <div class="bottom-actions bg-white w-100 d-flex align-items-center justify-content-center p-1 border-top"
        *ngPermission="'Admin'">
     <ng-button (onClick)="nextPage()" [disabled]="disableNextBtn" class="mx-2" icon="pi pi-chevron-right"></ng-button>

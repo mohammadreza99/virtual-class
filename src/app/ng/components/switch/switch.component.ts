@@ -101,13 +101,16 @@ export class SwitchComponent implements OnInit, ControlValueAccessor {
   _onChange(event) {
     let parentForm: FormGroup;
     let currentControl: AbstractControl;
-    if (this.controlContainer && this.ngControl) {
+    currentControl = this.ngControl.control;
+    if (this.controlContainer) {
       parentForm = this.controlContainer.control;
       if (this.ngControl instanceof NgModel) {
         currentControl = this.ngControl.control;
       } else if (this.ngControl instanceof FormControlName) {
         currentControl = parentForm.get(this.ngControl.name.toString());
       }
+    }
+    if (this.ngControl) {
       if (this.isRequired(currentControl)) {
         this.onModelChange(event.checked ? true : null);
       } else {

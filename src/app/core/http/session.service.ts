@@ -552,7 +552,9 @@ export class SessionService extends ApiService {
               // this.roomUsers.splice(userIndex, 1);
             }
             this.roomUsers[userIndex].kicked = true;
-            this.kickedUsers.push(user);
+            if (this.kickedUsers.findIndex(u => u.id == user.id) < 0) {
+              this.kickedUsers.push(user);
+            }
             this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
             this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.kickedUsers});
           }

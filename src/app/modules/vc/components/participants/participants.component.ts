@@ -18,7 +18,7 @@ export class ParticipantsComponent extends LanguageChecker implements OnInit {
   allMutedVideo: boolean = false;
   searchText: string;
 
-  @Input() roomUsers: RoomUser[];
+  @Input() allUsers: RoomUser[];
   @Input() raisedHandsUsers: RoomUser[];
   @Input() kickedUsers: RoomUser[];
   @Output() closeSidebar = new EventEmitter();

@@ -44,6 +44,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
   speakerTestAudioElem = new Audio();
   checkEnterRoomStatusInterval: any;
   disableEnterButton: boolean = false;
+  userKicked: boolean = false;
 
   ngOnInit(): void {
     this.loadData();
@@ -221,6 +222,24 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
     };
   }
 
+  async getEnterRoomStatus() {
+    if (!this.room) {
+      return;
+    }
+    if (this.user.role == 'Admin') {
+      return;
+    }
+    try {
+      const result = await this.sessionService.userEnterStatus(this.room.id).toPromise();
+      if (result.status != 'OK') {
+        return;
+      }
+      return result.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async checkEnterRoomStatus() {
     const checkEnterRoomStatus = await this.getEnterRoomStatus();
     if (checkEnterRoomStatus) {
@@ -229,6 +248,27 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
           this.roomStatusMessage = [{severity: 'warn', detail: this.instant('room.roomIsNotStarted')}];
           this.disableEnterButton = true;
           break;
+
+        case 'Enter':
+          if (this.userKicked) {
+            this.utilsService.showToast({
+              severity: 'warn',
+              detail: this.instant('room.youGetOutOfKickedMode'),
+              sticky: true
+            });
+          }
+          this.userKicked = false;
+          this.roomStatusMessage = [{severity: 'warn', detail: this.instant('room.roomIsInHold')}];
+          this.disableEnterButton = false;
+          break;
+
+        case 'TemporaryKicked':
+        case 'Kicked':
+          this.userKicked = true;
+          this.roomStatusMessage = [{severity: 'warn', detail: this.instant('room.roomIsInHold')}];
+          this.disableEnterButton = false;
+          break;
+
         default:
           this.roomStatusMessage = [{severity: 'warn', detail: this.instant('room.roomIsInHold')}];
           this.disableEnterButton = false;
@@ -241,23 +281,6 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
     }, 10000);
   }
 
-  async getEnterRoomStatus() {
-    if (!this.room) {
-      return;
-    }
-    if (this.user.role == 'Admin') {
-      return;
-    }
-    const result = await this.sessionService.userEnterStatus(this.room.id).toPromise();
-    if (result.status != 'OK') {
-      return;
-    }
-    return result.data;
-  }
-
-  sinkIsNotSupported() {
-    return !('sinkId' in HTMLMediaElement.prototype);
-  }
 
   async enterRoom(callback: () => any) {
     const result = await this.getEnterRoomStatus();
@@ -269,7 +292,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
           return;
         case 'TemporaryKicked':
           const kickTime = Math.round(+result.kick_time / 60);
-          const message = this.translationService.instant('room.yourTemporaryKicked', {value: kickTime}) as string;
+          const message = this.instant('room.yourTemporaryKicked', {value: kickTime}) as string;
           this.utilsService.showDialog({message});
           return;
         case 'RoomNotStarted':
@@ -280,7 +303,12 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
     this.stopAudio();
     localStorage.setItem('roomEnterTime', Date.now().toString());
     this.clearCheckEnterRoomStatusInterval();
+    this.utilsService.clear();
     this.router.navigate(['/vc', this.room.id]);
+  }
+
+  sinkIsNotSupported() {
+    return !('sinkId' in HTMLMediaElement.prototype);
   }
 
   goBack() {
