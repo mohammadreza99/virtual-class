@@ -627,14 +627,11 @@ export class SessionService extends ApiService {
           user = this.getRoomUserById(res.target);
           user.muted = res.value;
           if (this.currentUser.id == res.target) {
-            if (res.value && !this.currentUser.muted) {
+            if (res.value) {
               this.openToast('room.yourVoiceAccessIsClosed', 'warn');
-            }
-            if (!res.value && this.currentUser.muted) {
-              this.openToast('room.yourVoiceAccessIsOpened', 'warn');
-            }
-            if (res.value == true) {
               this.toggleMyAudio(false);
+            } else {
+              this.openToast('room.yourVoiceAccessIsOpened', 'warn');
             }
             this.updateViewService.setViewEvent({event: 'mutePerson', data: res});
           }
@@ -644,14 +641,11 @@ export class SessionService extends ApiService {
           user = this.getRoomUserById(res.target);
           user.muted_video = res.value;
           if (this.currentUser.id == res.target) {
-            if (res.value && !this.currentUser.muted_video) {
+            if (res.value) {
               this.openToast('room.yourVideoAccessIsClosed', 'warn');
-            }
-            if (!res.value && this.currentUser.muted_video) {
-              this.openToast('room.yourVideoAccessIsOpened', 'warn');
-            }
-            if (res.value == true) {
               this.toggleMyVideo(false);
+            } else {
+              this.openToast('room.yourVideoAccessIsOpened', 'warn');
             }
             this.updateViewService.setViewEvent({event: 'muteVideo', data: res});
           }
@@ -664,16 +658,13 @@ export class SessionService extends ApiService {
             }
           });
           if (this.imStudent) {
-            if (res.value && !this.currentUser.muted) {
+            if (res.value) {
               this.openToast('room.yourVoiceAccessIsClosed', 'warn');
-            }
-            if (!res.value && this.currentUser.muted) {
+              this.toggleMyAudio(false);
+            } else {
               this.openToast('room.yourVoiceAccessIsOpened', 'warn');
             }
             this.updateViewService.setViewEvent({event: 'muteAll', data: res});
-            if (res.value == true) {
-              this.toggleMyAudio(false);
-            }
           }
           break;
 
@@ -684,16 +675,13 @@ export class SessionService extends ApiService {
             }
           });
           if (this.imStudent) {
-            if (res.value && !this.currentUser.muted_video) {
+            if (res.value) {
               this.openToast('room.yourVideoAccessIsClosed', 'warn');
-            }
-            if (!res.value && this.currentUser.muted_video) {
+              this.toggleMyVideo(false);
+            } else {
               this.openToast('room.yourVideoAccessIsOpened', 'warn');
             }
             this.updateViewService.setViewEvent({event: 'muteVideoAll', data: res});
-            if (res.value == true) {
-              this.toggleMyVideo(false);
-            }
           }
           break;
 
