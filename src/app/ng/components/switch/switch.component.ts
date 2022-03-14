@@ -101,7 +101,6 @@ export class SwitchComponent implements OnInit, ControlValueAccessor {
   _onChange(event) {
     let parentForm: FormGroup;
     let currentControl: AbstractControl;
-    currentControl = this.ngControl.control;
     if (this.controlContainer) {
       parentForm = this.controlContainer.control;
       if (this.ngControl instanceof NgModel) {
@@ -111,6 +110,7 @@ export class SwitchComponent implements OnInit, ControlValueAccessor {
       }
     }
     if (this.ngControl) {
+      currentControl = this.ngControl.control;
       if (this.isRequired(currentControl)) {
         this.onModelChange(event.checked ? true : null);
       } else {
