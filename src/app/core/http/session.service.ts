@@ -614,6 +614,9 @@ export class SessionService extends ApiService {
             if (!res.value) {
               // the teacher reject student raise hand
               this.raisedHands.splice(this.raisedHands.findIndex(u => u.id == user.id), 1);
+              if (this.imStudent && res.target == this.currentUser.id) {
+                this.openToast('room.teacherRejectYourRaiseHand', 'warn', user.last_name);
+              }
             }
             this.updateViewService.setViewEvent({event: 'teacherConfirmRaisedHand', data: res});
           }
