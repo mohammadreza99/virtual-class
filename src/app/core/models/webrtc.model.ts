@@ -107,5 +107,6 @@ export enum SocketEventTypes {
   DeletePresentation = 'deletePresentation',
   RandomUser = 'randomUser',
   RestoreUser = 'restoreUser',
+  NewMedia = 'newMedia',
 }
 

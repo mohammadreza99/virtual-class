@@ -786,6 +786,10 @@ export class SessionService extends ApiService {
           this.updateViewService.setViewEvent({event: 'restoreUser', data: res});
           this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.kickedUsers});
           break;
+
+        case 'newMedia':
+          this.updateViewService.setViewEvent({event: 'newMedia', data: res});
+          break;
       }
     });
   }
