@@ -921,7 +921,9 @@ export class SessionService extends ApiService {
       clearInterval(this.updateRoomUsersTimer);
     }
     this.socketService.clearPingTimer();
-    this.socketService.close();
+    // TODO : I replace (this.socketService.close()) with (this.socketService.stop())
+    // this.socketService.close();
+    this.socketService.stop();
     if (this.socketSubscription) {
       this.socketSubscription.unsubscribe();
     }
