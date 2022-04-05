@@ -1,14 +1,38 @@
 import {PeerConnectionOptions, TrackPosition} from '../models/webrtc.model';
+import {Global} from '@ng/global';
+import {UpdateViewService} from '@core/http/update-view.service';
+import {Subscription} from 'rxjs';
 
 export class PeerConnection {
 
   private pc: RTCPeerConnection;
+  private subscription: Subscription;
 
   constructor(private options: PeerConnectionOptions) {
+    // const updateViewService = Global.Injector.get(UpdateViewService);
     if (!this.options) {
       throw Error('Invalid Options');
     }
     this.pc = new RTCPeerConnection();
+    // this.subscription = updateViewService.getViewEvent().subscribe(async res => {
+    //   switch (res.event) {
+    //     case 'newMedia':
+    //       if (res.data.target != this.options.userId) {
+    //         return;
+    //       }
+    //       if (this.options.onTrack) {
+    //         this.options.onTrack();
+    //       }
+    //       if (res.data.p_type == 'answer') {
+    //         await this.pc.setRemoteDescription({type: 'answer', sdp: res.data.sdp});
+    //         await this.options.publishConfirm();
+    //       }
+    //
+    //       if (res.data.p_type == 'offer') {
+    //       }
+    //       break;
+    //   }
+    // });
     this.pc.onconnectionstatechange = (e: Event) => {
       this.handleConnectionStateChange(e);
     };
@@ -88,6 +112,7 @@ export class PeerConnection {
 
   close() {
     this.pc.close();
+    this.subscription.unsubscribe();
   }
 
   get position() {
