@@ -227,7 +227,27 @@ export class UtilsService {
     return this.filterService.filters.before(value, filter);
   }
 
-  checkConnection(): Observable<boolean> {
+  checkConnectionState(callback: any) {
+    const imageUrl = 'https://via.placeholder.com/2000x2000';
+    const downloadSize = 4995374;
+    let startTime;
+    let endTime;
+    const download = new Image();
+    download.onload = () => {
+      endTime = (new Date()).getTime();
+      const duration = (endTime - startTime) / 1000;
+      const bitsLoaded = downloadSize * 8;
+      const speedBps = +(bitsLoaded / duration).toFixed(2);
+      const speedKbps = +(speedBps / 1024).toFixed(2);
+      const speedMbps = +(speedKbps / 1024).toFixed(2);
+      callback(speedMbps);
+    };
+    startTime = (new Date()).getTime();
+    const cacheBuster = '?nnn=' + startTime;
+    download.src = imageUrl + cacheBuster;
+  }
+
+  checkOnlineState(): Observable<boolean> {
     return merge<boolean>(
       fromEvent(window, 'offline').pipe(map(() => false)),
       fromEvent(window, 'online').pipe(map(() => true)),

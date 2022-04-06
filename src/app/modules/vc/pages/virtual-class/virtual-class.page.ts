@@ -5,7 +5,7 @@ import {OverlayPanel} from 'primeng/overlaypanel';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {UtilsService} from '@ng/services';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Subject} from 'rxjs';
+import {interval, Subject} from 'rxjs';
 import {LocationStrategy} from '@angular/common';
 import {UpdateViewService} from '@core/http/update-view.service';
 import {DialogService} from 'primeng/dynamicdialog';
@@ -16,6 +16,7 @@ import {QuestionResultComponent} from '@modules/vc/components/question-result/qu
 import {UploadFileComponent} from '@modules/vc/components/upload-file/upload-file.component';
 import {takeUntil} from 'rxjs/operators';
 import {SelectRandomUserComponent} from '@modules/vc/components/select-random-user/select-random-user.component';
+import {GlobalConfig} from '@core/global.config';
 
 @Component({
   selector: 'ng-virtual-class',
@@ -97,6 +98,17 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     this.initUserData();
     this.sessionService.initRoom();
     this.calculateSessionDuration();
+    interval(GlobalConfig.checkConnectionSpeedDelay).pipe(takeUntil(this.destroy$)).subscribe(res => {
+      this.utilsService.checkConnectionState((speed) => {
+        if (speed < 60) {
+          this.utilsService.showToast({
+            detail: 'room.networkIssueDetected',
+            severity: 'warn'
+          });
+          this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+        }
+      });
+    });
     this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe(async res => {
       switch (res.event) {
         case 'raisedHandsChange':

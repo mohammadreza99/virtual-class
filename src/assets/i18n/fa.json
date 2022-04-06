@@ -126,7 +126,8 @@
     "noInternet": "لطفا اتصال اینترنت خود را بررسی و دوباره تلاش کنید",
     "disabledViewModeChange": "دراین حالت امکان تغییر وجود ندارد",
     "deletePresentationConfirm": "تاییدیه حذف ارائه",
-    "deletePresentationConfirmBody": "آیا از حذف ارائه مطمئن هستید؟"
+    "deletePresentationConfirmBody": "آیا از حذف ارائه مطمئن هستید؟",
+    "networkIssueDetected": "اختلال در شبکه رخ داده است. لطفا مجدد وارد شوید"
   },
   "home": "خانه",
   "forgetPassword": "فراموشی رمزعبور",
