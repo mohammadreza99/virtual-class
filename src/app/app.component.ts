@@ -48,6 +48,15 @@ export class AppComponent extends LanguageChecker implements OnInit {
   }
 
   checkNetworkStatus() {
+    const conn = (navigator as any).connection;
+    if (conn) {
+      if (conn.saveData) {
+        // do something
+      }
+      const connectionlist = ['slow-2g', '2g', '3g', '4g'];
+      const effectiveType = conn.effectiveType;
+      console.log(effectiveType);
+    }
     this.utilsService.checkConnection().subscribe(status => {
       if (status == false) {
         console.log('......NETWORK DISCONNECTED......');
