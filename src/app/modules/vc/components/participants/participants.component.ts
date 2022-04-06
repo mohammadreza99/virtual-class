@@ -17,6 +17,7 @@ export class ParticipantsComponent extends LanguageChecker implements OnInit {
   allMuted: boolean = false;
   allMutedVideo: boolean = false;
   searchText: string;
+  loading: boolean = false;
 
   @Input() allUsers: RoomUser[];
   @Input() raisedHandsUsers: RoomUser[];
@@ -28,20 +29,28 @@ export class ParticipantsComponent extends LanguageChecker implements OnInit {
 
   async toggleMuteAll(event) {
     try {
+      this.loading = true;
       await this.sessionService.muteAll(!event.checked).toPromise();
       this.allMuted = !event.checked;
+      this.loading = false;
     } catch (error) {
       console.error(error);
+      this.loading = false;
+      this.allMuted = false;
       throw error;
     }
   }
 
   async toggleMuteVideoAll(event) {
     try {
+      this.loading = true;
       await this.sessionService.muteVideoAll(!event.checked).toPromise();
       this.allMutedVideo = !event.checked;
+      this.loading = false;
     } catch (error) {
       console.error(error);
+      this.loading = false;
+      this.allMutedVideo = false;
       throw error;
     }
   }

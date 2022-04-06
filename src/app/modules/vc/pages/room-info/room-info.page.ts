@@ -43,7 +43,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
   showTestArea: boolean = false;
   speakerTestAudioElem = new Audio();
   checkEnterRoomStatusInterval: any;
-  disableEnterButton: boolean = false;
+  disableEnterButton: boolean = true;
   userKicked: boolean = false;
 
   ngOnInit(): void {
@@ -59,6 +59,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
       if (result.status == 'OK') {
         this.room = result.data.room;
         this.user = result.data.member;
+        this.disableEnterButton = false;
       }
       const token = this.route.snapshot.queryParamMap.get('t');
       if (token) {

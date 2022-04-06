@@ -95,22 +95,30 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
     }
   }
 
-  async confirmRaiseHand() {
+  async confirmRaiseHand(callback: any) {
     try {
       await this.sessionService.acceptRaiseHand(this.user.id).toPromise();
       await this.sessionService.muteUser(this.user.id, false).toPromise();
       this.raiseHandConfirmed = true;
+      callback();
     } catch (error) {
       console.error(error);
+      callback();
     }
   }
 
-  async rejectRaiseHand(mute: boolean) {
-    await this.sessionService.rejectRaiseHand(this.user.id).toPromise();
-    if (mute) {
-      await this.sessionService.muteUser(this.user.id, true).toPromise();
+  async rejectRaiseHand(callback: any, mute: boolean) {
+    try {
+      await this.sessionService.rejectRaiseHand(this.user.id).toPromise();
+      if (mute) {
+        await this.sessionService.muteUser(this.user.id, true).toPromise();
+      }
+      this.raiseHandConfirmed = false;
+      callback();
+    } catch (error) {
+      console.error(error);
+      callback();
     }
-    this.raiseHandConfirmed = false;
   }
 
   async kickUser(actionsOverlay: OverlayPanel) {

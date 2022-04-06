@@ -13,13 +13,13 @@
     <ng-container *ngPermission="'Admin'">
       <div class="raise-hand text-center" *ngIf="raiseHand">
         <ng-container *ngIf="!raiseHandConfirmed">
-          <ng-button icon="icon-check" class="ml-1" (click)="confirmRaiseHand()"></ng-button>
-          <ng-button icon="icon-close" (click)="rejectRaiseHand(false)"></ng-button>
+          <ng-button-async icon="icon-check" class="ml-1" (clickAsync)="confirmRaiseHand($event)"></ng-button-async>
+          <ng-button-async icon="icon-close" (clickAsync)="rejectRaiseHand($event,false)"></ng-button-async>
         </ng-container>
-        <ng-button class="ml-1" color="danger" (click)="rejectRaiseHand(true)"
-                   [label]="'room.endAccess' | translate"
-                   *ngIf="raiseHandConfirmed">
-        </ng-button>
+        <ng-button-async class="ml-1" color="danger" (clickAsync)="rejectRaiseHand($event,true)"
+                         [label]="'room.endAccess' | translate"
+                         *ngIf="raiseHandConfirmed">
+        </ng-button-async>
         <ng-button icon="icon-close" *ngIf="raiseHandConfirmed" class="ml-1"
                    (click)="rejectRaiseHand(false)"></ng-button>
       </div>
@@ -81,7 +81,7 @@
         </p-overlayPanel>
       </div>
       <ng-button-async (clickAsync)="restoreKickedUser($event)" size="sm" *ngIf="!raiseHand && user.kicked"
-                 [label]="'room.restore' | translate"></ng-button-async>
+                       [label]="'room.restore' | translate"></ng-button-async>
     </ng-container>
   </ng-container>
 </div>

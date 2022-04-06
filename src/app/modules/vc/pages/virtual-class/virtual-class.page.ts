@@ -98,17 +98,6 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     this.initUserData();
     this.sessionService.initRoom();
     this.calculateSessionDuration();
-    interval(GlobalConfig.checkConnectionSpeedDelay).pipe(takeUntil(this.destroy$)).subscribe(res => {
-      this.utilsService.checkConnectionState((speed) => {
-        if (speed < 60) {
-          this.utilsService.showToast({
-            detail: 'room.networkIssueDetected',
-            severity: 'warn'
-          });
-          this.router.navigate(['/vc/room-info', this.currentRoom.id]);
-        }
-      });
-    });
     this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe(async res => {
       switch (res.event) {
         case 'raisedHandsChange':
@@ -281,10 +270,10 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   async toggleMic(callback: (toggleState?: boolean) => any) {
     try {
       this.micActivated = !this.micActivated;
-      await this.sessionService.toggleMyAudio(this.micActivated);
       if (!this.micActivated) {
         this.updateViewService.setViewEvent({event: 'isTalking', data: {value: false}});
       }
+      await this.sessionService.toggleMyAudio(this.micActivated);
       callback();
     } catch (error) {
       console.error(error);
@@ -320,22 +309,27 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   async leaveRoom() {
     const isTeacher = this.sessionService.imTeacher;
     let dialogRes;
+    let res;
     if (isTeacher) {
       dialogRes = await this.openTeacherLeaveRoomDialog();
       if (dialogRes === null) {
         return;
       }
       if (dialogRes) {
-        await this.sessionService.leaveRoom().toPromise();
+        res = await this.sessionService.leaveRoom().toPromise();
       } else {
-        await this.sessionService.closeRoom().toPromise();
+        res = await this.sessionService.closeRoom().toPromise();
       }
-      this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+      if (res.status == 'OK') {
+        this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+      }
     } else {
       dialogRes = await this.openStudentLeaveRoomDialog();
       if (dialogRes) {
-        await this.sessionService.leaveRoom().toPromise();
-        this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+        const res = await this.sessionService.leaveRoom().toPromise();
+        if (res.status == 'OK') {
+          this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+        }
       }
     }
   }
