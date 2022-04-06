@@ -6,7 +6,7 @@ import {Subscription} from 'rxjs';
 export class PeerConnection {
 
   private pc: RTCPeerConnection;
-  private subscription: Subscription;
+  // private subscription: Subscription;
 
   constructor(private options: PeerConnectionOptions) {
     // const updateViewService = Global.Injector.get(UpdateViewService);
@@ -112,7 +112,6 @@ export class PeerConnection {
 
   close() {
     this.pc.close();
-    this.subscription.unsubscribe();
   }
 
   get position() {
