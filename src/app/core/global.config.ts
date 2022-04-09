@@ -7,5 +7,6 @@ export const GlobalConfig = {
   socketConnectRetryDelay: 20000,
   socketConnectOnErrorRetryDelay: 5000,
   socketConnectRetryCount: 2,
-  checkConnectionSpeedDelay: 30000
+  checkConnectionSpeedDelay: 30000,
+  isTalkingThreshold: 20,
 };
