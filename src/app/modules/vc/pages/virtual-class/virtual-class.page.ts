@@ -93,11 +93,28 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   async loadData() {
+    let poorConnectionRetryCount = GlobalConfig.poorConnectionRetryCount;
     this.handleResize();
     this.utilsService.disableWindowBackButton();
     this.initUserData();
     this.sessionService.initRoom();
     this.calculateSessionDuration();
+    interval(GlobalConfig.checkConnectionSpeedDelay).pipe(takeUntil(this.destroy$)).subscribe(res => {
+      this.utilsService.checkConnectionState((speed) => {
+        if (speed < GlobalConfig.poorConnectionThreshold) {
+          console.log('poor connection detected');
+          poorConnectionRetryCount--;
+          if (poorConnectionRetryCount == 0) {
+            this.utilsService.showToast({
+              detail: this.instant('room.networkIssueDetected'),
+              severity: 'warn'
+            });
+            this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+          }
+        }
+      });
+    });
+
     this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe(async res => {
       switch (res.event) {
         case 'raisedHandsChange':

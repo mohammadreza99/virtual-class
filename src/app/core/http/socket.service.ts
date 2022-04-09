@@ -5,6 +5,8 @@ import {Subject, Subscription} from 'rxjs';
 import {DeviceType, SocketEventTypes} from '@core/models';
 import {GlobalConfig} from '@core/global.config';
 import {Router} from '@angular/router';
+import {UtilsService} from '@ng/services';
+import {TranslationService} from '@core/utils';
 
 @Injectable({providedIn: 'root'})
 export class SocketService extends ApiService {
@@ -18,7 +20,8 @@ export class SocketService extends ApiService {
   private connected = false;
   private retryCount: number = GlobalConfig.socketConnectRetryCount;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private utilsService: UtilsService,
+              private translationService: TranslationService) {
     super();
   }
 
@@ -60,6 +63,9 @@ export class SocketService extends ApiService {
       async (res) => {
         this.socketChannel.next({event: res.method, ...res.data});
         if (res.method == 'FAILURE') {
+          this.redirectUser();
+          return;
+
           this.connected = false;
           if (this.retryCount > 0) {
             await this.sendConnect();
@@ -79,6 +85,9 @@ export class SocketService extends ApiService {
         this.pingWithDelay();
       },
       (err) => {
+        this.redirectUser();
+        return;
+
         if (this.webSocket) {
           this.handleSocketFailure();
         }
@@ -173,5 +182,16 @@ export class SocketService extends ApiService {
       return 'Mobile';
     }
     return 'Desktop';
+  }
+
+  redirectUser() {
+    console.log('poor connection detected in socket');
+    this.utilsService.showToast({
+      detail: this.translationService.instant('room.networkIssueDetected') as string,
+      severity: 'warn'
+    });
+    this.stop();
+    this.connected = false;
+    this.router.navigate(['/vc/room-info', this.roomId]);
   }
 }

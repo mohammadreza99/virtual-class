@@ -240,7 +240,7 @@ export class SessionService extends ApiService {
         if (this.talkingTimer != null) {
           return;
         }
-        if (value > 20) {
+        if (value > GlobalConfig.isTalkingThreshold) {
           this.isTalking(true).toPromise();
         } else {
           this.isTalking(false).toPromise();
