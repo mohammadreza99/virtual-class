@@ -59,7 +59,6 @@
                        [defaultState]="raiseHandActivated ? 2 : 1" icon="icon-hand-raise">
       </ng-button-async>
       <ng-container *ngIf="!currentPresentation">
-        {{screenActivated}}
         <ng-button-async class="d-none d-xl-inline" *ngPermission="'Admin'" icon="icon-share-screen"
                          [defaultState]="screenActivated ? 2 : 1"
                          (clickAsync)="toggleScreen($event)"
