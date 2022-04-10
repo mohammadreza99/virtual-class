@@ -9,6 +9,8 @@ import {
 import {Observable} from 'rxjs';
 import {Subscriber} from 'rxjs';
 import {LoaderService} from '@core/utils';
+import {logger} from 'codelyzer/util/logger';
+import {requests} from '@core/requests.config';
 
 @Injectable()
 export class LoaderInterceptor implements HttpInterceptor {
@@ -30,14 +32,13 @@ export class LoaderInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if (
-      req.params.get('loading') != null &&
-      Boolean(req.params.get('loading')) === false
-    ) {
-      this.loaderService.isLoading.next(false);
-    } else {
+    const hasLoadingFalseParam = req.params.get('loading')?.toLocaleLowerCase() == 'false';
+    const shouldShowLoading = requests.filter(r => r.loading).findIndex(x => x.method == req.body?.method) > -1;
+    if (shouldShowLoading) {
       this.requests.push(req);
       this.loaderService.isLoading.next(true);
+    } else {
+      this.loaderService.isLoading.next(false);
     }
 
     return new Observable(

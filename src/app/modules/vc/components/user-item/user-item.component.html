@@ -1,6 +1,6 @@
 <div #actionsButton class="participant-item justify-content-between" [class.rtl]="fa">
   <div class="info" [class.kicked]="user.kicked">
-    <ng-avatar [class.is-talking]="isTalking" [user]="user"></ng-avatar>
+    <ng-avatar [class.is-talking]="isTalking" [loading]="loading" [user]="user"></ng-avatar>
     <div class="name mx-2">
       <p>{{user.first_name + ' ' + user.last_name}}</p>
       <small class="role" *ngIf="user.role == 'Admin'">{{('room.' + user.role.toLowerCase()) | translate}}</small>
@@ -21,7 +21,7 @@
                          *ngIf="raiseHandConfirmed">
         </ng-button-async>
         <ng-button icon="icon-close" *ngIf="raiseHandConfirmed" class="ml-1"
-                   (click)="rejectRaiseHand(false)"></ng-button>
+                   (click)="rejectRaiseHand($event,false)"></ng-button>
       </div>
       <div class="actions" *ngIf="!raiseHand && !user.kicked">
         <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm"

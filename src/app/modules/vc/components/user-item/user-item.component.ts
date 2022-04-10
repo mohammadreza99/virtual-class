@@ -36,6 +36,7 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
   currentUser: RoomUser;
   isTalkingUpdateTimer: any;
   isTalking: boolean = false;
+  loading: boolean = false;
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.currentUser;
@@ -206,7 +207,9 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
         }
         const result = await this.sessionService.getUserUploadLink(this.user.id).toPromise();
         if (result.status == 'OK') {
+          this.loading = true;
           await this.sessionService.uploadUserAvatar(result.data.upload_url, res.file).toPromise();
+          this.loading = false;
           this.user.avatar = res.base64;
           this.updateViewService.setViewEvent({event: 'updateAvatar', data: this.user});
         }

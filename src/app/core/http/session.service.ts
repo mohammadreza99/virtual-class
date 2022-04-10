@@ -1053,6 +1053,10 @@ export class SessionService extends ApiService {
     return this._post<any>('', {
       method: 'mutePerson',
       data: {user_id, room_id: this.currentRoom.id, mute},
+    }, {
+      params: {
+        loading: false
+      }
     });
   }
 

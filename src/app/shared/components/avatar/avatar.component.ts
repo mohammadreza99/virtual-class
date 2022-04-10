@@ -23,6 +23,7 @@ export class AvatarComponent extends LanguageChecker implements OnInit {
   @Input() editable: boolean = false;
   @Input() colorFull: boolean = true;
   @Input() size: string = 'large';
+  @Input() loading: boolean = false;
 
   ngOnInit(): void {
     if (!this.user) {
@@ -66,14 +67,16 @@ export class AvatarComponent extends LanguageChecker implements OnInit {
         }
         const result = await this.authService.getUploadLink().toPromise();
         if (result.status == 'OK') {
+          this.loading = true;
           await this.authService.uploadAvatar(result.data.upload_url, res.file).toPromise();
           this.user.avatar = res.base64;
           this.updateViewService.setViewEvent({event: 'updateAvatar', data: this.user});
+          this.loading = false;
         }
-
       });
     } catch (error) {
       console.error(error);
+      this.loading = false;
     }
   }
 }

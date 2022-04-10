@@ -4,6 +4,7 @@ import {Observable, throwError} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {MessageService} from '@core/utils';
+import {requests} from '@core/requests.config';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
@@ -14,19 +15,19 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const hasSuccessMessageApis = ['createRoom', 'generateRoomLink'];
-    const hasFailureMessageApis = ['activateRoom', 'login', 'userEnterStatus'];
+    const hasSuccessMessageApis = requests.filter(r => r.success);
+    const hasFailureMessageApis = requests.filter(r => r.failure);
     return next.handle(request).pipe(
       tap((event: any) => {
         const method = request.body?.method;
         const status = event.body?.status;
         if (status == 'OK') {
-          if (hasSuccessMessageApis.findIndex(x => method == x) >= 0) {
+          if (hasSuccessMessageApis.findIndex(x => x.method == method) >= 0) {
             this.showSuccessToast();
           }
         }
         if (status != 'OK' && !request.url.includes('.json')) {
-          if (hasFailureMessageApis.findIndex(x => method == x) >= 0) {
+          if (hasFailureMessageApis.findIndex(x => x.method == method) >= 0) {
             this.showFailureToast(status);
           }
           if (status == 'NOT_FOUND') {

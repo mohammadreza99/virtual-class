@@ -1,6 +1,7 @@
 <p-avatar shape="circle" [size]="size"
           [class.editable]="editable"
           (click)="changeAvatar()"
+          [icon]="loading ? 'pi pi-spinner pi-spin' : null"
           [style]="{backgroundColor: colorFull ? getColor() : (user.avatar ? '#363636' : '#ffffff')}"
           [image]="user.avatar || null"
           [label]="user.avatar ? null : user.first_name[0].toUpperCase()+'.'+user.last_name[0].toUpperCase()">
