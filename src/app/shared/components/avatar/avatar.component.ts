@@ -54,7 +54,7 @@ export class AvatarComponent extends LanguageChecker implements OnInit {
         data: this.user,
         header: this.instant('changeAvatar'),
         width: '400px',
-        rtl: this.fa
+        rtl: this.fa,
       }).onClose.subscribe(async res => {
         if (!res) {
           return;
