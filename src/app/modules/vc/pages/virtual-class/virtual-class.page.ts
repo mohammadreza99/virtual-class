@@ -133,7 +133,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           break;
 
         case 'onDisconnect':
-          if (res.target != this.currentUser.id) {
+          if (res.data.userId != this.currentUser.id) {
             return;
           }
           if (res.data.publishType == 'Screen') {
@@ -223,6 +223,16 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
         case 'closePresentation':
           this.currentPresentation = null;
+          break;
+
+        case 'networkIssue':
+          this.utilsService.showToast({
+            detail: this.instant('room.networkIssueDetected'),
+            severity: 'warn'
+          });
+          await this.sessionService.getMeOut(null, false);
+          this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+          document.location.reload();
           break;
       }
     });

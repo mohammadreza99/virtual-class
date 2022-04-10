@@ -5,6 +5,7 @@ import {Subject, Subscription} from 'rxjs';
 import {DeviceType, SocketEventTypes} from '@core/models';
 import {GlobalConfig} from '@core/global.config';
 import {Router} from '@angular/router';
+import {UpdateViewService} from '@core/http/update-view.service';
 
 @Injectable({providedIn: 'root'})
 export class SocketService extends ApiService {
@@ -18,7 +19,7 @@ export class SocketService extends ApiService {
   private connected = false;
   private retryCount: number = GlobalConfig.socketConnectRetryCount;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private updateViewService: UpdateViewService) {
     super();
   }
 
@@ -60,6 +61,9 @@ export class SocketService extends ApiService {
       async (res) => {
         this.socketChannel.next({event: res.method, ...res.data});
         if (res.method == 'FAILURE') {
+          this.redirectUser();
+          return;
+
           this.connected = false;
           if (this.retryCount > 0) {
             await this.sendConnect();
@@ -79,6 +83,9 @@ export class SocketService extends ApiService {
         this.pingWithDelay();
       },
       (err) => {
+        this.redirectUser();
+        return;
+
         if (this.webSocket) {
           this.handleSocketFailure();
         }
@@ -173,5 +180,16 @@ export class SocketService extends ApiService {
       return 'Mobile';
     }
     return 'Desktop';
+  }
+
+  poorConnectionRetryCount = GlobalConfig.poorConnectionRetryCount;
+
+  redirectUser() {
+    this.poorConnectionRetryCount--;
+    if (this.poorConnectionRetryCount == 0) {
+      this.stop();
+      this.connected = false;
+      this.updateViewService.setViewEvent({event: 'networkIssue', data: {value: true}});
+    }
   }
 }

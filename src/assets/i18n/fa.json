@@ -128,7 +128,8 @@
     "disabledViewModeChange": "دراین حالت امکان تغییر وجود ندارد",
     "deletePresentationConfirm": "تاییدیه حذف ارائه",
     "deletePresentationConfirmBody": "آیا از حذف ارائه مطمئن هستید؟",
-    "networkIssueDetected": "اختلال در شبکه رخ داده است. لطفا مجدد وارد شوید"
+    "networkIssueDetected": "اختلال در شبکه رخ داده است. لطفا مجدد وارد شوید",
+    "networkIssueDetectedRetrying": "اختلال در شبکه رخ داده است. درحال تلاش مجدد برای اتصال..."
   },
   "home": "خانه",
   "forgetPassword": "فراموشی رمزعبور",
