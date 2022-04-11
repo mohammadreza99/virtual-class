@@ -1290,7 +1290,31 @@ export class SessionService extends ApiService {
   }
 
   uploadPresentation(url: string, policy: any) {
+    // const chunkSize = 4 * 1024 * 1024;
     const formData = new FormData();
+    // const file = policy.file;
+    // const numberOfChunks = Math.ceil(file.size / chunkSize);
+    // console.log(`The file size is ${file.size} and there will be ${numberOfChunks} chunks uploaded.`);
+    // const start = 0;
+    // for (const key in policy) {
+    //   if (key == 'main_url') {
+    //     continue;
+    //   }
+    //   formData.append(key, policy[key]);
+    // }
+    // for (let i = 0; i < numberOfChunks; i++) {
+    //   console.log(numberOfChunks);
+    //   const chunkEnd = Math.min(start + chunkSize, policy.file.size);
+    //   const chunk = policy.file.slice(start, start + chunkSize);
+    //   console.log(chunk);
+    //   formData.delete('file');
+    //   formData.append('file', chunk);
+    //   this.http.post(url, formData, {
+    //     reportProgress: true,
+    //     observe: 'events',
+    //   });
+    // }
+    ////////////////////////////
     for (const key in policy) {
       if (key == 'main_url') {
         continue;
