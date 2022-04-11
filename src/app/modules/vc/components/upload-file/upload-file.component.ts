@@ -76,7 +76,17 @@ export class UploadFileComponent extends LanguageChecker implements OnInit, OnDe
         }).pipe(takeUntil(this.destroy$)).subscribe(async (event: HttpEvent<any>) => {
           try {
             switch (event.type) {
+              case HttpEventType.Sent:
+                console.log('Request has been made!');
+                break;
+              case HttpEventType.ResponseHeader:
+                console.log('Response header has been received!');
+                break;
+              case HttpEventType.UploadProgress:
+                console.log(`Uploaded! ${Math.round(event.loaded / event.total * 100)}%`);
+                break;
               case HttpEventType.Response:
+                console.log('User successfully created!', event.body);
                 const uploadRes = await this.sessionService.uploadPresentationCompleted(data.presentation_id).toPromise();
                 if (uploadRes.status == 'OK') {
                   await this.sessionService.changePresentationState(data.presentation_id, 'Open').toPromise();

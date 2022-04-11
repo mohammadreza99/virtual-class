@@ -14,8 +14,8 @@
   <img class="border shadow" [src]="currentImageUrl" alt="presentation">
   <div class="bottom-actions bg-white w-100 d-flex align-items-center justify-content-center p-1 border-top"
        *ngPermission="'Admin'">
-    <ng-button (onClick)="nextPage()" [disabled]="disableNextBtn" class="mx-2" icon="pi pi-chevron-right"></ng-button>
-    <ng-button (onClick)="prevPage()" [disabled]="disablePrevBtn" class="mx-2" icon="pi pi-chevron-left"></ng-button>
+    <ng-button-async (clickAsync)="nextPage($event)" [disabled]="disableNextBtn" class="mx-2" icon="pi pi-chevron-right"></ng-button-async>
+    <ng-button-async (clickAsync)="prevPage($event)" [disabled]="disablePrevBtn" class="mx-2" icon="pi pi-chevron-left"></ng-button-async>
   </div>
   <!--  <ng-whiteboard-->
   <!--    [color]="color"-->

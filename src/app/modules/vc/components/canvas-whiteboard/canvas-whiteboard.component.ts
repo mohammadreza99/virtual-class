@@ -126,14 +126,24 @@ export class CanvasWhiteboardComponent implements OnInit {
     this.renderer.removeClass(this.elementRef.nativeElement, className);
   }
 
-  async nextPage() {
-    this.presentationData.active_page++;
-    await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.presentationData.active_page).toPromise();
+  async nextPage(callback: any) {
+    try {
+      this.presentationData.active_page++;
+      await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.presentationData.active_page).toPromise();
+      callback();
+    } catch (e) {
+      callback();
+    }
   }
 
-  async prevPage() {
-    this.presentationData.active_page--;
-    await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.presentationData.active_page).toPromise();
+  async prevPage(callback: any) {
+    try {
+      this.presentationData.active_page--;
+      await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.presentationData.active_page).toPromise();
+      callback();
+    } catch (e) {
+      callback();
+    }
   }
 
   openFullscreen(elem) {
