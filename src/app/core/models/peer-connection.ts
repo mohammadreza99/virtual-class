@@ -31,10 +31,10 @@ export class PeerConnection {
         case 'newMedia':
           // subscribe
           if (res.data.p_type == 'offer') {
-            if (this.sessionService.currentUser.id == res.data.target) {
+            if (this.sessionService.currentUser.id != res.data.target) {
               return;
             }
-            if (res.data.target != this.options.userId) {
+            if (res.data.target == this.options.userId) {
               return;
             }
             await this.pc.setRemoteDescription({type: 'offer', sdp: res.data.sdp});
