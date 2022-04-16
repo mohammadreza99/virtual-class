@@ -172,6 +172,7 @@ export class PeerConnection {
 
   private handleConnectionStateChange(e: Event) {
     if (this.pc.connectionState === 'failed') {
+      console.error(`webrtc connection ${this.pc.connectionState}. ID =>`, this.userId);
       if (this.options.onError) {
         this.options.onError(`connection failed => ID:${this.userId}`);
       }
@@ -182,6 +183,7 @@ export class PeerConnection {
       }
     }
     if (this.pc.connectionState === 'disconnected' || this.pc.connectionState === 'closed') {
+      console.error(`webrtc connection ${this.pc.connectionState}. ID =>`, this.userId);
       if (this.options.onDisconnect) {
         this.options.onDisconnect();
       }

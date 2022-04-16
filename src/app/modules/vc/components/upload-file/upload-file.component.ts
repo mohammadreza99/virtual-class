@@ -54,6 +54,8 @@ export class UploadFileComponent extends LanguageChecker implements OnInit, OnDe
     this.invalidType = !this.isFileTypeValid(this.selectedFile);
   }
 
+  percent: number = 0;
+
   async onSubmit(callback: any) {
     try {
       if (this.selectedPresentation) {
@@ -70,54 +72,38 @@ export class UploadFileComponent extends LanguageChecker implements OnInit, OnDe
       } = await this.sessionService.getPresentationPolicy(this.selectedFile.name, this.allowDownload).toPromise();
       if (status == 'OK') {
         this.uploadProgress = true;
-        this.sessionService.uploadPresentation(data.upload_policy.main_url, {
-          ...data.upload_policy,
-          file: this.selectedFile
-        }).pipe(takeUntil(this.destroy$)).subscribe(async (event: HttpEvent<any>) => {
+        const uploadData = {...data.upload_policy, file: this.selectedFile};
+        this.sessionService.uploadPresentation(data.upload_policy.main_url, uploadData)
+          .pipe(takeUntil(this.destroy$)).subscribe(async (event: HttpEvent<any>) => {
           try {
-            switch (event.type) {
-              case HttpEventType.Sent:
-                console.log('Request has been made!');
-                break;
-              case HttpEventType.ResponseHeader:
-                console.log('Response header has been received!');
-                break;
-              case HttpEventType.UploadProgress:
-                console.log(`Uploaded! ${Math.round(event.loaded / event.total * 100)}%`);
-                break;
-              case HttpEventType.Response:
-                console.log('User successfully created!', event.body);
-                const uploadRes = await this.sessionService.uploadPresentationCompleted(data.presentation_id).toPromise();
-                if (uploadRes.status == 'OK') {
-                  await this.sessionService.changePresentationState(data.presentation_id, 'Open').toPromise();
-                  this.uploadProgress = false;
-                  this.selectedFile = null;
-                  this.dialogRef.close();
-                  this.destroy$.next(true);
-                }
-                break;
+            const uploadRes = await this.sessionService.uploadPresentationCompleted(data.presentation_id).toPromise();
+            if (uploadRes.status == 'OK') {
+              await this.sessionService.changePresentationState(data.presentation_id, 'Open').toPromise();
+              this.resetUploadDialog(callback);
+              this.dialogRef.close();
+              this.destroy$.next(true);
             }
             callback();
           } catch (err) {
             console.error(err);
-            callback();
-            this.selectedFile = null;
-            this.selectedPresentation = null;
-            this.uploadProgress = false;
+            this.resetUploadDialog(callback);
           }
         }, (err) => {
           console.error(err);
-          this.uploadProgress = false;
-          this.selectedFile = null;
-          callback();
+          this.resetUploadDialog(callback);
         });
       }
     } catch (err) {
       console.error(err);
-      callback();
-      this.selectedFile = null;
-      this.selectedPresentation = null;
+      this.resetUploadDialog(callback);
     }
+  }
+
+  resetUploadDialog(callback: any) {
+    this.selectedFile = null;
+    this.selectedPresentation = null;
+    this.uploadProgress = false;
+    callback();
   }
 
   onClose() {
