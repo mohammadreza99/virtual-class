@@ -43,7 +43,7 @@
           <span>{{presentation.file_name}}</span>
         </div>
         <div class="d-flex align-items-center">
-          <ng-button (click)="deletePresentation(presentation)" appearance="text" color="danger" [rounded]="true"
+          <ng-button (click)="deletePresentation(presentation,$event)" appearance="text" color="danger" [rounded]="true"
                      icon="icon-delete"></ng-button>
           <span class="circle"></span>
         </div>

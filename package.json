@@ -22,8 +22,6 @@
     "@angular/router": "~12.1.4",
     "@ngx-translate/core": "^13.0.0",
     "@ngx-translate/http-loader": "^6.0.0",
-    "ng-whiteboard": "^1.5.0",
-    "ng2-canvas-whiteboard": "^4.0.2",
     "ng2-jalali-date-picker": "^2.4.2",
     "ngx-image-cropper": "^6.1.0",
     "node-sass": "^4.14.1",

@@ -150,7 +150,8 @@ export class UploadFileComponent extends LanguageChecker implements OnInit, OnDe
     this.destroy$.unsubscribe();
   }
 
-  async deletePresentation(presentation: any) {
+  async deletePresentation(presentation: any, event: any) {
+    event.stopPropagation();
     const dialogRes = await this.utilsService.showConfirm({
       rtl: this.fa,
       header: this.instant('room.deletePresentationConfirm'),

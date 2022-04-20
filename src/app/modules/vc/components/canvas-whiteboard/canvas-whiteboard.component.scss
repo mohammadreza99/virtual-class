@@ -12,7 +12,6 @@ $timing: 0.3s;
   }
 }
 
-
 .white-board {
   background: #fff;
   height: 100%;
@@ -22,10 +21,14 @@ $timing: 0.3s;
   justify-content: center;
   position: relative;
 
-  img {
-    background: #fff;
+  .image-wrapper {
     max-height: calc(100% - 104px);
-    max-width: 100%;
+    overflow: auto;
+
+    img {
+      background: #fff;
+      max-width: 100%;
+    }
   }
 }
 

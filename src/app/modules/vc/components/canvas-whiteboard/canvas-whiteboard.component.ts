@@ -1,5 +1,4 @@
 import {Component, ElementRef, OnInit, Renderer2} from '@angular/core';
-import {FormatType, formatTypes, NgWhiteboardService} from 'ng-whiteboard';
 import {Subject} from 'rxjs';
 import {SessionService} from '@core/http';
 import {UpdateViewService} from '@core/http/update-view.service';
@@ -16,7 +15,6 @@ export class CanvasWhiteboardComponent implements OnInit {
   size = '5px';
   isSizeActive = false;
   isSaveActive = false;
-  formatType = FormatType;
   destroy$: Subject<boolean> = new Subject<boolean>();
   presentationData: any;
   currentImageUrl: string;
@@ -24,8 +22,7 @@ export class CanvasWhiteboardComponent implements OnInit {
   disablePrevBtn: boolean;
   fullscreenEnabled: boolean = false;
 
-  constructor(private whiteboardService: NgWhiteboardService,
-              private sessionService: SessionService,
+  constructor(private sessionService: SessionService,
               private updateViewService: UpdateViewService,
               private elementRef: ElementRef,
               private renderer: Renderer2) {
@@ -57,65 +54,6 @@ export class CanvasWhiteboardComponent implements OnInit {
           break;
       }
     });
-  }
-
-  onInit() {
-  }
-
-  onClear() {
-  }
-
-  onUndo() {
-  }
-
-  onRedo() {
-  }
-
-  onSave(img: string) {
-    // Copy to clipboard
-    const cb = navigator.clipboard;
-    if (cb) {
-      cb.writeText(img);
-    }
-  }
-
-  onImageAded() {
-  }
-
-  erase() {
-    this.whiteboardService.erase();
-  }
-
-  setSize(size) {
-    this.size = size;
-    this.isSizeActive = false;
-  }
-
-  save(type: formatTypes) {
-    this.whiteboardService.save(type);
-    this.isSaveActive = false;
-  }
-
-  undo() {
-    this.whiteboardService.undo();
-  }
-
-  redo() {
-    this.whiteboardService.redo();
-  }
-
-  addImage(fileInput) {
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      this.whiteboardService.addImage(reader.result);
-      fileInput.value = '';
-    };
-
-    if (file) {
-      reader.readAsDataURL(file);
-    }
   }
 
   private addClass(className: string) {

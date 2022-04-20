@@ -20,7 +20,7 @@
     }
 
     .participants {
-      width: 300px;
+      min-width: 300px;
 
       ng-screen:not(:last-child) {
         margin-bottom: 1rem
