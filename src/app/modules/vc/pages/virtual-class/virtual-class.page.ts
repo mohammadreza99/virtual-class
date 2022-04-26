@@ -5,7 +5,7 @@ import {OverlayPanel} from 'primeng/overlaypanel';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {UtilsService} from '@ng/services';
 import {ActivatedRoute, Router} from '@angular/router';
-import {interval, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {LocationStrategy} from '@angular/common';
 import {UpdateViewService} from '@core/http/update-view.service';
 import {DialogService} from 'primeng/dynamicdialog';
@@ -16,7 +16,6 @@ import {QuestionResultComponent} from '@modules/vc/components/question-result/qu
 import {UploadFileComponent} from '@modules/vc/components/upload-file/upload-file.component';
 import {takeUntil} from 'rxjs/operators';
 import {SelectRandomUserComponent} from '@modules/vc/components/select-random-user/select-random-user.component';
-import {GlobalConfig} from '@core/global.config';
 
 @Component({
   selector: 'ng-virtual-class',
@@ -234,22 +233,11 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           break;
 
         case 'openPresentation':
-
           this.currentPresentation = res.data.presentation_id;
           break;
 
         case 'closePresentation':
           this.currentPresentation = null;
-          break;
-
-        case 'networkIssue':
-          this.utilsService.showToast({
-            detail: this.instant('room.networkIssueDetected'),
-            severity: 'warn'
-          });
-          await this.sessionService.getMeOut(null, false);
-          this.router.navigate(['/vc/room-info', this.currentRoom.id]);
-          document.location.reload();
           break;
       }
     });

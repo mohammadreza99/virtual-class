@@ -15,9 +15,9 @@
         <span class="mx-2">{{'room.everyOnesVoice' | translate}}</span>
       </div>
       <div class="checkbox">
-        <p-progressSpinner [class.show]="loading"></p-progressSpinner>
+        <p-progressSpinner [class.show]="muteAllLoading"></p-progressSpinner>
         <span class="mx-2">{{(allMuted ? 'room.off' : 'room.on') | translate}}</span>
-        <ng-switch [disabled]="loading" [value]="!allMuted" (onChange)="toggleMuteAll($event)"></ng-switch>
+        <ng-switch [disabled]="muteAllLoading" [value]="!allMuted" (onChange)="toggleMuteAll($event)"></ng-switch>
       </div>
     </div>
     <div class="action-item">
@@ -26,9 +26,9 @@
         <span class="mx-2">{{'room.everyOnesVideo' | translate}}</span>
       </div>
       <div class="checkbox">
-        <p-progressSpinner [style]="{width:'20px',height:'20px',opacity:loading ? 1 : 0}"></p-progressSpinner>
+        <p-progressSpinner [class.show]="muteVideoAllLoading"></p-progressSpinner>
         <span class="mx-2">{{(allMutedVideo ? 'room.off' : 'room.on') | translate}}</span>
-        <ng-switch [value]="!allMutedVideo" (onChange)="toggleMuteVideoAll($event)"></ng-switch>
+        <ng-switch [disabled]="muteVideoAllLoading" [value]="!allMutedVideo" (onChange)="toggleMuteVideoAll($event)"></ng-switch>
       </div>
     </div>
   </div>

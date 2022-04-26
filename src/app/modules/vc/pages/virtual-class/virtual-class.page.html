@@ -1,6 +1,4 @@
-<div class="virtual-class-wrapper" [class.rtl]="fa"
-     [class.sidebar-visible]="anySidebarVisible()"
-     #wrapper>
+<div class="virtual-class-wrapper" [class.rtl]="fa" [class.sidebar-visible]="anySidebarVisible()">
   <div class="header d-flex align-items-center justify-content-lg-between fixed-top">
     <div class="actions d-flex flex-grow-1 align-items-center justify-content-between justify-content-lg-start">
       <ng-logo width="40" class="ml-3"></ng-logo>
@@ -82,13 +80,6 @@
   </ng-chat>
 </div>
 
-<!--<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"-->
-<!--           [(visible)]="chatSidebarVisible">-->
-<!--  <ng-chat [openPublicChat]="currentRoom.public_messages" (closeSidebar)="closeSidebar('chat')"-->
-<!--           (newMessage)="onGetNewMessage()">-->
-<!--  </ng-chat>-->
-<!--</p-sidebar>-->
-
 <div class="sidebar" [class.visible]="membersSidebarVisible">
   <ng-participants [allUsers]="allUsers"
                    [kickedUsers]="kickedUsers"
@@ -96,13 +87,6 @@
                    (closeSidebar)="closeSidebar('members')">
   </ng-participants>
 </div>
-<!--<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false"-->
-<!--           [showCloseIcon]="false"-->
-<!--           [(visible)]="membersSidebarVisible">-->
-<!--  <ng-participants [allUsers]="allUsers" [raisedHandsUsers]="raisedHandsUsers"-->
-<!--                   (closeSidebar)="closeSidebar('members')">-->
-<!--  </ng-participants>-->
-<!--</p-sidebar>-->
 
 <div class="sidebar" [class.visible]="questionSidebarVisible" *ngPermission="'Admin'">
   <ng-question-management [activeQuestionId]="currentRoom.active_question"
@@ -114,17 +98,6 @@
   </ng-question-management>
 </div>
 
-<!--<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"-->
-<!--           [(visible)]="questionSidebarVisible" *ngPermission="'Admin'">-->
-<!--  <ng-question-management [activeQuestionId]="currentRoom.active_question"-->
-<!--                          [visible]="questionSidebarVisible"-->
-<!--                          (published)="onQuestionPublished($event)"-->
-<!--                          (finished)="onQuestionRevoked()"-->
-<!--                          (canceled)="onQuestionRevoked()"-->
-<!--                          (visibleChange)="closeSidebar('question')">-->
-<!--  </ng-question-management>-->
-<!--</p-sidebar>-->
-
 <div class="sidebar" [class.visible]="pollSidebarVisible" *ngPermission="'Admin'">
   <ng-poll-management [activePollId]="currentRoom.active_poll"
                       [visible]="pollSidebarVisible"
@@ -134,16 +107,6 @@
                       (visibleChange)="closeSidebar('poll')">
   </ng-poll-management>
 </div>
-<!--<p-sidebar [appendTo]="wrapper" [position]="fa ? 'right' : 'left'" [modal]="false" [showCloseIcon]="false"-->
-<!--           [(visible)]="pollSidebarVisible" *ngPermission="'Admin'">-->
-<!--  <ng-poll-management [activePollId]="currentRoom.active_poll"-->
-<!--                      [visible]="pollSidebarVisible"-->
-<!--                      (published)="onPollPublished($event)"-->
-<!--                      (finished)="onPollRevoked()"-->
-<!--                      (canceled)="onPollRevoked()"-->
-<!--                      (visibleChange)="closeSidebar('poll')">-->
-<!--  </ng-poll-management>-->
-<!--</p-sidebar>-->
 
 <p-overlayPanel [baseZIndex]="2000" #viewModes styleClass="actions {{fa ? 'rtl' : null}}">
   <span *ngIf="currentPresentation" class="p-2 d-block">{{'room.disabledViewModeChange' | translate}}</span>

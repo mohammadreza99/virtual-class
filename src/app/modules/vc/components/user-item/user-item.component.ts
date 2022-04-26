@@ -58,13 +58,15 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
           if (res.data.target != this.user.id) {
             return;
           }
-          if (this.isTalkingUpdateTimer != null) {
-            return;
+          if (res.data.value) {
+            this.isTalking = true;
+            if (this.isTalkingUpdateTimer) {
+              clearTimeout(this.isTalkingUpdateTimer);
+            }
+            this.isTalkingUpdateTimer = setTimeout(() => {
+              this.isTalking = false;
+            }, GlobalConfig.isTalkingDisplayTime);
           }
-          this.isTalking = res.data.value;
-          this.isTalkingUpdateTimer = setTimeout(() => {
-            this.isTalkingUpdateTimer = null;
-          }, GlobalConfig.isTalkingDisplayTime);
           break;
       }
     });

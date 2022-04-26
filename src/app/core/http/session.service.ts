@@ -34,6 +34,8 @@ export class SessionService extends ApiService {
   private raisedHands: RoomUser[] = [];
   private mainPositionUser: RoomUser;
   private socketSubscription: Subscription;
+  private updateViewSubscription: Subscription;
+  private isTalkingSubscription: Subscription;
   private _currentUser: any;
   private _currentRoom: any;
 
@@ -53,6 +55,7 @@ export class SessionService extends ApiService {
     await this.updateRoomPublishers();
     await this.updateRoomPublicMessages();
     this.initSockets();
+    this.initViewUpdates();
   }
 
   async checkSession(roomId: number) {
@@ -104,7 +107,6 @@ export class SessionService extends ApiService {
         await this.updateRoomPublishers();
       }
       if (result.status == 'JANUS_ERROR') {
-        this.openToast('RoomStatus JANUS ERROR --- retrying...', 'warn');
         await this.updateRoomPublishers();
       }
       await this.updatePublishers(result.data.publishers);
@@ -217,6 +219,7 @@ export class SessionService extends ApiService {
 
   async toggleShareMedia(activate: boolean, mediaType: 'audio' | 'video'): Promise<void> {
     if (!activate) {
+      this.isTalkingSubscription.unsubscribe();
       await this.closeMyConnection('Webcam');
       return;
     }
@@ -233,7 +236,7 @@ export class SessionService extends ApiService {
       this.myWebcam.close();
     }
     try {
-      this.checkIsTalking(stream, async (value) => {
+      this.isTalkingSubscription = this.checkIsTalking(stream).subscribe(value => {
         if (!stream.getAudioTracks()[0].enabled) {
           return;
         }
@@ -297,26 +300,28 @@ export class SessionService extends ApiService {
           resolve(pc);
         },
         onError: (error: string) => {
-          if (error == 'JANUS_ERROR') {
-            this.openToast(`Subscribe JANUS ERROR -- retrying...`, 'warn');
-            this.closeSubscribeConnection(options.userId, options.publishType);
-            this.createSubscribeConnection(options);
-          }
-          if (error == 'SessionNotExist') {
-            this.peerConnections.forEach(c => {
-              this.closeSubscribeConnection(c.userId, c.publishType);
-            });
-            this.updateRoomPublishers();
-          }
-          this.updateViewService.setViewEvent({
-            event: 'onError',
-            data: {
-              userId: options.userId,
-              display: options.display,
-              position: options.position,
-              publishType: options.publishType,
-            }
-          });
+          // if (error == 'JANUS_ERROR') {
+          //   this.openToast(`Subscribe JANUS ERROR -- retrying...`, 'warn');
+          //   this.closeSubscribeConnection(options.userId, options.publishType);
+          //   this.createSubscribeConnection(options);
+          // }
+          // if (error == 'SessionNotExist') {
+          //   this.peerConnections.forEach(c => {
+          //     this.closeSubscribeConnection(c.userId, c.publishType);
+          //   });
+          //   this.updateRoomPublishers();
+          // }
+          // this.updateViewService.setViewEvent({
+          //   event: 'onError',
+          //   data: {
+          //     userId: options.userId,
+          //     display: options.display,
+          //     position: options.position,
+          //     publishType: options.publishType,
+          //   }
+          // });
+          this.resetAll();
+          this.initRoom();
         }
       });
       pc.createSubscribeConnection();
@@ -354,33 +359,35 @@ export class SessionService extends ApiService {
           resolve(pc);
         },
         onDisconnect: () => {
-          this.updateViewService.setViewEvent({event: `activate${options.publishType}Button`, data: {value: false}});
           if (this.mainPositionUser?.id == options.userId) {
             this.removeMainPositionUser();
           }
           this.closeMyConnection(options.publishType, true);
+          this.createPublishConnection(options, mediaType);
         },
         onError: (error: string) => {
-          if (error == 'JANUS_ERROR') {
-            this.closeMyConnection(options.publishType, true);
-            this.createPublishConnection(options, mediaType);
-          }
-          if (error == 'SessionNotExist') {
-            this.peerConnections.forEach(c => {
-              this.closeSubscribeConnection(c.userId, c.publishType);
-            });
-            this.updateRoomPublishers();
-          }
-          this.updateViewService.setViewEvent({
-            event: 'onError',
-            data: {
-              userId: options.userId,
-              display: options.display,
-              position: options.position,
-              publishType: options.publishType,
-            }
-          });
-          reject(error);
+          // if (error == 'JANUS_ERROR') {
+          //   this.closeMyConnection(options.publishType, true);
+          //   this.createPublishConnection(options, mediaType);
+          // }
+          // if (error == 'SessionNotExist') {
+          //   this.peerConnections.forEach(c => {
+          //     this.closeSubscribeConnection(c.userId, c.publishType);
+          //   });
+          //   this.updateRoomPublishers();
+          // }
+          // this.updateViewService.setViewEvent({
+          //   event: 'onError',
+          //   data: {
+          //     userId: options.userId,
+          //     display: options.display,
+          //     position: options.position,
+          //     publishType: options.publishType,
+          //   }
+          // });
+          // reject(error);
+          // this.resetAll();
+          // this.initRoom();
         },
       });
       pc.createPublishConnection(mediaType);
@@ -396,13 +403,15 @@ export class SessionService extends ApiService {
       });
 
       for (const publisher of added) {
-        const display: DisplayName = publisher.display;
-        const position: TrackPosition = this.getPosition(publisher.display);
-        const publishId: any = publisher.id;
-        const publishType: any = publisher.publish_type;
-        const userId: any = publisher.user_id;
-        const newPC = await this.createSubscribeConnection({publishId, userId, display, position, publishType});
-        this.peerConnections.push(newPC);
+        if (this.roomUsers.findIndex(u => u.id == publisher.user_id) > -1) {
+          const display: DisplayName = publisher.display;
+          const position: TrackPosition = this.getPosition(publisher.display);
+          const publishId: any = publisher.id;
+          const publishType: any = publisher.publish_type;
+          const userId: any = publisher.user_id;
+          const newPC = await this.createSubscribeConnection({publishId, userId, display, position, publishType});
+          this.peerConnections.push(newPC);
+        }
       }
       this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
     }
@@ -500,7 +509,7 @@ export class SessionService extends ApiService {
     return sortedUsers;
   }
 
-  initSockets() {
+  private initSockets() {
     this.socketService.start(this.currentRoom.id);
     this.socketSubscription = this.socketService.listen().subscribe(res => {
       console.log(`${res.event} => `, res);
@@ -516,6 +525,9 @@ export class SessionService extends ApiService {
             this.raisedHands.push(user);
             this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
           }
+          setTimeout(() => {
+            this.updateRoomPublishers();
+          }, 5000);
           break;
 
         case 'newPublisher':
@@ -795,6 +807,27 @@ export class SessionService extends ApiService {
     });
   }
 
+  private initViewUpdates() {
+    this.updateViewSubscription = this.updateViewService.getViewEvent().subscribe(async (res: any) => {
+      switch (res.event) {
+        case 'networkIssue':
+          this.utilsService.showToast({
+            detail: this.translationService.instant('room.networkIssueDetected') as string,
+            severity: 'warn'
+          });
+          await this.getMeOut(null, false);
+          this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+          document.location.reload();
+          break;
+
+        case 'socketFail':
+          this.resetAll();
+          this.initRoom();
+          break;
+      }
+    });
+  }
+
   private isMainPositionBusy() {
     return this.peerConnections.findIndex(c => c.position == 'mainPosition') >= 0;
   }
@@ -817,6 +850,14 @@ export class SessionService extends ApiService {
     }
     const randomIndex = Math.floor(Math.random() * availableUsers.length);
     return availableUsers[randomIndex];
+  }
+
+  private resetAll() {
+    this.kickedUsers = [];
+    this.raisedHands = [];
+    this.roomUsers = [];
+    this.peerConnections = [];
+    this.removeMainPositionUser();
   }
 
   ///////////////////////////////////////////////////////////////////////////////
@@ -886,27 +927,29 @@ export class SessionService extends ApiService {
   //                                   UTILS                                   //
   ///////////////////////////////////////////////////////////////////////////////
 
-  checkIsTalking(stream: MediaStream, callback: (v: number) => any) {
-    const audioContext = new AudioContext();
-    const analyser = audioContext.createAnalyser();
-    const microphone = audioContext.createMediaStreamSource(stream);
-    const javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
-    analyser.smoothingTimeConstant = 0.8;
-    analyser.fftSize = 1024;
-    microphone.connect(analyser);
-    analyser.connect(javascriptNode);
-    javascriptNode.connect(audioContext.destination);
-    javascriptNode.onaudioprocess = () => {
-      const array = new Uint8Array(analyser.frequencyBinCount);
-      analyser.getByteFrequencyData(array);
-      let values = 0;
-      const length = array.length;
-      for (let i = 0; i < length; i++) {
-        values += (array[i]);
-      }
-      const average = values / length;
-      callback(Math.round(average));
-    };
+  checkIsTalking(stream: MediaStream) {
+    return new Observable<number>(observer => {
+      const audioContext = new AudioContext();
+      const analyser = audioContext.createAnalyser();
+      const microphone = audioContext.createMediaStreamSource(stream);
+      const javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+      analyser.smoothingTimeConstant = 0.8;
+      analyser.fftSize = 1024;
+      microphone.connect(analyser);
+      analyser.connect(javascriptNode);
+      javascriptNode.connect(audioContext.destination);
+      javascriptNode.onaudioprocess = () => {
+        const array = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(array);
+        let values = 0;
+        const length = array.length;
+        for (let i = 0; i < length; i++) {
+          values += (array[i]);
+        }
+        const average = values / length;
+        observer.next(average);
+      };
+    });
   }
 
   async getMeOut(message?: any, reload: boolean = true) {
@@ -1374,6 +1417,7 @@ export class SessionService extends ApiService {
       data: {room_id: this.currentRoom.id, ...data},
     });
   }
+
 
   private roomStatus() {
     return this._post<any>('', {

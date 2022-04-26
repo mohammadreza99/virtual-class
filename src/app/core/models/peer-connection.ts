@@ -26,46 +26,46 @@ export class PeerConnection {
         this.options.onTrack(e);
       }
     };
-    this.subscription = updateViewService.getViewEvent().subscribe(async res => {
-      switch (res.event) {
-        case 'newMedia':
-          // subscribe
-          if (res.data.p_type == 'offer') {
-            if (this.sessionService.currentUser.id != res.data.target) {
-              return;
-            }
-            if (res.data.target == this.options.userId) {
-              return;
-            }
-            await this.pc.setRemoteDescription({type: 'offer', sdp: res.data.sdp});
-            const answer = await this.pc.createAnswer();
-            await this.pc.setLocalDescription(answer);
-            const result = await this.options.startSubscription(answer.sdp);
-            if (result.status_det == 'JANUS_ERROR') {
-              this.options.onError('JANUS_ERROR');
-              return;
-            }
-            if (result.status_det == 'SessionNotExist') {
-              this.options.onError('SessionNotExist');
-              return;
-            }
-          }
-
-          // publish
-          if (res.data.p_type == 'answer') {
-            if (res.data.target != this.options.userId) {
-              return;
-            }
-            await this.pc.setRemoteDescription({type: 'answer', sdp: res.data.sdp});
-            await this.options.publishConfirm();
-            if (this.options.onTrack) {
-              this.options.onTrack();
-            }
-          }
-
-          break;
-      }
-    });
+    // this.subscription = updateViewService.getViewEvent().subscribe(async res => {
+    //   switch (res.event) {
+    //     case 'newMedia':
+    //       // subscribe
+    //       if (res.data.p_type == 'offer') {
+    //         if (this.sessionService.currentUser.id != res.data.target) {
+    //           return;
+    //         }
+    //         if (res.data.target == this.options.userId) {
+    //           return;
+    //         }
+    //         await this.pc.setRemoteDescription({type: 'offer', sdp: res.data.sdp});
+    //         const answer = await this.pc.createAnswer();
+    //         await this.pc.setLocalDescription(answer);
+    //         const result = await this.options.startSubscription(answer.sdp);
+    //         if (result.status_det == 'JANUS_ERROR') {
+    //           this.options.onError('JANUS_ERROR');
+    //           return;
+    //         }
+    //         if (result.status_det == 'SessionNotExist') {
+    //           this.options.onError('SessionNotExist');
+    //           return;
+    //         }
+    //       }
+    //
+    //       // publish
+    //       if (res.data.p_type == 'answer') {
+    //         if (res.data.target != this.options.userId) {
+    //           return;
+    //         }
+    //         await this.pc.setRemoteDescription({type: 'answer', sdp: res.data.sdp});
+    //         await this.options.publishConfirm();
+    //         if (this.options.onTrack) {
+    //           this.options.onTrack();
+    //         }
+    //       }
+    //
+    //       break;
+    //   }
+    // });
 
   }
 
@@ -80,18 +80,20 @@ export class PeerConnection {
         this.options.onError('SessionNotExist');
         return;
       }
-      // await this.pc.setRemoteDescription({type: 'offer', sdp: remoteOffer.data.sdp_offer_data});
-      // const answer = await this.pc.createAnswer();
-      // await this.pc.setLocalDescription(answer);
-      // const result = await this.options.startSubscription(answer.sdp);
-      // if (result.status_det == 'JANUS_ERROR') {
-      //   this.options.onError('JANUS_ERROR');
-      //   return;
-      // }
-      // if (result.status_det == 'SessionNotExist') {
-      //   this.options.onError('SessionNotExist');
-      //   return;
-      // }
+      //
+      await this.pc.setRemoteDescription({type: 'offer', sdp: remoteOffer.data.sdp_offer_data});
+      const answer = await this.pc.createAnswer();
+      await this.pc.setLocalDescription(answer);
+      const result = await this.options.startSubscription(answer.sdp);
+      if (result.status_det == 'JANUS_ERROR') {
+        this.options.onError('JANUS_ERROR');
+        return;
+      }
+      if (result.status_det == 'SessionNotExist') {
+        this.options.onError('SessionNotExist');
+        return;
+      }
+      //
     } catch (error) {
       console.error(error);
       if (this.options.onError) {
@@ -122,11 +124,13 @@ export class PeerConnection {
         this.options.onError('JANUS_ERROR');
         return;
       }
-      // await this.pc.setRemoteDescription({type: 'answer', sdp: result.data.sdp_answer_data});
-      // await this.options.publishConfirm();
-      // if (this.options.onTrack) {
-      //   this.options.onTrack();
-      // }
+      //
+      await this.pc.setRemoteDescription({type: 'answer', sdp: result.data.sdp_answer_data});
+      await this.options.publishConfirm();
+      if (this.options.onTrack) {
+        this.options.onTrack();
+      }
+      //
     } catch (error) {
       console.error(error);
       if (this.options.onError) {
@@ -172,9 +176,9 @@ export class PeerConnection {
 
   private handleConnectionStateChange(e: Event) {
     if (this.pc.connectionState === 'failed') {
-      console.error(`webrtc connection ${this.pc.connectionState}. ID =>`, this.userId);
+      console.error(`-- WEB_RTC FOR USER ID ${this.userId} HAS ${this.pc.connectionState} - MY ID => ${this.sessionService.currentUser.id}`);
       if (this.options.onError) {
-        this.options.onError(`connection failed => ID:${this.userId}`);
+        this.options.onError('failed');
       }
     }
     if (this.pc.connectionState === 'connected') {
@@ -183,7 +187,7 @@ export class PeerConnection {
       }
     }
     if (this.pc.connectionState === 'disconnected' || this.pc.connectionState === 'closed') {
-      console.error(`webrtc connection ${this.pc.connectionState}. ID =>`, this.userId);
+      console.error(`-- WEB_RTC FOR USER ID ${this.userId} HAS ${this.pc.connectionState} - MY ID => ${this.sessionService.currentUser.id}`);
       if (this.options.onDisconnect) {
         this.options.onDisconnect();
       }

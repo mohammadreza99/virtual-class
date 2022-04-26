@@ -6,6 +6,7 @@ import {LanguageChecker} from '@shared/components/language-checker/language-chec
 import {NgMessage} from '@ng/models/overlay';
 import {UtilsService} from '@ng/services';
 import {NgDropdownItem} from '@ng/models/forms';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'ng-room-info',
@@ -45,6 +46,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
   checkEnterRoomStatusInterval: any;
   disableEnterButton: boolean = true;
   userKicked: boolean = false;
+  isTalkingSubscription: Subscription;
 
   ngOnInit(): void {
     this.loadData();
@@ -118,7 +120,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
       return;
     }
     this.micVideoElem.nativeElement.srcObject = this.audioStream;
-    this.sessionService.checkIsTalking(this.audioStream, (value: number) => {
+    this.isTalkingSubscription = this.sessionService.checkIsTalking(this.audioStream).subscribe(value => {
       this.volumeMeterElem.toArray().forEach(el => {
         el.nativeElement.value = value;
       });
@@ -305,6 +307,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
     localStorage.setItem('roomEnterTime', Date.now().toString());
     this.clearCheckEnterRoomStatusInterval();
     this.utilsService.clear();
+    this.isTalkingSubscription.unsubscribe();
     this.router.navigate(['/vc', this.room.id]);
   }
 
