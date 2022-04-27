@@ -307,7 +307,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
     localStorage.setItem('roomEnterTime', Date.now().toString());
     this.clearCheckEnterRoomStatusInterval();
     this.utilsService.clear();
-    this.isTalkingSubscription.unsubscribe();
+    this.isTalkingSubscription?.unsubscribe();
     this.router.navigate(['/vc', this.room.id]);
   }
 

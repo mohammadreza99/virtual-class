@@ -102,8 +102,7 @@
       }
     }
 
-    ng-canvas-whiteboard.open-presentation {
-
+    ng-whiteboard.active {
       ~ .teacher-webcam-shared {
         position: absolute;
         width: 170px;

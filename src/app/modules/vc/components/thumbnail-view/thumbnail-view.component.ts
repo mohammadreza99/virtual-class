@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, TemplateRef} from '@angular/core';
 import {RoomUser} from '@core/models';
 
 @Component({
@@ -13,6 +13,7 @@ export class ThumbnailViewComponent implements OnInit {
 
   @Input() users: RoomUser[];
   hideScreen: boolean = false;
+  @Input() whiteboardTemplate: TemplateRef<any>;
 
   ngOnInit(): void {
   }

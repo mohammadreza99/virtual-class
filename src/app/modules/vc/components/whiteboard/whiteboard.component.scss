@@ -1,0 +1,80 @@
+:host {
+  //&:not(.active) {
+  //  display: none;
+  //}
+
+  .wrapper,
+  .konva-wrapper,
+  .konva-wrapper > div {
+    width: 100%;
+    height: 100%;
+  }
+
+  .wrapper {
+    position: relative;
+  }
+
+  .konva-wrapper {
+    position: relative;
+    background-color: #FFFFFF;
+  }
+
+  .whiteboard-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+
+  .controls {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 0 28px 28px 0;
+    z-index: 1;
+
+    > button,
+    > p-button {
+      display: block;
+      margin: 5px;
+    }
+  }
+
+  .menu-button {
+    position: fixed;
+    z-index: 4;
+    top: 0;
+    right: 0;
+  }
+
+  .pointer_cursor {
+    cursor: pointer;
+  }
+
+  .default_cursor {
+    cursor: default;
+  }
+
+  .hr_divider {
+    border: 0.5px solid #c7c7c782;
+    margin: 0.5rem;
+    width: 100%;
+  }
+
+  p-button {
+    display: block;
+    border-radius: 50%;
+  }
+
+  video {
+    width: 300px;
+    display: none;
+  }
+}

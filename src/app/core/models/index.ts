@@ -6,3 +6,4 @@ export * from './room.model';
 export * from './table.model';
 export * from './user.model';
 export * from './webrtc.model';
+export * from './konva.model';

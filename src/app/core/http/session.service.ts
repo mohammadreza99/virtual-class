@@ -219,7 +219,7 @@ export class SessionService extends ApiService {
 
   async toggleShareMedia(activate: boolean, mediaType: 'audio' | 'video'): Promise<void> {
     if (!activate) {
-      this.isTalkingSubscription.unsubscribe();
+      this.isTalkingSubscription?.unsubscribe();
       await this.closeMyConnection('Webcam');
       return;
     }
