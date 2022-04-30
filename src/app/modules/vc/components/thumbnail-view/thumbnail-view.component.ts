@@ -12,17 +12,22 @@ export class ThumbnailViewComponent implements OnInit {
   }
 
   @Input() users: RoomUser[];
-  hideScreen: boolean = false;
-  @Input() whiteboardTemplate: TemplateRef<any>;
+
+  toggleSpeaker: boolean = false;
+  toggleParticipants: boolean = false;
 
   ngOnInit(): void {
   }
 
-  toggleScreen() {
-    this.hideScreen = !this.hideScreen;
+  toggleSpeakerClick() {
+    this.toggleSpeaker = !this.toggleSpeaker;
   }
 
   trackByFn(index: number, item: RoomUser): number {
     return item.id;
+  }
+
+  toggleParticipantsClick() {
+    this.toggleParticipants = !this.toggleParticipants;
   }
 }

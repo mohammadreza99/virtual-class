@@ -10,7 +10,6 @@ import {ParticipantsComponent} from '@modules/vc/components/participants/partici
 import {ChatComponent} from '@modules/vc/components/chat/chat.component';
 import {ThumbnailViewComponent} from '@modules/vc/components/thumbnail-view/thumbnail-view.component';
 import {GridViewComponent} from '@modules/vc/components/grid-view/grid-view.component';
-import {SpeakerViewComponent} from '@modules/vc/components/speaker-view/speaker-view.component';
 import {QuestionManagementComponent} from '@modules/vc/components/question-management/question-management.component';
 import {PollManagementComponent} from '@modules/vc/components/poll-management/poll-management.component';
 import {QuestionIncomeComponent} from '@modules/vc/components/question-income/question-income.component';
@@ -34,7 +33,6 @@ export const COMPONENTS: Type<any>[] = [
   ChatComponent,
   ThumbnailViewComponent,
   GridViewComponent,
-  SpeakerViewComponent,
   QuestionManagementComponent,
   PollManagementComponent,
   QuestionIncomeComponent,

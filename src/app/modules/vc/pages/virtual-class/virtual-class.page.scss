@@ -94,13 +94,6 @@
     }
 
     @include media-breakpoint-up(lg) {
-      .content {
-        .participants {
-          overflow: auto;
-        }
-      }
-    }
-    @include media-breakpoint-up(md) {
       &:not(.rtl).sidebar-visible {
         &, .header, .footer {
           margin-left: $sidebarWidth;

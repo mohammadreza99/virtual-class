@@ -66,10 +66,6 @@
 
 <p-overlayPanel [baseZIndex]="2000" #chatActions styleClass="actions {{fa ? 'rtl' : null}}">
     <ul class="list-unstyled p-0 m-0">
-      <!--      <li (click)="saveChat()">-->
-      <!--        <i class="icon-view-speaker"></i>-->
-      <!--        <span>{{'room.showSpeakerOnly' | translate}}</span>-->
-      <!--      </li>-->
       <li (click)="togglePublicChatActivation(chatActions)">
         <i class="icon-error-toast"></i>
         <span>{{(openPublicChat ? 'room.closePublicChat' : 'room.openPublicChat') | translate}}</span>

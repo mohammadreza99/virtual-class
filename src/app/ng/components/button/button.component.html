@@ -13,4 +13,8 @@
     raised ? 'raised' : ''
   }}"
   (onClick)="_onClick($event)"
-></p-button>
+>
+  <ng-template pTemplate="content" *ngIf="contentTemplate">
+    <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+  </ng-template>
+</p-button>

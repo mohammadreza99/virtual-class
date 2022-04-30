@@ -14,13 +14,24 @@
 :host ::ng-deep {
   .thumbnail-view {
     height: calc(100vh - 140px);
+    position: relative;
 
     .participants, .main-area {
       padding: 1rem 0.5rem;
+      transition: all .4s;
     }
 
     .participants {
       min-width: 300px;
+      position: absolute;
+      right: -300px;
+      top: 0;
+      height: 100%;
+      background-color: #35363D;
+      transition: all .4s;
+      border-left: 1px solid #545454;
+      overflow-y: auto;
+      z-index: -2;
 
       ng-screen:not(:last-child) {
         margin-bottom: 1rem
@@ -28,8 +39,9 @@
     }
 
     .main-area {
-      position: relative;
       touch-action: auto !important;
+      margin-right: 0;
+      position: relative;
 
       ng-whiteboard {
         width: 100%;
@@ -123,7 +135,6 @@
       }
 
       ng-whiteboard.active {
-
         ~ .teacher-webcam-shared {
           position: absolute;
           width: 170px;
@@ -166,25 +177,38 @@
       }
     }
 
-    @include media-breakpoint-down(lg) {
-      height: 100%;
+    .participants-toggler {
+      position: absolute;
+      top: 10%;
+      right: 0;
+      z-index: 300;
+      transition: all .4s;
 
-      ng-screen:not(:last-child) {
-        margin-bottom: 2rem !important;
+      button {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 6px 0 0 6px;
+      }
+    }
+
+    &.participants-active {
+      .participants {
+        right: 0;
+        z-index: 200;
+      }
+
+      .participants-toggler {
+        right: 300px;
       }
 
       .main-area {
-        min-height: 50vh;
+        margin-right: 300px;
       }
 
-      .participants {
-        width: 100%;
-        display: grid;
-        padding: 1rem;
-        grid-gap: 1rem;
-        grid-auto-flow: row;
-        grid-template-rows: auto;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      @include media-breakpoint-down(lg) {
+        .main-area {
+          margin-right: 0;
+        }
       }
     }
   }

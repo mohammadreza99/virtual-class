@@ -1,4 +1,4 @@
-import {Component, ComponentFactoryResolver, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {Component, ComponentFactoryResolver, OnDestroy, OnInit} from '@angular/core';
 import {PollItem, QuestionItem, Room, RoomUser, ViewMode} from '@core/models';
 import {AuthService, RoomService, SessionService} from '@core/http';
 import {OverlayPanel} from 'primeng/overlaypanel';
@@ -55,6 +55,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   currentQuestion: QuestionItem;
   currentPoll: PollItem;
   currentPresentation: any;
+  whiteboardActivated: boolean = false;
   membersSidebarVisible: boolean = true;
   chatSidebarVisible: boolean = false;
   questionSidebarVisible: boolean = false;
@@ -63,37 +64,12 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   destroy$: Subject<boolean> = new Subject<boolean>();
   sidebarKeys = ['members', 'chat', 'question', 'poll'];
 
-  @HostListener('window:resize', ['$event']) onResize(e) {
-    this.handleResize();
-  }
-
-  handleResize() {
-    if (window.innerWidth <= 992) {
-      this.closeAllSidebars();
-      if (this.currentPresentation) {
-        this.currentViewMode = 'speaker';
-        return;
-      }
-      if (this.currentViewMode != 'thumbnail') {
-        return;
-      }
-      this.currentViewMode = 'speaker';
-    } else {
-      this.openSidebar('members');
-      if (this.currentPresentation) {
-        this.currentViewMode = 'thumbnail';
-        return;
-      }
-    }
-  }
-
   ngOnInit(): void {
     this.loadData();
   }
 
   async loadData() {
     // let poorConnectionRetryCount = GlobalConfig.poorConnectionRetryCount;
-    this.handleResize();
     this.utilsService.disableWindowBackButton();
     this.initUserData();
     this.sessionService.initRoom();
@@ -533,6 +509,11 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
         this.sessionService.selectRandomUser(res.id).toPromise();
       }
     });
+    overlay.hide();
+  }
+
+  activeWhiteboard(overlay: OverlayPanel) {
+    this.updateViewService.setViewEvent({event: 'openPresentation', data: {pages: [''], active_page: 0}});
     overlay.hide();
   }
 }

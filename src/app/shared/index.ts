@@ -7,7 +7,6 @@ import {CustomTableComponent} from '@shared/components/custom-table/custom-table
 import {AvatarComponent} from '@shared/components/avatar/avatar.component';
 import {FileSizePipe} from '@shared/pipe/file-size.pipe';
 import {NoInternetComponent} from '@shared/components/no-internet/no-internet.component';
-import {TemplateDirective} from '@shared/directives/template.directive';
 
 export const COMPONENTS: Type<any>[] = [
   LogoComponent,
@@ -18,5 +17,4 @@ export const COMPONENTS: Type<any>[] = [
   CustomTableComponent,
   FileSizePipe,
   NoInternetComponent,
-  TemplateDirective
 ];

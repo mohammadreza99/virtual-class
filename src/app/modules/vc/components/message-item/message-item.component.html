@@ -24,10 +24,6 @@
 
 <p-overlayPanel [baseZIndex]="2000" #messageActions styleClass="actions {{fa ? 'rtl' : null}}">
   <ul class="list-unstyled p-0 m-0">
-    <!--      <li (click)="saveChat()">-->
-    <!--        <i class="icon-view-speaker"></i>-->
-    <!--        <span>{{'room.showSpeakerOnly' | translate}}</span>-->
-    <!--      </li>-->
     <li (click)="onReply(messageActions)">
       <i class="icon-forward"></i>
       <span>{{'room.reply' | translate}}</span>

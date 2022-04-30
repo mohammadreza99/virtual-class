@@ -1,4 +1,4 @@
-export type ViewMode = 'speaker' | 'grid' | 'thumbnail';
+export type ViewMode = 'grid' | 'thumbnail';
 export type QuestionState = 'Draft' | 'InProgress' | 'Canceled' | 'Finished';
 
 export interface Room {
