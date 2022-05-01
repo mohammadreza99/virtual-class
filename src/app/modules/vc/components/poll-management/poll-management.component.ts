@@ -17,7 +17,7 @@ export class PollManagementComponent extends LanguageChecker implements OnInit {
     super();
   }
 
-  @Input('visible') set setVisible(v: number) {
+  @Input('visible') set setVisible(v: boolean) {
     if (!v) {
       this.resetForm();
 
