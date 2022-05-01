@@ -47,6 +47,8 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   webcamActivated = false;
   micActivated = false;
   raiseHandActivated = false;
+  presentationActivated: boolean = false;
+  whiteboardActivated: boolean = false;
   hasUnreadMessage = false;
   hasUnreadRaisedHands = false;
   currentViewMode: ViewMode = 'thumbnail';
@@ -54,15 +56,13 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   currentUser: RoomUser;
   currentQuestion: QuestionItem;
   currentPoll: PollItem;
-  currentPresentation: any;
-  whiteboardActivated: boolean = false;
   membersSidebarVisible: boolean = true;
   chatSidebarVisible: boolean = false;
   questionSidebarVisible: boolean = false;
   pollSidebarVisible: boolean = false;
-  sessionDuration: any;
-  destroy$: Subject<boolean> = new Subject<boolean>();
+  sessionDuration: string;
   sidebarKeys = ['members', 'chat', 'question', 'poll'];
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   ngOnInit(): void {
     this.loadData();
@@ -209,11 +209,19 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           break;
 
         case 'openPresentation':
-          this.currentPresentation = res.data.presentation_id;
+          this.presentationActivated = true;
           break;
 
         case 'closePresentation':
-          this.currentPresentation = null;
+          this.presentationActivated = false;
+          break;
+
+        case 'openBoard':
+          this.whiteboardActivated = true;
+          break;
+
+        case 'closeBoard':
+          this.whiteboardActivated = false;
           break;
       }
     });
@@ -512,8 +520,11 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     overlay.hide();
   }
 
-  activeWhiteboard(overlay: OverlayPanel) {
-    this.updateViewService.setViewEvent({event: 'openPresentation', data: {pages: [''], active_page: 0}});
+  async openWhiteboard(overlay: OverlayPanel) {
+    const res = await this.sessionService.openBoard(true).toPromise();
+    if (res.status == 'OK') {
+      this.updateViewService.setViewEvent({event: 'openBoard', data: res});
+    }
     overlay.hide();
   }
 }

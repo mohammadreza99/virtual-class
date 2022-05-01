@@ -26,7 +26,7 @@
     </div>
   </div>
 
-  <div class="content" [class.mh-100]="currentPresentation">
+  <div class="content" [class.mh-100]="presentationActivated">
     <ng-grid-view [users]="roomUsers" [allUsers]="allUsers" [hidden]="currentViewMode != 'grid'"></ng-grid-view>
     <ng-thumbnail-view [users]="roomUsers" [hidden]="currentViewMode != 'thumbnail'"></ng-thumbnail-view>
   </div>
@@ -55,7 +55,7 @@
       <ng-button-async *ngPermission="'Viewer'" (clickAsync)="toggleRaiseHand($event)" newColor="success"
                        [defaultState]="raiseHandActivated ? 2 : 1" icon="icon-hand-raise">
       </ng-button-async>
-      <ng-container *ngIf="!currentPresentation">
+      <ng-container *ngIf="!presentationActivated || !whiteboardActivated">
         <ng-button-async class="d-none d-lg-inline" *ngPermission="'Admin'" icon="icon-share-screen"
                          [defaultState]="screenActivated ? 2 : 1"
                          (clickAsync)="toggleScreen($event)"
@@ -108,8 +108,9 @@
 </div>
 
 <p-overlayPanel [baseZIndex]="2000" #viewModes styleClass="actions {{fa ? 'rtl' : null}}">
-  <span *ngIf="currentPresentation" class="p-2 d-block">{{'room.disabledViewModeChange' | translate}}</span>
-  <ul class="list-unstyled p-0 m-0" *ngIf="!currentPresentation">
+  <span *ngIf="presentationActivated || whiteboardActivated"
+        class="p-2 d-block">{{'room.disabledViewModeChange' | translate}}</span>
+  <ul class="list-unstyled p-0 m-0" *ngIf="!presentationActivated">
     <li (click)="changeView('grid',viewModes)" [class.active]="currentViewMode == 'grid'">
       <i class="icon-view-grid"></i>
       <span>{{'room.showAllParticipants' | translate}}</span>
@@ -149,7 +150,7 @@
       <i class="icon-download"></i>
       <span>{{'room.sendFile' | translate}}</span>
     </li>
-    <li (click)="activeWhiteboard(mediaActions)" [class.p-disabled]="screenActivated || currentPresentation">
+    <li (click)="openWhiteboard(mediaActions)" [class.p-disabled]="screenActivated || presentationActivated">
       <i class="icon-download"></i>
       <span>{{'room.whiteboard' | translate}}</span>
     </li>

@@ -108,5 +108,11 @@ export enum SocketEventTypes {
   RandomUser = 'randomUser',
   RestoreUser = 'restoreUser',
   NewMedia = 'newMedia',
+  UpdateBoard = 'updateBoard',
+  OpenBoard = 'openBoard',
+  CloseBoard = 'closeBoard',
+  ChangeBoardSlide = 'changeBoardSlide',
+  SetBoardPermission = 'setBoardPermission',
+  RemoveBoardPermission = 'removeBoardPermission',
 }
 

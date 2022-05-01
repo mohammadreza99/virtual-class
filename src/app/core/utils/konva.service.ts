@@ -37,7 +37,6 @@ export class KonvaService {
       const containerEl = document.createElement('div');
       const id = this.getId(i);
       containerEl.id = id;
-      containerEl.style.display = 'block';
       containerEl.style.height = '100%';
       konvaWrapper.appendChild(containerEl);
       this.init(id);
@@ -131,22 +130,27 @@ export class KonvaService {
       isPaint = false;
     });
 
-    setTimeout(() => {
-      this.fitStageIntoParentContainer();
-    });
+    this.fitStageIntoParentContainer();
     window.addEventListener('resize', this.fitStageIntoParentContainer);
   }
 
   private fitStageIntoParentContainer = () => {
-    const containerElem: any = document.querySelector(`.main-area`);
-    const computedStyle = getComputedStyle(containerElem);
-    let containerWidth = containerElem.clientWidth;
-    let containerHeight = containerElem.clientHeight;
-    containerWidth -= parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
-    containerHeight -= parseFloat(computedStyle.paddingTop) + parseFloat(computedStyle.paddingBottom);
+    const containerElem: any = document.querySelector(`.konva-wrapper`);
+    const containerWidth = containerElem.offsetWidth;
+    const containerHeight = containerElem.offsetHeight;
     this.currentSlide.stage.width(containerWidth);
     this.currentSlide.stage.height(containerHeight);
     this.currentSlide.stage.scale({x: containerWidth / 1000, y: containerHeight / 1000});
+  };
+
+  private fitStageIntoParentContainer2 = () => {
+    // first set the stage with and height to 1000
+    const container: any = document.querySelector(`.konva-wrapper`);
+    const containerWidth = container.offsetWidth;
+    const scale = containerWidth / 1000;
+    this.currentSlide.stage.width(1000 * scale);
+    this.currentSlide.stage.height(1000 * scale);
+    this.currentSlide.stage.scale({x: scale, y: scale});
   };
 
   private brush(pos: any) {

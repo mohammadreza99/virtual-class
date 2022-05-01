@@ -46,7 +46,6 @@ export class WhiteboardComponent implements OnInit {
 
 
   ngOnInit() {
-    this.konvaService.start(this.slidesCount, this.currentSlide);
     this.konvaService.stageChange().subscribe(res => {
       switch (res.event) {
         case 'toolChange':
@@ -59,6 +58,26 @@ export class WhiteboardComponent implements OnInit {
 
     this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
       switch (res.event) {
+        case 'openBoard':
+
+          break;
+
+        case 'closeBoard':
+
+          break;
+
+        case 'changeBoardSlide':
+
+          break;
+
+        case 'setBoardPermission':
+
+          break;
+
+        case 'removeBoardPermission':
+
+          break;
+
         case 'changePresentationPage':
           this.presentationData.active_page = res.data.page_number;
           this.currentImageUrl = this.presentationData.pages[res.data.page_number];
@@ -67,6 +86,7 @@ export class WhiteboardComponent implements OnInit {
 
         case 'openPresentation':
           this.addClass('active');
+          this.konvaService.start(this.slidesCount, this.currentSlide);
           this.presentationData = res.data;
           this.currentImageUrl = this.presentationData.pages[res.data.active_page];
           this.handleButtonsState();

@@ -66,7 +66,7 @@ export class ChatComponent extends LanguageChecker implements OnInit, AfterViewI
           this.scrollDown();
           break;
 
-        case 'newPublicMessage':
+        case 'newMessage':
           this.publicMessages.push({message: res.data.message, user: res.data.user});
           if (this.sessionService.currentUser.id != res.data.user.id) {
             this.newMessage.emit();

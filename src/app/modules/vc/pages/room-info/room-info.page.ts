@@ -58,6 +58,10 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
     try {
       const roomId = +this.route.snapshot.paramMap.get('roomId');
       const result = await this.roomService.getRoomById(roomId).toPromise();
+      if (result.status == 'NOT_FOUND') {
+        this.router.navigateByUrl('/');
+        return;
+      }
       if (result.status == 'OK') {
         this.room = result.data.room;
         this.user = result.data.member;

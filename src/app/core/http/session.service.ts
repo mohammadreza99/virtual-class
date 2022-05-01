@@ -576,10 +576,6 @@ export class SessionService extends ApiService {
         case 'userDisconnected':
         case 'leaveRoom':
           user = this.getRoomUserById(res.target);
-          // if (user?.kicked) {
-          //   // don't do anything if user has been kicked
-          //   return;
-          // }
           if (res.target != this.currentUser.id) {
             const connection = this.getPeerConnectionById(res.target);
             if (connection) {
@@ -711,26 +707,6 @@ export class SessionService extends ApiService {
           }
           break;
 
-        case 'isTalking':
-          this.updateViewService.setViewEvent({event: 'isTalking', data: res});
-          break;
-
-        case 'publicChatState':
-          this.updateViewService.setViewEvent({event: 'publicChatState', data: res});
-          break;
-
-        case 'newMessage':
-          this.updateViewService.setViewEvent({event: 'newPublicMessage', data: res});
-          break;
-
-        case 'deletedMessage':
-          this.updateViewService.setViewEvent({event: 'deletedMessage', data: res});
-          break;
-
-        case 'newQuestion':
-          this.updateViewService.setViewEvent({event: 'newQuestion', data: res});
-          break;
-
         case 'finishedQuestion':
           if (this.imStudent) {
             this.openToast('room.questionFinished', 'warn');
@@ -745,13 +721,6 @@ export class SessionService extends ApiService {
           this.updateViewService.setViewEvent({event: 'canceledQuestion', data: res});
           break;
 
-        case 'newQuestionReply':
-          this.updateViewService.setViewEvent({event: 'newQuestionReply', data: res});
-          break;
-
-        case 'newPoll':
-          this.updateViewService.setViewEvent({event: 'newPoll', data: res});
-          break;
 
         case 'finishedPoll':
           if (this.imStudent) {
@@ -775,22 +744,6 @@ export class SessionService extends ApiService {
           }
           break;
 
-        case 'changePresentationPage':
-          this.updateViewService.setViewEvent({event: 'changePresentationPage', data: res});
-          break;
-
-        case 'openPresentation':
-          this.updateViewService.setViewEvent({event: 'openPresentation', data: res});
-          break;
-
-        case 'closePresentation':
-          this.updateViewService.setViewEvent({event: 'closePresentation', data: res});
-          break;
-
-        case 'deletePresentation':
-          this.updateViewService.setViewEvent({event: 'deletePresentation', data: res});
-          break;
-
         case 'restoreUser':
           const idx = this.kickedUsers.findIndex(u => u.id == res.target);
           if (idx > -1) {
@@ -800,8 +753,79 @@ export class SessionService extends ApiService {
           this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.kickedUsers});
           break;
 
-        case 'newMedia':
-          this.updateViewService.setViewEvent({event: 'newMedia', data: res});
+        // case 'newQuestionReply':
+        //   this.updateViewService.setViewEvent({event: 'newQuestionReply', data: res});
+        //   break;
+        //
+        // case 'newPoll':
+        //   this.updateViewService.setViewEvent({event: 'newPoll', data: res});
+        //   break;
+        //
+        // case 'changePresentationPage':
+        //   this.updateViewService.setViewEvent({event: 'changePresentationPage', data: res});
+        //   break;
+        //
+        // case 'openPresentation':
+        //   this.updateViewService.setViewEvent({event: 'openPresentation', data: res});
+        //   break;
+        //
+        // case 'closePresentation':
+        //   this.updateViewService.setViewEvent({event: 'closePresentation', data: res});
+        //   break;
+        //
+        // case 'deletePresentation':
+        //   this.updateViewService.setViewEvent({event: 'deletePresentation', data: res});
+        //   break;
+        //
+        // case 'isTalking':
+        //   this.updateViewService.setViewEvent({event: 'isTalking', data: res});
+        //   break;
+        //
+        // case 'publicChatState':
+        //   this.updateViewService.setViewEvent({event: 'publicChatState', data: res});
+        //   break;
+        //
+        // case 'newMessage':
+        //   this.updateViewService.setViewEvent({event: 'newMessage', data: res});
+        //   break;
+        //
+        // case 'deletedMessage':
+        //   this.updateViewService.setViewEvent({event: 'deletedMessage', data: res});
+        //   break;
+        //
+        // case 'newQuestion':
+        //   this.updateViewService.setViewEvent({event: 'newQuestion', data: res});
+        //   break;
+        //
+        // case 'newMedia':
+        //   this.updateViewService.setViewEvent({event: 'newMedia', data: res});
+        //   break;
+        //
+        // case 'updateBoard':
+        //   this.updateViewService.setViewEvent({event: 'updateBoard', data: res});
+        //   break;
+        //
+        // case 'openBoard':
+        //   this.updateViewService.setViewEvent({event: 'openBoard', data: res});
+        //   break;
+        //
+        // case 'closeBoard':
+        //   this.updateViewService.setViewEvent({event: 'closeBoard', data: res});
+        //   break;
+        //
+        // case 'changeBoardSlide':
+        //   this.updateViewService.setViewEvent({event: 'changeBoardSlide', data: res});
+        //   break;
+        //
+        // case 'setBoardPermission':
+        //   this.updateViewService.setViewEvent({event: 'setBoardPermission', data: res});
+        //   break;
+        //
+        // case 'removeBoardPermission':
+        //   this.updateViewService.setViewEvent({event: 'removeBoardPermission', data: res});
+        //   break;
+        default:
+          this.updateViewService.setViewEvent({event: res.event, data: res});
           break;
       }
     });
@@ -965,8 +989,6 @@ export class SessionService extends ApiService {
       clearInterval(this.updateRoomUsersTimer);
     }
     this.socketService.clearPingTimer();
-    // TODO : I replace (this.socketService.close()) with (this.socketService.stop())
-    // this.socketService.close();
     this.socketService.stop();
     if (this.socketSubscription) {
       this.socketSubscription.unsubscribe();
@@ -1092,14 +1114,60 @@ export class SessionService extends ApiService {
   ///////////////////////////////////////////////////////////////////////////////
   //                                API CALLS                                  //
   ///////////////////////////////////////////////////////////////////////////////
+
+  updateBoard(board_id: number, slide_no: number, data: any) {
+    return this._post<any>('', {
+      method: 'updateBoard',
+      data: {board_id, room_id: this.currentRoom.id, slide_no, data},
+    });
+  }
+
+  openBoard(is_downloadable: boolean) {
+    return this._post<any>('', {
+      method: 'openBoard',
+      data: {is_downloadable, room_id: this.currentRoom.id},
+    });
+  }
+
+  closeBoard() {
+    return this._post<any>('', {
+      method: 'closeBoard',
+      data: {room_id: this.currentRoom.id},
+    });
+  }
+
+  changeBoardSlide(board_id: number, slide_no: number) {
+    return this._post<any>('', {
+      method: 'changeBoardSlide',
+      data: {board_id, room_id: this.currentRoom.id, slide_no},
+    });
+  }
+
+  getBoard() {
+    return this._post<any>('', {
+      method: 'getBoard',
+      data: {room_id: this.currentRoom.id},
+    });
+  }
+
+  setBoardPermission(board_id: number, user_id: number) {
+    return this._post<any>('', {
+      method: 'setBoardPermission',
+      data: {user_id, room_id: this.currentRoom.id, board_id},
+    });
+  }
+
+  removeBoardPermission(board_id: number, user_id: number) {
+    return this._post<any>('', {
+      method: 'removeBoardPermission',
+      data: {user_id, room_id: this.currentRoom.id, board_id},
+    });
+  }
+
   muteUser(user_id: number, mute: boolean) {
     return this._post<any>('', {
       method: 'mutePerson',
       data: {user_id, room_id: this.currentRoom.id, mute},
-    }, {
-      params: {
-        loading: false
-      }
     });
   }
 
