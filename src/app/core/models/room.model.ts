@@ -17,6 +17,7 @@ export interface Room {
   active_question?: number;
   active_poll?: number;
   presentation?: any;
+  board?: any;
 }
 
 export interface UserOrGroup {

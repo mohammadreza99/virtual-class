@@ -217,6 +217,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           break;
 
         case 'openBoard':
+        case 'startBoard':
           this.whiteboardActivated = true;
           break;
 
@@ -251,7 +252,14 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
         this.updateViewService.setViewEvent({event: 'openPresentation', data: this.currentRoom.presentation});
       });
     }
-
+    if (this.currentRoom.board) {
+      const res = await this.sessionService.getBoard(this.currentRoom.board.id).toPromise();
+      if (res.status == 'OK') {
+        setTimeout(() => {
+          this.updateViewService.setViewEvent({event: 'openBoard', data: res.data.board});
+        });
+      }
+    }
   }
 
   async toggleCamera(callback: (toggleState?: boolean) => any) {
@@ -505,7 +513,6 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     overlay.hide();
   }
 
-
   selectRandomUser(overlay: OverlayPanel) {
     this.dialogService.open(SelectRandomUserComponent, {
       header: this.instant('room.selectRandomUser'),
@@ -523,7 +530,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   async openWhiteboard(overlay: OverlayPanel) {
     const res = await this.sessionService.openBoard(true).toPromise();
     if (res.status == 'OK') {
-      this.updateViewService.setViewEvent({event: 'openBoard', data: res});
+      this.updateViewService.setViewEvent({event: 'startBoard', data: {id: res.data.board_id}});
     }
     overlay.hide();
   }

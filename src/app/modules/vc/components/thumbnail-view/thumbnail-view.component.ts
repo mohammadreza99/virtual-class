@@ -1,5 +1,6 @@
-import {Component, Input, OnInit, TemplateRef} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {RoomUser} from '@core/models';
+import {KonvaService} from '@core/utils';
 
 @Component({
   selector: 'ng-thumbnail-view',
@@ -8,13 +9,13 @@ import {RoomUser} from '@core/models';
 })
 export class ThumbnailViewComponent implements OnInit {
 
-  constructor() {
+  constructor(private konvaService: KonvaService) {
   }
 
   @Input() users: RoomUser[];
 
   toggleSpeaker: boolean = false;
-  toggleParticipants: boolean = false;
+  toggleParticipants: boolean = true;
 
   ngOnInit(): void {
   }
@@ -29,5 +30,8 @@ export class ThumbnailViewComponent implements OnInit {
 
   toggleParticipantsClick() {
     this.toggleParticipants = !this.toggleParticipants;
+    setTimeout(() => {
+      this.konvaService.fitStageIntoParentContainer(null);
+    }, 500);
   }
 }

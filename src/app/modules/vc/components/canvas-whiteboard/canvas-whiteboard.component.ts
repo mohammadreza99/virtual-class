@@ -38,14 +38,14 @@ export class CanvasWhiteboardComponent implements OnInit {
           break;
 
         case 'openPresentation':
-          this.addClass('open-presentation');
+          this.activatePresentation();
           this.presentationData = res.data;
           this.currentImageUrl = this.presentationData.pages[res.data.active_page];
           this.handleButtonsState();
           break;
 
         case 'closePresentation':
-          this.removeClass('open-presentation');
+          this.deactivatePresentation();
           this.presentationData = null;
           this.currentImageUrl = null;
           break;
@@ -56,12 +56,12 @@ export class CanvasWhiteboardComponent implements OnInit {
     });
   }
 
-  private addClass(className: string) {
-    this.renderer.addClass(this.elementRef.nativeElement, className);
+  private activatePresentation() {
+    this.renderer.addClass(this.elementRef.nativeElement, 'active');
   }
 
-  private removeClass(className: string) {
-    this.renderer.removeClass(this.elementRef.nativeElement, className);
+  private deactivatePresentation() {
+    this.renderer.removeClass(this.elementRef.nativeElement, 'active');
   }
 
   async nextPage(callback: any) {

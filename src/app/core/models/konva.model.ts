@@ -19,8 +19,13 @@ export type KonvaTools =
   | 'circle'
   | 'line'
   | 'rectangle';
-export type StageEvents = 'toolChange' | 'optionChange' | 'undo';
+export type StageEvents = 'toolChange' | 'optionChange' | 'updateBoard';
 export type OverlayMode = 'tools' | 'thicknesses' | 'textSizes' | 'colors';
+
+export interface WhitebordSlide {
+  slideNumber: number;
+  data: any;
+}
 
 export interface KonvaOptions {
   thickness?: Thicknesses;
@@ -28,7 +33,7 @@ export interface KonvaOptions {
   textSize?: TextSizes;
 }
 
-export interface Slide {
+export interface CanvasItem {
   stage: Stage;
   layer: Layer;
   shapes: (Shape | Group | any)[];

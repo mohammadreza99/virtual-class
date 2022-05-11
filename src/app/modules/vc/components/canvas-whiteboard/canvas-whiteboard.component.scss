@@ -7,7 +7,7 @@ $timing: 0.3s;
   display: block;
   height: 100%;
 
-  &:not(.open-presentation) {
+  &:not(.active) {
     display: none;
   }
 }

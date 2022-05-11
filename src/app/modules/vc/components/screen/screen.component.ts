@@ -1,6 +1,6 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {SessionService} from '@core/http';
-import {RoomUser, StreamActionEvent, TrackPosition} from '@core/models';
+import {RoomUser, TrackPosition} from '@core/models';
 import {UpdateViewService} from '@core/http/update-view.service';
 import {GlobalConfig} from '@core/global.config';
 import {takeUntil} from 'rxjs/operators';
@@ -115,7 +115,7 @@ export class ScreenComponent implements OnInit, OnDestroy {
     return this.sessionService.hasVideo(this.stream);
   }
 
-  private handleTrackClassNames(res: StreamActionEvent) {
+  private handleTrackClassNames(res: any) {
     this.addClass(res.display);
     this.addClass(res.position);
     if (this.isInMainPosition()) {
@@ -132,7 +132,7 @@ export class ScreenComponent implements OnInit, OnDestroy {
     }
   }
 
-  private handleDisconnectClassNames(res: StreamActionEvent) {
+  private handleDisconnectClassNames(res: any) {
     this.addClass('disconnected');
     if (this.isInMainPosition()) {
       this.user = this.sessionService.getRoomUserById(res.userId);

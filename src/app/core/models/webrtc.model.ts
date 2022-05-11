@@ -1,11 +1,3 @@
-export type StreamAction =
-  | 'onMute'
-  | 'onMuteVideo'
-  | 'onConnect'
-  | 'onDisconnect'
-  | 'onTrack'
-  | 'onError';
-
 export type TrackPosition = 'mainPosition' | 'mainThumbPosition' | 'sideThumbPosition';
 
 export type DisplayName = 'studentWebcam' | 'teacherWebcam' | 'teacherScreen';
@@ -33,7 +25,8 @@ export interface PeerConnectionOptions {
   position?: TrackPosition;
   onConnect?: () => any;
   onDisconnect?: () => any;
-  onError?: (error: string) => any;
+  onClose?: () => any;
+  onFailed?: (reason?: string) => any;
 }
 
 export interface RoomUser {
@@ -62,15 +55,6 @@ export interface Publisher {
   talking?: boolean;
   user_id: any;
   publish_type?: PublishType;
-}
-
-export interface StreamActionEvent {
-  action: StreamAction;
-  userId: any;
-  stream?: MediaStream;
-  position?: TrackPosition;
-  display?: DisplayName;
-  publishType?: PublishType;
 }
 
 export enum SocketEventTypes {

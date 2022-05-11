@@ -51,11 +51,11 @@ export class SessionService extends ApiService {
   //                                    MAIN                                   //
   ///////////////////////////////////////////////////////////////////////////////
   async initRoom() {
+    this.initSockets();
+    this.initViewUpdates();
     await this.updateRoomUsers();
     await this.updateRoomPublishers();
     await this.updateRoomPublicMessages();
-    this.initSockets();
-    this.initViewUpdates();
   }
 
   async checkSession(roomId: number) {
@@ -109,7 +109,7 @@ export class SessionService extends ApiService {
       if (result.status == 'JANUS_ERROR') {
         await this.updateRoomPublishers();
       }
-      await this.updatePublishers(result.data.publishers);
+      await this.subscribePublishers(result.data.publishers);
       this.setUpdateRoomPublishersTimer();
     } catch (error) {
       console.error(error);
@@ -280,9 +280,6 @@ export class SessionService extends ApiService {
         startSubscription: (sdp: string) => {
           return this.startSubscription(sdp, options.publishId).toPromise();
         },
-        onDisconnect: () => {
-          this.closeSubscribeConnection(options.userId, options.publishType);
-        },
         onTrack: (event: RTCTrackEvent) => {
           if (options.position == 'mainThumbPosition') {
             this.setMainPositionUser(options.userId);
@@ -299,7 +296,12 @@ export class SessionService extends ApiService {
           });
           resolve(pc);
         },
-        onError: (error: string) => {
+        onConnect: () => {
+        },
+        onDisconnect: () => {
+          this.closeSubscribeConnection(options.userId, options.publishType);
+        },
+        onFailed: (reason: string) => {
           // if (error == 'JANUS_ERROR') {
           //   this.openToast(`Subscribe JANUS ERROR -- retrying...`, 'warn');
           //   this.closeSubscribeConnection(options.userId, options.publishType);
@@ -320,8 +322,15 @@ export class SessionService extends ApiService {
           //     publishType: options.publishType,
           //   }
           // });
-          this.resetAll();
-          this.initRoom();
+          if (options.userId == this.currentUser.id) {
+            this.resetAll();
+            this.initRoom();
+          } else {
+            this.closeSubscribeConnection(options.userId, options.publishType);
+            this.createSubscribeConnection(options);
+          }
+        },
+        onClose: () => {
         }
       });
       pc.createSubscribeConnection();
@@ -349,23 +358,25 @@ export class SessionService extends ApiService {
           this.updateViewService.setViewEvent({
             event: 'onTrack',
             data: {
+              stream: options.stream,
               userId: options.userId,
               display: options.display,
               position: options.position,
-              stream: options.stream,
               publishType: options.publishType,
             }
           });
           resolve(pc);
+        },
+        onConnect: () => {
         },
         onDisconnect: () => {
           if (this.mainPositionUser?.id == options.userId) {
             this.removeMainPositionUser();
           }
           this.closeMyConnection(options.publishType, true);
-          this.createPublishConnection(options, mediaType);
+          // this.createPublishConnection(options, mediaType);
         },
-        onError: (error: string) => {
+        onFailed: (reason: string) => {
           // if (error == 'JANUS_ERROR') {
           //   this.closeMyConnection(options.publishType, true);
           //   this.createPublishConnection(options, mediaType);
@@ -386,15 +397,15 @@ export class SessionService extends ApiService {
           //   }
           // });
           // reject(error);
-          // this.resetAll();
-          // this.initRoom();
         },
+        onClose: () => {
+        }
       });
       pc.createPublishConnection(mediaType);
     });
   }
 
-  private async updatePublishers(publishers: Publisher[]) {
+  private async subscribePublishers(publishers: Publisher[]) {
     const {added, deleted} = this.getPublishersDifference(publishers, this.peerConnections);
     if (added.length !== 0 || deleted.length !== 0) {
 
@@ -461,22 +472,22 @@ export class SessionService extends ApiService {
     }
   }
 
-  private setUpdateRoomPublishersTimer() {
+  private setUpdateRoomPublishersTimer(timer: number = GlobalConfig.updateRoomPublishersDelay) {
     if (this.updateRoomPublishersTimer) {
       clearTimeout(this.updateRoomPublishersTimer);
     }
     this.updateRoomPublishersTimer = setTimeout(() => {
       this.updateRoomPublishers();
-    }, GlobalConfig.updateRoomPublishersDelay);
+    }, timer);
   }
 
-  private setUpdateRoomUsersTimer() {
+  private setUpdateRoomUsersTimer(timer: number = GlobalConfig.updateRoomUsersDelay) {
     if (this.updateRoomUsersTimer) {
       clearTimeout(this.updateRoomUsersTimer);
     }
     this.updateRoomUsersTimer = setTimeout(() => {
       this.updateRoomUsers();
-    }, GlobalConfig.updateRoomUsersDelay);
+    }, timer);
   }
 
   private removeMainPositionUser() {
@@ -511,7 +522,7 @@ export class SessionService extends ApiService {
 
   private initSockets() {
     this.socketService.start(this.currentRoom.id);
-    this.socketSubscription = this.socketService.listen().subscribe(res => {
+    this.socketSubscription = this.socketService.listen().subscribe(async res => {
       console.log(`${res.event} => `, res);
       let user: RoomUser;
       switch (res.event) {
@@ -525,15 +536,11 @@ export class SessionService extends ApiService {
             this.raisedHands.push(user);
             this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
           }
-          setTimeout(() => {
-            this.updateRoomPublishers();
-          }, 5000);
+          this.setUpdateRoomPublishersTimer(2000);
           break;
 
         case 'newPublisher':
-          setTimeout(() => {
-            this.updateRoomPublishers();
-          }, 5000);
+          this.setUpdateRoomPublishersTimer(2000);
           break;
 
         case 'unpublish':
@@ -599,7 +606,9 @@ export class SessionService extends ApiService {
             if (res.target == this.currentUser.id) {
               this.getMeOut();
             } else if (res.target != this.currentUser.id && this.imTeacher) {
-              this.openToast('room.userLeftTheRoom', 'warn', user.last_name);
+              if (user) {
+                this.openToast('room.userLeftTheRoom', 'warn', user.last_name);
+              }
             }
           }
           break;
@@ -753,82 +762,40 @@ export class SessionService extends ApiService {
           this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.kickedUsers});
           break;
 
-        // case 'newQuestionReply':
-        //   this.updateViewService.setViewEvent({event: 'newQuestionReply', data: res});
-        //   break;
-        //
-        // case 'newPoll':
-        //   this.updateViewService.setViewEvent({event: 'newPoll', data: res});
-        //   break;
-        //
-        // case 'changePresentationPage':
-        //   this.updateViewService.setViewEvent({event: 'changePresentationPage', data: res});
-        //   break;
-        //
-        // case 'openPresentation':
-        //   this.updateViewService.setViewEvent({event: 'openPresentation', data: res});
-        //   break;
-        //
-        // case 'closePresentation':
-        //   this.updateViewService.setViewEvent({event: 'closePresentation', data: res});
-        //   break;
-        //
-        // case 'deletePresentation':
-        //   this.updateViewService.setViewEvent({event: 'deletePresentation', data: res});
-        //   break;
-        //
-        // case 'isTalking':
-        //   this.updateViewService.setViewEvent({event: 'isTalking', data: res});
-        //   break;
-        //
-        // case 'publicChatState':
-        //   this.updateViewService.setViewEvent({event: 'publicChatState', data: res});
-        //   break;
-        //
-        // case 'newMessage':
-        //   this.updateViewService.setViewEvent({event: 'newMessage', data: res});
-        //   break;
-        //
-        // case 'deletedMessage':
-        //   this.updateViewService.setViewEvent({event: 'deletedMessage', data: res});
-        //   break;
-        //
-        // case 'newQuestion':
-        //   this.updateViewService.setViewEvent({event: 'newQuestion', data: res});
-        //   break;
-        //
-        // case 'newMedia':
-        //   this.updateViewService.setViewEvent({event: 'newMedia', data: res});
-        //   break;
-        //
-        // case 'updateBoard':
-        //   this.updateViewService.setViewEvent({event: 'updateBoard', data: res});
-        //   break;
-        //
-        // case 'openBoard':
-        //   this.updateViewService.setViewEvent({event: 'openBoard', data: res});
-        //   break;
-        //
-        // case 'closeBoard':
-        //   this.updateViewService.setViewEvent({event: 'closeBoard', data: res});
-        //   break;
-        //
-        // case 'changeBoardSlide':
-        //   this.updateViewService.setViewEvent({event: 'changeBoardSlide', data: res});
-        //   break;
-        //
-        // case 'setBoardPermission':
-        //   this.updateViewService.setViewEvent({event: 'setBoardPermission', data: res});
-        //   break;
-        //
-        // case 'removeBoardPermission':
-        //   this.updateViewService.setViewEvent({event: 'removeBoardPermission', data: res});
-        //   break;
+        case 'newMedia':
+          this.handleNewMedia(res);
+          break;
+
         default:
           this.updateViewService.setViewEvent({event: res.event, data: res});
           break;
       }
     });
+  }
+
+  async handleNewMedia(res) {
+    if (this.currentUser.id != res.data.target) {
+      return;
+    }
+    const {p_type, feed, sdp, publish_type} = res;
+    let connection: PeerConnection;
+
+    // subscribe
+    if (p_type == 'offer') {
+      connection = this.peerConnections.find(c => c.publishId == feed);
+      await connection.pc.setRemoteDescription({type: 'offer', sdp});
+      const answer = await connection.pc.createAnswer();
+      await connection.pc.setLocalDescription(answer);
+      await connection.options.startSubscription(answer.sdp);
+    }
+
+    // publish
+    if (p_type == 'answer') {
+      connection = this.peerConnections.find(c => c.publishType.toLowerCase() == publish_type.toLowerCase());
+      await connection.pc.setRemoteDescription({type: 'answer', sdp});
+      await connection.options.publishConfirm();
+      connection.options.onTrack();
+    }
   }
 
   private initViewUpdates() {
@@ -1143,10 +1110,10 @@ export class SessionService extends ApiService {
     });
   }
 
-  getBoard() {
+  getBoard(board_id: number) {
     return this._post<any>('', {
       method: 'getBoard',
-      data: {room_id: this.currentRoom.id},
+      data: {board_id, room_id: this.currentRoom.id},
     });
   }
 

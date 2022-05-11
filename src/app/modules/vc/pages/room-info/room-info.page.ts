@@ -303,6 +303,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
           this.utilsService.showDialog({message});
           return;
         case 'RoomNotStarted':
+          this.disableEnterButton = true;
           return;
       }
     }

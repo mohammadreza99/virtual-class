@@ -112,7 +112,21 @@ $visibility_on: "\e961";
 $visibility_off: "\e962";
 $waiting-room: "\e963";
 $warning-toast: "\e964";
-
+$icon-erase: "\e900";
+$icon-fi-rr-broom: "\e901";
+$icon-fi-rr-cursor: "\e902";
+$icon-fi-rr-line-width: "\e903";
+$icon-fi-rr-minus: "\e904";
+$icon-fi-rr-mode-landscape: "\e905";
+$icon-fi-rr-paint-brush: "\e906";
+$icon-fi-rr-pencil: "\e907";
+$icon-fi-rr-pyramid: "\e908";
+$icon-fi-rr-rec: "\e909";
+$icon-fi-rr-rectangle-horizontal: "\e90a";
+$icon-fi-rr-resources: "\e90b";
+$icon-fi-rr-stop: "\e90c";
+$icon-fi-rr-text: "\e90d";
+$icon-fi-rr-undo: "\e90e";
 
 [class^="icon-"], [class*=" icon-"] {
   font-family: 'icomoon' !important;
@@ -132,6 +146,7 @@ $warning-toast: "\e964";
     content: $icon-recover-password;
   }
 }
+
 .icon-about {
   &:before {
     content: $about;
@@ -741,6 +756,98 @@ $warning-toast: "\e964";
     content: $warning-toast;
   }
 }
+
+
+.icon-erase {
+  &:before {
+    content: $icon-erase;
+  }
+}
+
+.icon-fi-rr-broom {
+  &:before {
+    content: $icon-fi-rr-broom;
+  }
+}
+
+.icon-fi-rr-cursor {
+  &:before {
+    content: $icon-fi-rr-cursor;
+  }
+}
+
+.icon-fi-rr-line-width {
+  &:before {
+    content: $icon-fi-rr-line-width;
+  }
+}
+
+.icon-fi-rr-minus {
+  &:before {
+    content: $icon-fi-rr-minus;
+  }
+}
+
+.icon-fi-rr-mode-landscape {
+  &:before {
+    content: $icon-fi-rr-mode-landscape;
+  }
+}
+
+.icon-fi-rr-paint-brush {
+  &:before {
+    content: $icon-fi-rr-paint-brush;
+  }
+}
+
+.icon-fi-rr-pencil {
+  &:before {
+    content: $icon-fi-rr-pencil;
+  }
+}
+
+.icon-fi-rr-pyramid {
+  &:before {
+    content: $icon-fi-rr-pyramid;
+  }
+}
+
+.icon-fi-rr-rec {
+  &:before {
+    content: $icon-fi-rr-rec;
+  }
+}
+
+.icon-fi-rr-rectangle-horizontal {
+  &:before {
+    content: $icon-fi-rr-rectangle-horizontal;
+  }
+}
+
+.icon-fi-rr-resources {
+  &:before {
+    content: $icon-fi-rr-resources;
+  }
+}
+
+.icon-fi-rr-stop {
+  &:before {
+    content: $icon-fi-rr-stop;
+  }
+}
+
+.icon-fi-rr-text {
+  &:before {
+    content: $icon-fi-rr-text;
+  }
+}
+
+.icon-fi-rr-undo {
+  &:before {
+    content: $icon-fi-rr-undo;
+  }
+}
+
 
 
 

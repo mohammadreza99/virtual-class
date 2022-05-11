@@ -1,11 +1,12 @@
-<section class="wrapper" #presentation>
-
-  <div class="controls border shadow">
-    <ng-button icon="pi pi-times" color="secondary" (click)="closePresentation()"></ng-button>
-    <ng-button icon="pi pi-download" (click)="saveAsImage()"></ng-button>
-    <ng-button appearance="outlined" icon="icon-fullscreen" (click)="toggleFullScreen(presentation)"></ng-button>
-    <ng-button [rounded]="true" appearance="outlined" pTooltip="Text Size" tooltipPosition="right"
-               icon="pi pi-sort-alpha-down" (click)="showOptionOverlay('textSizes',$event)"
+<div class="controls">
+  <ng-button *ngPermission="'Admin'" class="mb-3" icon="pi pi-times" color="secondary" (click)="close()"></ng-button>
+  <ng-button *ngPermission="'Viewer'" class="mb-3" icon="icon-fullscreen" appearance="outlined"
+             (click)="toggleFullScreen(whiteboard)"></ng-button>
+  <ng-button class="mb-3" icon="pi pi-download" (click)="saveAsImage()"></ng-button>
+  <div class="tools" *ngPermission="'Admin'">
+    <ng-button icon="pi pi-sort-alpha-down" [rounded]="true" appearance="outlined" pTooltip="Text Size"
+               tooltipPosition="right"
+               (click)="showOptionOverlay('textSizes',$event)"
                *ngIf="selectedTool == 'text'">
     </ng-button>
     <ng-button [rounded]="true" appearance="outlined" pTooltip="Thickness"
@@ -27,52 +28,52 @@
     </ng-button>
 
     <ng-button [rounded]="true" appearance="outlined" (click)="showOptionOverlay('tools',$event)" pTooltip="Tools"
-               tooltipPosition="right" [icon]="'pi pi-'+selectedTool">
+               tooltipPosition="right" [icon]="getActiveToolIcon()">
     </ng-button>
 
-    <ng-button [rounded]="true" [appearance]="selectedTool == 'eraser' ? 'basic' : 'outlined'"
+    <ng-button icon="icon-erase" [rounded]="true" [appearance]="selectedTool == 'eraser' ? 'basic' : 'outlined'"
                [color]="selectedTool == 'eraser' ? 'primary' : null"
-               (click)="onSelectTool('eraser')" pTooltip="Eraser" tooltipPosition="right" icon="pi pi-print">
+               (click)="onSelectTool('eraser')" pTooltip="Eraser" tooltipPosition="right">
     </ng-button>
 
-    <ng-button [rounded]="true" [appearance]="selectedTool == 'select' ? 'basic' : 'outlined'"
+    <ng-button icon="icon-fi-rr-cursor" [rounded]="true" [appearance]="selectedTool == 'select' ? 'basic' : 'outlined'"
                [color]="selectedTool == 'select' ? 'primary' : null"
-               (click)="onSelectTool('select')" pTooltip="Select" tooltipPosition="right" icon="pi pi-arrow-up-left">
+               (click)="onSelectTool('select')" pTooltip="Select" tooltipPosition="right">
     </ng-button>
 
-    <ng-button [rounded]="true" appearance="outlined" pTooltip="Image" tooltipPosition="right"
-               icon="pi pi-images" (click)="file.click()">
-      <input type="file" #file (change)="onSelectImage($event)" accept="image" class="hidden"/>
-    </ng-button>
+    <!--    <ng-button [rounded]="true" appearance="outlined" pTooltip="Image" tooltipPosition="right"-->
+    <!--               icon="pi pi-images" (click)="file.click()">-->
+    <!--      <input type="file" #file (change)="onSelectImage($event)" accept="image" class="hidden"/>-->
+    <!--    </ng-button>-->
 
-    <ng-button [rounded]="true" appearance="outlined" (click)="undo()" pTooltip="Undo" tooltipPosition="right"
-               icon="pi pi-arrow-left">
+    <ng-button icon="icon-fi-rr-undo" [rounded]="true" appearance="outlined" (click)="undo()" pTooltip="Undo"
+               tooltipPosition="right">
     </ng-button>
 
     <ng-button [rounded]="true" appearance="outlined" (click)="clearBoard()" pTooltip="Clear"
-               tooltipPosition="right" icon="pi pi-trash">
+               tooltipPosition="right" icon="icon-fi-rr-broom">
     </ng-button>
   </div>
+</div>
 
+<section class="wrapper" #whiteboard>
   <div class="konva-wrapper"></div>
-
-  <div class="whiteboard-footer d-flex justify-content-center align-items-center bg-light border-top py-4" dir="ltr">
-    <span class="p-buttonset">
-    <ng-button (click)="prevSlide()" label="Prev" icon="pi pi-chevron-left"
-               [disabled]="currentSlide == 0"></ng-button>
-    <ng-button color="secondary" label="{{currentSlide + 1}}/{{slidesCount}}" [disabled]="true"></ng-button>
-    <ng-button (click)="nextSlide()" label="Next" icon="pi pi-chevron-right"
-               [disabled]="currentSlide == slidesCount-1"></ng-button>
-  </span>
-  </div>
+  <!--  <img class="border shadow" [src]="presentationCurrentSlide" alt="presentation">-->
 </section>
 
+<div class="whiteboard-footer d-flex justify-content-center align-items-center">
+  <ng-button-async *ngPermission="'Admin'" (clickAsync)="nextPage($event)" icon="pi pi-chevron-right"
+                   [disabled]="disableNextBtn"></ng-button-async>
+  <ng-button color="secondary" label="{{currentSlide}}/{{slidesCount}}" [disabled]="true"></ng-button>
+  <ng-button-async *ngPermission="'Admin'" (clickAsync)="prevPage($event)" icon="pi pi-chevron-left"
+                   [disabled]="disablePrevBtn"></ng-button-async>
+</div>
 
 <p-overlayPanel>
   <ng-template pTemplate>
-    <ul class="list-unstyled p-0 m-0 d-flex" *ngIf="overlayMode == 'tools'">
+    <ul class="list-unstyled p-0 m-0 d-flex" *ngIf="whiteboardOverlayMode == 'tools'">
       <li>
-        <ng-button icon="pi pi-pencil" [rounded]="true"
+        <ng-button icon="icon-fi-rr-pencil" [rounded]="true"
                    [appearance]="selectedTool == 'brush' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'brush' ? 'primary' : 'secondary'"
                    pTooltip="Brush"
@@ -81,7 +82,7 @@
         </ng-button>
       </li>
       <li class="mr-2">
-        <ng-button icon="pi pi-tablet" [rounded]="true"
+        <ng-button icon="icon-fi-rr-rectangle-horizontal" [rounded]="true"
                    [appearance]="selectedTool == 'rectangle' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'rectangle' ? 'primary' : 'secondary'"
                    pTooltip="Rectangle"
@@ -90,7 +91,7 @@
         </ng-button>
       </li>
       <li class="mr-2">
-        <ng-button icon="pi pi-caret-up" [rounded]="true"
+        <ng-button icon="icon-fi-rr-pyramid" [rounded]="true"
                    [appearance]="selectedTool == 'triangle' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'triangle' ? 'primary' : 'secondary'"
                    pTooltip="Triangle"
@@ -99,7 +100,7 @@
         </ng-button>
       </li>
       <li class="mr-2">
-        <ng-button icon="pi pi-circle-off" [rounded]="true"
+        <ng-button icon="icon-fi-rr-rec" [rounded]="true"
                    [appearance]="selectedTool == 'circle' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'circle' ? 'primary' : 'secondary'"
                    pTooltip="Circle"
@@ -108,7 +109,7 @@
         </ng-button>
       </li>
       <li class="mr-2">
-        <ng-button icon="pi pi-minus" [rounded]="true"
+        <ng-button icon="icon-fi-rr-minus" [rounded]="true"
                    [appearance]="selectedTool == 'line' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'line' ? 'primary' : 'secondary'"
                    pTooltip="Line"
@@ -117,7 +118,7 @@
         </ng-button>
       </li>
       <li class="mr-2">
-        <ng-button icon="pi pi-amazon" [rounded]="true"
+        <ng-button icon="icon-fi-rr-text" [rounded]="true"
                    [appearance]="selectedTool == 'text' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'text' ? 'primary' : 'secondary'"
                    pTooltip="Text"
@@ -127,9 +128,9 @@
       </li>
     </ul>
 
-    <ul class="list-unstyled p-0 m-0 d-flex" *ngIf="overlayMode == 'textSizes'">
+    <ul class="list-unstyled p-0 m-0 d-flex" *ngIf="whiteboardOverlayMode == 'textSizes'">
       <li *ngFor="let s of availableTextSizes;let first=first" [class.mr-2]="!first">
-        <ng-button icon="p"
+        <ng-button icon="pi pi-nothing"
                    [rounded]="true" [appearance]="selectedOption.textSize == s ? 'basic' : 'outlined'"
                    [color]="selectedOption.textSize == s ? 'primary' : null"
                    (click)="onSelectTextSize(s)" [pTooltip]="s.toString()" tooltipPosition="bottom">
@@ -140,7 +141,7 @@
       </li>
     </ul>
 
-    <ul class="list-unstyled p-0 m-0 d-flex" *ngIf="overlayMode == 'thicknesses'">
+    <ul class="list-unstyled p-0 m-0 d-flex" *ngIf="whiteboardOverlayMode == 'thicknesses'">
       <li *ngFor="let s of availableThickness;let first=first" [class.mr-2]="!first">
         <ng-button icon="pi pi-nothing"
                    [rounded]="true" [appearance]="selectedOption.thickness == s ? 'basic' : 'outlined'"
@@ -156,7 +157,7 @@
       </li>
     </ul>
 
-    <ul class="list-unstyled p-0 m-0 d-flex" *ngIf="overlayMode == 'colors'">
+    <ul class="list-unstyled p-0 m-0 d-flex" *ngIf="whiteboardOverlayMode == 'colors'">
       <li *ngFor="let c of availableColors;let first=first" [class.mr-2]="!first">
         <ng-button icon="pi pi-nothing"
                    [style.backgroundColor]="c"

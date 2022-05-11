@@ -17,7 +17,7 @@
     position: relative;
 
     .participants, .main-area {
-      padding: 1rem 0.5rem;
+      padding: 1rem;
       transition: all .4s;
     }
 
@@ -42,15 +42,6 @@
       touch-action: auto !important;
       margin-right: 0;
       position: relative;
-
-      ng-whiteboard {
-        width: 100%;
-        height: 100%;
-
-        .konvajs-content {
-          width: 100% !important
-        }
-      }
 
       ng-screen {
         @include restoreFullAspectRatio();
@@ -134,7 +125,8 @@
         }
       }
 
-      ng-whiteboard.active {
+      ng-whiteboard.active,
+      ng-canvas-whiteboard.active {
         ~ .teacher-webcam-shared {
           position: absolute;
           width: 170px;

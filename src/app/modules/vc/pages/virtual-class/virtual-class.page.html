@@ -55,7 +55,7 @@
       <ng-button-async *ngPermission="'Viewer'" (clickAsync)="toggleRaiseHand($event)" newColor="success"
                        [defaultState]="raiseHandActivated ? 2 : 1" icon="icon-hand-raise">
       </ng-button-async>
-      <ng-container *ngIf="!presentationActivated || !whiteboardActivated">
+      <ng-container *ngIf="!presentationActivated && !whiteboardActivated">
         <ng-button-async class="d-none d-lg-inline" *ngPermission="'Admin'" icon="icon-share-screen"
                          [defaultState]="screenActivated ? 2 : 1"
                          (clickAsync)="toggleScreen($event)"
@@ -110,7 +110,7 @@
 <p-overlayPanel [baseZIndex]="2000" #viewModes styleClass="actions {{fa ? 'rtl' : null}}">
   <span *ngIf="presentationActivated || whiteboardActivated"
         class="p-2 d-block">{{'room.disabledViewModeChange' | translate}}</span>
-  <ul class="list-unstyled p-0 m-0" *ngIf="!presentationActivated">
+  <ul class="list-unstyled p-0 m-0" *ngIf="!presentationActivated && !whiteboardActivated">
     <li (click)="changeView('grid',viewModes)" [class.active]="currentViewMode == 'grid'">
       <i class="icon-view-grid"></i>
       <span>{{'room.showAllParticipants' | translate}}</span>

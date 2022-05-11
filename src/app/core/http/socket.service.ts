@@ -55,14 +55,15 @@ export class SocketService extends ApiService {
 
   private async createSocketConnection() {
     this.webSocket = webSocket(this.socketBaseUrl);
+    console.log('before connect sent');
     await this.sendConnect();
     console.log('connect sent');
     this.subscription = this.webSocket.subscribe(
       async (res) => {
         this.socketChannel.next({event: res.method, ...res.data});
         if (res.method == 'FAILURE') {
-          this.updateViewService.setViewEvent({event: 'socketFail', data: null});
-          // this.redirectUser();
+          // this.updateViewService.setViewEvent({event: 'socketFail', data: null});
+          this.redirectUser();
           return;
 
           this.connected = false;
@@ -84,8 +85,8 @@ export class SocketService extends ApiService {
         this.pingWithDelay();
       },
       (err) => {
-        this.updateViewService.setViewEvent({event: 'socketFail', data: null});
-        // this.redirectUser();
+        // this.updateViewService.setViewEvent({event: 'socketFail', data: null});
+        this.redirectUser();
         return;
 
         if (this.webSocket) {
