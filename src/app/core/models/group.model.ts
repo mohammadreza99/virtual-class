@@ -1,6 +1,6 @@
 export interface Group {
   id: number;
-  company_id: number,
+  company_id: number;
   name: string;
   user_count: number;
   room_count: number;

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {ApiService} from '@core/http/api.service';
 import {Subject, Subscription} from 'rxjs';
-import {DeviceType, SocketEventTypes} from '@core/models';
+import {DeviceType, RoomEventType} from '@core/models';
 import {GlobalConfig} from '@core/global.config';
 import {Router} from '@angular/router';
 import {UpdateViewService} from '@core/http/update-view.service';
@@ -10,7 +10,7 @@ import {UpdateViewService} from '@core/http/update-view.service';
 @Injectable({providedIn: 'root'})
 export class SocketService extends ApiService {
   private webSocket: WebSocketSubject<any>;
-  private socketChannel = new Subject<{ event: SocketEventTypes, [key: string]: any }>();
+  private socketChannel = new Subject<{ event: RoomEventType, [key: string]: any }>();
   private subscription: Subscription;
   private roomId: number;
   private reconnectTimer: any;
@@ -43,9 +43,7 @@ export class SocketService extends ApiService {
     if (this.connected) {
       this.webSocket?.complete();
       this.webSocket = null;
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-      }
+      this.subscription?.unsubscribe();
     }
   }
 

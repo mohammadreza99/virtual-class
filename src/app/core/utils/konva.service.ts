@@ -9,7 +9,7 @@ import {Rect} from 'konva/lib/shapes/Rect';
 import {Circle} from 'konva/lib/shapes/Circle';
 import {RegularPolygon} from 'konva/lib/shapes/RegularPolygon';
 import {jsPDF} from 'jspdf';
-import {KonvaOptions, KonvaTools, CanvasItem, StageEvents, WhitebordSlide} from '@core/models';
+import {KonvaOptions, KonvaTools, CanvasItem, StageEvents, WhiteboardSlide} from '@core/models';
 import {Stage} from 'konva/lib/Stage';
 import Konva from 'konva';
 import {KonvaEventObject} from 'konva/lib/Node';
@@ -38,7 +38,7 @@ export class KonvaService {
     shapes: []
   };
 
-  start(slides: WhitebordSlide[] = [], initSlideNumber: number = 1) {
+  start(slides: WhiteboardSlide[] = [], initSlideNumber: number = 1) {
     if (!slides.length) {
       slides = Array.from({length: 10}, (s, i) => ({data: null, slideNumber: i + 1}));
     }

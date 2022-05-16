@@ -11,7 +11,7 @@ import {
   QuestionOption,
   RoomUser,
   SearchParam,
-  TrackPosition
+  TrackPosition,
 } from '@core/models';
 import {ApiService, SocketService} from '@core/http';
 import {UtilsService} from '@ng/services';
@@ -39,7 +39,7 @@ export class SessionService extends ApiService {
   private isTalkingSubscription: Subscription;
   private _currentUser: any;
   private _currentRoom: any;
-  private tryCounts: any = {};
+  private tryCounts: { [publishId: number]: number } = {};
 
   constructor(private utilsService: UtilsService,
               private router: Router,
@@ -49,9 +49,6 @@ export class SessionService extends ApiService {
     super();
   }
 
-  ///////////////////////////////////////////////////////////////////////////////
-  //                                    MAIN                                   //
-  ///////////////////////////////////////////////////////////////////////////////
   async initRoom() {
     this.initSockets();
     this.initViewUpdates();
@@ -139,9 +136,9 @@ export class SessionService extends ApiService {
       if (this.roomUsers.findIndex(u => u.id == this.currentUser.id) < 0) {
         this.roomUsers.unshift(this.currentUser);
       }
-      this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
-      this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.roomUsers.filter(u => u.raise_hand)});
-      this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.roomUsers.filter(u => u.kicked)});
+      this.updateViewService.setViewEvent({event: 'userContainersChange', data: this.getSortedUsers()});
+      this.updateViewService.setViewEvent({event: 'raiseHandsChange', data: this.roomUsers.filter(u => u.raise_hand)});
+      this.updateViewService.setViewEvent({event: 'kickedUsersChange', data: this.roomUsers.filter(u => u.kicked)});
       this.setUpdateRoomUsersTimer();
     } catch (error) {
       console.error(error);
@@ -391,7 +388,7 @@ export class SessionService extends ApiService {
     this.connectionCheckerTimer = setTimeout(() => {
       this.connectionChecker(publishers);
     }, 10000);
-    this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
+    this.updateViewService.setViewEvent({event: 'userContainersChange', data: this.getSortedUsers()});
   }
 
   private async subscribePublishers(publishers: Publisher[]) {
@@ -401,7 +398,7 @@ export class SessionService extends ApiService {
       deleted.forEach(d => {
         this.closeSubscribeConnection(d.userId, d.publishType);
       });
-      this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
+      this.updateViewService.setViewEvent({event: 'userContainersChange', data: this.getSortedUsers()});
     }
     this.connectionChecker(publishers);
   }
@@ -471,17 +468,17 @@ export class SessionService extends ApiService {
   private removeMainPositionUser() {
     if (this.mainPositionUser) {
       this.mainPositionUser = null;
-      this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
+      this.updateViewService.setViewEvent({event: 'userContainersChange', data: this.getSortedUsers()});
     }
   }
 
   private setMainPositionUser(userId: any) {
     this.mainPositionUser = this.getRoomUserById(userId);
-    this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
+    this.updateViewService.setViewEvent({event: 'userContainersChange', data: this.getSortedUsers()});
   }
 
   private getSortedUsers() {
-    this.updateViewService.setViewEvent({event: 'roomParticipants', data: this.roomUsers});
+    this.updateViewService.setViewEvent({event: 'roomParticipantsChange', data: this.roomUsers});
     let sortedUsers = [...this.roomUsers.filter(u => !u.kicked)];
     const meIndex = sortedUsers.findIndex(u => u.id == this.currentUser.id);
     const me = sortedUsers[meIndex];
@@ -503,18 +500,21 @@ export class SessionService extends ApiService {
     this.socketSubscription = this.socketService.listen().subscribe(async res => {
       console.log(`${res.event} => `, res);
       let user: RoomUser;
+      let raiseHandUser: RoomUser;
+      let connection: PeerConnection;
+
       switch (res.event) {
         case 'newUser':
           user = res.user;
           if (res.target != this.currentUser.id && this.roomUsers.findIndex(u => u.id == user.id) < 0) {
             this.roomUsers.push(user);
-            this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
+            this.updateViewService.setViewEvent({event: 'userContainersChange', data: this.getSortedUsers()});
           }
-          const raiseHandUser = this.roomUsers.find(u => u.id === user.id);
+          raiseHandUser = this.roomUsers.find(u => u.id === user.id);
           if (raiseHandUser && user.raise_hand !== raiseHandUser.raise_hand) {
             raiseHandUser.raise_hand = user.raise_hand;
             this.updateViewService.setViewEvent({
-              event: 'raisedHandsChange',
+              event: 'raiseHandsChange',
               data: this.roomUsers.filter(u => u.raise_hand)
             });
           }
@@ -547,21 +547,21 @@ export class SessionService extends ApiService {
           if (res.target == this.currentUser.id) {
             this.getMeOut(this.translationService.instant('room.yourKicked') as string);
           } else {
-            const raisedHandUser = this.roomUsers.find(p => p.id == res.target);
+            raiseHandUser = this.roomUsers.find(p => p.id == res.target);
             const userIndex = this.roomUsers.findIndex(u => u.id == res.target);
-            if (raisedHandUser) {
-              raisedHandUser.raise_hand = false;
+            if (raiseHandUser) {
+              raiseHandUser.raise_hand = false;
               this.updateViewService.setViewEvent({
-                event: 'raisedHandsChange',
+                event: 'raiseHandsChange',
                 data: this.roomUsers.filter(u => u.raise_hand)
               });
             }
-            // if (userIndex > -1) {
-            // this.roomUsers.splice(userIndex, 1);
-            // }
             this.roomUsers[userIndex].kicked = true;
-            this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
-            this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.roomUsers.filter(u => u.kicked)});
+            this.updateViewService.setViewEvent({event: 'userContainersChange', data: this.getSortedUsers()});
+            this.updateViewService.setViewEvent({
+              event: 'kickedUsersChange',
+              data: this.roomUsers.filter(u => u.kicked)
+            });
             this.openToast('room.userKicked', 'warn', user.last_name);
           }
           break;
@@ -570,7 +570,7 @@ export class SessionService extends ApiService {
         case 'leaveRoom':
           user = this.getRoomUserById(res.target);
           if (res.target != this.currentUser.id) {
-            const connection = this.getPeerConnectionById(res.target);
+            connection = this.getPeerConnectionById(res.target);
             if (connection) {
               this.closeSubscribeConnection(res.target, connection.publishType);
             }
@@ -581,12 +581,12 @@ export class SessionService extends ApiService {
             if (this.mainPositionUser?.id == res.target) {
               this.removeMainPositionUser();
             }
-            this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
-            const handRaiseUser = this.roomUsers.find(p => p.id == res.target);
-            if (handRaiseUser) {
-              handRaiseUser.raise_hand = false;
+            this.updateViewService.setViewEvent({event: 'userContainersChange', data: this.getSortedUsers()});
+            raiseHandUser = this.roomUsers.find(p => p.id == res.target);
+            if (raiseHandUser) {
+              raiseHandUser.raise_hand = false;
               this.updateViewService.setViewEvent({
-                event: 'raisedHandsChange',
+                event: 'raiseHandsChange',
                 data: this.roomUsers.filter(u => u.raise_hand)
               });
             }
@@ -604,10 +604,10 @@ export class SessionService extends ApiService {
 
         case 'raiseHand':
           user = this.getRoomUserById(res.target);
-          const handRaiseUser = this.roomUsers.find(u => u.id == res.target);
+          raiseHandUser = this.roomUsers.find(u => u.id == res.target);
           if (res.by == res.target) {
             // hand raise occur by student
-            handRaiseUser.raise_hand = res.value;
+            raiseHandUser.raise_hand = res.value;
             if (res.value) {
               if (this.imTeacher) {
                 this.openToast('room.userRaisedHand', 'warn', user.last_name);
@@ -618,7 +618,7 @@ export class SessionService extends ApiService {
             // hand raise occur by teacher
             if (!res.value) {
               // the teacher reject student raise hand
-              handRaiseUser.raise_hand = false;
+              raiseHandUser.raise_hand = false;
               if (this.imStudent && res.target == this.currentUser.id) {
                 this.openToast('room.teacherRejectYourRaiseHand', 'warn', user.last_name);
               }
@@ -626,7 +626,7 @@ export class SessionService extends ApiService {
             this.updateViewService.setViewEvent({event: 'teacherConfirmRaisedHand', data: res});
           }
           this.updateViewService.setViewEvent({
-            event: 'raisedHandsChange',
+            event: 'raiseHandsChange',
             data: this.roomUsers.filter(u => u.raise_hand)
           });
           break;
@@ -749,7 +749,7 @@ export class SessionService extends ApiService {
             kickedUser.kicked = false;
           }
           this.updateViewService.setViewEvent({event: 'restoreUser', data: res});
-          this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.roomUsers.filter(u => u.kicked)});
+          this.updateViewService.setViewEvent({event: 'kickedUsersChange', data: this.roomUsers.filter(u => u.kicked)});
           break;
 
         case 'newMedia':
@@ -757,7 +757,6 @@ export class SessionService extends ApiService {
             return;
           }
           const {p_type, feed, sdp, publish_type} = res;
-          let connection: PeerConnection;
 
           // subscribe
           if (p_type == 'offer') {
@@ -773,7 +772,7 @@ export class SessionService extends ApiService {
             //   connection = this.myConnection.screen;
             // }
             // connection.setRemoteAnswer(sdp);
-            this.updateViewService.setViewEvent({event: 'remoteAnswer', data: {sdp: res.sdp}});
+            this.updateViewService.setViewEvent({event: 'remoteAnswer', data: {sdp}});
           }
           break;
 
@@ -814,7 +813,7 @@ export class SessionService extends ApiService {
   private async updateRoomPublicMessages() {
     const result = await this.getPublicMessages().toPromise();
     if (result.status == 'OK') {
-      this.updateViewService.setViewEvent({event: 'publicMessages', data: result.data.items.reverse()});
+      this.updateViewService.setViewEvent({event: 'publicMessagesChange', data: result.data.items.reverse()});
     }
   }
 
@@ -893,10 +892,6 @@ export class SessionService extends ApiService {
     return this.roomUsers.find(u => u.id == id);
   }
 
-  ///////////////////////////////////////////////////////////////////////////////
-  //                                   UTILS                                   //
-  ///////////////////////////////////////////////////////////////////////////////
-
   checkIsTalking(stream: MediaStream) {
     return new Observable<number>(observer => {
       const audioContext = new AudioContext();
@@ -936,9 +931,7 @@ export class SessionService extends ApiService {
     }
     this.socketService.clearPingTimer();
     this.socketService.stop();
-    if (this.socketSubscription) {
-      this.socketSubscription.unsubscribe();
-    }
+    this.socketSubscription?.unsubscribe();
     if (message) {
       await this.utilsService.showDialog({message, closable: false});
     }

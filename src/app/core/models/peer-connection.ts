@@ -14,10 +14,11 @@ export class PeerConnection {
   constructor(public options: PeerConnectionOptions) {
     this.sessionService = Global.Injector.get(SessionService);
     this.updateViewService = Global.Injector.get(UpdateViewService);
+    this.pc = new RTCPeerConnection();
 
     this.subscription = this.updateViewService.getViewEvent().subscribe(res => {
       switch (res.event) {
-        // we just use this subscribe in publish mode because we dont want to set any retry and etc functions to that.
+        // we just use this subscription in publish mode because we dont want to set any retry and etc functions to that.
         // so control it in PeerConnection own class.
         case 'remoteAnswer':
           this.setRemoteAnswer(res.data.sdp);
@@ -25,10 +26,6 @@ export class PeerConnection {
       }
     });
 
-    if (!this.options) {
-      throw Error('Invalid Options');
-    }
-    this.pc = new RTCPeerConnection();
     this.pc.onconnectionstatechange = (e: Event) => {
       this.handleConnectionStateChange(e);
     };
@@ -59,9 +56,8 @@ export class PeerConnection {
     await this.pc.setRemoteDescription({type: 'answer', sdp});
     await this.options.publishConfirm();
     this.options.onTrack();
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    // when the publish connection was successful (options.onTrack() was called), we no longer need to listen to remote answer.
+    this.subscription?.unsubscribe();
   }
 
   async startSubscribeConnection() {
@@ -133,9 +129,7 @@ export class PeerConnection {
 
   close() {
     this.pc.close();
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.subscription?.unsubscribe();
   }
 
   get position() {

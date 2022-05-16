@@ -22,7 +22,7 @@ export type KonvaTools =
 export type StageEvents = 'toolChange' | 'optionChange' | 'updateBoard';
 export type OverlayMode = 'tools' | 'thicknesses' | 'textSizes' | 'colors';
 
-export interface WhitebordSlide {
+export interface WhiteboardSlide {
   slideNumber: number;
   data: any;
 }

@@ -57,46 +57,58 @@ export interface Publisher {
   publish_type?: PublishType;
 }
 
-export enum SocketEventTypes {
-  ACK = 'ACK',
-  MutePerson = 'mutePerson',
-  MuteVideo = 'muteVideo',
-  MuteVideoAll = 'muteVideoAll',
-  LeaveRoom = 'leaveRoom',
-  KickUser = 'kickUser',
-  CloseRoom = 'closeRoom',
-  RaiseHand = 'raiseHand',
-  MuteAll = 'muteAll',
-  NewPublisher = 'newPublisher',
-  UserDisconnected = 'userDisconnected',
-  Unpublish = 'unpublish',
-  NewUser = 'newUser',
-  AssignAdmin = 'assignAdmin',
-  Connect = 'connect',
-  IsTalking = 'isTalking',
-  PublicChatState = 'publicChatState',
-  NewMessage = 'newMessage',
-  DeletedMessage = 'deletedMessage',
-  NewQuestion = 'newQuestion',
-  FinishedQuestion = 'finishedQuestion',
-  CanceledQuestion = 'canceledQuestion',
-  NewQuestionReply = 'newQuestionReply',
-  NewPoll = 'newPoll',
-  FinishedPoll = 'finishedPoll',
-  CanceledPoll = 'canceledPoll',
-  NewPollReply = 'newPollReply',
-  ChangePresentationPage = 'changePresentationPage',
-  OpenPresentation = 'openPresentation',
-  ClosePresentation = 'closePresentation',
-  DeletePresentation = 'deletePresentation',
-  RandomUser = 'randomUser',
-  RestoreUser = 'restoreUser',
-  NewMedia = 'newMedia',
-  UpdateBoard = 'updateBoard',
-  OpenBoard = 'openBoard',
-  CloseBoard = 'closeBoard',
-  ChangeBoardSlide = 'changeBoardSlide',
-  SetBoardPermission = 'setBoardPermission',
-  RemoveBoardPermission = 'removeBoardPermission',
-}
+export type RoomEventType =
+  'ACK' |
+  'mutePerson' |
+  'muteVideo' |
+  'muteVideoAll' |
+  'leaveRoom' |
+  'kickUser' |
+  'closeRoom' |
+  'raiseHand' |
+  'muteAll' |
+  'newPublisher' |
+  'userDisconnected' |
+  'unpublish' |
+  'newUser' |
+  'assignAdmin' |
+  'connect' |
+  'isTalking' |
+  'publicChatState' |
+  'newMessage' |
+  'deletedMessage' |
+  'newQuestion' |
+  'finishedQuestion' |
+  'canceledQuestion' |
+  'newQuestionReply' |
+  'newPoll' |
+  'finishedPoll' |
+  'canceledPoll' |
+  'newPollReply' |
+  'changePresentationPage' |
+  'openPresentation' |
+  'closePresentation' |
+  'deletePresentation' |
+  'randomUser' |
+  'restoreUser' |
+  'newMedia' |
+  'updateBoard' |
+  'openBoard' |
+  'closeBoard' |
+  'changeBoardSlide' |
+  'setBoardPermission' |
+  'removeBoardPermission' |
+  'userContainersChange' |
+  'roomParticipantsChange' |
+  'raiseHandsChange' |
+  'kickedUsersChange' |
+  'onTrack' |
+  'onDisconnect' |
+  'studentRaisedHand' |
+  'teacherConfirmRaisedHand' |
+  'remoteAnswer' |
+  'networkIssue' |
+  'updateAvatar' |
+  'startBoard' |
+  'publicMessagesChange';
 

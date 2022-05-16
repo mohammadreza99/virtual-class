@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
+import {RoomEventType} from '@core/models';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class UpdateViewService {
   constructor() {
   }
 
-  setViewEvent(event: { event: string, data: any }) {
+  setViewEvent(event: { event: RoomEventType, data: any }) {
     this.updateViewSubject.next(event);
   }
 

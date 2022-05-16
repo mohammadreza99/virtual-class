@@ -27,10 +27,6 @@ export interface BaseRes<T> {
   status_det: string;
 }
 
-interface OutputMeta {
-  total?: number;
-}
-
 export interface ListRes<T> {
   items: T[];
   meta?: OutputMeta;
@@ -41,5 +37,6 @@ export interface PagerRes<T> {
   total: number;
 }
 
-
-
+interface OutputMeta {
+  total?: number;
+}
