@@ -49,6 +49,7 @@ export class ScreenComponent implements OnInit, OnDestroy {
             this.handleTrackClassNames(res.data);
             this.setStream(res.data.stream);
             break;
+
           case 'onDisconnect':
             this.handleDisconnectClassNames(res.data);
             this.streamActivated = false;

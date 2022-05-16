@@ -63,8 +63,8 @@ export class SocketService extends ApiService {
         this.socketChannel.next({event: res.method, ...res.data});
         if (res.method == 'FAILURE') {
           // this.updateViewService.setViewEvent({event: 'socketFail', data: null});
-          this.redirectUser();
-          return;
+          // this.redirectUser();
+          // return;
 
           this.connected = false;
           if (this.retryCount > 0) {
@@ -86,8 +86,8 @@ export class SocketService extends ApiService {
       },
       (err) => {
         // this.updateViewService.setViewEvent({event: 'socketFail', data: null});
-        this.redirectUser();
-        return;
+        // this.redirectUser();
+        // return;
 
         if (this.webSocket) {
           this.handleSocketFailure();

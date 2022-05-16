@@ -20,8 +20,8 @@
                          [label]="'room.endAccess' | translate"
                          *ngIf="raiseHandConfirmed">
         </ng-button-async>
-        <ng-button icon="icon-close" *ngIf="raiseHandConfirmed" class="ml-1"
-                   (click)="rejectRaiseHand($event,false)"></ng-button>
+        <ng-button-async icon="icon-close" *ngIf="raiseHandConfirmed" class="ml-1"
+                         (clickAsync)="rejectRaiseHand($event,false)"></ng-button-async>
       </div>
       <div class="actions" *ngIf="!raiseHand && !user.kicked">
         <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm"

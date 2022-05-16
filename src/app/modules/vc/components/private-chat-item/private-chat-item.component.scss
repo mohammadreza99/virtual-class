@@ -1,0 +1,15 @@
+.chat-item-wrapper {
+  display: flex;
+  align-items: center;
+  transition: all .4s;
+  border-radius: 1rem;
+
+  &:hover {
+    background-color: #5C5D66;
+    cursor: pointer;
+  }
+
+  .chat-item-body {
+    flex: 1;
+  }
+}

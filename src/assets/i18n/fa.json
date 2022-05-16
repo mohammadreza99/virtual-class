@@ -130,7 +130,8 @@
     "deletePresentationConfirm": "تاییدیه حذف ارائه",
     "deletePresentationConfirmBody": "آیا از حذف ارائه مطمئن هستید؟",
     "networkIssueDetected": "اختلال در شبکه رخ داده است. لطفا مجدد وارد شوید",
-    "networkIssueDetectedRetrying": "اختلال در شبکه رخ داده است. درحال تلاش مجدد برای اتصال..."
+    "networkIssueDetectedRetrying": "اختلال در شبکه رخ داده است. درحال تلاش مجدد برای اتصال...",
+    "startNewConversation": "شروع گفتگوی جدید"
   },
   "home": "خانه",
   "forgetPassword": "فراموشی رمزعبور",

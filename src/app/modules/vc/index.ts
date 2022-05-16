@@ -20,6 +20,10 @@ import {UploadFileComponent} from '@modules/vc/components/upload-file/upload-fil
 import {SelectRandomUserComponent} from '@modules/vc/components/select-random-user/select-random-user.component';
 import {CanvasWhiteboardComponent} from '@modules/vc/components/canvas-whiteboard/canvas-whiteboard.component';
 import {WhiteboardComponent} from '@modules/vc/components/whiteboard/whiteboard.component';
+import {PrivateChatItemComponent} from '@modules/vc/components/private-chat-item/private-chat-item.component';
+import {ContactsComponent} from '@modules/vc/components/contacts/contacts.component';
+import {PublicChatComponent} from '@modules/vc/components/public-chat/public-chat.component';
+import {PrivateChatComponent} from '@modules/vc/components/private-chat/private-chat.component';
 
 export const COMPONENTS: Type<any>[] = [
   VirtualClassPage,
@@ -31,6 +35,8 @@ export const COMPONENTS: Type<any>[] = [
   ScreenComponent,
   ParticipantsComponent,
   ChatComponent,
+  PublicChatComponent,
+  PrivateChatComponent,
   ThumbnailViewComponent,
   GridViewComponent,
   QuestionManagementComponent,
@@ -42,5 +48,7 @@ export const COMPONENTS: Type<any>[] = [
   UploadFileComponent,
   SelectRandomUserComponent,
   CanvasWhiteboardComponent,
-  WhiteboardComponent
+  WhiteboardComponent,
+  PrivateChatItemComponent,
+  ContactsComponent
 ];

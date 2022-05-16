@@ -1,18 +1,30 @@
 import {PeerConnectionOptions, TrackPosition} from '../models/webrtc.model';
 import {Global} from '@ng/global';
+import {SessionService} from '@core/http';
 import {UpdateViewService} from '@core/http/update-view.service';
 import {Subscription} from 'rxjs';
-import {SessionService} from '@core/http';
 
 export class PeerConnection {
 
+  private sessionService: SessionService;
+  private updateViewService: UpdateViewService;
   public pc: RTCPeerConnection;
   private subscription: Subscription;
-  private sessionService: SessionService;
 
   constructor(public options: PeerConnectionOptions) {
-    const updateViewService = Global.Injector.get(UpdateViewService);
     this.sessionService = Global.Injector.get(SessionService);
+    this.updateViewService = Global.Injector.get(UpdateViewService);
+
+    this.subscription = this.updateViewService.getViewEvent().subscribe(res => {
+      switch (res.event) {
+        // we just use this subscribe in publish mode because we dont want to set any retry and etc functions to that.
+        // so control it in PeerConnection own class.
+        case 'remoteAnswer':
+          this.setRemoteAnswer(res.data.sdp);
+          break;
+      }
+    });
+
     if (!this.options) {
       throw Error('Invalid Options');
     }
@@ -20,65 +32,50 @@ export class PeerConnection {
     this.pc.onconnectionstatechange = (e: Event) => {
       this.handleConnectionStateChange(e);
     };
+
+    // run in subscribe mode
     this.pc.ontrack = (e: RTCTrackEvent) => {
-      // run in subscribe mode
       if (this.options.onTrack) {
         this.options.stream = e.streams[0];
         this.options.onTrack(e);
       }
     };
-
-    this.subscription = updateViewService.getViewEvent().subscribe(async res => {
-      if (this.sessionService.currentUser.id != res.data.target) {
-        return;
-      }
-      switch (res.event) {
-        case 'newMedia':
-          // subscribe
-          if (res.data.p_type == 'offer') {
-            if (res.data.feed != this.options.publishId) {
-              return;
-            }
-            await this.pc.setRemoteDescription({type: 'offer', sdp: res.data.sdp});
-            const answer = await this.pc.createAnswer();
-            await this.pc.setLocalDescription(answer);
-            const result = await this.options.startSubscription(answer.sdp);
-            if (result.status_det == 'JANUS_ERROR') {
-              this.options.onFailed('JANUS_ERROR');
-              return;
-            }
-            if (result.status_det == 'SessionNotExist') {
-              this.options.onFailed('SessionNotExist');
-              return;
-            }
-          }
-
-          // publish
-          if (res.data.p_type == 'answer') {
-            if (res.data.publish_type.toLowerCase() != this.options.publishType.toLowerCase()) {
-              return;
-            }
-            await this.pc.setRemoteDescription({type: 'answer', sdp: res.data.sdp});
-            await this.options.publishConfirm();
-            this.options.onTrack();
-          }
-          break;
-      }
-    });
-
   }
 
-  async createSubscribeConnection() {
+  // calls when socket recieved
+  async setRemoteOffer(sdp) {
+    await this.pc.setRemoteDescription({type: 'offer', sdp});
+    const answer = await this.pc.createAnswer();
+    await this.pc.setLocalDescription(answer);
+    const result = await this.options.startSubscription(answer.sdp);
+    if (result.status != 'OK') {
+      this.options.onFailed('failed');
+      return;
+    }
+  }
+
+  // calls when socket recieved
+  async setRemoteAnswer(sdp) {
+    await this.pc.setRemoteDescription({type: 'answer', sdp});
+    await this.options.publishConfirm();
+    this.options.onTrack();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
+  async startSubscribeConnection() {
     try {
       const remoteOffer = await this.options.getRemoteOfferSdp();
-      if (remoteOffer.status_det == 'JANUS_ERROR') {
-        this.options.onFailed('JANUS_ERROR');
+      if (remoteOffer.status != 'OK') {
+        this.options.onFailed('start subscribe failed');
         return;
       }
-      if (remoteOffer.status_det == 'SessionNotExist') {
-        this.options.onFailed('SessionNotExist');
-        return;
-      }
+      setTimeout(() => {
+        if (this.pc.connectionState == 'new') {
+          this.options.onFailed('failed');
+        }
+      }, 10000);
       //
       // await this.pc.setRemoteDescription({type: 'offer', sdp: remoteOffer.data.sdp_offer_data});
       // const answer = await this.pc.createAnswer();

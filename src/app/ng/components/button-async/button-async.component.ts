@@ -6,7 +6,8 @@ import {NgColor} from '@ng/models/color';
 @Component({
   selector: 'ng-button-async',
   templateUrl: './button-async.component.html',
-  styleUrls: ['./button-async.component.scss']
+  styleUrls: ['./button-async.component.scss'],
+  host: {'[class.w-100]': 'full'}
 })
 export class ButtonAsyncComponent implements OnInit, OnChanges {
 

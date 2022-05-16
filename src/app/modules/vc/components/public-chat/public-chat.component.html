@@ -1,0 +1,45 @@
+<section class="chat-wrapper">
+  <main class="chat-messages" #chatContainer (scroll)="scrolled()">
+    <div class="pinned-container d-flex align-items-center justify-content-between py-2 m-2 rounded"
+         *ngIf="pinnedMessage">
+      <i class="icon-pin text-warning"></i>
+      <div class="message-info flex-grow-1">
+        <small
+          class="d-block font-medium">{{pinnedMessage.user.first_name + ' ' + pinnedMessage.user.last_name}}</small>
+        <small class="d-block font-light">{{pinnedMessage.message.message}}</small>
+      </div>
+    </div>
+    <ng-container *ngIf="publicMessages.length != 0">
+      <ng-message-item #messageItem *ngFor="let message of publicMessages;trackBy:trackByFn"
+                       [position]="message.user.id == currentUser.id ? 'right' : 'left'"
+                       [message]="message.message"
+                       [sender]="message.user"
+                       [replyMessage]="getReplyMessageOf(message)"
+                       (delete)="onDelete(message)"
+                       (pin)="onPin(message)"
+                       (reply)="onReply(message)">
+      </ng-message-item>
+    </ng-container>
+  </main>
+  <div class="chat-footer">
+    <div class="reply-container d-flex align-items-center justify-content-between py-2 m-2 rounded"
+         *ngIf="replyMessage">
+      <div class="message-info">
+        <small
+          class="d-block font-medium">{{replyMessage.user.first_name + ' ' + replyMessage.user.last_name}}</small>
+        <small class="d-block font-light">{{replyMessage.message.message}}</small>
+      </div>
+      <i class="pi pi-times" (click)="cancelReply()"></i>
+    </div>
+    <div class="chat-inputarea">
+      <ng-container *ngIf="openChat">
+        <ng-input-text [rtl]="fa" (keyup.enter)="sendMessage()" inputSize="md"
+                       class="ml-2 flex-grow-1"
+                       [(ngModel)]="chatText"></ng-input-text>
+        <ng-button-async icon="pi pi-chevron-left"
+                         (clickAsync)="sendMessage($event)"></ng-button-async>
+      </ng-container>
+      <span class="text-center flex-grow-1" *ngIf="!openChat">{{'room.sendMessageBlocked' | translate}}</span>
+    </div>
+  </div>
+</section>

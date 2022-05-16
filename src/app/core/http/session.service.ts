@@ -1,16 +1,17 @@
 import {Injectable} from '@angular/core';
 import {Observable, Subscription} from 'rxjs';
 import {
-  QuestionOption,
-  DeviceType,
+  BaseRes,
   DisplayName,
   PeerConnection,
   PeerConnectionOptions,
+  PollItem,
   Publisher,
   PublishType,
+  QuestionOption,
   RoomUser,
   SearchParam,
-  TrackPosition, PollOption, PollItem, BaseRes
+  TrackPosition
 } from '@core/models';
 import {ApiService, SocketService} from '@core/http';
 import {UtilsService} from '@ng/services';
@@ -24,20 +25,21 @@ import {GlobalConfig} from '@core/global.config';
 @Injectable({providedIn: 'root'})
 export class SessionService extends ApiService {
 
+  private connectionCheckerTimer: any;
   private updateRoomPublishersTimer: any;
   private updateRoomUsersTimer: any;
   private talkingTimer: any;
   private myConnection: { webcam: PeerConnection, screen: PeerConnection } = {webcam: null, screen: null};
   private peerConnections: PeerConnection[] = [];
+  private publishers: Publisher[] = [];
   private roomUsers: RoomUser[] = [];
-  private kickedUsers: RoomUser[] = [];
-  private raisedHands: RoomUser[] = [];
   private mainPositionUser: RoomUser;
   private socketSubscription: Subscription;
   private updateViewSubscription: Subscription;
   private isTalkingSubscription: Subscription;
   private _currentUser: any;
   private _currentRoom: any;
+  private tryCounts: any = {};
 
   constructor(private utilsService: UtilsService,
               private router: Router,
@@ -109,8 +111,10 @@ export class SessionService extends ApiService {
       if (result.status == 'JANUS_ERROR') {
         await this.updateRoomPublishers();
       }
-      await this.subscribePublishers(result.data.publishers);
-      this.setUpdateRoomPublishersTimer();
+      if (result.status == 'OK') {
+        await this.subscribePublishers(result.data.publishers);
+        this.setUpdateRoomPublishersTimer();
+      }
     } catch (error) {
       console.error(error);
       this.setUpdateRoomPublishersTimer();
@@ -136,10 +140,8 @@ export class SessionService extends ApiService {
         this.roomUsers.unshift(this.currentUser);
       }
       this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
-      this.raisedHands = this.roomUsers.filter(u => u.raise_hand);
-      this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
-      this.kickedUsers = this.roomUsers.filter(u => u.kicked);
-      this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.kickedUsers});
+      this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.roomUsers.filter(u => u.raise_hand)});
+      this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.roomUsers.filter(u => u.kicked)});
       this.setUpdateRoomUsersTimer();
     } catch (error) {
       console.error(error);
@@ -227,7 +229,7 @@ export class SessionService extends ApiService {
     const display = this.imStudent || this.isMainThumbPositionBusy() ? 'studentWebcam' : 'teacherWebcam';
     const options: PeerConnectionOptions = {
       display,
-      position: this.getPosition(display),
+      position: this.getPositionByDisplay(display),
       userId: this.currentUser.id,
       publishType: 'Webcam',
       stream
@@ -266,74 +268,48 @@ export class SessionService extends ApiService {
     }
   }
 
-  private async createSubscribeConnection(options: PeerConnectionOptions): Promise<PeerConnection> {
-    return new Promise<PeerConnection>((resolve, reject) => {
-      const pc = new PeerConnection({
-        userId: options.userId,
-        publishId: options.publishId,
-        display: options.display,
-        position: options.position,
-        publishType: options.publishType,
-        getRemoteOfferSdp: () => {
-          return this.joinAsSubscriber(this.currentRoom.id, options.publishId).toPromise();
-        },
-        startSubscription: (sdp: string) => {
-          return this.startSubscription(sdp, options.publishId).toPromise();
-        },
-        onTrack: (event: RTCTrackEvent) => {
-          if (options.position == 'mainThumbPosition') {
-            this.setMainPositionUser(options.userId);
-          }
-          this.updateViewService.setViewEvent({
-            event: 'onTrack',
-            data: {
-              stream: event.streams[0],
-              userId: options.userId,
-              display: options.display,
-              position: options.position,
-              publishType: options.publishType,
-            }
-          });
-          resolve(pc);
-        },
-        onConnect: () => {
-        },
-        onDisconnect: () => {
-          this.closeSubscribeConnection(options.userId, options.publishType);
-        },
-        onFailed: (reason: string) => {
-          // if (error == 'JANUS_ERROR') {
-          //   this.openToast(`Subscribe JANUS ERROR -- retrying...`, 'warn');
-          //   this.closeSubscribeConnection(options.userId, options.publishType);
-          //   this.createSubscribeConnection(options);
-          // }
-          // if (error == 'SessionNotExist') {
-          //   this.peerConnections.forEach(c => {
-          //     this.closeSubscribeConnection(c.userId, c.publishType);
-          //   });
-          //   this.updateRoomPublishers();
-          // }
-          // this.updateViewService.setViewEvent({
-          //   event: 'onError',
-          //   data: {
-          //     userId: options.userId,
-          //     display: options.display,
-          //     position: options.position,
-          //     publishType: options.publishType,
-          //   }
-          // });
-          if (options.userId == this.currentUser.id) {
-            this.resetAll();
-            this.initRoom();
-          } else {
-            this.closeSubscribeConnection(options.userId, options.publishType);
-            this.createSubscribeConnection(options);
-          }
-        },
-        onClose: () => {
+  private createSubscribeConnection(options: PeerConnectionOptions) {
+    return new PeerConnection({
+      userId: options.userId,
+      publishId: options.publishId,
+      display: options.display,
+      position: options.position,
+      publishType: options.publishType,
+      getRemoteOfferSdp: () => {
+        return this.joinAsSubscriber(this.currentRoom.id, options.publishId).toPromise();
+      },
+      startSubscription: (sdp: string) => {
+        return this.startSubscription(sdp, options.publishId).toPromise();
+      },
+      onTrack: (event: RTCTrackEvent) => {
+        if (options.position == 'mainThumbPosition') {
+          this.setMainPositionUser(options.userId);
         }
-      });
-      pc.createSubscribeConnection();
+        this.updateViewService.setViewEvent({
+          event: 'onTrack',
+          data: {
+            stream: event.streams[0],
+            userId: options.userId,
+            display: options.display,
+            position: options.position,
+            publishType: options.publishType,
+          }
+        });
+      },
+      onConnect: () => {
+      },
+      onDisconnect: () => {
+        this.closeSubscribeConnection(options.userId, options.publishType);
+      },
+      onFailed: (reason: string) => {
+        this.closeSubscribeConnection(options.userId, options.publishType);
+        if (options.userId == this.currentUser.id) {
+          this.resetAll();
+          this.initRoom();
+        }
+      },
+      onClose: () => {
+      }
     });
   }
 
@@ -374,58 +350,60 @@ export class SessionService extends ApiService {
             this.removeMainPositionUser();
           }
           this.closeMyConnection(options.publishType, true);
-          // this.createPublishConnection(options, mediaType);
         },
         onFailed: (reason: string) => {
-          // if (error == 'JANUS_ERROR') {
-          //   this.closeMyConnection(options.publishType, true);
-          //   this.createPublishConnection(options, mediaType);
-          // }
-          // if (error == 'SessionNotExist') {
-          //   this.peerConnections.forEach(c => {
-          //     this.closeSubscribeConnection(c.userId, c.publishType);
-          //   });
-          //   this.updateRoomPublishers();
-          // }
-          // this.updateViewService.setViewEvent({
-          //   event: 'onError',
-          //   data: {
-          //     userId: options.userId,
-          //     display: options.display,
-          //     position: options.position,
-          //     publishType: options.publishType,
-          //   }
-          // });
-          // reject(error);
         },
         onClose: () => {
         }
       });
       pc.createPublishConnection(mediaType);
     });
+    // return pc;
+  }
+
+  private async connectionChecker(publishers: Publisher[]) {
+    if (this.connectionCheckerTimer) {
+      clearTimeout(this.connectionCheckerTimer);
+    }
+    const added = publishers.filter(b => this.peerConnections.findIndex(s => s.publishId === b.id) < 0);
+    if (added.length === 0) {
+      return;
+    }
+    for (const publisher of added) {
+      let tryCount = this.tryCounts[publisher.id] || 0;
+      if (tryCount >= 5) {
+        continue;
+      }
+      this.tryCounts[publisher.id] = ++tryCount;
+
+      if (this.roomUsers.findIndex(u => u.id == publisher.user_id) > -1) {
+        const display: DisplayName = publisher.display;
+        const position: TrackPosition = this.getPositionByDisplay(publisher.display);
+        const publishId: any = publisher.id;
+        const publishType: any = publisher.publish_type;
+        const userId: any = publisher.user_id;
+        const newPC = await this.createSubscribeConnection({publishId, userId, display, position, publishType});
+        this.peerConnections.push(newPC);
+        newPC.startSubscribeConnection();
+      }
+    }
+
+    this.connectionCheckerTimer = setTimeout(() => {
+      this.connectionChecker(publishers);
+    }, 10000);
+    this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
   }
 
   private async subscribePublishers(publishers: Publisher[]) {
-    const {added, deleted} = this.getPublishersDifference(publishers, this.peerConnections);
-    if (added.length !== 0 || deleted.length !== 0) {
-
-      deleted?.forEach(d => {
+    this.publishers = publishers;
+    const deleted = this.peerConnections.filter(s => publishers.findIndex(b => b.id === s.publishId) < 0);
+    if (deleted.length) {
+      deleted.forEach(d => {
         this.closeSubscribeConnection(d.userId, d.publishType);
       });
-
-      for (const publisher of added) {
-        if (this.roomUsers.findIndex(u => u.id == publisher.user_id) > -1) {
-          const display: DisplayName = publisher.display;
-          const position: TrackPosition = this.getPosition(publisher.display);
-          const publishId: any = publisher.id;
-          const publishType: any = publisher.publish_type;
-          const userId: any = publisher.user_id;
-          const newPC = await this.createSubscribeConnection({publishId, userId, display, position, publishType});
-          this.peerConnections.push(newPC);
-        }
-      }
       this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
     }
+    this.connectionChecker(publishers);
   }
 
   private async closeMyConnection(publishType: PublishType, locally?: boolean) {
@@ -532,14 +510,22 @@ export class SessionService extends ApiService {
             this.roomUsers.push(user);
             this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
           }
-          if (user.raise_hand == true && this.raisedHands.findIndex(u => u.id == user.id) < 0) {
-            this.raisedHands.push(user);
-            this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
+          const raiseHandUser = this.roomUsers.find(u => u.id === user.id);
+          if (raiseHandUser && user.raise_hand !== raiseHandUser.raise_hand) {
+            raiseHandUser.raise_hand = user.raise_hand;
+            this.updateViewService.setViewEvent({
+              event: 'raisedHandsChange',
+              data: this.roomUsers.filter(u => u.raise_hand)
+            });
           }
           this.setUpdateRoomPublishersTimer(2000);
           break;
 
         case 'newPublisher':
+          const publisher = this.publishers.find(p => p.user_id == res.target);
+          if (publisher) {
+            this.tryCounts[publisher.id] = 0;
+          }
           this.setUpdateRoomPublishersTimer(2000);
           break;
 
@@ -561,21 +547,21 @@ export class SessionService extends ApiService {
           if (res.target == this.currentUser.id) {
             this.getMeOut(this.translationService.instant('room.yourKicked') as string);
           } else {
-            const handRaiseIndex = this.raisedHands.findIndex(p => p.id == res.target);
+            const raisedHandUser = this.roomUsers.find(p => p.id == res.target);
             const userIndex = this.roomUsers.findIndex(u => u.id == res.target);
-            if (handRaiseIndex > -1) {
-              this.raisedHands.splice(handRaiseIndex, 1);
-              this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
+            if (raisedHandUser) {
+              raisedHandUser.raise_hand = false;
+              this.updateViewService.setViewEvent({
+                event: 'raisedHandsChange',
+                data: this.roomUsers.filter(u => u.raise_hand)
+              });
             }
             // if (userIndex > -1) {
             // this.roomUsers.splice(userIndex, 1);
             // }
             this.roomUsers[userIndex].kicked = true;
-            if (this.kickedUsers.findIndex(u => u.id == user.id) < 0) {
-              this.kickedUsers.push(user);
-            }
             this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
-            this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.kickedUsers});
+            this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.roomUsers.filter(u => u.kicked)});
             this.openToast('room.userKicked', 'warn', user.last_name);
           }
           break;
@@ -596,10 +582,13 @@ export class SessionService extends ApiService {
               this.removeMainPositionUser();
             }
             this.updateViewService.setViewEvent({event: 'roomUsers', data: this.getSortedUsers()});
-            const handRaiseIndex = this.raisedHands.findIndex(p => p.id == res.target);
-            if (handRaiseIndex > -1) {
-              this.raisedHands.splice(handRaiseIndex, 1);
-              this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
+            const handRaiseUser = this.roomUsers.find(p => p.id == res.target);
+            if (handRaiseUser) {
+              handRaiseUser.raise_hand = false;
+              this.updateViewService.setViewEvent({
+                event: 'raisedHandsChange',
+                data: this.roomUsers.filter(u => u.raise_hand)
+              });
             }
           }
           if (res.event == 'leaveRoom') {
@@ -615,30 +604,31 @@ export class SessionService extends ApiService {
 
         case 'raiseHand':
           user = this.getRoomUserById(res.target);
+          const handRaiseUser = this.roomUsers.find(u => u.id == res.target);
           if (res.by == res.target) {
-            const handRaiseIndex = this.raisedHands.findIndex(u => u.id == res.target);
             // hand raise occur by student
-            if (res.value && handRaiseIndex < 0) {
-              this.raisedHands.push(user);
+            handRaiseUser.raise_hand = res.value;
+            if (res.value) {
               if (this.imTeacher) {
                 this.openToast('room.userRaisedHand', 'warn', user.last_name);
               }
-            } else {
-              this.raisedHands.splice(handRaiseIndex, 1);
             }
             this.updateViewService.setViewEvent({event: 'studentRaisedHand', data: res});
           } else {
             // hand raise occur by teacher
             if (!res.value) {
               // the teacher reject student raise hand
-              this.raisedHands.splice(this.raisedHands.findIndex(u => u.id == user.id), 1);
+              handRaiseUser.raise_hand = false;
               if (this.imStudent && res.target == this.currentUser.id) {
                 this.openToast('room.teacherRejectYourRaiseHand', 'warn', user.last_name);
               }
             }
             this.updateViewService.setViewEvent({event: 'teacherConfirmRaisedHand', data: res});
           }
-          this.updateViewService.setViewEvent({event: 'raisedHandsChange', data: this.raisedHands});
+          this.updateViewService.setViewEvent({
+            event: 'raisedHandsChange',
+            data: this.roomUsers.filter(u => u.raise_hand)
+          });
           break;
 
         case 'mutePerson':
@@ -754,16 +744,37 @@ export class SessionService extends ApiService {
           break;
 
         case 'restoreUser':
-          const idx = this.kickedUsers.findIndex(u => u.id == res.target);
-          if (idx > -1) {
-            this.kickedUsers.splice(idx, 1);
+          const kickedUser = this.roomUsers.find(u => u.id == res.target);
+          if (kickedUser) {
+            kickedUser.kicked = false;
           }
           this.updateViewService.setViewEvent({event: 'restoreUser', data: res});
-          this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.kickedUsers});
+          this.updateViewService.setViewEvent({event: 'kickedUsers', data: this.roomUsers.filter(u => u.kicked)});
           break;
 
         case 'newMedia':
-          this.handleNewMedia(res);
+          if (this.currentUser.id != res.target) {
+            return;
+          }
+          const {p_type, feed, sdp, publish_type} = res;
+          let connection: PeerConnection;
+
+          // subscribe
+          if (p_type == 'offer') {
+            connection = this.peerConnections.find(c => c.publishId == feed);
+            connection.setRemoteOffer(sdp);
+          }
+
+          // publish
+          if (p_type == 'answer') {
+            // if (publish_type.toLowerCase() == 'webcam') {
+            //   connection = this.myConnection.webcam;
+            // } else {
+            //   connection = this.myConnection.screen;
+            // }
+            // connection.setRemoteAnswer(sdp);
+            this.updateViewService.setViewEvent({event: 'remoteAnswer', data: {sdp: res.sdp}});
+          }
           break;
 
         default:
@@ -771,31 +782,6 @@ export class SessionService extends ApiService {
           break;
       }
     });
-  }
-
-  async handleNewMedia(res) {
-    if (this.currentUser.id != res.data.target) {
-      return;
-    }
-    const {p_type, feed, sdp, publish_type} = res;
-    let connection: PeerConnection;
-
-    // subscribe
-    if (p_type == 'offer') {
-      connection = this.peerConnections.find(c => c.publishId == feed);
-      await connection.pc.setRemoteDescription({type: 'offer', sdp});
-      const answer = await connection.pc.createAnswer();
-      await connection.pc.setLocalDescription(answer);
-      await connection.options.startSubscription(answer.sdp);
-    }
-
-    // publish
-    if (p_type == 'answer') {
-      connection = this.peerConnections.find(c => c.publishType.toLowerCase() == publish_type.toLowerCase());
-      await connection.pc.setRemoteDescription({type: 'answer', sdp});
-      await connection.options.publishConfirm();
-      connection.options.onTrack();
-    }
   }
 
   private initViewUpdates() {
@@ -812,8 +798,6 @@ export class SessionService extends ApiService {
           break;
 
         case 'socketFail':
-          this.resetAll();
-          this.initRoom();
           break;
       }
     });
@@ -844,16 +828,11 @@ export class SessionService extends ApiService {
   }
 
   private resetAll() {
-    this.kickedUsers = [];
-    this.raisedHands = [];
     this.roomUsers = [];
     this.peerConnections = [];
     this.removeMainPositionUser();
   }
 
-  ///////////////////////////////////////////////////////////////////////////////
-  //                                  GENERAL                                  //
-  ///////////////////////////////////////////////////////////////////////////////
   set currentUser(data: any) {
     this._currentUser = data;
   }
@@ -878,7 +857,7 @@ export class SessionService extends ApiService {
     return this.currentUser.role == 'Admin';
   }
 
-  private getPosition(display: DisplayName): TrackPosition {
+  private getPositionByDisplay(display: DisplayName): TrackPosition {
     switch (display) {
       case 'teacherWebcam':
         return 'mainThumbPosition';
@@ -1056,15 +1035,6 @@ export class SessionService extends ApiService {
     return {added, deleted};
   }
 
-  getPublishersDifference(base: Publisher[], secondary: PeerConnection[]) {
-    if (!base || !secondary) {
-      return;
-    }
-    const added = base.filter(b => secondary.findIndex(s => s.publishId === b.id) < 0);
-    const deleted = secondary.filter(s => base.findIndex(b => b.id === s.publishId) < 0);
-    return {added, deleted};
-  }
-
   private sortByPublishers(users: RoomUser[]) {
     const isPublishers = [];
     const isNotPublishers = [];
@@ -1082,6 +1052,7 @@ export class SessionService extends ApiService {
   //                                API CALLS                                  //
   ///////////////////////////////////////////////////////////////////////////////
 
+  //region Api Calls
   updateBoard(board_id: number, slide_no: number, data: any) {
     return this._post<any>('', {
       method: 'updateBoard',
@@ -1481,4 +1452,6 @@ export class SessionService extends ApiService {
       data: {sdp_offer_data, tag, room_id, publish_type, session: this.currentUser.session}
     });
   }
+
+  //endregion
 }
