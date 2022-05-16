@@ -7,7 +7,7 @@ import {RoomEventType} from '@core/models';
 })
 export class UpdateViewService {
 
-  private updateViewSubject = new Subject<any>();
+  private updateViewSubject = new Subject<{ event: RoomEventType, data: any }>();
 
   constructor() {
   }

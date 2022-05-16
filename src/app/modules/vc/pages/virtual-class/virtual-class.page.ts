@@ -92,7 +92,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
     this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe(async res => {
       switch (res.event) {
-        case 'raisedHandsChange':
+        case 'raiseHandsChange':
           const deletedIndex = this.raisedHandsUsers.findIndex(x => res.data.find(u => u.id == x.id) == undefined);
           const addedIndex = res.data.findIndex(x => this.raisedHandsUsers.find(u => u.id == x.id) == undefined);
           if (addedIndex > -1) {
@@ -103,15 +103,15 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           }
           break;
 
-        case 'roomParticipants':
+        case 'roomParticipantsChange':
           this.allUsers = res.data.filter(u => !u.kicked);
           break;
 
-        case 'roomUsers':
+        case 'userContainersChange':
           this.roomUsers = res.data.filter(u => !u.kicked);
           break;
 
-        case 'kickedUsers':
+        case 'kickedUsersChange':
           this.kickedUsers = res.data;
           break;
 

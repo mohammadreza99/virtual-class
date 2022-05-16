@@ -57,7 +57,7 @@ export class PrivateChatComponent extends LanguageChecker implements OnInit, Aft
     this.currentUser = this.sessionService.currentUser;
     this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe(res => {
       switch (res.event) {
-        case 'publicMessages':
+        case 'publicMessagesChange':
           this.publicMessages = res.data;
           this.scrollDown();
           break;
