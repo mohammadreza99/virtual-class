@@ -118,6 +118,7 @@
     "downloadAttendance": "دانلود لیست حضور و غیاب",
     "multipleChoiceAllowed": "امکان انتخاب چند گزینه وجود دارد",
     "sendFile": "ارسال فایل کلاسی",
+    "sendVideoLink": "ارسال لینک ویدئو",
     "whiteboard": "تخته وایت برد",
     "selectRandomUser": "انتخاب تصادفی دانش آموز",
     "chooseAnotherUser": "انتخاب فرد دیگر",
@@ -131,7 +132,14 @@
     "deletePresentationConfirmBody": "آیا از حذف ارائه مطمئن هستید؟",
     "networkIssueDetected": "اختلال در شبکه رخ داده است. لطفا مجدد وارد شوید",
     "networkIssueDetectedRetrying": "اختلال در شبکه رخ داده است. درحال تلاش مجدد برای اتصال...",
-    "startNewConversation": "شروع گفتگوی جدید"
+    "startNewConversation": "شروع گفتگوی جدید",
+    "startPrivateChat": "شروع چت خصوصی",
+    "muteUser": "میوت کردن کاربر",
+    "sendAMessage": "پیامی ارسال کنید...",
+    "enterVideoLink": "لینک ویدئو را وارد کنید",
+    "enterValidLink": "لینک وارد شده معتبر نیست",
+    "clearAllMessages": "پاک کردن تمام پیامها",
+    "videoRecordIsNotPossible": "امکان ضبط ویدئو برای ویدئوهایی که از طریق لینک بارگذاری میشوند وجود ندارد."
   },
   "home": "خانه",
   "forgetPassword": "فراموشی رمزعبور",

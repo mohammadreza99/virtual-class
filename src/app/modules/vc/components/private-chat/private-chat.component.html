@@ -1,35 +1,32 @@
-<section class="chat-wrapper">
-  <main class="chat-messages" #chatContainer (scroll)="scrolled()">
-    <div class="pinned-container d-flex align-items-center justify-content-between py-2 m-2 rounded"
-         *ngIf="pinnedMessage">
-      <i class="icon-pin text-warning"></i>
-      <div class="message-info flex-grow-1">
-        <small
-          class="d-block font-medium">{{pinnedMessage.user.first_name + ' ' + pinnedMessage.user.last_name}}</small>
-        <small class="d-block font-light">{{pinnedMessage.message.message}}</small>
+<div class="h-100" [ngSwitch]="state" [ngClass]="{'d-flex flex-column': state == 'chat'}">
+  <ng-container *ngSwitchCase="'chatList'">
+    <div class="h-100 d-flex flex-column">
+      <div class="flex-grow-1" [ngClass]="{'d-flex align-items-center': chatList.length == 0}">
+        <ng-container *ngIf="chatList.length != 0">
+          <ng-private-chat-item (click)="setState('chat')"></ng-private-chat-item>
+        </ng-container>
+        <ng-empty [message]="'nothingFound' | translate" *ngIf="chatList.length == 0"></ng-empty>
+      </div>
+
+      <div class="p-3">
+        <ng-button *ngIf="openChat" icon="pi pi-plus" [full]="true"
+                   [label]="'room.startNewConversation' | translate"
+                   (click)="setState('contacts')"></ng-button>
+        <span class="text-center flex-grow-1" *ngIf="!openChat">{{'room.sendMessageBlocked' | translate}}</span>
       </div>
     </div>
-    <ng-container *ngIf="publicMessages.length != 0">
-      <ng-private-chat-item></ng-private-chat-item>
-      <ng-private-chat-item></ng-private-chat-item>
-    </ng-container>
-  </main>
-  <div class="chat-footer">
-    <div class="reply-container d-flex align-items-center justify-content-between py-2 m-2 rounded"
-         *ngIf="replyMessage">
-      <div class="message-info">
-        <small
-          class="d-block font-medium">{{replyMessage.user.first_name + ' ' + replyMessage.user.last_name}}</small>
-        <small class="d-block font-light">{{replyMessage.message.message}}</small>
-      </div>
-      <i class="pi pi-times" (click)="cancelReply()"></i>
-    </div>
-    <div class="p-3">
-      <ng-container *ngIf="openChat">
-        <ng-button-async icon="pi pi-plus" [full]="true" [label]="'room.startNewConversation' | translate"
-                         (clickAsync)="startChat($event)"></ng-button-async>
-      </ng-container>
-      <span class="text-center flex-grow-1" *ngIf="!openChat">{{'room.sendMessageBlocked' | translate}}</span>
-    </div>
-  </div>
-</section>
+  </ng-container>
+
+  <ng-contacts *ngSwitchCase="'contacts'" [contacts]="contacts"
+               (goBack)="setState('chatList')" (selectContact)="onSelectContact($event)">
+  </ng-contacts>
+
+  <ng-container *ngSwitchCase="'chat'">
+    <ng-button class="mb-3" icon="pi pi-chevron-right" [full]="true" iconPos="right"
+               [label]="peerUser.first_name + ' ' + peerUser.last_name"
+               (click)="setState('chatList')"></ng-button>
+    <ng-messenger [enableChat]="openChat"
+                  [messages]="messages"
+                  (sendMessage)="sendMessage($event)"></ng-messenger>
+  </ng-container>
+</div>

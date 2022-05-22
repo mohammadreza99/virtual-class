@@ -17,8 +17,7 @@ import {ApiService, SocketService} from '@core/http';
 import {UtilsService} from '@ng/services';
 import {map} from 'rxjs/operators';
 import {Router} from '@angular/router';
-import {TranslationService} from '@core/utils';
-import {UpdateViewService} from '@core/http/update-view.service';
+import {TranslationService, UpdateViewService} from '@core/utils';
 import {NgMessageSeverities} from '@ng/models/overlay';
 import {GlobalConfig} from '@core/global.config';
 
@@ -211,6 +210,9 @@ export class SessionService extends ApiService {
       console.error(error);
       if (error.name == 'NotAllowedError') {
         this.openToast('room.pleaseAllowWebcam', 'warn');
+      }
+      if (error.name == 'notReadableError') {
+        this.openToast('errorOccurred', 'warn');
       }
       throw Error(error);
     }
@@ -973,6 +975,10 @@ export class SessionService extends ApiService {
     return stream.getVideoTracks().findIndex(t => t.enabled) >= 0;
   }
 
+  getRoomUsers() {
+    return this.roomUsers;
+  }
+
   hasAudio(stream: MediaStream) {
     if (!stream) {
       return false;
@@ -1012,7 +1018,13 @@ export class SessionService extends ApiService {
   }
 
   getUserMedia(options: MediaStreamConstraints = {audio: true, video: true}) {
-    return navigator.mediaDevices.getUserMedia(options);
+    const navigator2 = navigator as any;
+    navigator2.getWebcam = (navigator2.getUserMedia || navigator2.webKitGetUserMedia || navigator2.moxGetUserMedia || navigator2.mozGetUserMedia || navigator2.msGetUserMedia);
+    if (navigator.mediaDevices.getUserMedia) {
+      return navigator.mediaDevices.getUserMedia(options);
+    } else {
+      return navigator2.getWebcam(options);
+    }
   }
 
   private getUserScreen(): Promise<MediaStream> {
@@ -1204,11 +1216,24 @@ export class SessionService extends ApiService {
     });
   }
 
-
   deletePublicMessage(message_id: number) {
     return this._post<any>('', {
       method: 'deletePublicMessage',
       data: {message_id},
+    });
+  }
+
+  muteUserMessage(user_id: number) {
+    return this._post<any>('', {
+      method: 'muteUserMessage',
+      data: {room_id: this.currentRoom.id, user_id},
+    });
+  }
+
+  clearPublicMessages() {
+    return this._post<any>('', {
+      method: 'clearPublicMessage',
+      data: {room_id: this.currentRoom.id},
     });
   }
 
@@ -1349,14 +1374,12 @@ export class SessionService extends ApiService {
     });
   }
 
-
   changePresentationState(presentation_id: number, state: 'Open' | 'Close') {
     return this._post<any>('', {
       method: 'changePresentationState',
       data: {room_id: this.currentRoom.id, presentation_id, state},
     });
   }
-
 
   deletePresentation(presentation_id: number) {
     return this._post<any>('', {
@@ -1365,17 +1388,9 @@ export class SessionService extends ApiService {
     });
   }
 
-
   getUploadStatus(presentation_id: number) {
     return this._post<any>('', {
       method: 'getUploadStatus',
-      data: {room_id: this.currentRoom.id, presentation_id},
-    });
-  }
-
-  getPresentation(presentation_id: number) {
-    return this._post<any>('', {
-      method: 'getPresentation',
       data: {room_id: this.currentRoom.id, presentation_id},
     });
   }
@@ -1410,13 +1425,42 @@ export class SessionService extends ApiService {
     return this._post('', {method: 'selectRandomUser', data: {room_id: this.currentRoom.id, user_id}});
   }
 
+  videoAction(action: string) {
+    return this._post('', {method: 'videoAction', data: {room_id: this.currentRoom.id, action}});
+  }
+
+  uploadVideoLink(link: number, is_downloadable: boolean = false) {
+    return this._post('', {method: 'presentLink', data: {room_id: this.currentRoom.id, link, is_downloadable}});
+  }
+
+  openPV(user_id: number): Observable<BaseRes<any>> {
+    return this._post('', {method: 'openPV', data: {room_id: this.currentRoom.id, user_id}});
+  }
+
+  sendPVMessage(pv_id: number, message: string, reply_to_message_id: number = null): Observable<BaseRes<any>> {
+    return this._post('', {
+      method: 'sendPVMessage',
+      data: {room_id: this.currentRoom.id, pv_id, reply_to_message_id, message}
+    });
+  }
+
+  getPVMessage(pv_id: number, page?: number, limit?: number) {
+    return this._post('', {method: 'getPVMessage', data: {room_id: this.currentRoom.id, pv_id, page, limit}});
+  }
+
+  pinPublicMessage(message_id: number) {
+    return this._post<any>('', {
+      method: 'pinPublicMessage',
+      data: {room_id: this.currentRoom.id, message_id},
+    });
+  }
+
   private getPublicMessages(data: SearchParam | {} = {}) {
     return this._post<any>('', {
       method: 'getPublicMessages',
       data: {room_id: this.currentRoom.id, ...data},
     });
   }
-
 
   private roomStatus() {
     return this._post<any>('', {

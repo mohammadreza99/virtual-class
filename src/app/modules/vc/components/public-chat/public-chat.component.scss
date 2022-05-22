@@ -1,50 +1,8 @@
-:host ::ng-deep {
-  .chat-wrapper {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+:host {
+  height: 100%;
+  display: flex;
 
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 10px;
-    }
-
-    .pinned-container {
-      padding: 0.2rem 1rem;
-      background: rgba(#C4C4C4, 0.14);
-      border-radius: 4px;
-      margin-bottom: 0.5rem;
-    }
-
-    .chat-footer {
-      .reply-container {
-        border-right: 6px solid #61987A;
-        padding: 0.2rem 1rem;
-        background: rgba(196, 196, 196, 0.08);
-        border-radius: 4px;
-        margin-bottom: 0.5rem;
-
-        i {
-          cursor: pointer;
-
-          &:hover {
-            opacity: 0.5;
-          }
-        }
-      }
-
-      .chat-inputarea {
-        display: flex;
-        padding: 10px;
-        background: #5F6069;
-
-        input {
-          background-color: transparent;
-          color: #ffffff;
-          border-color: #E0E0E0 !important;
-        }
-      }
-    }
+  ng-messenger {
+    flex: auto;
   }
 }

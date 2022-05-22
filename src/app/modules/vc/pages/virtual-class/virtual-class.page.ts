@@ -7,15 +7,16 @@ import {UtilsService} from '@ng/services';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subject} from 'rxjs';
 import {LocationStrategy} from '@angular/common';
-import {UpdateViewService} from '@core/http/update-view.service';
+import {UpdateViewService} from '@core/utils';
 import {DialogService} from 'primeng/dynamicdialog';
 import {QuestionIncomeComponent} from '@modules/vc/components/question-income/question-income.component';
 import {PollIncomeComponent} from '@modules/vc/components/poll-income/poll-income.component';
 import {ResultTableComponent} from '@modules/vc/components/result-table/result-table.component';
 import {QuestionResultComponent} from '@modules/vc/components/question-result/question-result.component';
-import {UploadFileComponent} from '@modules/vc/components/upload-file/upload-file.component';
+import {UploadFileFormComponent} from '@modules/vc/components/upload-file-form/upload-file-form.component';
 import {takeUntil} from 'rxjs/operators';
 import {SelectRandomUserComponent} from '@modules/vc/components/select-random-user/select-random-user.component';
+import {VideoLinkFormComponent} from '@modules/vc/components/video-link-form/video-link-form.component';
 
 @Component({
   selector: 'ng-virtual-class',
@@ -503,7 +504,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   uploadFile(overlay: OverlayPanel) {
-    this.dialogService.open(UploadFileComponent, {
+    this.dialogService.open(UploadFileFormComponent, {
       header: this.instant('room.sendFile'),
       width: '500px',
       closable: true,
@@ -533,5 +534,14 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
       this.updateViewService.setViewEvent({event: 'startBoard', data: {id: res.data.board_id}});
     }
     overlay.hide();
+  }
+
+  sendVideoLink(mediaActions: OverlayPanel) {
+    mediaActions.hide();
+    this.dialogService.open(VideoLinkFormComponent, {header: this.instant('room.sendVideoLink')}).onClose.subscribe(res => {
+      if (res) {
+        this.sessionService.uploadVideoLink(res).toPromise();
+      }
+    });
   }
 }

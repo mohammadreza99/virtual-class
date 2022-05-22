@@ -126,7 +126,8 @@
       }
 
       ng-whiteboard.active,
-      ng-canvas-whiteboard.active {
+      ng-video-presentation.active,
+      ng-canvas-whiteboard.active, {
         ~ .teacher-webcam-shared {
           position: absolute;
           width: 170px;

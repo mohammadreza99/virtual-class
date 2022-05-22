@@ -5,7 +5,7 @@ import {Subject, Subscription} from 'rxjs';
 import {DeviceType, RoomEventType} from '@core/models';
 import {GlobalConfig} from '@core/global.config';
 import {Router} from '@angular/router';
-import {UpdateViewService} from '@core/http/update-view.service';
+import {UpdateViewService} from '@core/utils';
 
 @Injectable({providedIn: 'root'})
 export class SocketService extends ApiService {

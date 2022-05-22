@@ -9,10 +9,10 @@ import {UtilsService} from '@ng/services';
 
 @Component({
   selector: 'ng-upload-file',
-  templateUrl: './upload-file.component.html',
-  styleUrls: ['./upload-file.component.scss']
+  templateUrl: './upload-file-form.component.html',
+  styleUrls: ['./upload-file-form.component.scss']
 })
-export class UploadFileComponent extends LanguageChecker implements OnInit, OnDestroy {
+export class UploadFileFormComponent extends LanguageChecker implements OnInit, OnDestroy {
 
   constructor(public dialogConfig: DynamicDialogConfig,
               private dialogRef: DynamicDialogRef,
@@ -53,8 +53,6 @@ export class UploadFileComponent extends LanguageChecker implements OnInit, OnDe
     this.invalidSize = !this.isFileSizeValid(this.selectedFile);
     this.invalidType = !this.isFileTypeValid(this.selectedFile);
   }
-
-  percent: number = 0;
 
   async onSubmit(callback: any) {
     try {

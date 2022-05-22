@@ -1,0 +1,13 @@
+<p class="m-0">{{'room.sendVideoLink' | translate}}</p>
+<small class="d-block mb-4 text-muted">{{'room.videoRecordIsNotPossible' | translate}}</small>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <ng-input-text [rtl]="true" formControlName="link"
+                 [errors]="{'required':'requiredField' | translate,'pattern':'room.enterValidLink' | translate}"
+                 [label]="'room.enterVideoLink' | translate"></ng-input-text>
+  <div class="actions text-left mt-4">
+    <ng-button class="mx-2" appearance="outlined" color="secondary" [label]="'cancel' | translate"
+               (click)="onClose()"></ng-button>
+    <ng-button type="submit" [label]="'verify' | translate"></ng-button>
+  </div>
+</form>
+

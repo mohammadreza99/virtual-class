@@ -5,7 +5,7 @@ import {UtilsService} from '@ng/services';
 import {Group, PagerRes, Room, SearchParam, TableConfig} from '@core/models';
 import * as moment from 'jalali-moment';
 import {Router} from '@angular/router';
-import {UpdateViewService} from '@core/http/update-view.service';
+import {UpdateViewService} from '@core/utils';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 

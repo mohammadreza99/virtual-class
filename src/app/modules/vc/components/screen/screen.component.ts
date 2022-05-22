@@ -1,7 +1,7 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {SessionService} from '@core/http';
 import {RoomUser, TrackPosition} from '@core/models';
-import {UpdateViewService} from '@core/http/update-view.service';
+import {UpdateViewService} from '@core/utils';
 import {GlobalConfig} from '@core/global.config';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';

@@ -110,5 +110,9 @@ export type RoomEventType =
   'networkIssue' |
   'updateAvatar' |
   'startBoard' |
-  'publicMessagesChange';
+  'newPVMessage' |
+  'videoAction' |
+  'publicMessagesChange' |
+  'pinnedMessage' |
+  'privateMessagesChange';
 

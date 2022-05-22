@@ -32,13 +32,13 @@
       <i class="icon-delete"></i>
       <span>{{'room.deleteMessage' | translate}}</span>
     </li>
-    <!--      <li (click)="onPin(messageActions)">-->
-    <!--        <i class="icon-pin"></i>-->
-    <!--        <span>{{'room.pinMessage' | translate}}</span>-->
-    <!--      </li>-->
-    <!--      <li (click)="saveChat()">-->
-    <!--        <i class="icon-view-speaker"></i>-->
-    <!--        <span>{{(openPrivateChat ? 'room.closePrivateChat' : 'room.openPrivateChat') | translate}}</span>-->
-    <!--      </li>-->
+    <li (click)="muteUser(messageActions)" *ngIf="sender.id != currentUser.id">
+      <i class="icon-view-speaker"></i>
+      <span>{{'room.muteUser' | translate}}</span>
+    </li>
+    <li (click)="onPin(messageActions)">
+      <i class="icon-pin"></i>
+      <span>{{'room.pinMessage' | translate}}</span>
+    </li>
   </ul>
 </p-overlayPanel>

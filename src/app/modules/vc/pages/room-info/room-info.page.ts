@@ -65,7 +65,6 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
       if (result.status == 'OK') {
         this.room = result.data.room;
         this.user = result.data.member;
-        this.disableEnterButton = false;
       }
       const token = this.route.snapshot.queryParamMap.get('t');
       if (token) {
@@ -79,6 +78,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
       await this.checkEnterRoomStatus();
       await this.startAudioStream();
       await this.startVideoStream();
+      this.disableEnterButton = false;
     } catch (error) {
       console.error(error);
     }
@@ -134,7 +134,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
   async startVideoStream() {
     this.stopVideo();
     const videoSource = this.selectedVideoInput;
-    const constraints = {
+    const constraints: MediaStreamConstraints = {
       video: {deviceId: videoSource ? {exact: videoSource} : undefined}
     };
     try {
@@ -291,7 +291,6 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
 
   async enterRoom(callback: () => any) {
     const result = await this.getEnterRoomStatus();
-    callback();
     if (result) {
       switch (result.enter_status) {
         case 'Kicked':
@@ -314,6 +313,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
     this.utilsService.clear();
     this.isTalkingSubscription?.unsubscribe();
     this.router.navigate(['/vc', this.room.id]);
+    callback();
   }
 
   sinkIsNotSupported() {

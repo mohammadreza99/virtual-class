@@ -8,7 +8,7 @@ import {KonvaService} from '@core/utils';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {SessionService} from '@core/http';
-import {UpdateViewService} from '@core/http/update-view.service';
+import {UpdateViewService} from '@core/utils';
 
 @Component({
   selector: 'ng-whiteboard',

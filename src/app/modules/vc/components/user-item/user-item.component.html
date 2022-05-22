@@ -1,4 +1,4 @@
-<div #actionsButton class="participant-item justify-content-between" [class.rtl]="fa">
+<div #actionsButton class="participant-item justify-content-between p-1 rounded" [class.rtl]="fa">
   <div class="info" [class.kicked]="user.kicked">
     <ng-avatar [class.is-talking]="isTalking" [loading]="loading" [user]="user"></ng-avatar>
     <div class="name mx-2">
@@ -9,8 +9,8 @@
   <ng-container *ngPermission="'Viewer'">
     <i class="icon-hand-raise" [class.text-success]="raiseHandConfirmed" *ngIf="user.raise_hand && raiseHand"></i>
   </ng-container>
-  <ng-container *ngIf="user.id != currentUser.id">
-    <ng-container *ngPermission="'Admin'">
+  <ng-container *ngPermission="'Admin'">
+    <ng-container *ngIf="enableActions && user.id != currentUser.id">
       <div class="raise-hand text-center" *ngIf="raiseHand">
         <ng-container *ngIf="!raiseHandConfirmed">
           <ng-button-async icon="icon-check" class="ml-1" (clickAsync)="confirmRaiseHand($event)"></ng-button-async>
@@ -53,7 +53,8 @@
             </li>
           </ul>
         </p-overlayPanel>
-        <p-overlayPanel baseZIndex="2000" [showCloseIcon]="true" #userStatus styleClass="actions {{fa ? 'rtl' : null}}">
+        <p-overlayPanel baseZIndex="2000" [showCloseIcon]="true" #userStatus
+                        styleClass="actions {{fa ? 'rtl' : null}}">
           <div class="info">
             <div class="d-flex flex-column align-items-center justify-content-between py-4">
               <ng-avatar class="mb-2" [user]="user"></ng-avatar>

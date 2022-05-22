@@ -1,0 +1,14 @@
+:host ::ng-deep {
+  ng-user-item {
+    display: block;
+
+    .participant-item {
+      transition: all .4s;
+
+      &:hover {
+        background-color: #5C5D66;
+        cursor: pointer;
+      }
+    }
+  }
+}

@@ -74,7 +74,7 @@
 
 
 <div class="sidebar" [class.visible]="chatSidebarVisible">
-  <ng-chat [openPublicChat]="currentRoom.public_messages" (closeSidebar)="closeSidebar('chat')"
+  <ng-chat [enablePublicChat]="currentRoom.public_messages" (closeSidebar)="closeSidebar('chat')"
            (newMessage)="onGetNewMessage()">
   </ng-chat>
 </div>
@@ -149,6 +149,10 @@
     <li (click)="uploadFile(mediaActions)" [class.p-disabled]="screenActivated || whiteboardActivated">
       <i class="icon-download"></i>
       <span>{{'room.sendFile' | translate}}</span>
+    </li>
+    <li (click)="sendVideoLink(mediaActions)" [class.p-disabled]="screenActivated || whiteboardActivated">
+      <i class="icon-download"></i>
+      <span>{{'room.sendVideoLink' | translate}}</span>
     </li>
     <li (click)="openWhiteboard(mediaActions)" [class.p-disabled]="screenActivated || presentationActivated">
       <i class="icon-download"></i>

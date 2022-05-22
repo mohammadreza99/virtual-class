@@ -16,7 +16,7 @@ import {QuestionIncomeComponent} from '@modules/vc/components/question-income/qu
 import {PollIncomeComponent} from '@modules/vc/components/poll-income/poll-income.component';
 import {ResultTableComponent} from '@modules/vc/components/result-table/result-table.component';
 import {QuestionResultComponent} from '@modules/vc/components/question-result/question-result.component';
-import {UploadFileComponent} from '@modules/vc/components/upload-file/upload-file.component';
+import {UploadFileFormComponent} from '@modules/vc/components/upload-file-form/upload-file-form.component';
 import {SelectRandomUserComponent} from '@modules/vc/components/select-random-user/select-random-user.component';
 import {CanvasWhiteboardComponent} from '@modules/vc/components/canvas-whiteboard/canvas-whiteboard.component';
 import {WhiteboardComponent} from '@modules/vc/components/whiteboard/whiteboard.component';
@@ -24,6 +24,9 @@ import {PrivateChatItemComponent} from '@modules/vc/components/private-chat-item
 import {ContactsComponent} from '@modules/vc/components/contacts/contacts.component';
 import {PublicChatComponent} from '@modules/vc/components/public-chat/public-chat.component';
 import {PrivateChatComponent} from '@modules/vc/components/private-chat/private-chat.component';
+import {MessengerComponent} from '@modules/vc/components/messenger/messenger.component';
+import {VideoPresentationComponent} from '@modules/vc/components/video-presentation/video-presentation.component';
+import {VideoLinkFormComponent} from '@modules/vc/components/video-link-form/video-link-form.component';
 
 export const COMPONENTS: Type<any>[] = [
   VirtualClassPage,
@@ -45,10 +48,13 @@ export const COMPONENTS: Type<any>[] = [
   QuestionResultComponent,
   PollIncomeComponent,
   ResultTableComponent,
-  UploadFileComponent,
+  UploadFileFormComponent,
   SelectRandomUserComponent,
   CanvasWhiteboardComponent,
   WhiteboardComponent,
   PrivateChatItemComponent,
-  ContactsComponent
+  ContactsComponent,
+  MessengerComponent,
+  VideoPresentationComponent,
+  VideoLinkFormComponent
 ];

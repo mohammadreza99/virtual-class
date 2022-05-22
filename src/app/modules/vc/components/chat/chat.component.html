@@ -11,23 +11,31 @@
   </div>
   <p-tabView>
     <p-tabPanel header="چت خصوصی" leftIcon="icon-user-groups">
-      <ng-private-chat [openChat]="openPrivateChat"></ng-private-chat>
+      <ng-private-chat [openChat]="enablePrivateChat"></ng-private-chat>
     </p-tabPanel>
     <p-tabPanel header="چت عمومی" leftIcon="icon-user-groups" [selected]="true">
-      <ng-public-chat [openChat]="openPublicChat"></ng-public-chat>
+      <ng-public-chat [openChat]="enablePublicChat"></ng-public-chat>
     </p-tabPanel>
   </p-tabView>
 </div>
 
 <p-overlayPanel [baseZIndex]="2000" #chatActions styleClass="actions {{fa ? 'rtl' : null}}">
   <ul class="list-unstyled p-0 m-0">
+    <li (click)="clearChat()">
+      <i class="icon-view-speaker"></i>
+      <span>{{'room.clearAllMessages' | translate}}</span>
+    </li>
+    <li (click)="saveChat()">
+      <i class="icon-view-speaker"></i>
+      <span>{{'room.saveChat' | translate}}</span>
+    </li>
     <li (click)="togglePublicChatActivation(chatActions)">
       <i class="icon-error-toast"></i>
-      <span>{{(openPublicChat ? 'room.closePublicChat' : 'room.openPublicChat') | translate}}</span>
+      <span>{{(enablePublicChat ? 'room.closePublicChat' : 'room.openPublicChat') | translate}}</span>
     </li>
-    <!--      <li (click)="saveChat()">-->
-    <!--        <i class="icon-view-speaker"></i>-->
-    <!--        <span>{{(openPrivateChat ? 'room.closePrivateChat' : 'room.openPrivateChat') | translate}}</span>-->
-    <!--      </li>-->
+    <li (click)="togglePrivateChatActivation(chatActions)">
+      <i class="icon-error-toast"></i>
+      <span>{{(enablePrivateChat ? 'room.closePrivateChat' : 'room.openPrivateChat') | translate}}</span>
+    </li>
   </ul>
 </p-overlayPanel>

@@ -3,7 +3,7 @@ import {UploadAvatarComponent} from '@shared/components/upload-avatar/upload-ava
 import {AuthService, SessionService} from '@core/http';
 import {DialogService} from 'primeng/dynamicdialog';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
-import {UpdateViewService} from '@core/http/update-view.service';
+import {UpdateViewService} from '@core/utils';
 
 @Component({
   selector: 'ng-avatar',

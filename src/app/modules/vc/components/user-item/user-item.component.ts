@@ -4,7 +4,7 @@ import {RoomService, SessionService} from '@core/http';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {UtilsService} from '@ng/services';
-import {UpdateViewService} from '@core/http/update-view.service';
+import {UpdateViewService} from '@core/utils';
 import {DialogService} from 'primeng/dynamicdialog';
 import {KickUserConfirmComponent} from '@modules/vc/components/kick-user-confirm/kick-user-confirm.component';
 import {UploadAvatarComponent} from '@shared/components/upload-avatar/upload-avatar.component';
@@ -27,6 +27,7 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
     super();
   }
 
+  @Input() enableActions: boolean = true;
   @Input() user: RoomUser;
   @Input() raiseHand: boolean;
 

@@ -1,1 +1,14 @@
-<p>contacts works!</p>
+<div class="contacts p-3 d-flex flex-column h-100">
+  <div class="d-flex justify-content-between align-items-center border-bottom pb-2 ,b-2">
+    <span>{{'room.startPrivateChat' | translate}}</span>
+    <ng-button (click)="goBackClick()" appearance="text" icon="pi pi-chevron-left"></ng-button>
+  </div>
+  <div class="contacts-list flex-grow-1 py-3" [ngClass]="{'d-flex align-items-center': contacts.length == 0}">
+    <ng-user-item class="mb-3"
+                  *ngFor="let user of contacts"
+                  [user]="user"
+                  [enableActions]="false"
+                  (click)="selectContactClick(user)"></ng-user-item>
+    <ng-empty [message]="'nothingFound' | translate" *ngIf="contacts.length == 0"></ng-empty>
+  </div>
+</div>

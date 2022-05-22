@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, Renderer2} from '@angular/core';
 import {Subject} from 'rxjs';
 import {SessionService} from '@core/http';
-import {UpdateViewService} from '@core/http/update-view.service';
+import {UpdateViewService} from '@core/utils';
 import {min, takeUntil} from 'rxjs/operators';
 
 @Component({

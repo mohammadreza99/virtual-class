@@ -7,6 +7,7 @@
       <ng-empty *ngIf="users.length == 0" [message]="'nothingFound' | translate"></ng-empty>
     </div>
     <div class="main-area flex-grow-1">
+      <ng-video-presentation class="active"></ng-video-presentation>
       <ng-canvas-whiteboard></ng-canvas-whiteboard>
       <ng-whiteboard></ng-whiteboard>
       <ng-screen position="mainPosition"></ng-screen>

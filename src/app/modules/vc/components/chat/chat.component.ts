@@ -14,19 +14,24 @@ export class ChatComponent extends LanguageChecker {
     super();
   }
 
-  @Input() openPublicChat: boolean = true;
-  @Input() openPrivateChat: boolean = true;
+  @Input() enablePublicChat: boolean = true;
+  @Input() enablePrivateChat: boolean = true;
   @Output() closeSidebar = new EventEmitter();
   @Output() newMessage = new EventEmitter();
 
-  saveChat() {
-  }
 
   async togglePublicChatActivation(chatActions: OverlayPanel) {
-    await this.sessionService.changePublicChatState(!this.openPublicChat).toPromise();
+    await this.sessionService.changePublicChatState(!this.enablePublicChat).toPromise();
     chatActions.hide();
   }
 
   togglePrivateChatActivation(activate: boolean) {
+  }
+
+  saveChat() {
+  }
+
+  clearChat() {
+
   }
 }

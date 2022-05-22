@@ -1,7 +1,7 @@
 import {PeerConnectionOptions, TrackPosition} from '../models/webrtc.model';
 import {Global} from '@ng/global';
 import {SessionService} from '@core/http';
-import {UpdateViewService} from '@core/http/update-view.service';
+import {UpdateViewService} from '@core/utils';
 import {Subscription} from 'rxjs';
 
 export class PeerConnection {

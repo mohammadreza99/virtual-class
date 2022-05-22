@@ -1,8 +1,9 @@
-import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {NgPosition} from '@ng/models/offset';
-import {SessionService} from '@core/http';
 import {OverlayPanel} from 'primeng/overlaypanel';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
+import {RoomUser} from '@core/models';
+import {SessionService} from '@core/http';
 
 @Component({
   selector: 'ng-message-item',
@@ -11,7 +12,7 @@ import {LanguageChecker} from '@shared/components/language-checker/language-chec
 })
 export class MessageItemComponent extends LanguageChecker implements OnInit {
 
-  constructor() {
+  constructor(private sessionService: SessionService) {
     super();
   }
 
@@ -22,8 +23,12 @@ export class MessageItemComponent extends LanguageChecker implements OnInit {
   @Output() reply = new EventEmitter();
   @Output() delete = new EventEmitter();
   @Output() pin = new EventEmitter();
+  @Output() mute = new EventEmitter();
+
+  currentUser: RoomUser;
 
   ngOnInit(): void {
+    this.currentUser = this.sessionService.currentUser;
   }
 
   onReply(messageActions?: OverlayPanel) {
@@ -36,6 +41,11 @@ export class MessageItemComponent extends LanguageChecker implements OnInit {
   onDelete(messageActions: OverlayPanel) {
     messageActions.hide();
     this.delete.emit();
+  }
+
+  muteUser(messageActions: OverlayPanel) {
+    messageActions.hide();
+    this.mute.emit();
   }
 
   onPin(messageActions: OverlayPanel) {
