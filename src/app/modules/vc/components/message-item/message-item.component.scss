@@ -26,6 +26,11 @@
       background-color: #5C5C5C;
       color: #ffffff;
 
+      .message-text {
+        overflow-wrap: break-word;
+        word-break: break-word;
+      }
+
       .reply-container {
         border-right: 6px solid #61987A;
         padding: 0.2rem 1rem;

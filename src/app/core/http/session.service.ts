@@ -479,6 +479,35 @@ export class SessionService extends ApiService {
     this.updateViewService.setViewEvent({event: 'userContainersChange', data: this.getSortedUsers()});
   }
 
+  setUserDisplayToMain(userId) {
+    if (this.mainPositionUser) {
+      const mainPositionPC = this.peerConnections.find(pc => pc.userId == this.mainPositionUser.id);
+      this.updateViewService.setViewEvent({
+        event: 'onTrack',
+        data: {
+          stream: mainPositionPC.stream,
+          userId: this.mainPositionUser.id,
+          display: mainPositionPC.display,
+          position: 'teacherWebcam',
+          publishType: mainPositionPC.publishType,
+        }
+      });
+      this.removeMainPositionUser();
+      this.setMainPositionUser(userId);
+    }
+    const targetPC = this.peerConnections.find(pc => pc.userId == userId);
+    this.updateViewService.setViewEvent({
+      event: 'onTrack',
+      data: {
+        stream: targetPC.stream,
+        userId: targetPC.userId,
+        display: targetPC.display,
+        position: 'teacherWebcam',
+        publishType: targetPC.publishType,
+      }
+    });
+  }
+
   private getSortedUsers() {
     this.updateViewService.setViewEvent({event: 'roomParticipantsChange', data: this.roomUsers});
     let sortedUsers = [...this.roomUsers.filter(u => !u.kicked)];
@@ -818,6 +847,7 @@ export class SessionService extends ApiService {
       this.updateViewService.setViewEvent({event: 'publicMessagesChange', data: result.data.items.reverse()});
     }
   }
+
 
   async getRandomUser() {
     const availableUsers = this.roomUsers.filter(u => u.role != 'Admin');

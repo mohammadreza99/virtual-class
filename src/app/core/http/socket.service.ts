@@ -53,9 +53,6 @@ export class SocketService extends ApiService {
 
   private async createSocketConnection() {
     this.webSocket = webSocket(this.socketBaseUrl);
-    console.log('before connect sent');
-    await this.sendConnect();
-    console.log('connect sent');
     this.subscription = this.webSocket.subscribe(
       async (res) => {
         this.socketChannel.next({event: res.method, ...res.data});
@@ -97,6 +94,9 @@ export class SocketService extends ApiService {
           this.retryConnection(GlobalConfig.socketConnectOnErrorRetryDelay);
         }
       });
+    console.log('before connect sent');
+    await this.sendConnect();
+    console.log('connect sent');
   }
 
   private handleSocketFailure() {

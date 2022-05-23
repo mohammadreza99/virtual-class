@@ -111,6 +111,10 @@ export class ScreenComponent implements OnInit, OnDestroy {
     };
   }
 
+  onClick() {
+    this.sessionService.setUserDisplayToMain(this.user.id);
+  }
+
 
   hasVideo() {
     return this.sessionService.hasVideo(this.stream);

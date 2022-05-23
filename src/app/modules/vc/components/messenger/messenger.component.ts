@@ -43,19 +43,17 @@ export class MessengerComponent extends LanguageChecker implements OnInit, OnCha
   @ViewChildren('messageItem') messageItems: QueryList<any>;
 
   currentUser: RoomUser;
-  messageText: string;
+  messageText: string = '';
   replyMessage: any;
   isNearBottom = true;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  emojiPickerVisible: boolean = false;
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.currentUser;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.pinnedMessage) {
-      this.pinnedMessage = changes.pinnedMessage;
-    }
   }
 
   ngAfterViewInit() {
@@ -64,6 +62,7 @@ export class MessengerComponent extends LanguageChecker implements OnInit, OnCha
 
   sendMessageClick(callback: () => any) {
     if (!this.messageText) {
+      callback();
       return;
     }
     this.sendMessage.emit({message: this.messageText, replyMessage: this.replyMessage, callback});
@@ -141,8 +140,18 @@ export class MessengerComponent extends LanguageChecker implements OnInit, OnCha
     this.el.nativeElement.querySelector('ng-input-text input').focus();
   }
 
+  addEmoji(event) {
+    this.messageText += event.emoji.native;
+    this.emojiPickerVisible = false;
+    this.focusInput();
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+  }
+
+  toggleEmojiPicker() {
+    this.emojiPickerVisible = !this.emojiPickerVisible;
   }
 }

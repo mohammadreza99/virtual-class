@@ -28,13 +28,18 @@
     </div>
     <i class="pi pi-times" (click)="cancelReply()"></i>
   </div>
+  <emoji-mart [style]="{width:'100%'}" [enableSearch]="false" *ngIf="emojiPickerVisible"
+              (emojiSelect)="addEmoji($event)"
+              [showPreview]="false"></emoji-mart>
   <div class="chat-inputarea">
     <ng-container *ngIf="enableChat">
+      <ng-button (click)="toggleEmojiPicker()"
+                 icon="icon-emoji_happy"></ng-button>
       <ng-input-text [rtl]="fa" (keyup.enter)="sendMessageClick(null)" inputSize="md"
-                     class="ml-2 flex-grow-1"
+                     class="mx-2 flex-grow-1"
                      [placeholder]="'room.sendAMessage' | translate"
                      [(ngModel)]="messageText"></ng-input-text>
-      <ng-button-async icon="pi pi-chevron-left"
+      <ng-button-async appearance="outlined" color="success" newColor="success" [rounded]="true" icon="pi pi-chevron-left"
                        (clickAsync)="sendMessageClick($event)"></ng-button-async>
     </ng-container>
     <span class="text-center flex-grow-1" *ngIf="!enableChat">{{'room.sendMessageBlocked' | translate}}</span>

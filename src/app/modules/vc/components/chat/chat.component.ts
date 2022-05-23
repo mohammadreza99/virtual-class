@@ -21,11 +21,19 @@ export class ChatComponent extends LanguageChecker {
 
 
   async togglePublicChatActivation(chatActions: OverlayPanel) {
-    await this.sessionService.changePublicChatState(!this.enablePublicChat).toPromise();
+    const res = await this.sessionService.changePublicChatState(!this.enablePublicChat).toPromise();
     chatActions.hide();
+    if (res.status == 'OK') {
+      this.enablePublicChat = !this.enablePublicChat;
+    }
   }
 
-  togglePrivateChatActivation(activate: boolean) {
+  async togglePrivateChatActivation(chatActions: OverlayPanel) {
+    const res = await this.sessionService.changePublicChatState(!this.enablePrivateChat).toPromise();
+    chatActions.hide();
+    if (res.status == 'OK') {
+      this.enablePrivateChat = !this.enablePrivateChat;
+    }
   }
 
   saveChat() {
