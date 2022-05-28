@@ -18,6 +18,10 @@
       padding: 2rem 1rem 2rem;
       margin: 2rem;
       border: 1px solid #DADBE1;
+      @include media-breakpoint-down(sm) {
+        padding: 1rem 0.5rem;
+        margin: 0.5rem;
+      }
     }
 
     &.menu-overlay.sidebar-lock,

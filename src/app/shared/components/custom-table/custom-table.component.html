@@ -1,21 +1,11 @@
 <div class="table-responsive">
-  <div class="d-flex align-items-center justify-content-between p-3 bg-light flex-column flex-md-row"
+  <div class="d-flex align-items-center justify-content-between py-3 px-2 bg-light flex-column flex-sm-row"
        *ngIf="showCaption">
-    <div class="table-caption w-100 mb-3 mb-md-0">
+    <div class="table-caption mb-3 mb-sm-0">
       <i [class]="captionIcon"></i>
       <h5 class="mb-0">{{captionText | translate}}</h5>
     </div>
-    <div class="table-actions w-100">
-      <div class="table-search" [class.mr-md-5]="captionText || captionIcon">
-        <input type="text" (keydown.enter)="onSearch()" [(ngModel)]="searchTerm"
-               [placeholder]="'search' | translate">
-        <button class="close" (click)="toggleSearch()">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <!--      <a tooltipPosition="bottom" [pTooltip]="'im_filter' | translate" (click)="onActionClick('onFilter')">-->
-      <!--        <i class="icon-settings"></i>-->
-      <!--      </a>-->
+    <div class="table-actions">
       <a tooltipPosition="bottom" [pTooltip]="'search' | translate" (click)="toggleSearch()">
         <i class="icon-search"></i>
       </a>
@@ -27,10 +17,13 @@
          (click)="onActionClick('onAdd')">
         <i class="icon-add"></i>
       </a>
-      <!--      <a tooltipPosition="bottom" [pTooltip]="'im_download' | translate" (click)="onActionClick('onDownload')">-->
-      <!--        <i class="icon-download"></i>-->
-      <!--      </a>-->
-
+    </div>
+    <div class="table-search">
+      <input type="text" (keydown.enter)="onSearch()" [(ngModel)]="searchTerm"
+             [placeholder]="'search' | translate">
+      <button class="close" (click)="toggleSearch()">
+        <span aria-hidden="true">&times;</span>
+      </button>
     </div>
   </div>
   <p-table [value]="rowData" responsiveLayout="scroll" [rowHover]="true" (onSort)="sortColumn($event)"

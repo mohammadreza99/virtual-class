@@ -1,5 +1,6 @@
-:host ::ng-deep {
+@import "mixins";
 
+:host ::ng-deep {
   .p-datatable .p-datatable-thead > tr > th,
   .p-datatable .p-datatable-tbody > tr > td {
     text-align: right;
@@ -12,11 +13,24 @@
     }
   }
 
+  .table-caption {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    justify-content: flex-start;
+    order: 1;
+
+    i {
+      color: #5643C1;
+      margin-left: 1rem;
+    }
+  }
+
   .table-actions {
     display: flex;
     align-items: center;
-    flex-grow: 1;
     overflow: hidden;
+    order: 4;
 
     a {
       cursor: pointer;
@@ -25,26 +39,14 @@
     }
   }
 
-  .table-caption {
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    justify-content: flex-start;
-
-    i {
-      color: #5643C1;
-      margin-left: 1rem;
-    }
-
-
-  }
-
   .table-search {
     display: flex;
     align-items: center;
     flex-grow: 1;
     transition: all .4s;
-    transform: translateY(-200%);
+    transform: translateY(-400%);
+    order: 2;
+    margin-right: 1rem;
 
     &.open {
       transform: translateY(0);
@@ -69,11 +71,18 @@
       border-radius: 8px;
       background-color: #dcdcdc;
       padding: 0.5rem 1.25rem;
+      width: 0;
 
       &:focus {
         outline: none;
         border: none;
       }
+    }
+
+    @include media-breakpoint-down(sm) {
+      width: 100%;
+      order: 5;
+      margin-right: 0;
     }
   }
 

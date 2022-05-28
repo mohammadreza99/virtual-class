@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
-import {AuthService} from '@core/http';
 
 @Component({
-  selector: 'main-page',
+  selector: 'panel-page',
   styleUrls: ['panel.page.scss'],
   templateUrl: './panel.page.html',
 })

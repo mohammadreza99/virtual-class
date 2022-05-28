@@ -59,7 +59,6 @@ export class CustomTableComponent implements OnInit {
     } else {
       searchElement.querySelector('input').blur();
       this.searchTerm = null;
-      await this.reloadData();
     }
   }
 

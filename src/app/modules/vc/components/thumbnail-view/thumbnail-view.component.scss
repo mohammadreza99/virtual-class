@@ -22,9 +22,9 @@
     }
 
     .participants {
-      min-width: 300px;
+      min-width: $participantsWidth;
       position: absolute;
-      right: -300px;
+      right: -#{$participantsWidth};
       top: 0;
       height: 100%;
       background-color: #35363D;
@@ -191,11 +191,11 @@
       }
 
       .participants-toggler {
-        right: 300px;
+        right: $participantsWidth;
       }
 
       .main-area {
-        margin-right: 300px;
+        margin-right: $participantsWidth;
       }
 
       @include media-breakpoint-down(lg) {
