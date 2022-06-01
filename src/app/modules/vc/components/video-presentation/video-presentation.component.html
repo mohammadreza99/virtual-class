@@ -1,5 +1,30 @@
-<div>
-  <video #videoEl (contextmenu)="onContextMenu($event)">
+<!--<div>-->
+<!--  <ng-button *ngPermission="'Admin'" class="mb-3" icon="pi pi-times" color="secondary" (click)="close()"></ng-button>-->
+<!--    <video (contextmenu)="onContextMenu($event)">-->
+<!--      <source src="">-->
+<!--      Your browser does not support HTML5 video.-->
+<!--    </video>-->
+<!--</div>-->
+
+<div class="wrapper" (contextmenu)="onContextMenu($event)">
+  <ng-button *ngPermission="'Admin'" class="mb-3" icon="pi pi-times" color="secondary" (click)="close()"></ng-button>
+
+  <div class="video-controls" *ngPermission="'Admin'">
+    <div class="progress-bar">
+      <span class="buffer-bar"></span>
+      <span class="time-bar"></span>
+    </div>
+
+    <div class="actions p-3 d-flex align-items-center">
+      <div class="play-button mini pi flex-grow-1"></div>
+      <i class="pi pi-clock mr-2"></i>
+      <span class="current-time">00:00</span> / <span class="duration">00:00</span>
+      <div class="sound-button pi ml-4"></div>
+      <input type="range" class="ml-2" value="70">
+    </div>
+  </div>
+
+  <video preload="auto">
     <source src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4">
   </video>
 </div>

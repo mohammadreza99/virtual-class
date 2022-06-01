@@ -1,16 +1,20 @@
-<div class="pinned-container d-flex align-items-center justify-content-between py-2 rounded" *ngIf="pinnedMessage">
+<div class="pinned-container d-flex align-items-center justify-content-between py-3 rounded bg-secondary shadow"
+     *ngIf="pinnedMessage">
   <i class="icon-pin text-warning mx-2"></i>
   <div class="message-info flex-grow-1">
     <small
-      class="d-block font-medium">{{pinnedMessage.user.first_name + ' ' + pinnedMessage.user.last_name}}</small>
-    <small class="d-block font-light">{{pinnedMessage.message.message}}</small>
+      class="d-block font-medium">{{pinnedMessage.sender_first_name + ' ' + pinnedMessage.sender_last_name}}</small>
+    <small class="d-block font-light">{{pinnedMessage.message}}</small>
   </div>
+  <i class="pi pi-times mx-2" role="button" (click)="closePin()"></i>
 </div>
-<div class="messenger" [class.has-pinned-message]="pinnedMessage" #chatContainer (scroll)="scrolled()">
-  <ng-message-item #messageItem *ngFor="let message of messages;trackBy:trackByFn"
+<div class="messenger p-2" [class.has-pinned-message]="pinnedMessage" #chatContainer (scroll)="scrolled()">
+  <ng-message-item #messageItem *ngFor="let message of messages;let last=last;trackBy:trackByFn"
+                   [class.mb-3]="!last"
                    [position]="message.user.id == currentUser.id ? 'right' : 'left'"
                    [message]="message.message"
                    [sender]="message.user"
+                   [showMoreOptions]="showMoreOptions"
                    [replyMessage]="getReplyMessageOf(message)"
                    (delete)="deleteMessageClick(message)"
                    (pin)="pinMessageClick(message)"
@@ -19,8 +23,7 @@
   </ng-message-item>
 </div>
 <div class="chat-footer">
-  <div class="reply-container d-flex align-items-center justify-content-between py-2 m-2 rounded"
-       *ngIf="replyMessage">
+  <div *ngIf="replyMessage" class="reply-container d-flex align-items-center justify-content-between py-2 m-2 rounded">
     <div class="message-info">
       <small
         class="d-block font-medium">{{replyMessage.user.first_name + ' ' + replyMessage.user.last_name}}</small>
@@ -39,7 +42,8 @@
                      class="mx-2 flex-grow-1"
                      [placeholder]="'room.sendAMessage' | translate"
                      [(ngModel)]="messageText"></ng-input-text>
-      <ng-button-async appearance="outlined" color="success" newColor="success" [rounded]="true" icon="pi pi-chevron-left"
+      <ng-button-async appearance="outlined" color="success" newColor="success" [rounded]="true"
+                       icon="pi pi-chevron-left"
                        (clickAsync)="sendMessageClick($event)"></ng-button-async>
     </ng-container>
     <span class="text-center flex-grow-1" *ngIf="!enableChat">{{'room.sendMessageBlocked' | translate}}</span>

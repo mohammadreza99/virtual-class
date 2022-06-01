@@ -3,7 +3,7 @@
   <ng-button *ngPermission="'Viewer'" class="mb-3" icon="icon-fullscreen" appearance="outlined"
              (click)="toggleFullScreen(whiteboard)"></ng-button>
   <ng-button class="mb-3" icon="pi pi-download" (click)="saveAsImage()"></ng-button>
-  <div class="tools" *ngPermission="'Admin'">
+  <div class="tools" *ngIf="hasPersmission">
     <ng-button icon="pi pi-sort-alpha-down" [rounded]="true" appearance="outlined" pTooltip="Text Size"
                tooltipPosition="right"
                (click)="showOptionOverlay('textSizes',$event)"
@@ -58,15 +58,20 @@
 
 <section class="wrapper" #whiteboard>
   <div class="konva-wrapper"></div>
-  <!--  <img class="border shadow" [src]="presentationCurrentSlide" alt="presentation">-->
 </section>
 
 <div class="whiteboard-footer d-flex justify-content-center align-items-center">
-  <ng-button-async *ngPermission="'Admin'" (clickAsync)="nextPage($event)" icon="pi pi-chevron-right"
-                   [disabled]="disableNextBtn"></ng-button-async>
-  <ng-button color="secondary" label="{{currentSlide}}/{{slidesCount}}" [disabled]="true"></ng-button>
-  <ng-button-async *ngPermission="'Admin'" (clickAsync)="prevPage($event)" icon="pi pi-chevron-left"
-                   [disabled]="disablePrevBtn"></ng-button-async>
+  <div class="d-flex justify-content-center align-items-center ml-2 page-control">
+    <ng-button-async *ngPermission="'Admin'" (clickAsync)="nextPage($event)" icon="pi pi-chevron-right"
+                     [disabled]="disableNextBtn"></ng-button-async>
+    <ng-button color="secondary" label="{{currentSlide}}/{{slidesCount}}" [disabled]="true"></ng-button>
+    <ng-button-async *ngPermission="'Admin'" (clickAsync)="prevPage($event)" icon="pi pi-chevron-left"
+                     [disabled]="disablePrevBtn"></ng-button-async>
+  </div>
+  <ng-button *ngPermission="'Admin'" [pTooltip]="'room.whiteboardPermission' | translate"
+             tooltipPosition="top"
+             icon="icon-fi-rr-line-width" color="secondary"
+             (click)="setPermissionForUser()"></ng-button>
 </div>
 
 <p-overlayPanel>

@@ -28,7 +28,7 @@
     "ng2-jalali-date-picker": "^2.4.2",
     "ngx-image-cropper": "^6.1.0",
     "node-sass": "^4.14.1",
-    "primeicons": "^4.1.0",
+    "primeicons": "^5.0.0",
     "primeng": "^12.2.2",
     "rxjs": "~6.6.7",
     "tslib": "^2.0.0",

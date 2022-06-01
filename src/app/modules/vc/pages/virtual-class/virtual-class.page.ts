@@ -258,9 +258,16 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
       if (res.status == 'OK') {
         setTimeout(() => {
           this.updateViewService.setViewEvent({event: 'openBoard', data: res.data.board});
+          this.currentRoom.board.users.forEach(id => {
+            this.updateViewService.setViewEvent({event: 'setBoardPermission', data: {user_id: id}});
+          });
         });
       }
     }
+    this.updateViewService.setViewEvent({
+      event: 'messageMutedUser',
+      data: {user_id: this.currentUser.id, state: this.currentUser.user_message_state}
+    });
   }
 
   async toggleCamera(callback: (toggleState?: boolean) => any) {
@@ -373,11 +380,6 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     }, 1000);
   }
 
-  ngOnDestroy(): void {
-    this.closeAllSidebars();
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
-  }
 
   closeAllSidebars(exceptionKey?: string) {
     for (const key of this.sidebarKeys) {
@@ -504,6 +506,10 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   uploadFile(overlay: OverlayPanel) {
+    if (this.isPresentationAreaBusy()) {
+      this.utilsService.showToast({detail: this.instant('room.pleaseCloseCurrentPresentation'), severity: 'warn'});
+      return;
+    }
     this.dialogService.open(UploadFileFormComponent, {
       header: this.instant('room.sendFile'),
       width: '500px',
@@ -528,20 +534,44 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     overlay.hide();
   }
 
-  async openWhiteboard(overlay: OverlayPanel) {
-    const res = await this.sessionService.openBoard(true).toPromise();
-    if (res.status == 'OK') {
-      this.updateViewService.setViewEvent({event: 'startBoard', data: {id: res.data.board_id}});
-    }
+  async toggleWhiteboard(overlay: OverlayPanel) {
     overlay.hide();
+    this.whiteboardActivated = !this.whiteboardActivated;
+    if (this.whiteboardActivated) {
+      this.openBoard();
+    } else {
+      this.closeBoard();
+    }
+  }
+
+  openBoard() {
+    this.sessionService.openBoard(true).toPromise();
+  }
+
+  closeBoard() {
+    this.sessionService.closeBoard().toPromise();
   }
 
   sendVideoLink(mediaActions: OverlayPanel) {
+    if (this.isPresentationAreaBusy()) {
+      this.utilsService.showToast({detail: this.instant('room.pleaseCloseCurrentPresentation'), severity: 'warn'});
+      return;
+    }
     mediaActions.hide();
     this.dialogService.open(VideoLinkFormComponent, {header: this.instant('room.sendVideoLink')}).onClose.subscribe(res => {
       if (res) {
         this.sessionService.uploadVideoLink(res).toPromise();
       }
     });
+  }
+
+  isPresentationAreaBusy() {
+    return this.presentationActivated || this.whiteboardActivated || this.screenActivated;
+  }
+
+  ngOnDestroy(): void {
+    this.closeAllSidebars();
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

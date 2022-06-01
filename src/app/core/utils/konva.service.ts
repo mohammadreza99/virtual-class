@@ -42,7 +42,7 @@ export class KonvaService {
     if (!slides.length) {
       slides = Array.from({length: 10}, (s, i) => ({data: null, slideNumber: i + 1}));
     }
-    slides.sort((a, b) => (a.slideNumber > b.slideNumber) ? 1 : ((b.slideNumber > a.slideNumber) ? -1 : 0));
+    // slides.sort((a, b) => (a.slideNumber > b.slideNumber) ? 1 : ((b.slideNumber > a.slideNumber) ? -1 : 0));
     for (const slide of slides) {
       const containerEl = this._document.createElement('div');
       const id = this.getId(slide.slideNumber);

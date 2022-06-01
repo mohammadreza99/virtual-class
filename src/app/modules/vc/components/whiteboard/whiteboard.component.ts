@@ -1,21 +1,31 @@
 import {Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {
   availableColors,
-  availableTextSizes, availableThicknesses, Colors, KonvaOptions, KonvaTools, OverlayMode, TextSizes, Thicknesses
+  availableTextSizes,
+  availableThicknesses,
+  Colors,
+  KonvaOptions,
+  KonvaTools,
+  OverlayMode,
+  TextSizes,
+  Thicknesses
 } from '@core/models';
 import {OverlayPanel} from 'primeng/overlaypanel';
-import {KonvaService} from '@core/utils';
+import {KonvaService, UpdateViewService} from '@core/utils';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {SessionService} from '@core/http';
-import {UpdateViewService} from '@core/utils';
+import {UtilsService} from '@ng/services';
+import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
+import {DialogService} from 'primeng/dynamicdialog';
+import {WhiteboardManagePermissionComponent} from '@modules/vc/components/whiteboard-manage-permission-form/whiteboard-manage-permission.component';
 
 @Component({
   selector: 'ng-whiteboard',
   templateUrl: './whiteboard.component.html',
   styleUrls: ['./whiteboard.component.scss'],
 })
-export class WhiteboardComponent implements OnInit, OnDestroy {
+export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDestroy {
   whiteboardData: any;
   selectedTool: KonvaTools;
   selectedOption: KonvaOptions = {
@@ -37,17 +47,21 @@ export class WhiteboardComponent implements OnInit, OnDestroy {
   slidesCount: number = 10;
   destroy$: Subject<boolean> = new Subject<boolean>();
   fullscreenEnabled: boolean = false;
+  hasPersmission: boolean;
 
   constructor(private sessionService: SessionService,
               private updateViewService: UpdateViewService,
               private elementRef: ElementRef,
               private konvaService: KonvaService,
+              private dialogService: DialogService,
               private renderer: Renderer2) {
+    super();
   }
 
   @ViewChild(OverlayPanel, {static: true}) overlayPanel: OverlayPanel;
 
   ngOnInit() {
+    this.hasPersmission = this.sessionService.imTeacher;
     this.konvaService.stageChange().pipe(takeUntil(this.destroy$)).subscribe(res => {
       switch (res.event) {
         case 'updateBoard':
@@ -60,6 +74,7 @@ export class WhiteboardComponent implements OnInit, OnDestroy {
         case 'toolChange':
           this.selectedTool = res.tool;
           break;
+
         case 'optionChange':
           break;
       }
@@ -72,7 +87,11 @@ export class WhiteboardComponent implements OnInit, OnDestroy {
           this.whiteboardData = res.data;
           this.currentSlide = res.data.current_slide_no || 1;
           if (this.whiteboardData.slides?.length) {
-            const slidesData = this.whiteboardData.slides.map(s => ({data: s.data, slideNumber: s.slide_no}));
+            const slidesData = Array.from({length: 10}, (s, i) => ({data: null, slideNumber: i + 1}));
+            this.whiteboardData.slides.forEach(slide => {
+              const idx = slidesData.findIndex(s => slide.slide_no == s.slideNumber);
+              slidesData[idx] = {data: slide.data, slideNumber: slide.slide_no};
+            });
             this.konvaService.start(slidesData);
           } else {
             this.konvaService.start();
@@ -104,36 +123,46 @@ export class WhiteboardComponent implements OnInit, OnDestroy {
           break;
 
         case 'setBoardPermission':
-
+          if (res.data.user_id == this.sessionService.currentUser.id) {
+            this.hasPersmission = true;
+          }
           break;
 
         case 'removeBoardPermission':
-
+          if (res.data.user_id == this.sessionService.currentUser.id) {
+            this.hasPersmission = false;
+          }
           break;
 
-        // case 'changePresentationPage':
-        //   this.currentSlide = res.data.page_number;
-        //   this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
-        //   this.handleButtonsState();
-        //   break;
+        case 'changePresentationPage':
+          this.currentSlide = res.data.page_number;
+          this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
+          this.handleButtonsState();
+          break;
 
-        // case 'openPresentation':
-        //   this.activateBoard();
-        //   this.presentationData = res.data;
-        //   this.currentSlide = res.data.active_page;
-        //   this.slidesCount = Object.keys(this.presentationData.pages).length;
-        //   this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
-        //   this.handleButtonsState();
-        //   break;
-        //
-        // case 'closePresentation':
-        //   this.deactivateBoard();
-        //   this.presentationData = null;
-        //   this.presentationCurrentSlide = null;
-        //   break;
-        //
-        // case 'deletePresentation':
-        //   break;
+        case 'openPresentation':
+          if (res.data.is_video) {
+            return;
+          }
+          this.activateBoard();
+          this.presentationData = res.data;
+          this.currentSlide = res.data.active_page;
+          this.slidesCount = Object.keys(this.presentationData.pages).length;
+          this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
+          this.handleButtonsState();
+          break;
+
+        case 'closePresentation':
+          if (res.data.is_video) {
+            return;
+          }
+          this.deactivateBoard();
+          this.presentationData = null;
+          this.presentationCurrentSlide = null;
+          break;
+
+        case 'deletePresentation':
+          break;
       }
     });
   }
@@ -295,5 +324,20 @@ export class WhiteboardComponent implements OnInit, OnDestroy {
       triangle: 'icon-fi-rr-pyramid',
     };
     return source[this.selectedTool];
+  }
+
+  setPermissionForUser() {
+    const users = this.sessionService.getRoomUsers().filter(u => u.id != this.sessionService.currentUser.id);
+    // TODO: get allowed users via api
+    const allowedUsers = this.sessionService.getRoomUsers().filter(u => u.id != this.sessionService.currentUser.id);
+    this.dialogService.open(WhiteboardManagePermissionComponent, {
+      header: this.instant('room.whiteboardPermission'),
+      data: {users, allowedUsers},
+      width: '500px'
+    }).onClose.subscribe(res => {
+      if (res) {
+        this.sessionService.setBoardPermission(this.whiteboardData.id, res.userId).toPromise();
+      }
+    });
   }
 }

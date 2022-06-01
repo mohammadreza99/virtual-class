@@ -844,7 +844,10 @@ export class SessionService extends ApiService {
   private async updateRoomPublicMessages() {
     const result = await this.getPublicMessages().toPromise();
     if (result.status == 'OK') {
-      this.updateViewService.setViewEvent({event: 'publicMessagesChange', data: result.data.items.reverse()});
+      this.updateViewService.setViewEvent({
+        event: 'publicMessagesChange',
+        data: {messages: result.data.items.reverse(), pinnedMessage: result.data.meta.pinned_message}
+      });
     }
   }
 
@@ -1253,16 +1256,16 @@ export class SessionService extends ApiService {
     });
   }
 
-  muteUserMessage(user_id: number) {
+  changeUserMessageState(user_id: number, state: boolean) {
     return this._post<any>('', {
-      method: 'muteUserMessage',
-      data: {room_id: this.currentRoom.id, user_id},
+      method: 'changeUserMessageState',
+      data: {room_id: this.currentRoom.id, user_id, state},
     });
   }
 
   clearPublicMessages() {
     return this._post<any>('', {
-      method: 'clearPublicMessage',
+      method: 'clearPublicMessages',
       data: {room_id: this.currentRoom.id},
     });
   }
@@ -1306,13 +1309,6 @@ export class SessionService extends ApiService {
     return this._post<any>('', {
       method: 'getQuestionResult',
       data: {room_id: this.currentRoom.id, question_id},
-    });
-  }
-
-  getQuestionOptionReplies(question_option_id: number) {
-    return this._post<any>('', {
-      method: 'getQuestionOptionReplies',
-      data: {room_id: this.currentRoom.id, question_option_id},
     });
   }
 
@@ -1418,13 +1414,6 @@ export class SessionService extends ApiService {
     });
   }
 
-  getUploadStatus(presentation_id: number) {
-    return this._post<any>('', {
-      method: 'getUploadStatus',
-      data: {room_id: this.currentRoom.id, presentation_id},
-    });
-  }
-
   getActivePresentations() {
     return this._post<any>('', {
       method: 'getActivePresentations',
@@ -1455,8 +1444,8 @@ export class SessionService extends ApiService {
     return this._post('', {method: 'selectRandomUser', data: {room_id: this.currentRoom.id, user_id}});
   }
 
-  videoAction(action: string) {
-    return this._post('', {method: 'videoAction', data: {room_id: this.currentRoom.id, action}});
+  videoAction(operation: string, time: number) {
+    return this._post('', {method: 'videoAction', data: {room_id: this.currentRoom.id, action: {operation, time}}});
   }
 
   uploadVideoLink(link: number, is_downloadable: boolean = false) {
@@ -1474,7 +1463,11 @@ export class SessionService extends ApiService {
     });
   }
 
-  getPVMessage(pv_id: number, page?: number, limit?: number) {
+  getPVList(): Observable<BaseRes<any[]>> {
+    return this._post('', {method: 'getPVList', data: {room_id: this.currentRoom.id}});
+  }
+
+  getPVMessage(pv_id: number, page?: number, limit?: number): Observable<BaseRes<any>> {
     return this._post('', {method: 'getPVMessage', data: {room_id: this.currentRoom.id, pv_id, page, limit}});
   }
 

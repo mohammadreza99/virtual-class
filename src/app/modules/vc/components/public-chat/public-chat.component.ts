@@ -33,7 +33,8 @@ export class PublicChatComponent extends LanguageChecker implements OnInit, OnDe
     this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe(res => {
       switch (res.event) {
         case 'publicMessagesChange':
-          this.messages = res.data;
+          this.messages = res.data.messages;
+          this.pinnedMessage = res.data.pinnedMessage;
           break;
 
         case 'newMessage':
@@ -56,8 +57,20 @@ export class PublicChatComponent extends LanguageChecker implements OnInit, OnDe
           }
           break;
 
+        case 'clearPublicMessages':
+          this.messages = [];
+          this.pinnedMessage = null;
+          break;
+
         case 'pinnedMessage':
           this.pinnedMessage = res.data.message;
+          break;
+
+        case 'messageMutedUser':
+          const idx = this.messages.findIndex(m => m.user.id == res.data.user_id);
+          if (idx > -1) {
+            this.messages[idx].user.user_message_state = res.data.state;
+          }
           break;
       }
     });
@@ -81,9 +94,9 @@ export class PublicChatComponent extends LanguageChecker implements OnInit, OnDe
     }
   }
 
-  async muteUser(event: any) {
+  async changeUserMessageState(event: any) {
     try {
-      await this.sessionService.muteUserMessage(event.user.id).toPromise();
+      await this.sessionService.changeUserMessageState(event.user.id, !event.user.user_message_state).toPromise();
     } catch (error) {
 
     }

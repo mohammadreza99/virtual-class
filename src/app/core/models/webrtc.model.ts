@@ -47,6 +47,7 @@ export interface RoomUser {
   kicked: boolean;
   device: string;
   avatar: string;
+  user_message_state: boolean;
 }
 
 export interface Publisher {
@@ -114,5 +115,7 @@ export type RoomEventType =
   'videoAction' |
   'publicMessagesChange' |
   'pinnedMessage' |
+  'clearPublicMessages' |
+  'messageMutedUser' |
   'privateMessagesChange';
 

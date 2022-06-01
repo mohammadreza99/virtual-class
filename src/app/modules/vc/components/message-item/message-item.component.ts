@@ -20,6 +20,7 @@ export class MessageItemComponent extends LanguageChecker implements OnInit {
   @Input() message: any;
   @Input() sender: any;
   @Input() replyMessage: any;
+  @Input() showMoreOptions: boolean = true;
   @Output() reply = new EventEmitter();
   @Output() delete = new EventEmitter();
   @Output() pin = new EventEmitter();

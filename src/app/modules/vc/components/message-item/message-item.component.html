@@ -14,9 +14,9 @@
   </div>
   <div class="reply">
     <ng-avatar [user]="sender"></ng-avatar>
-    <ng-button *ngPermission="'Viewer'" appearance="text" (onClick)="onReply()" class="mt-2" [rounded]="true"
+    <ng-button *ngIf="!showMoreOptions" appearance="text" (onClick)="onReply()" class="mt-2" [rounded]="true"
                icon="icon-forward"></ng-button>
-    <ng-button *ngPermission="'Admin'" appearance="text" (onClick)="messageActions.toggle($event)" class="mt-2"
+    <ng-button *ngIf="showMoreOptions" appearance="text" (onClick)="messageActions.toggle($event)" class="mt-2"
                [rounded]="true"
                icon="icon-more"></ng-button>
   </div>
@@ -34,7 +34,7 @@
     </li>
     <li (click)="muteUser(messageActions)" *ngIf="sender.id != currentUser.id">
       <i class="icon-view-speaker"></i>
-      <span>{{'room.muteUser' | translate}}</span>
+      <span>{{(sender.user_message_state ? 'room.muteUser' : 'room.unmuteUser') | translate}}</span>
     </li>
     <li (click)="onPin(messageActions)">
       <i class="icon-pin"></i>

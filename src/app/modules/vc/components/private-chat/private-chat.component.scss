@@ -1,5 +1,6 @@
 :host {
   ng-messenger {
     flex: auto;
+    height: calc(100% - 44px - 1rem);
   }
 }

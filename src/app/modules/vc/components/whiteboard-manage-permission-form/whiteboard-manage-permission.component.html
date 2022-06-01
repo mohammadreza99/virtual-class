@@ -1,0 +1,23 @@
+<div class="container-fluid">
+  <div class="form-row">
+    <div class="col-12">
+      <p>{{'room.chooseWhiteboardPermissionUsers' | translate}}</p>
+      <ng-auto-complete [suggestions]="filteredUsers"
+                        field="label"
+                        [placeholder]="'room.searchParticipants' | translate"
+                        [forceSelection]="true"
+                        [rtl]="fa"
+                        (onSelect)="onSelectUser($event)"
+                        [multiple]="true"
+                        (completeMethod)="onSearchUsers($event)"
+                        [(ngModel)]="allowedUsers"
+                        (onUnselect)="onUnselectUser($event)">
+      </ng-auto-complete>
+    </div>
+    <div class="col-12 pt-3 mt-3 text-left">
+      <ng-button (onClick)="onSubmit()" [label]="'submit' | translate"
+                 [disabled]="selectedUsers.length === 0">
+      </ng-button>
+    </div>
+  </div>
+</div>

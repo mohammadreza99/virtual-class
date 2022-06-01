@@ -3,11 +3,11 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Input, OnChanges, OnDestroy,
+  Input,
+  OnDestroy,
   OnInit,
   Output,
   QueryList,
-  SimpleChanges,
   ViewChild,
   ViewChildren
 } from '@angular/core';
@@ -23,7 +23,7 @@ import {Subject} from 'rxjs';
   templateUrl: './messenger.component.html',
   styleUrls: ['./messenger.component.scss']
 })
-export class MessengerComponent extends LanguageChecker implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+export class MessengerComponent extends LanguageChecker implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private el: ElementRef,
               private utilsService: UtilsService,
@@ -31,10 +31,10 @@ export class MessengerComponent extends LanguageChecker implements OnInit, OnCha
     super();
   }
 
-
   @Input() enableChat: boolean = true;
   @Input() pinnedMessage: any;
   @Input() messages: any[] = [];
+  @Input() showMoreOptions: boolean = true;
   @Output() sendMessage = new EventEmitter();
   @Output() deleteMessage = new EventEmitter();
   @Output() pinMessage = new EventEmitter();
@@ -51,9 +51,6 @@ export class MessengerComponent extends LanguageChecker implements OnInit, OnCha
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.currentUser;
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
   }
 
   ngAfterViewInit() {
@@ -153,5 +150,9 @@ export class MessengerComponent extends LanguageChecker implements OnInit, OnCha
 
   toggleEmojiPicker() {
     this.emojiPickerVisible = !this.emojiPickerVisible;
+  }
+
+  closePin() {
+    this.pinnedMessage = null;
   }
 }

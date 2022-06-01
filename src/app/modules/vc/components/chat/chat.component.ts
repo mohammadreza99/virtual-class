@@ -19,7 +19,6 @@ export class ChatComponent extends LanguageChecker {
   @Output() closeSidebar = new EventEmitter();
   @Output() newMessage = new EventEmitter();
 
-
   async togglePublicChatActivation(chatActions: OverlayPanel) {
     const res = await this.sessionService.changePublicChatState(!this.enablePublicChat).toPromise();
     chatActions.hide();
@@ -36,10 +35,11 @@ export class ChatComponent extends LanguageChecker {
     }
   }
 
-  saveChat() {
+  onSaveChatClick() {
   }
 
-  clearChat() {
-
+  onClearChatClick(chatActions: OverlayPanel) {
+    chatActions.hide();
+    this.sessionService.clearPublicMessages().toPromise();
   }
 }

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {ActivatedRoute, ActivationStart, Router} from '@angular/router';
-import {filter} from 'rxjs/operators';
+import {filter, tap} from 'rxjs/operators';
 import {UtilsService} from '@ng/services';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {MessageService} from '@core/utils';
@@ -25,11 +25,14 @@ export class AppComponent extends LanguageChecker implements OnInit {
     super();
   }
 
+  currentUrl: string;
 
   ngOnInit() {
     this.checkNetworkStatus();
     this.router.events
-      .pipe(filter((e: any) => e instanceof ActivationStart))
+      .pipe(filter((e: any) => e instanceof ActivationStart), tap(e => {
+        this.currentUrl = e.snapshot.routeConfig.path;
+      }))
       .subscribe((event: ActivatedRoute) => {
         const data = event.snapshot.data;
         if (data?.title) {
@@ -49,12 +52,12 @@ export class AppComponent extends LanguageChecker implements OnInit {
 
   checkNetworkStatus() {
     this.utilsService.checkOnlineState().subscribe(status => {
+      if (this.currentUrl == 'no-internet') {
+        return;
+      }
       if (status == false) {
         console.log('......NETWORK DISCONNECTED......');
         this.sessionService.getMeOut(null, false);
-        if (this.router.url == '/no-internet') {
-          return;
-        }
         this.router.navigate(['/no-internet'], {queryParams: {returnUrl: this.router.url}});
       }
     });

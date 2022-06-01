@@ -1,19 +1,17 @@
 <div class="h-100" [ngSwitch]="state" [ngClass]="{'d-flex flex-column': state == 'chat'}">
   <ng-container *ngSwitchCase="'chatList'">
-    <div class="h-100 d-flex flex-column">
-      <div class="flex-grow-1" [ngClass]="{'d-flex align-items-center': chatList.length == 0}">
-        <ng-container *ngIf="chatList.length != 0">
-          <ng-private-chat-item (click)="setState('chat')"></ng-private-chat-item>
-        </ng-container>
-        <ng-empty [message]="'nothingFound' | translate" *ngIf="chatList.length == 0"></ng-empty>
+    <div class="h-100 d-flex flex-column p-3">
+      <div class="flex-grow-1" [ngClass]="{'d-flex align-items-center': privateChats.length == 0}">
+        <ng-private-chat-item *ngFor="let pvItem of privateChats"
+                              [pvItem]="pvItem"
+                              (click)="onPrivateChatClick(pvItem)">
+        </ng-private-chat-item>
+        <ng-empty [message]="'nothingFound' | translate" *ngIf="privateChats.length == 0"></ng-empty>
       </div>
 
-      <div class="p-3">
-        <ng-button *ngIf="openChat" icon="pi pi-plus" [full]="true"
-                   [label]="'room.startNewConversation' | translate"
-                   (click)="setState('contacts')"></ng-button>
-        <span class="text-center flex-grow-1" *ngIf="!openChat">{{'room.sendMessageBlocked' | translate}}</span>
-      </div>
+      <ng-button *ngIf="openChat" icon="pi pi-plus" [full]="true"
+                 [label]="'room.startNewConversation' | translate"
+                 (click)="setState('contacts')"></ng-button>
     </div>
   </ng-container>
 
@@ -27,6 +25,8 @@
                (click)="setState('chatList')"></ng-button>
     <ng-messenger [enableChat]="openChat"
                   [messages]="messages"
-                  (sendMessage)="sendMessage($event)"></ng-messenger>
+                  [showMoreOptions]="false"
+                  (sendMessage)="sendMessage($event)">
+    </ng-messenger>
   </ng-container>
 </div>

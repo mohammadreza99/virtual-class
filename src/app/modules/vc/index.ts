@@ -27,6 +27,7 @@ import {PrivateChatComponent} from '@modules/vc/components/private-chat/private-
 import {MessengerComponent} from '@modules/vc/components/messenger/messenger.component';
 import {VideoPresentationComponent} from '@modules/vc/components/video-presentation/video-presentation.component';
 import {VideoLinkFormComponent} from '@modules/vc/components/video-link-form/video-link-form.component';
+import {WhiteboardManagePermissionComponent} from '@modules/vc/components/whiteboard-manage-permission-form/whiteboard-manage-permission.component';
 
 export const COMPONENTS: Type<any>[] = [
   VirtualClassPage,
@@ -56,5 +57,6 @@ export const COMPONENTS: Type<any>[] = [
   ContactsComponent,
   MessengerComponent,
   VideoPresentationComponent,
-  VideoLinkFormComponent
+  VideoLinkFormComponent,
+  WhiteboardManagePermissionComponent
 ];

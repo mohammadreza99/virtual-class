@@ -51,11 +51,19 @@ export class SocketService extends ApiService {
     return this.socketChannel.asObservable();
   }
 
+  private async getSocketInstance() {
+    const has_cam = await this.webcamConnected();
+    const has_mic = await this.micConnected();
+    const device = this.getDeviceType();
+    const socketUrl = `${this.socketBaseUrl}/?token=${localStorage.getItem('token')}&method=connect&room_id=${this.roomId}&has_cam=${has_cam}&has_mic=${has_mic}&device=${device}`;
+    return webSocket(socketUrl);
+  }
+
   private async createSocketConnection() {
-    this.webSocket = webSocket(this.socketBaseUrl);
+    this.webSocket = await this.getSocketInstance();
     this.subscription = this.webSocket.subscribe(
       async (res) => {
-        this.socketChannel.next({event: res.method, ...res.data});
+        this.socketChannel.next({event: res.method || res, ...res.data});
         if (res.method == 'FAILURE') {
           // this.updateViewService.setViewEvent({event: 'socketFail', data: null});
           // this.redirectUser();
@@ -94,9 +102,9 @@ export class SocketService extends ApiService {
           this.retryConnection(GlobalConfig.socketConnectOnErrorRetryDelay);
         }
       });
-    console.log('before connect sent');
-    await this.sendConnect();
-    console.log('connect sent');
+    // console.log('before connect sent');
+    // await this.sendConnect();
+    // console.log('connect sent');
   }
 
   private handleSocketFailure() {
@@ -116,18 +124,13 @@ export class SocketService extends ApiService {
     this.clearPingTimer();
     this.pingTimer = setTimeout(() => {
       this.sendPing();
-      this.retryConnection(GlobalConfig.socketConnectRetryDelay);
+      // this.retryConnection(GlobalConfig.socketConnectRetryDelay);
     }, GlobalConfig.socketPingRetryDelay);
   }
 
   private sendPing() {
-    this.webSocket.next({
-      auth: localStorage.getItem('token'),
-      data: {
-        room_id: this.roomId,
-      },
-      method: 'ping'
-    });
+    this.webSocket.next('ping');
+    this.pingWithDelay();
   }
 
   private async sendConnect() {
