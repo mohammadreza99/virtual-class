@@ -372,14 +372,12 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     });
   }
 
-
   calculateSessionDuration() {
     this.sessionDuration = this.utilsService.convertToTimeFormat(this.currentRoom.session_duration++);
     setInterval(() => {
       this.sessionDuration = this.utilsService.convertToTimeFormat(this.currentRoom.session_duration++);
     }, 1000);
   }
-
 
   closeAllSidebars(exceptionKey?: string) {
     for (const key of this.sidebarKeys) {
@@ -535,6 +533,10 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   async toggleWhiteboard(overlay: OverlayPanel) {
+    if (this.isPresentationAreaBusy()) {
+      this.utilsService.showToast({detail: this.instant('room.pleaseCloseCurrentPresentation'), severity: 'warn'});
+      return;
+    }
     overlay.hide();
     this.whiteboardActivated = !this.whiteboardActivated;
     if (this.whiteboardActivated) {
