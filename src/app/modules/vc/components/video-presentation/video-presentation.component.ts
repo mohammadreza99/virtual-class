@@ -42,14 +42,21 @@ export class VideoPresentationComponent implements AfterViewInit {
           break;
 
         case 'videoAction':
+          if (this.sessionService.imTeacher) {
+            return;
+          }
           const {operation, time} = res.data.action;
           switch (operation) {
             case 'play':
-              videoEl.play();
+              if (videoEl.paused) {
+                videoEl.play();
+              }
               break;
 
             case 'pause':
-              videoEl.pause();
+              if (videoEl.play) {
+                videoEl.pause();
+              }
               break;
 
             case 'seek':
@@ -59,7 +66,9 @@ export class VideoPresentationComponent implements AfterViewInit {
           break;
       }
     });
-    this.initVideoPlayer();
+    if (this.sessionService.imTeacher) {
+      this.initVideoPlayerListeners();
+    }
   }
 
   activateVideo() {
@@ -79,7 +88,7 @@ export class VideoPresentationComponent implements AfterViewInit {
     this.sessionService.changePresentationState(this.presentationData.presentation_id, 'Close').toPromise();
   }
 
-  initVideoPlayer() {
+  initVideoPlayerListeners() {
     const videoContainer = this.elementRef.nativeElement.querySelector('.wrapper');
     const video = videoContainer.querySelector('video');
     const videoControls = videoContainer.querySelector('.video-controls');
@@ -90,7 +99,7 @@ export class VideoPresentationComponent implements AfterViewInit {
     const soundButton = videoContainer.querySelector('.sound-button');
     const currentTime = videoContainer.querySelector('.current-time');
     const duration = videoContainer.querySelector('.duration');
-    const volumeBar = videoContainer.querySelector('input[type=range]');
+    const volumeBar = videoContainer.querySelector('.actions input');
     video.volume = 0.7;
     let timeDrag = false;
 
@@ -163,15 +172,15 @@ export class VideoPresentationComponent implements AfterViewInit {
       }
     });
 
-    volumeBar.addEventListener('input', (e) => {
+    volumeBar?.addEventListener('input', (e) => {
       video.volume = e.target.value / 100;
     });
 
-    playButton.addEventListener('click', () => {
+    playButton?.addEventListener('click', () => {
       togglePlay();
     });
 
-    soundButton.addEventListener('click', (e) => {
+    soundButton?.addEventListener('click', (e) => {
       video.muted = !video.muted;
       e.target.classList.toggle('sound-muted');
       if (video.muted) {
@@ -181,7 +190,7 @@ export class VideoPresentationComponent implements AfterViewInit {
       }
     });
 
-    progressBar.addEventListener('mousedown', (e) => {
+    progressBar?.addEventListener('mousedown', (e) => {
       timeDrag = true;
       updatebar(e.pageX);
     });

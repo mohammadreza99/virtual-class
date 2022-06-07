@@ -117,5 +117,7 @@ export type RoomEventType =
   'pinnedMessage' |
   'clearPublicMessages' |
   'messageMutedUser' |
+  'gotNewPrivateMessage' |
+  'gotNewPublicMessage' |
   'privateMessagesChange';
 

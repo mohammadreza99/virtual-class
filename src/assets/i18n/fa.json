@@ -72,6 +72,8 @@
     "saveChat": "ذخیره چت",
     "closePublicChat": "بستن چت عمومی",
     "openPublicChat": "بازکردن چت عمومی",
+    "publicChat": "چت عمومی",
+    "privateChat": "چت خصوصی",
     "closePrivateChat": "بستن چت خصوصی",
     "openPrivateChat": "بازکردن چت خصوصی",
     "virtualClass": "کلاس مجازی",

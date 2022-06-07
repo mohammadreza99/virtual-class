@@ -74,9 +74,7 @@
 
 
 <div class="sidebar" [class.visible]="chatSidebarVisible">
-  <ng-chat [enablePublicChat]="currentRoom.public_messages" (closeSidebar)="closeSidebar('chat')"
-           (newMessage)="onGetNewMessage()">
-  </ng-chat>
+  <ng-chat (closeSidebar)="closeSidebar('chat')"></ng-chat>
 </div>
 
 <div class="sidebar" [class.visible]="membersSidebarVisible">

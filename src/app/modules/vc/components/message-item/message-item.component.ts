@@ -46,6 +46,7 @@ export class MessageItemComponent extends LanguageChecker implements OnInit {
 
   muteUser(messageActions: OverlayPanel) {
     messageActions.hide();
+    this.sender.user_message_state = !this.sender.user_message_state;
     this.mute.emit();
   }
 

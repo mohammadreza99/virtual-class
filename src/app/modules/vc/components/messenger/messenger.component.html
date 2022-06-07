@@ -14,7 +14,7 @@
                    [position]="message.user.id == currentUser.id ? 'right' : 'left'"
                    [message]="message.message"
                    [sender]="message.user"
-                   [showMoreOptions]="showMoreOptions"
+                   [showMoreOptions]="type == 'public' && currentUser.role == 'Admin'"
                    [replyMessage]="getReplyMessageOf(message)"
                    (delete)="deleteMessageClick(message)"
                    (pin)="pinMessageClick(message)"

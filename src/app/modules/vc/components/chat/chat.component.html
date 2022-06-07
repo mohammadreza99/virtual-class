@@ -9,12 +9,13 @@
       <i class="icon-close mx-2" (click)="closeSidebar.emit()"></i>
     </div>
   </div>
-  <p-tabView>
-    <p-tabPanel header="چت خصوصی" leftIcon="icon-user-groups">
-      <ng-private-chat [openChat]="enablePrivateChat"></ng-private-chat>
+  <p-tabView (activeIndexChange)="onChangeTab($event)"
+             [ngClass]="{'unread-public': unreadPublicMessage,'unread-private':unreadPrivateMessage}">
+    <p-tabPanel [header]="'room.publicChat' | translate" leftIcon="icon-user-groups" headerStyleClass="public-header">
+      <ng-public-chat></ng-public-chat>
     </p-tabPanel>
-    <p-tabPanel header="چت عمومی" leftIcon="icon-user-groups" [selected]="true">
-      <ng-public-chat [openChat]="enablePublicChat"></ng-public-chat>
+    <p-tabPanel [header]="'room.privateChat' | translate" leftIcon="icon-user-groups" headerStyleClass="private-header">
+      <ng-private-chat></ng-private-chat>
     </p-tabPanel>
   </p-tabView>
 </div>

@@ -9,7 +9,7 @@
         <ng-empty [message]="'nothingFound' | translate" *ngIf="privateChats.length == 0"></ng-empty>
       </div>
 
-      <ng-button *ngIf="openChat" icon="pi pi-plus" [full]="true"
+      <ng-button *ngIf="enableChat" icon="pi pi-plus" [full]="true"
                  [label]="'room.startNewConversation' | translate"
                  (click)="setState('contacts')"></ng-button>
     </div>
@@ -23,10 +23,6 @@
     <ng-button class="mb-3" icon="pi pi-chevron-right" [full]="true" iconPos="right"
                [label]="peerUser.first_name + ' ' + peerUser.last_name"
                (click)="setState('chatList')"></ng-button>
-    <ng-messenger [enableChat]="openChat"
-                  [messages]="messages"
-                  [showMoreOptions]="false"
-                  (sendMessage)="sendMessage($event)">
-    </ng-messenger>
+    <ng-messenger type="private"></ng-messenger>
   </ng-container>
 </div>

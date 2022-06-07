@@ -380,10 +380,14 @@ export class KonvaService {
   }
 
   image(file: File | string) {
-    const URL = window.webkitURL || window.URL;
-    const url = URL.createObjectURL(file);
+    let url: any;
+    if (typeof file != 'string') {
+      const URL = window.webkitURL || window.URL;
+      url = URL.createObjectURL(file);
+    } else {
+      url = file;
+    }
     const img = new Image();
-    img.src = url;
     img.onload = () => {
       const imgWidth = img.width;
       const imgHeight = img.height;
@@ -391,14 +395,20 @@ export class KonvaService {
       const ratio = (imgWidth > imgHeight ? (imgWidth / max) : (imgHeight / max));
       const image = new KonvaImage({
         image: img,
-        x: (this.currentSlide.stage.width() / 2) - (imgWidth / ratio),
-        y: (this.currentSlide.stage.height() / 2) - (imgHeight / ratio),
-        width: imgWidth / ratio,
-        height: imgHeight / ratio,
+        // x: (this.currentSlide.stage.width() / 2) - (imgWidth / ratio),
+        // y: (this.currentSlide.stage.height() / 2) - (imgHeight / ratio),
+        // width: imgWidth / ratio,
+        // height: imgHeight / ratio,
+        borderSize: 5,
+        borderColor: 'red',
         draggable: false,
       });
-      this.addTransformer(image, true);
+      // this.addTransformer(image, true);
+      this.addToLayerAndShapes(image);
+      this.currentSlide.layer.draw();
+      this.setTool('select');
     };
+    img.src = url;
   }
 
   private addTransformer(shape: any, resetTool: boolean = false, anchors?: string[]) {

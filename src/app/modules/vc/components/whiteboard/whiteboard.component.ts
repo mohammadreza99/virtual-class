@@ -47,7 +47,7 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
   slidesCount: number = 10;
   destroy$: Subject<boolean> = new Subject<boolean>();
   fullscreenEnabled: boolean = false;
-  hasPersmission: boolean;
+  hasPermission: boolean;
 
   constructor(private sessionService: SessionService,
               private updateViewService: UpdateViewService,
@@ -61,14 +61,14 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
   @ViewChild(OverlayPanel, {static: true}) overlayPanel: OverlayPanel;
 
   ngOnInit() {
-    this.hasPersmission = this.sessionService.imTeacher;
+    this.hasPermission = this.sessionService.imTeacher;
     this.konvaService.stageChange().pipe(takeUntil(this.destroy$)).subscribe(res => {
       switch (res.event) {
         case 'updateBoard':
           if (!this.selectedTool) {
             return;
           }
-          this.sessionService.updateBoard(this.whiteboardData.id, this.currentSlide, res.data).toPromise();
+          this.sessionService.updateBoard(this.whiteboardData.board_id, this.currentSlide, res.data).toPromise();
           break;
 
         case 'toolChange':
@@ -124,19 +124,22 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
 
         case 'setBoardPermission':
           if (res.data.user_id == this.sessionService.currentUser.id) {
-            this.hasPersmission = true;
+            this.hasPermission = true;
           }
           break;
 
         case 'removeBoardPermission':
           if (res.data.user_id == this.sessionService.currentUser.id) {
-            this.hasPersmission = false;
+            this.hasPermission = false;
           }
           break;
 
         case 'changePresentationPage':
           this.currentSlide = res.data.page_number;
           this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
+          this.konvaService.goToSlide(this.currentSlide);
+          // this.konvaService.image(this.presentationCurrentSlide);
+          this.konvaService.clearBoard();
           this.handleButtonsState();
           break;
 
@@ -147,9 +150,13 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
           this.activateBoard();
           this.presentationData = res.data;
           this.currentSlide = res.data.active_page;
+          this.sessionService.openBoard(false).toPromise();
           this.slidesCount = Object.keys(this.presentationData.pages).length;
+          const slides = Array.from({length: this.slidesCount}, (s, i) => ({data: null, slideNumber: i + 1}));
+          this.konvaService.start(slides, this.currentSlide);
           this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
           this.handleButtonsState();
+          this.konvaService.image(this.presentationCurrentSlide);
           break;
 
         case 'closePresentation':
@@ -172,8 +179,9 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
       this.currentSlide++;
       if (this.presentationData) {
         await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.currentSlide).toPromise();
+        await this.sessionService.changeBoardSlide(this.whiteboardData.board_id, this.currentSlide).toPromise();
       } else if (this.whiteboardData) {
-        await this.sessionService.changeBoardSlide(this.whiteboardData.id, this.currentSlide).toPromise();
+        await this.sessionService.changeBoardSlide(this.whiteboardData.board_id, this.currentSlide).toPromise();
         this.konvaService.goToSlide(this.currentSlide);
       }
       this.handleButtonsState();
@@ -188,8 +196,9 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
       this.currentSlide--;
       if (this.presentationData) {
         await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.currentSlide).toPromise();
+        await this.sessionService.changeBoardSlide(this.whiteboardData.board_id, this.currentSlide).toPromise();
       } else if (this.whiteboardData) {
-        await this.sessionService.changeBoardSlide(this.whiteboardData.id, this.currentSlide).toPromise();
+        await this.sessionService.changeBoardSlide(this.whiteboardData.board_id, this.currentSlide).toPromise();
         this.konvaService.goToSlide(this.currentSlide);
       }
       this.handleButtonsState();
@@ -259,10 +268,16 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
   }
 
   close() {
-    if (this.whiteboardData) {
-      this.sessionService.closeBoard().toPromise();
-    } else if (this.presentationData) {
+    // if (this.whiteboardData) {
+    //   this.sessionService.closeBoard().toPromise();
+    // } else if (this.presentationData) {
+    //   this.sessionService.changePresentationState(this.presentationData.presentation_id, 'Close').toPromise();
+    // }
+    if (this.presentationData) {
       this.sessionService.changePresentationState(this.presentationData.presentation_id, 'Close').toPromise();
+      this.sessionService.closeBoard().toPromise();
+    } else if (this.whiteboardData) {
+      this.sessionService.closeBoard().toPromise();
     }
   }
 
@@ -336,7 +351,7 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
       width: '500px'
     }).onClose.subscribe(res => {
       if (res) {
-        this.sessionService.setBoardPermission(this.whiteboardData.id, res.userId).toPromise();
+        this.sessionService.setBoardPermission(this.whiteboardData.board_id, res.userId).toPromise();
       }
     });
   }

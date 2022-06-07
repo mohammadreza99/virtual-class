@@ -2,14 +2,13 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   OnDestroy,
-  OnInit,
-  Output,
+  OnInit, Output,
   QueryList,
   ViewChild,
-  ViewChildren
+  ViewChildren,
+  EventEmitter
 } from '@angular/core';
 import {RoomUser} from '@core/models';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
@@ -17,6 +16,7 @@ import {UtilsService} from '@ng/services';
 import {SessionService} from '@core/http';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import {UpdateViewService} from '@core/utils';
 
 @Component({
   selector: 'ng-messenger',
@@ -27,42 +27,112 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
 
   constructor(private el: ElementRef,
               private utilsService: UtilsService,
+              private updateViewService: UpdateViewService,
               private sessionService: SessionService) {
     super();
   }
 
+  @Input() type: 'public' | 'private';
   @Input() enableChat: boolean = true;
-  @Input() pinnedMessage: any;
-  @Input() messages: any[] = [];
-  @Input() showMoreOptions: boolean = true;
-  @Output() sendMessage = new EventEmitter();
-  @Output() deleteMessage = new EventEmitter();
-  @Output() pinMessage = new EventEmitter();
-  @Output() muteUser = new EventEmitter();
   @ViewChild('chatContainer', {static: true}) chatContainer: ElementRef<HTMLElement>;
   @ViewChildren('messageItem') messageItems: QueryList<any>;
 
+  pinnedMessage: any;
+  messages: any[] = [];
   currentUser: RoomUser;
   messageText: string = '';
   replyMessage: any;
   isNearBottom = true;
   destroy$: Subject<boolean> = new Subject<boolean>();
   emojiPickerVisible: boolean = false;
+  currentPVId: number;
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.currentUser;
+    this.loadData();
+  }
+
+  async loadData() {
+    this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe(res => {
+      if (this.type == 'private') {
+        switch (res.event) {
+          case 'privateMessagesChange':
+            this.messages = res.data.messages;
+            this.currentPVId = res.data.pvId;
+            break;
+
+          case 'newPVMessage':
+            this.currentPVId = res.data.pv_id;
+            this.messages.push({message: res.data.message, user: res.data.user});
+            this.updateViewService.setViewEvent({event: 'gotNewPrivateMessage', data: true});
+            break;
+        }
+      } else if (this.type == 'public') {
+        switch (res.event) {
+          case 'publicMessagesChange':
+            this.messages = res.data.messages;
+            this.pinnedMessage = res.data.pinnedMessage;
+            break;
+
+          case 'newMessage':
+            this.messages.push({message: res.data.message, user: res.data.user});
+            this.updateViewService.setViewEvent({event: 'gotNewPublicMessage', data: true});
+            break;
+
+          case 'deletedMessage':
+            const index = this.messages.findIndex(p => p.message.id == res.data.message);
+            this.messages.splice(index, 1);
+            break;
+
+          case 'publicChatState':
+            this.enableChat = res.data.value;
+            // const message = this.enableChat ? this.instant('room.chatAccessOpened') : this.instant('room.chatAccessClosed');
+            // if (this.sessionService.imStudent) {
+            //   this.utilsService.showToast({detail: message, severity: 'warn'});
+            // }
+            break;
+
+          case 'clearPublicMessages':
+            this.messages = [];
+            this.pinnedMessage = null;
+            break;
+
+          case 'pinnedMessage':
+            this.pinnedMessage = res.data.message;
+            break;
+
+          case 'messageMutedUser':
+            if (this.sessionService.currentUser.id == res.data.user_id) {
+              this.enableChat = res.data.state;
+            }
+            break;
+        }
+      }
+    });
   }
 
   ngAfterViewInit() {
     this.messageItems.changes.pipe(takeUntil(this.destroy$)).subscribe(_ => this.onItemElementsChanged());
   }
 
-  sendMessageClick(callback: () => any) {
+  async sendMessageClick(callback: () => any) {
     if (!this.messageText) {
-      callback();
+      if (callback) {
+        callback();
+      }
       return;
     }
-    this.sendMessage.emit({message: this.messageText, replyMessage: this.replyMessage, callback});
+    let result;
+    if (this.type == 'public') {
+      result = await this.sessionService.sendPublicMessage(this.messageText, this.replyMessage?.message?.id).toPromise();
+    } else if (this.type == 'private') {
+      result = await this.sessionService.sendPVMessage(this.currentPVId, this.messageText, this.replyMessage?.message?.id).toPromise();
+    }
+    if (result.status == 'OK') {
+      if (callback) {
+        callback();
+      }
+    }
     this.messageText = '';
     this.replyMessage = null;
     this.scrollDown();
@@ -80,16 +150,16 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
       rtl: this.fa
     });
     if (dialogRes) {
-      this.deleteMessage.emit(message);
+      await this.sessionService.deletePublicMessage(message.message.id).toPromise();
     }
   }
 
-  pinMessageClick(message: any) {
-    this.pinMessage.emit(message);
+  async pinMessageClick(message: any) {
+    await this.sessionService.pinPublicMessage(message.message.id).toPromise();
   }
 
-  muteUserClick(message: any) {
-    this.muteUser.emit(message);
+  async muteUserClick(message: any) {
+    await this.sessionService.changeUserMessageState(message.user.id, !message.user.user_message_state).toPromise();
   }
 
   cancelReply() {

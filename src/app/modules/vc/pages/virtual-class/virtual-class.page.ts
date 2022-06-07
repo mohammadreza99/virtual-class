@@ -71,10 +71,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   async loadData() {
     // let poorConnectionRetryCount = GlobalConfig.poorConnectionRetryCount;
-    this.utilsService.disableWindowBackButton();
-    this.initUserData();
-    this.sessionService.initRoom();
-    this.calculateSessionDuration();
+
     // interval(GlobalConfig.checkConnectionSpeedDelay).pipe(takeUntil(this.destroy$)).subscribe(res => {
     //   this.utilsService.checkConnectionState((speed) => {
     //     if (speed < GlobalConfig.poorConnectionThreshold) {
@@ -225,8 +222,19 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
         case 'closeBoard':
           this.whiteboardActivated = false;
           break;
+
+        case 'gotNewPrivateMessage':
+        case 'gotNewPublicMessage':
+          if (!this.chatSidebarVisible) {
+            this.hasUnreadMessage = true;
+          }
+          break;
       }
     });
+    this.utilsService.disableWindowBackButton();
+    this.initUserData();
+    this.sessionService.initRoom();
+    this.calculateSessionDuration();
   }
 
   async initUserData() {
@@ -264,9 +272,15 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
         });
       }
     }
-    this.updateViewService.setViewEvent({
-      event: 'messageMutedUser',
-      data: {user_id: this.currentUser.id, state: this.currentUser.user_message_state}
+    setTimeout(() => {
+      this.updateViewService.setViewEvent({
+        event: 'messageMutedUser',
+        data: {user_id: this.currentUser.id, state: this.currentUser.user_message_state}
+      });
+      this.updateViewService.setViewEvent({
+        event: 'publicChatState',
+        data: {value: this.currentRoom.public_messages}
+      });
     });
   }
 
@@ -438,12 +452,6 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   onPollPublished(event: number) {
     this.currentRoom.active_poll = event;
-  }
-
-  onGetNewMessage() {
-    if (!this.chatSidebarVisible) {
-      this.hasUnreadMessage = true;
-    }
   }
 
   changeView(mode: ViewMode, overlay: OverlayPanel) {

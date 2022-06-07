@@ -5,7 +5,7 @@
       <div class="message-info-time">{{ message.datetime | ngDate:'fa-ir' }}</div>
     </div>
     <div class="reply-container" *ngIf="replyMessage">
-      <small class="sender font-medium">{{replyMessage.user.first_name + ' ' + sender.last_name}}</small>
+      <small class="sender font-medium">{{replyMessage.user.first_name + ' ' + replyMessage.user.last_name}}</small>
       <small class="text font-light">{{replyMessage.message.message}}</small>
     </div>
     <div class="message-text">
@@ -34,7 +34,7 @@
     </li>
     <li (click)="muteUser(messageActions)" *ngIf="sender.id != currentUser.id">
       <i class="icon-view-speaker"></i>
-      <span>{{(sender.user_message_state ? 'room.muteUser' : 'room.unmuteUser') | translate}}</span>
+      <span>{{(sender.user_message_state ? 'room.unmuteUser' : 'room.muteUser') | translate}}</span>
     </li>
     <li (click)="onPin(messageActions)">
       <i class="icon-pin"></i>

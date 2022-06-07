@@ -25,50 +25,82 @@
       }
     }
 
-    .p-tabview {
-      .p-tabview-nav-container {
-        height: 60px;
+    p-tabView {
+      .public-header,
+      .private-header {
+        position: relative;
 
-        .p-tabview-nav {
-          direction: ltr;
-          background: transparent;
+        &:before {
+          content: '';
+          position: absolute;
+          width: 0.5rem;
+          height: 0.5rem;
+          background: red;
+          border-radius: 50%;
+          top: 10%;
+          left: 10%;
+          z-index: 2000;
+          display: none;
+        }
+      }
 
-          li {
-            flex-grow: 1;
-            background-color: #40414A;
+      &.unread-public {
+        .public-header:before {
+          display: block;
+        }
+      }
 
-            &:not(.p-highlight):not(.p-disabled) {
-              a {
-                border-color: #6c757d;
-              }
+      &.unread-private {
+        .private-header:before {
+          display: block;
+        }
+      }
 
-              &:hover {
-                a {
-                  background-color: transparent;
-                }
-              }
-            }
+      .p-tabview {
+        .p-tabview-nav-container {
+          height: 60px;
 
-            a {
-              justify-content: center;
+          .p-tabview-nav {
+            direction: ltr;
+            background: transparent;
+
+            li {
+              flex-grow: 1;
               background-color: #40414A;
 
+              &:not(.p-highlight):not(.p-disabled) {
+                a {
+                  border-color: #6c757d;
+                }
 
-              &:focus {
-                box-shadow: none !important;
+                &:hover {
+                  a {
+                    background-color: transparent;
+                  }
+                }
+              }
+
+              a {
+                justify-content: center;
+                background-color: #40414A;
+
+
+                &:focus {
+                  box-shadow: none !important;
+                }
               }
             }
           }
         }
-      }
 
-      .p-tabview-panels {
-        background-color: #40414A;
-        padding: 0;
-        height: calc(100vh - 60px - 70px);
+        .p-tabview-panels {
+          background-color: #40414A;
+          padding: 0;
+          height: calc(100vh - 60px - 70px);
 
-        .p-tabview-panel {
-          height: 100%;
+          .p-tabview-panel {
+            height: 100%;
+          }
         }
       }
     }
