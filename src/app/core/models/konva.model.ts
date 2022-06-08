@@ -14,7 +14,6 @@ export type KonvaTools =
   | 'text'
   | 'brush'
   | 'eraser'
-  | 'image'
   | 'triangle'
   | 'circle'
   | 'line'

@@ -1126,17 +1126,17 @@ export class SessionService extends ApiService {
     });
   }
 
-  setBoardPermission(board_id: number, user_id: number) {
+  setBoardPermission(board_id: number, users_id: number[]) {
     return this._post<any>('', {
       method: 'setBoardPermission',
-      data: {user_id, room_id: this.currentRoom.id, board_id},
+      data: {users_id, room_id: this.currentRoom.id, board_id},
     });
   }
 
-  removeBoardPermission(board_id: number, user_id: number) {
+  removeBoardPermission(board_id: number, users_id: number[]) {
     return this._post<any>('', {
       method: 'removeBoardPermission',
-      data: {user_id, room_id: this.currentRoom.id, board_id},
+      data: {users_id, room_id: this.currentRoom.id, board_id},
     });
   }
 
@@ -1469,6 +1469,10 @@ export class SessionService extends ApiService {
 
   getPVMessage(pv_id: number, page?: number, limit?: number): Observable<BaseRes<any>> {
     return this._post('', {method: 'getPVMessage', data: {room_id: this.currentRoom.id, pv_id, page, limit}});
+  }
+
+  boardPermission(board_id: number): Observable<BaseRes<any>> {
+    return this._post('', {method: 'boardPermission', data: {room_id: this.currentRoom.id, board_id}});
   }
 
   pinPublicMessage(message_id: number) {

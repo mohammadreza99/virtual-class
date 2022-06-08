@@ -38,11 +38,13 @@ export class KonvaService {
     shapes: []
   };
 
-  start(slides: WhiteboardSlide[] = [], initSlideNumber: number = 1) {
-    if (!slides.length) {
-      slides = Array.from({length: 10}, (s, i) => ({data: null, slideNumber: i + 1}));
+  start(slides: WhiteboardSlide[] | number = 10, initSlideNumber: number = 1) {
+    if (this.boardActivated) {
+      return;
     }
-    // slides.sort((a, b) => (a.slideNumber > b.slideNumber) ? 1 : ((b.slideNumber > a.slideNumber) ? -1 : 0));
+    if (typeof slides == 'number') {
+      slides = Array.from({length: slides}, (s, i) => ({data: null, slideNumber: i + 1}));
+    }
     for (const slide of slides) {
       const containerEl = this._document.createElement('div');
       const id = this.getId(slide.slideNumber);
@@ -379,36 +381,44 @@ export class KonvaService {
     });
   }
 
-  image(file: File | string) {
-    let url: any;
-    if (typeof file != 'string') {
-      const URL = window.webkitURL || window.URL;
-      url = URL.createObjectURL(file);
-    } else {
-      url = file;
-    }
-    const img = new Image();
-    img.onload = () => {
-      const imgWidth = img.width;
-      const imgHeight = img.height;
-      const max = 300;
-      const ratio = (imgWidth > imgHeight ? (imgWidth / max) : (imgHeight / max));
-      const image = new KonvaImage({
-        image: img,
-        // x: (this.currentSlide.stage.width() / 2) - (imgWidth / ratio),
-        // y: (this.currentSlide.stage.height() / 2) - (imgHeight / ratio),
-        // width: imgWidth / ratio,
-        // height: imgHeight / ratio,
-        borderSize: 5,
-        borderColor: 'red',
-        draggable: false,
-      });
-      // this.addTransformer(image, true);
-      this.addToLayerAndShapes(image);
-      this.currentSlide.layer.draw();
-      this.setTool('select');
-    };
-    img.src = url;
+  image(file: File | string | unknown) {
+    // return new Promise((resolve, reject) => {
+    this.currentSlide.stage.container().style.backgroundImage = `url("${file}")`;
+    this.currentSlide.stage.container().style.backgroundSize = 'contain';
+    this.currentSlide.stage.container().style.backgroundRepeat = 'no-repeat';
+    this.currentSlide.stage.container().style.backgroundPosition = 'center center';
+
+    //   let url: any;
+    //   if (typeof file != 'string') {
+    //     const URL = window.webkitURL || window.URL;
+    //     url = URL.createObjectURL(file);
+    //   } else {
+    //     url = file;
+    //   }
+    //   const img = new Image();
+    //   img.onload = () => {
+    //     const imgWidth = img.width;
+    //     const imgHeight = img.height;
+    //     const max = 300;
+    //     const ratio = (imgWidth > imgHeight ? (imgWidth / max) : (imgHeight / max));
+    //     const image = new KonvaImage({
+    //       image: img,
+    //       // x: (this.currentSlide.stage.width() / 2) - (imgWidth / ratio),
+    //       // y: (this.currentSlide.stage.height() / 2) - (imgHeight / ratio),
+    //       // width: imgWidth / ratio,
+    //       // height: imgHeight / ratio,
+    //       borderSize: 5,
+    //       borderColor: 'red',
+    //       draggable: false,
+    //     });
+    //     // this.addTransformer(image, true);
+    //     this.addToLayerAndShapes(image);
+    //     this.currentSlide.layer.draw();
+    //     this.setTool('select');
+    //     resolve(true);
+    //   };
+    //   img.src = url;
+    // });
   }
 
   private addTransformer(shape: any, resetTool: boolean = false, anchors?: string[]) {

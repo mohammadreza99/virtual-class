@@ -80,7 +80,7 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
       }
     });
 
-    this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
+    this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe(async (res: any) => {
       switch (res.event) {
         case 'openBoard':
           this.activateBoard();
@@ -135,12 +135,12 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
           break;
 
         case 'changePresentationPage':
-          this.currentSlide = res.data.page_number;
-          this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
-          this.konvaService.goToSlide(this.currentSlide);
+          // this.currentSlide = res.data.page_number;
+          // this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
+          // this.konvaService.goToSlide(this.currentSlide);
           // this.konvaService.image(this.presentationCurrentSlide);
-          this.konvaService.clearBoard();
-          this.handleButtonsState();
+          // this.konvaService.clearBoard();
+          // this.handleButtonsState();
           break;
 
         case 'openPresentation':
@@ -150,13 +150,17 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
           this.activateBoard();
           this.presentationData = res.data;
           this.currentSlide = res.data.active_page;
-          this.sessionService.openBoard(false).toPromise();
+          await this.sessionService.openBoard(false).toPromise();
           this.slidesCount = Object.keys(this.presentationData.pages).length;
-          const slides = Array.from({length: this.slidesCount}, (s, i) => ({data: null, slideNumber: i + 1}));
-          this.konvaService.start(slides, this.currentSlide);
-          this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
+          const entries = Object.entries(this.presentationData.pages);
+          this.konvaService.start(entries.length);
+          for (const [key, value] of entries) {
+            this.konvaService.goToSlide(+key);
+            await this.konvaService.image(value);
+          }
+          this.konvaService.goToSlide(this.currentSlide);
+          // this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
           this.handleButtonsState();
-          this.konvaService.image(this.presentationCurrentSlide);
           break;
 
         case 'closePresentation':
@@ -178,7 +182,7 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
     try {
       this.currentSlide++;
       if (this.presentationData) {
-        await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.currentSlide).toPromise();
+        // await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.currentSlide).toPromise();
         await this.sessionService.changeBoardSlide(this.whiteboardData.board_id, this.currentSlide).toPromise();
       } else if (this.whiteboardData) {
         await this.sessionService.changeBoardSlide(this.whiteboardData.board_id, this.currentSlide).toPromise();
@@ -195,7 +199,7 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
     try {
       this.currentSlide--;
       if (this.presentationData) {
-        await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.currentSlide).toPromise();
+        // await this.sessionService.changePresentationPage(this.presentationData.presentation_id, this.currentSlide).toPromise();
         await this.sessionService.changeBoardSlide(this.whiteboardData.board_id, this.currentSlide).toPromise();
       } else if (this.whiteboardData) {
         await this.sessionService.changeBoardSlide(this.whiteboardData.board_id, this.currentSlide).toPromise();
@@ -331,27 +335,38 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
       brush: 'icon-fi-rr-pencil',
       circle: 'icon-fi-rr-rec',
       eraser: 'icon-erase',
-      image: 'icon-fi-rr-mode-landscape',
       line: 'icon-fi-rr-minus',
       rectangle: 'icon-fi-rr-rectangle-horizontal',
       select: 'icon-fi-rr-cursor',
       text: 'icon-fi-rr-text',
       triangle: 'icon-fi-rr-pyramid',
     };
+    // if (['eraser', 'select'].indexOf(this.selectedTool) > -1) {
+    //   return;
+    // }
     return source[this.selectedTool];
   }
 
-  setPermissionForUser() {
+  async setPermissionForUser() {
     const users = this.sessionService.getRoomUsers().filter(u => u.id != this.sessionService.currentUser.id);
-    // TODO: get allowed users via api
-    const allowedUsers = this.sessionService.getRoomUsers().filter(u => u.id != this.sessionService.currentUser.id);
+    const res = await this.sessionService.boardPermission(this.whiteboardData.board_id).toPromise();
+    let allowedUsers;
+    if (res.status == 'OK') {
+      allowedUsers = res.data.users;
+    }
     this.dialogService.open(WhiteboardManagePermissionComponent, {
       header: this.instant('room.whiteboardPermission'),
       data: {users, allowedUsers},
       width: '500px'
     }).onClose.subscribe(res => {
-      if (res) {
-        this.sessionService.setBoardPermission(this.whiteboardData.board_id, res.userId).toPromise();
+      if (!res) {
+        return;
+      }
+      if (res.selectedUsers.length) {
+        this.sessionService.setBoardPermission(this.whiteboardData.board_id, res.selectedUsers).toPromise();
+      }
+      if (res.unselectedUsers.length) {
+        this.sessionService.removeBoardPermission(this.whiteboardData.board_id, res.unselectedUsers).toPromise();
       }
     });
   }

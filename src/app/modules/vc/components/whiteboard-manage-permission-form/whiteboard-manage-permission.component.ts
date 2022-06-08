@@ -46,8 +46,8 @@ export class WhiteboardManagePermissionComponent extends LanguageChecker impleme
 
   onSubmit() {
     this.dialogRef.close({
-      selectedUsers: this.selectedUsers,
-      unselectedUsers: this.unselectedUsers
+      selectedUsers: this.selectedUsers.map(u => u.id),
+      unselectedUsers: this.unselectedUsers.map(u => u.id),
     });
   }
 

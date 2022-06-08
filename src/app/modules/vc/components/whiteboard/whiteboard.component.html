@@ -31,16 +31,6 @@
                tooltipPosition="right" [icon]="getActiveToolIcon()">
     </ng-button>
 
-    <ng-button icon="icon-erase" [rounded]="true" [appearance]="selectedTool == 'eraser' ? 'basic' : 'outlined'"
-               [color]="selectedTool == 'eraser' ? 'primary' : null"
-               (click)="onSelectTool('eraser')" pTooltip="Eraser" tooltipPosition="right">
-    </ng-button>
-
-    <ng-button icon="icon-fi-rr-cursor" [rounded]="true" [appearance]="selectedTool == 'select' ? 'basic' : 'outlined'"
-               [color]="selectedTool == 'select' ? 'primary' : null"
-               (click)="onSelectTool('select')" pTooltip="Select" tooltipPosition="right">
-    </ng-button>
-
     <ng-button icon="icon-fi-rr-undo" [rounded]="true" appearance="outlined" (click)="undo()" pTooltip="Undo"
                tooltipPosition="right">
     </ng-button>
@@ -124,6 +114,19 @@
                    pTooltip="Text"
                    tooltipPosition="bottom"
                    (click)="onSelectTool('text')">
+        </ng-button>
+      </li>
+      <li class="mr-2">
+        <ng-button icon="icon-erase" [rounded]="true" [appearance]="selectedTool == 'eraser' ? 'basic' : 'outlined'"
+                   [color]="selectedTool == 'eraser' ? 'primary' : 'secondary'"
+                   (click)="onSelectTool('eraser')" pTooltip="Eraser" tooltipPosition="right">
+        </ng-button>
+      </li>
+      <li class="mr-2">
+        <ng-button icon="icon-fi-rr-cursor" [rounded]="true"
+                   [appearance]="selectedTool == 'select' ? 'basic' : 'outlined'"
+                   [color]="selectedTool == 'select' ? 'primary' : 'secondary'"
+                   (click)="onSelectTool('select')" pTooltip="Select" tooltipPosition="right">
         </ng-button>
       </li>
     </ul>
