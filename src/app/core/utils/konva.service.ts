@@ -185,7 +185,7 @@ export class KonvaService {
   private brush(pos: any) {
     const line = new Line({
       stroke: this.selectedOptions.color,
-      strokeWidth: this.selectedOptions.thickness,
+      strokeWidth: this.selectedOptions.thickness * 1.9,
       globalCompositeOperation: 'source-over',
       points: [pos.x, pos.y, pos.x, pos.y],
       lineCap: 'round',
@@ -201,7 +201,7 @@ export class KonvaService {
       x: pos.x,
       y: pos.y,
       stroke: this.selectedOptions.color,
-      strokeWidth: this.selectedOptions.thickness,
+      strokeWidth: this.selectedOptions.thickness * 1.9,
       draggable: false,
       strokeScaleEnabled: false,
     });
@@ -216,7 +216,7 @@ export class KonvaService {
       sides: 3,
       radius: 0,
       stroke: this.selectedOptions.color,
-      strokeWidth: this.selectedOptions.thickness,
+      strokeWidth: this.selectedOptions.thickness * 1.9,
       draggable: false,
       strokeScaleEnabled: false,
     });
@@ -229,7 +229,7 @@ export class KonvaService {
       x: pos.x,
       y: pos.y,
       stroke: this.selectedOptions.color,
-      strokeWidth: this.selectedOptions.thickness,
+      strokeWidth: this.selectedOptions.thickness * 1.9,
       draggable: false,
       strokeScaleEnabled: false,
     });
@@ -241,7 +241,7 @@ export class KonvaService {
     const line = new Line({
       points: [pos.x, pos.y, pos.x, pos.y],
       stroke: this.selectedOptions.color,
-      strokeWidth: this.selectedOptions.thickness,
+      strokeWidth: this.selectedOptions.thickness * 1.9,
       listening: false,
     });
     this.addToLayerAndShapes(line);
@@ -386,7 +386,7 @@ export class KonvaService {
     this.currentSlide.stage.container().style.backgroundImage = `url("${file}")`;
     this.currentSlide.stage.container().style.backgroundSize = 'contain';
     this.currentSlide.stage.container().style.backgroundRepeat = 'no-repeat';
-    this.currentSlide.stage.container().style.backgroundPosition = 'center center';
+    this.currentSlide.stage.container().style.backgroundPosition = 'top left';
 
     //   let url: any;
     //   if (typeof file != 'string') {

@@ -15,7 +15,6 @@ import {KonvaService, UpdateViewService} from '@core/utils';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {SessionService} from '@core/http';
-import {UtilsService} from '@ng/services';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {DialogService} from 'primeng/dynamicdialog';
 import {WhiteboardManagePermissionComponent} from '@modules/vc/components/whiteboard-manage-permission-form/whiteboard-manage-permission.component';
@@ -272,11 +271,6 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
   }
 
   close() {
-    // if (this.whiteboardData) {
-    //   this.sessionService.closeBoard().toPromise();
-    // } else if (this.presentationData) {
-    //   this.sessionService.changePresentationState(this.presentationData.presentation_id, 'Close').toPromise();
-    // }
     if (this.presentationData) {
       this.sessionService.changePresentationState(this.presentationData.presentation_id, 'Close').toPromise();
       this.sessionService.closeBoard().toPromise();

@@ -44,7 +44,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
   showTestArea: boolean = false;
   speakerTestAudioElem = new Audio();
   checkEnterRoomStatusInterval: any;
-  disableEnterButton: boolean = true;
+  disableEnterButton: boolean = false;
   userKicked: boolean = false;
   isTalkingSubscription: Subscription;
 
@@ -78,7 +78,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
       await this.checkEnterRoomStatus();
       await this.startAudioStream();
       await this.startVideoStream();
-      this.disableEnterButton = false;
+      // this.disableEnterButton = false;
     } catch (error) {
       console.error(error);
     }
@@ -254,6 +254,7 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
         case 'RoomNotStarted':
           this.roomStatusMessage = [{severity: 'warn', detail: this.instant('room.roomIsNotStarted')}];
           this.disableEnterButton = true;
+          console.log(123);
           break;
 
         case 'Enter':
@@ -295,14 +296,17 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
       switch (result.enter_status) {
         case 'Kicked':
           this.utilsService.showDialog({message: this.instant('room.yourKickedUntilEndSession')});
+          callback();
           return;
         case 'TemporaryKicked':
           const kickTime = Math.round(+result.kick_time / 60);
           const message = this.instant('room.yourTemporaryKicked', {value: kickTime}) as string;
           this.utilsService.showDialog({message});
+          callback();
           return;
         case 'RoomNotStarted':
           this.disableEnterButton = true;
+          callback();
           return;
       }
     }

@@ -4,12 +4,13 @@
              (click)="toggleFullScreen(whiteboard)"></ng-button>
   <ng-button class="mb-3" icon="pi pi-download" (click)="saveAsImage()"></ng-button>
   <div class="tools" *ngIf="hasPermission">
-    <ng-button icon="pi pi-sort-alpha-down" [rounded]="true" appearance="outlined" pTooltip="Text Size"
+    <ng-button icon="pi pi-sort-alpha-down" [rounded]="true" appearance="outlined"
+               [pTooltip]="'room.textSize' | translate"
                tooltipPosition="right"
                (click)="showOptionOverlay('textSizes',$event)"
                *ngIf="selectedTool == 'text'">
     </ng-button>
-    <ng-button [rounded]="true" appearance="outlined" pTooltip="Thickness"
+    <ng-button [rounded]="true" appearance="outlined" [pTooltip]="'room.thickness' | translate"
                tooltipPosition="right"
                icon="pi pi-nothing" (click)="showOptionOverlay('thicknesses',$event)"
                *ngIf="selectedTool != 'select' && selectedTool != 'eraser' && selectedTool != 'text'">
@@ -21,21 +22,23 @@
       </ng-template>
     </ng-button>
 
-    <ng-button appearance="text" pTooltip="Color Palette" tooltipPosition="right"
+    <ng-button appearance="text" [pTooltip]="'room.colorPalette' | translate" tooltipPosition="right"
                icon="pi pi-nothing" (click)="showOptionOverlay('colors',$event)"
                [style.backgroundColor]="selectedOption.color"
                *ngIf="selectedTool != 'select' && selectedTool != 'eraser'">
     </ng-button>
 
-    <ng-button [rounded]="true" appearance="outlined" (click)="showOptionOverlay('tools',$event)" pTooltip="Tools"
+    <ng-button [rounded]="true" appearance="outlined" (click)="showOptionOverlay('tools',$event)"
+               [pTooltip]="'room.tools' | translate"
                tooltipPosition="right" [icon]="getActiveToolIcon()">
     </ng-button>
 
-    <ng-button icon="icon-fi-rr-undo" [rounded]="true" appearance="outlined" (click)="undo()" pTooltip="Undo"
+    <ng-button icon="icon-fi-rr-undo" [rounded]="true" appearance="outlined" (click)="undo()"
+               [pTooltip]="'room.undo' | translate"
                tooltipPosition="right">
     </ng-button>
 
-    <ng-button [rounded]="true" appearance="outlined" (click)="clearBoard()" pTooltip="Clear"
+    <ng-button [rounded]="true" appearance="outlined" (click)="clearBoard()" [pTooltip]="'room.clear' | translate"
                tooltipPosition="right" icon="icon-fi-rr-broom">
     </ng-button>
   </div>
@@ -66,7 +69,7 @@
         <ng-button icon="icon-fi-rr-pencil" [rounded]="true"
                    [appearance]="selectedTool == 'brush' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'brush' ? 'primary' : 'secondary'"
-                   pTooltip="Brush"
+                   [pTooltip]="'room.brush' | translate"
                    tooltipPosition="bottom"
                    (click)="onSelectTool('brush')">
         </ng-button>
@@ -75,7 +78,7 @@
         <ng-button icon="icon-fi-rr-rectangle-horizontal" [rounded]="true"
                    [appearance]="selectedTool == 'rectangle' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'rectangle' ? 'primary' : 'secondary'"
-                   pTooltip="Rectangle"
+                   [pTooltip]="'room.rectangle' | translate"
                    tooltipPosition="bottom"
                    (click)="onSelectTool('rectangle')">
         </ng-button>
@@ -84,7 +87,7 @@
         <ng-button icon="icon-fi-rr-pyramid" [rounded]="true"
                    [appearance]="selectedTool == 'triangle' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'triangle' ? 'primary' : 'secondary'"
-                   pTooltip="Triangle"
+                   [pTooltip]="'room.triangle' | translate"
                    tooltipPosition="bottom"
                    (click)="onSelectTool('triangle')">
         </ng-button>
@@ -93,7 +96,7 @@
         <ng-button icon="icon-fi-rr-rec" [rounded]="true"
                    [appearance]="selectedTool == 'circle' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'circle' ? 'primary' : 'secondary'"
-                   pTooltip="Circle"
+                   [pTooltip]="'room.circle' | translate"
                    tooltipPosition="bottom"
                    (click)="onSelectTool('circle')">
         </ng-button>
@@ -102,7 +105,7 @@
         <ng-button icon="icon-fi-rr-minus" [rounded]="true"
                    [appearance]="selectedTool == 'line' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'line' ? 'primary' : 'secondary'"
-                   pTooltip="Line"
+                   [pTooltip]="'room.line' | translate"
                    tooltipPosition="bottom"
                    (click)="onSelectTool('line')">
         </ng-button>
@@ -111,7 +114,7 @@
         <ng-button icon="icon-fi-rr-text" [rounded]="true"
                    [appearance]="selectedTool == 'text' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'text' ? 'primary' : 'secondary'"
-                   pTooltip="Text"
+                   [pTooltip]="'room.text' | translate"
                    tooltipPosition="bottom"
                    (click)="onSelectTool('text')">
         </ng-button>
@@ -119,14 +122,14 @@
       <li class="mr-2">
         <ng-button icon="icon-erase" [rounded]="true" [appearance]="selectedTool == 'eraser' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'eraser' ? 'primary' : 'secondary'"
-                   (click)="onSelectTool('eraser')" pTooltip="Eraser" tooltipPosition="right">
+                   (click)="onSelectTool('eraser')" [pTooltip]="'room.eraser' | translate" tooltipPosition="right">
         </ng-button>
       </li>
       <li class="mr-2">
         <ng-button icon="icon-fi-rr-cursor" [rounded]="true"
                    [appearance]="selectedTool == 'select' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'select' ? 'primary' : 'secondary'"
-                   (click)="onSelectTool('select')" pTooltip="Select" tooltipPosition="right">
+                   (click)="onSelectTool('select')" [pTooltip]="'room.select' | translate" tooltipPosition="right">
         </ng-button>
       </li>
     </ul>
