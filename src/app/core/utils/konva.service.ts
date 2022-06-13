@@ -543,6 +543,9 @@ export class KonvaService {
   goToSlide(slideNumber: number) {
     const id = this.getId(slideNumber);
     this.currentSlide = this.slides.find(s => s.stage.container().id == id);
+    if (!this.currentSlide) {
+      return;
+    }
     (this._document.querySelector(`#${id}`) as any).style.display = 'block';
     this.boardContainerEl.childNodes.forEach((ch: any) => {
       if (ch.id != this.currentSlide.stage.container().id) {
