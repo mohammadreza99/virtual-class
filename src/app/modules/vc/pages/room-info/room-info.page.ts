@@ -254,7 +254,6 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
         case 'RoomNotStarted':
           this.roomStatusMessage = [{severity: 'warn', detail: this.instant('room.roomIsNotStarted')}];
           this.disableEnterButton = true;
-          console.log(123);
           break;
 
         case 'Enter':

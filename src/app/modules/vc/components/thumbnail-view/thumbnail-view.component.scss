@@ -19,6 +19,7 @@
     .participants, .main-area {
       padding: 1rem;
       transition: all .4s;
+      max-width: 100%;
     }
 
     .participants {
@@ -196,12 +197,12 @@
       }
 
       .main-area {
-        margin-right: $participantsWidth;
+        padding-right: $participantsWidth;
       }
 
       @include media-breakpoint-down(lg) {
         .main-area {
-          margin-right: 0;
+          padding-right: 1rem;
         }
       }
     }

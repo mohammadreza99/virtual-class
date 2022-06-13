@@ -57,10 +57,11 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   currentUser: RoomUser;
   currentQuestion: QuestionItem;
   currentPoll: PollItem;
-  membersSidebarVisible: boolean = true;
-  chatSidebarVisible: boolean = false;
-  questionSidebarVisible: boolean = false;
-  pollSidebarVisible: boolean = false;
+  toggleMembersSidebar: boolean = false;
+  toggleChatSidebar: boolean = false;
+  toggleQuestionSidebar: boolean = false;
+  togglePollSidebar: boolean = false;
+  toggleParticipants: boolean = false;
   sessionDuration: string;
   sidebarKeys = ['members', 'chat', 'question', 'poll'];
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -146,7 +147,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
           if (res.data.target == this.currentUser.id) {
             this.raiseHandActivated = res.data.value;
           }
-          if (res.data.value && !this.membersSidebarVisible) {
+          if (res.data.value && !this.toggleMembersSidebar) {
             this.hasUnreadRaisedHands = true;
           }
           break;
@@ -225,7 +226,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
         case 'gotNewPrivateMessage':
         case 'gotNewPublicMessage':
-          if (!this.chatSidebarVisible) {
+          if (!this.toggleChatSidebar) {
             this.hasUnreadMessage = true;
           }
           break;
@@ -264,24 +265,24 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     if (this.currentRoom.board) {
       const res = await this.sessionService.getBoard(this.currentRoom.board.id).toPromise();
       if (res.status == 'OK') {
-        setTimeout(() => {
-          this.updateViewService.setViewEvent({event: 'openBoard', data: res.data.board});
-          this.currentRoom.board.users.forEach(id => {
-            this.updateViewService.setViewEvent({event: 'setBoardPermission', data: {user_id: id}});
-          });
+        this.updateViewService.setViewEvent({event: 'openBoard', data: res.data.board});
+        this.currentRoom.board.users.forEach(id => {
+          this.updateViewService.setViewEvent({event: 'setBoardPermission', data: {user_id: id}});
         });
       }
     }
-    setTimeout(() => {
-      this.updateViewService.setViewEvent({
-        event: 'messageMutedUser',
-        data: {user_id: this.currentUser.id, state: this.currentUser.user_message_state}
-      });
-      this.updateViewService.setViewEvent({
-        event: 'publicChatState',
-        data: {value: this.currentRoom.public_messages}
-      });
+    this.updateViewService.setViewEvent({
+      event: 'messageMutedUser',
+      data: {user_id: this.currentUser.id, state: this.currentUser.user_message_state}
     });
+    this.updateViewService.setViewEvent({
+      event: 'publicChatState',
+      data: {value: this.currentRoom.public_messages}
+    });
+    if (!this.isPresentationAreaBusy()) {
+      this.toggleMembersSidebar = true;
+      this.toggleParticipants = true;
+    }
   }
 
   async toggleCamera(callback: (toggleState?: boolean) => any) {
@@ -403,11 +404,13 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   closeSidebar(key: string) {
-    this[`${key}SidebarVisible`] = false;
+    const pascalCase = key.replace(/(\w)(\w*)/g,
+      (g0, g1, g2) => (g1.toUpperCase() + g2.toLowerCase()));
+    this[`toggle${pascalCase}Sidebar`] = false;
   }
 
   anySidebarVisible() {
-    return this.membersSidebarVisible || this.chatSidebarVisible || this.questionSidebarVisible || this.pollSidebarVisible;
+    return this.toggleMembersSidebar || this.toggleChatSidebar || this.toggleQuestionSidebar || this.togglePollSidebar;
   }
 
   openIncomeQuestion(question: QuestionItem) {
@@ -460,7 +463,9 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   }
 
   openSidebar(key: string, overlay?: OverlayPanel) {
-    this[`${key}SidebarVisible`] = true;
+    const pascalCase = key.replace(/(\w)(\w*)/g,
+      (g0, g1, g2) => (g1.toUpperCase() + g2.toLowerCase()));
+    this[`toggle${pascalCase}Sidebar`] = true;
     if (key == 'chat') {
       this.hasUnreadMessage = false;
     }

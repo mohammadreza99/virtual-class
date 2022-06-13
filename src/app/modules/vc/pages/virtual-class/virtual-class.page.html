@@ -4,10 +4,10 @@
       <ng-logo width="40" class="ml-3"></ng-logo>
 
       <ng-button appearance="text" [class.badge]="hasUnreadRaisedHands" icon="icon-user-groups" class="d-lg-none"
-                 [class.active]="membersSidebarVisible"
+                 [class.active]="toggleMembersSidebar"
                  (click)="openSidebar('members')"></ng-button>
       <ng-button appearance="text" [class.badge]="hasUnreadMessage" icon="icon-chat" class="d-lg-none"
-                 [class.active]="chatSidebarVisible"
+                 [class.active]="toggleChatSidebar"
                  (click)="openSidebar('chat')"></ng-button>
       <ng-button appearance="text" class="d-lg-none" icon="icon-view" (click)="viewModes.toggle($event)"></ng-button>
       <ng-button appearance="text" class="d-lg-none" icon="icon-info-Circle"
@@ -28,15 +28,15 @@
 
   <div class="content" [class.mh-100]="presentationActivated">
     <ng-grid-view [users]="roomUsers" [allUsers]="allUsers" [hidden]="currentViewMode != 'grid'"></ng-grid-view>
-    <ng-thumbnail-view [users]="roomUsers" [hidden]="currentViewMode != 'thumbnail'"></ng-thumbnail-view>
+    <ng-thumbnail-view [users]="roomUsers" [hidden]="currentViewMode != 'thumbnail'" [toggleParticipants]="toggleParticipants"></ng-thumbnail-view>
   </div>
 
   <div class="footer d-flex align-items-center justify-content-between fixed-bottom">
     <div class="d-none d-lg-block">
       <ng-button [class.badge]="hasUnreadRaisedHands" icon="icon-user-groups" class="ml-3"
-                 [class.active]="membersSidebarVisible"
+                 [class.active]="toggleMembersSidebar"
                  (click)="openSidebar('members')"></ng-button>
-      <ng-button [class.badge]="hasUnreadMessage" icon="icon-chat" [class.active]="chatSidebarVisible"
+      <ng-button [class.badge]="hasUnreadMessage" icon="icon-chat" [class.active]="toggleChatSidebar"
                  (click)="openSidebar('chat')"></ng-button>
     </div>
     <div class="actions d-flex d-lg-block align-items-center justify-content-between">
@@ -73,11 +73,11 @@
 </div>
 
 
-<div class="sidebar" [class.visible]="chatSidebarVisible">
+<div class="sidebar" [class.visible]="toggleChatSidebar">
   <ng-chat (closeSidebar)="closeSidebar('chat')"></ng-chat>
 </div>
 
-<div class="sidebar" [class.visible]="membersSidebarVisible">
+<div class="sidebar" [class.visible]="toggleMembersSidebar">
   <ng-participants [allUsers]="allUsers"
                    [kickedUsers]="kickedUsers"
                    [raisedHandsUsers]="raisedHandsUsers"
@@ -85,9 +85,9 @@
   </ng-participants>
 </div>
 
-<div class="sidebar" [class.visible]="questionSidebarVisible" *ngPermission="'Admin'">
+<div class="sidebar" [class.visible]="toggleQuestionSidebar" *ngPermission="'Admin'">
   <ng-question-management [activeQuestionId]="currentRoom.active_question"
-                          [visible]="questionSidebarVisible"
+                          [visible]="toggleQuestionSidebar"
                           (published)="onQuestionPublished($event)"
                           (finished)="onQuestionRevoked()"
                           (canceled)="onQuestionRevoked()"
@@ -95,9 +95,9 @@
   </ng-question-management>
 </div>
 
-<div class="sidebar" [class.visible]="pollSidebarVisible" *ngPermission="'Admin'">
+<div class="sidebar" [class.visible]="togglePollSidebar" *ngPermission="'Admin'">
   <ng-poll-management [activePollId]="currentRoom.active_poll"
-                      [visible]="pollSidebarVisible"
+                      [visible]="togglePollSidebar"
                       (published)="onPollPublished($event)"
                       (finished)="onPollRevoked()"
                       (canceled)="onPollRevoked()"

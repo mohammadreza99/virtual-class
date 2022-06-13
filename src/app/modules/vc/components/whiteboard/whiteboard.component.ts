@@ -158,7 +158,7 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
             await this.konvaService.image(value);
           }
           this.konvaService.goToSlide(this.currentSlide);
-          // this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
+          this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
           this.handleButtonsState();
           break;
 

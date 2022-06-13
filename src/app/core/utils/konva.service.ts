@@ -37,6 +37,8 @@ export class KonvaService {
     layer: null,
     shapes: []
   };
+  parentHeight;
+  parentWidth;
 
   start(slides: WhiteboardSlide[] | number = 10, initSlideNumber: number = 1) {
     if (this.boardActivated) {
@@ -49,7 +51,7 @@ export class KonvaService {
       const containerEl = this._document.createElement('div');
       const id = this.getId(slide.slideNumber);
       containerEl.id = id;
-      containerEl.style.height = '100%';
+      // containerEl.style.height = '100%';
       this.boardContainerEl.appendChild(containerEl);
       this.init(id, slide.data);
     }
@@ -60,9 +62,7 @@ export class KonvaService {
 
   private createStage(id: string) {
     return new Stage({
-      container: id,
-      width: 1000,
-      height: 1000
+      container: id
     });
   }
 
@@ -149,12 +149,13 @@ export class KonvaService {
       }
     });
 
-    stage.on('mouseup touchend', () => {
+    stage.on('mouseup touchend mouseleave', () => {
       this.stageChangeSubject.next({event: 'updateBoard', data: stage.toJSON()});
       isPaint = false;
     });
 
     this.fitStageIntoParentContainer(stage);
+
     window.addEventListener('resize', () => {
       this.fitStageIntoParentContainer(stage);
     });
@@ -167,19 +168,20 @@ export class KonvaService {
     if (!stage) {
       stage = this.currentSlide.stage;
     }
-    const containerWidth = this.boardContainerEl.offsetWidth;
-    const containerHeight = this.boardContainerEl.offsetHeight;
-    stage.width(containerWidth);
-    stage.height(containerHeight);
-    stage.scale({x: containerWidth / 1000, y: containerHeight / 1000});
-  };
+    const ratioScale = this.boardParentEl.offsetWidth / this.boardContainerEl.offsetWidth;
+    const forceScale = ((this.boardParentEl.offsetHeight * 16) / 9) / this.boardContainerEl.offsetWidth;
 
-  fitStageIntoParentContainer2 = () => {
-    const containerWidth = this.boardContainerEl.offsetWidth;
-    const scale = containerWidth / 1000;
-    this.currentSlide.stage.width(1000 * scale);
-    this.currentSlide.stage.height(1000 * scale);
-    this.currentSlide.stage.scale({x: scale, y: scale});
+    if (this.boardContainerEl.getBoundingClientRect().height < this.boardParentEl.offsetHeight
+      || this.boardContainerEl.getBoundingClientRect().width > this.boardParentEl.offsetWidth) {
+      this.boardContainerEl.style.transform = `scale(${ratioScale})`;
+    } else {
+      this.boardContainerEl.style.transform = `scale(${forceScale})`;
+    }
+    this.boardContainerEl.style.top = `${(this.boardParentEl.offsetHeight - this.boardContainerEl.getBoundingClientRect().height) / 2}px`;
+    this.boardContainerEl.style.right = `${(this.boardParentEl.offsetWidth - this.boardContainerEl.getBoundingClientRect().width) / 2}px`;
+
+    stage.width(this.boardContainerEl.offsetWidth);
+    stage.height(this.boardContainerEl.offsetHeight);
   };
 
   private brush(pos: any) {
@@ -386,7 +388,7 @@ export class KonvaService {
     this.currentSlide.stage.container().style.backgroundImage = `url("${file}")`;
     this.currentSlide.stage.container().style.backgroundSize = 'contain';
     this.currentSlide.stage.container().style.backgroundRepeat = 'no-repeat';
-    this.currentSlide.stage.container().style.backgroundPosition = 'top left';
+    this.currentSlide.stage.container().style.backgroundPosition = 'center center';
 
     //   let url: any;
     //   if (typeof file != 'string') {
@@ -568,5 +570,9 @@ export class KonvaService {
 
   private get boardContainerEl() {
     return this._document.querySelector('.konva-wrapper') as HTMLDivElement;
+  }
+
+  private get boardParentEl() {
+    return this._document.querySelector('.konva-wrapper').parentNode as HTMLDivElement;
   }
 }
