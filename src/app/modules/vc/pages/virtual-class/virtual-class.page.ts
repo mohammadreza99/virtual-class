@@ -7,7 +7,7 @@ import {UtilsService} from '@ng/services';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subject} from 'rxjs';
 import {LocationStrategy} from '@angular/common';
-import {UpdateViewService} from '@core/utils';
+import {KonvaService, UpdateViewService} from '@core/utils';
 import {DialogService} from 'primeng/dynamicdialog';
 import {QuestionIncomeComponent} from '@modules/vc/components/question-income/question-income.component';
 import {PollIncomeComponent} from '@modules/vc/components/poll-income/poll-income.component';
@@ -34,6 +34,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
               private dialogService: DialogService,
               private updateViewService: UpdateViewService,
               private resolver: ComponentFactoryResolver,
+              private konvaService: KonvaService,
               private router: Router) {
     super();
   }
@@ -407,6 +408,9 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     const pascalCase = key.replace(/(\w)(\w*)/g,
       (g0, g1, g2) => (g1.toUpperCase() + g2.toLowerCase()));
     this[`toggle${pascalCase}Sidebar`] = false;
+    setTimeout(() => {
+      this.konvaService.fitStageIntoParentContainer(null);
+    }, 500);
   }
 
   anySidebarVisible() {
@@ -477,6 +481,9 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     if (overlay) {
       overlay.hide();
     }
+    setTimeout(() => {
+      this.konvaService.fitStageIntoParentContainer(null);
+    }, 500);
   }
 
   openQuestionSidebar(overlay: OverlayPanel) {
