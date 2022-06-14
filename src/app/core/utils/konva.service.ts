@@ -149,9 +149,16 @@ export class KonvaService {
       }
     });
 
-    stage.on('mouseup touchend mouseleave', () => {
+    stage.on('mouseup touchend', () => {
       this.stageChangeSubject.next({event: 'updateBoard', data: stage.toJSON()});
       isPaint = false;
+    });
+
+    stage.on('mouseleave', () => {
+      if (isPaint) {
+        isPaint = false;
+        this.stageChangeSubject.next({event: 'updateBoard', data: stage.toJSON()});
+      }
     });
 
     this.fitStageIntoParentContainer(stage);

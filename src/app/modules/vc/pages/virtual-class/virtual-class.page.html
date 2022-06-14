@@ -28,7 +28,7 @@
 
   <div class="content" [class.mh-100]="presentationActivated">
     <ng-grid-view [users]="roomUsers" [allUsers]="allUsers" [hidden]="currentViewMode != 'grid'"></ng-grid-view>
-    <ng-thumbnail-view [users]="roomUsers" [hidden]="currentViewMode != 'thumbnail'" [toggleParticipants]="toggleParticipants"></ng-thumbnail-view>
+    <ng-thumbnail-view [users]="roomUsers" [hidden]="currentViewMode != 'thumbnail'"></ng-thumbnail-view>
   </div>
 
   <div class="footer d-flex align-items-center justify-content-between fixed-bottom">

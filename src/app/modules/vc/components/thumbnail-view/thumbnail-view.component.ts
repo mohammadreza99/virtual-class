@@ -7,23 +7,17 @@ import {KonvaService} from '@core/utils';
   templateUrl: './thumbnail-view.component.html',
   styleUrls: ['./thumbnail-view.component.scss']
 })
-export class ThumbnailViewComponent implements OnInit, OnChanges {
+export class ThumbnailViewComponent implements OnInit {
 
   constructor(private konvaService: KonvaService) {
   }
 
   @Input() users: RoomUser[];
-  @Input() toggleParticipants: boolean = false;
+  toggleParticipants: boolean = true;
 
   toggleSpeaker: boolean = false;
 
   ngOnInit(): void {
-  }
-
-  ngOnChanges(changes) {
-    if (!!(changes?.toggleParticipants?.previousValue)) {
-      this.toggleParticipantsClick();
-    }
   }
 
   toggleSpeakerClick() {

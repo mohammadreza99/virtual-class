@@ -58,11 +58,10 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   currentUser: RoomUser;
   currentQuestion: QuestionItem;
   currentPoll: PollItem;
-  toggleMembersSidebar: boolean = false;
+  toggleMembersSidebar: boolean = true;
   toggleChatSidebar: boolean = false;
   toggleQuestionSidebar: boolean = false;
   togglePollSidebar: boolean = false;
-  toggleParticipants: boolean = false;
   sessionDuration: string;
   sidebarKeys = ['members', 'chat', 'question', 'poll'];
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -280,10 +279,6 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
       event: 'publicChatState',
       data: {value: this.currentRoom.public_messages}
     });
-    if (!this.isPresentationAreaBusy()) {
-      this.toggleMembersSidebar = true;
-      this.toggleParticipants = true;
-    }
   }
 
   async toggleCamera(callback: (toggleState?: boolean) => any) {
