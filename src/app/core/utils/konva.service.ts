@@ -62,7 +62,9 @@ export class KonvaService {
 
   private createStage(id: string) {
     return new Stage({
-      container: id
+      container: id,
+      width: this.boardContainerEl.offsetWidth,
+      height: this.boardContainerEl.offsetHeight,
     });
   }
 
@@ -161,34 +163,34 @@ export class KonvaService {
       }
     });
 
-    this.fitStageIntoParentContainer(stage);
+    this.fitStageIntoParentContainer();
 
     window.addEventListener('resize', () => {
-      this.fitStageIntoParentContainer(stage);
+      this.fitStageIntoParentContainer();
     });
   }
 
-  fitStageIntoParentContainer = (stage: Stage) => {
+  fitStageIntoParentContainer = () => {
     if (!this.boardActivated) {
       return;
     }
-    if (!stage) {
-      stage = this.currentSlide.stage;
-    }
-    const ratioScale = this.boardParentEl.offsetWidth / this.boardContainerEl.offsetWidth;
-    const forceScale = ((this.boardParentEl.offsetHeight * 16) / 9) / this.boardContainerEl.offsetWidth;
+    const container = this.boardContainerEl;
+    const parent = this.boardParentEl;
+    const containerOffsetWidth = container.offsetWidth;
+    const containerClientWidth = container.getBoundingClientRect().width;
+    const containerClientHeight = container.getBoundingClientRect().height;
+    const parentOffsetWidth = parent.offsetWidth;
+    const parentOffsetHeight = parent.offsetHeight;
+    const ratioScale = parentOffsetWidth / containerOffsetWidth;
+    const forceScale = ((parentOffsetHeight * 16) / 9) / containerOffsetWidth;
 
-    if (this.boardContainerEl.getBoundingClientRect().height < this.boardParentEl.offsetHeight
-      || this.boardContainerEl.getBoundingClientRect().width > this.boardParentEl.offsetWidth) {
-      this.boardContainerEl.style.transform = `scale(${ratioScale})`;
+    if (containerClientHeight < parentOffsetHeight || containerClientWidth > parentOffsetWidth) {
+      container.style.transform = `scale(${ratioScale})`;
     } else {
-      this.boardContainerEl.style.transform = `scale(${forceScale})`;
+      container.style.transform = `scale(${forceScale})`;
     }
-    this.boardContainerEl.style.top = `${(this.boardParentEl.offsetHeight - this.boardContainerEl.getBoundingClientRect().height) / 2}px`;
-    this.boardContainerEl.style.right = `${(this.boardParentEl.offsetWidth - this.boardContainerEl.getBoundingClientRect().width) / 2}px`;
-
-    stage.width(this.boardContainerEl.offsetWidth);
-    stage.height(this.boardContainerEl.offsetHeight);
+    container.style.top = `${(parentOffsetHeight - container.getBoundingClientRect().height) / 2}px`;
+    container.style.right = `${(parentOffsetWidth - container.getBoundingClientRect().width) / 2}px`;
   };
 
   private brush(pos: any) {
@@ -560,7 +562,7 @@ export class KonvaService {
       }
     });
     setTimeout(() => {
-      this.fitStageIntoParentContainer(this.currentSlide.stage);
+      this.fitStageIntoParentContainer();
     });
   }
 

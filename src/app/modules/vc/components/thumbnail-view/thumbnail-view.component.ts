@@ -31,7 +31,7 @@ export class ThumbnailViewComponent implements OnInit {
   toggleParticipantsClick() {
     this.toggleParticipants = !this.toggleParticipants;
     setTimeout(() => {
-      this.konvaService.fitStageIntoParentContainer(null);
+      this.konvaService.fitStageIntoParentContainer();
     }, 500);
   }
 }

@@ -404,7 +404,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
       (g0, g1, g2) => (g1.toUpperCase() + g2.toLowerCase()));
     this[`toggle${pascalCase}Sidebar`] = false;
     setTimeout(() => {
-      this.konvaService.fitStageIntoParentContainer(null);
+      this.konvaService.fitStageIntoParentContainer();
     }, 500);
   }
 
@@ -477,7 +477,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
       overlay.hide();
     }
     setTimeout(() => {
-      this.konvaService.fitStageIntoParentContainer(null);
+      this.konvaService.fitStageIntoParentContainer();
     }, 500);
   }
 
