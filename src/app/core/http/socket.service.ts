@@ -4,8 +4,6 @@ import {ApiService} from '@core/http/api.service';
 import {Subject, Subscription} from 'rxjs';
 import {DeviceType, RoomEventType} from '@core/models';
 import {GlobalConfig} from '@core/global.config';
-import {Router} from '@angular/router';
-import {UpdateViewService} from '@core/utils';
 
 @Injectable({providedIn: 'root'})
 export class SocketService extends ApiService {
@@ -15,36 +13,31 @@ export class SocketService extends ApiService {
   private roomId: number;
   private reconnectTimer: any;
   private pingTimer: any;
-  private started = false;
   private connected = false;
-  private retryCount: number = GlobalConfig.socketConnectRetryCount;
 
-  constructor(private router: Router, private updateViewService: UpdateViewService) {
+  constructor() {
     super();
   }
 
   start(roomId: number) {
-    if (this.started) {
+    this.close();
+    if (this.connected) {
       return;
     }
-
     this.roomId = roomId;
-    this.started = true;
-    this.close();
     this.createSocketConnection();
   }
 
-  stop() {
-    this.started = false;
-    this.close();
-  }
-
   close() {
-    if (this.connected) {
-      this.webSocket?.complete();
-      this.webSocket = null;
-      this.subscription?.unsubscribe();
+    if (!this.connected) {
+      return;
     }
+    this.webSocket?.complete();
+    this.clearPingTimer();
+    this.clearReconnectTimer();
+    this.webSocket = null;
+    this.subscription?.unsubscribe();
+    this.connected = false;
   }
 
   listen() {
@@ -55,7 +48,7 @@ export class SocketService extends ApiService {
     const has_cam = await this.webcamConnected();
     const has_mic = await this.micConnected();
     const device = this.getDeviceType();
-    const socketUrl = `${this.socketBaseUrl}/?token=${localStorage.getItem('token')}&method=connect&room_id=${this.roomId}&has_cam=${has_cam}&has_mic=${has_mic}&device=${device}`;
+    const socketUrl = `${this.socketBaseUrl}/?token=${localStorage.getItem('token')}&room_id=${this.roomId}&has_cam=${has_cam}&has_mic=${has_mic}&device=${device}`;
     return webSocket(socketUrl);
   }
 
@@ -64,84 +57,39 @@ export class SocketService extends ApiService {
     this.subscription = this.webSocket.subscribe(
       async (res) => {
         this.socketChannel.next({event: res.method || res, ...res.data});
-        if (res.method == 'FAILURE') {
-          // this.updateViewService.setViewEvent({event: 'socketFail', data: null});
-          // this.redirectUser();
-          // return;
-
-          this.connected = false;
-          if (this.retryCount > 0) {
-            await this.sendConnect();
-            this.retryCount--;
-            return;
-          }
-
-          if (this.retryCount == 0 && !this.connected) {
-            this.router.navigate(['/no-internet'], {queryParams: {returnUrl: `/vc/room-info/${this.roomId}`}});
-            return;
-          }
-        } else {
-          this.connected = true;
-          this.retryCount = GlobalConfig.socketConnectRetryCount;
-        }
+        this.connected = true;
         this.clearReconnectTimer();
-        this.pingWithDelay();
       },
       (err) => {
-        // this.updateViewService.setViewEvent({event: 'socketFail', data: null});
-        // this.redirectUser();
-        // return;
-
         if (this.webSocket) {
           this.handleSocketFailure();
         }
         console.error(err);
       },
       () => {
-        if (this.webSocket) {
-          this.retryConnection(GlobalConfig.socketConnectOnErrorRetryDelay);
-        }
+        this.socketChannel.next({event: 'sessionExist', data: true});
       });
-    // console.log('before connect sent');
-    // await this.sendConnect();
-    // console.log('connect sent');
+    this.sendPing();
   }
 
   private handleSocketFailure() {
-    this.connected = false;
     this.close();
-    this.retryConnection(GlobalConfig.socketConnectOnErrorRetryDelay);
+    this.retryConnection();
   }
 
-  private retryConnection(delay: number) {
+  private retryConnection() {
     this.clearReconnectTimer();
     this.reconnectTimer = setTimeout(() => {
       this.createSocketConnection();
-    }, delay);
-  }
-
-  private pingWithDelay() {
-    this.clearPingTimer();
-    this.pingTimer = setTimeout(() => {
-      this.sendPing();
-      // this.retryConnection(GlobalConfig.socketConnectRetryDelay);
-    }, GlobalConfig.socketPingRetryDelay);
+    }, GlobalConfig.socketConnectOnErrorRetryDelay); // 5000
   }
 
   private sendPing() {
-    this.webSocket.next('ping');
-    this.pingWithDelay();
-  }
-
-  private async sendConnect() {
-    const has_cam = await this.webcamConnected();
-    const has_mic = await this.micConnected();
-    const device = this.getDeviceType();
-    this.webSocket.next({
-      auth: localStorage.getItem('token'),
-      method: 'connect',
-      data: {room_id: this.roomId, has_cam, has_mic, device}
-    });
+    this.clearPingTimer();
+    this.pingTimer = setTimeout(() => {
+      this.webSocket.next('ping');
+      this.sendPing();
+    }, GlobalConfig.socketPingRetryDelay); // 30000
   }
 
   clearPingTimer() {
@@ -184,16 +132,5 @@ export class SocketService extends ApiService {
       return 'Mobile';
     }
     return 'Desktop';
-  }
-
-  poorConnectionRetryCount = GlobalConfig.poorConnectionRetryCount;
-
-  redirectUser() {
-    this.poorConnectionRetryCount--;
-    if (this.poorConnectionRetryCount == 0) {
-      this.stop();
-      this.connected = false;
-      this.updateViewService.setViewEvent({event: 'networkIssue', data: {value: true}});
-    }
   }
 }

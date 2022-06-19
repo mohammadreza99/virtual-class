@@ -350,14 +350,14 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
         res = await this.sessionService.closeRoom().toPromise();
       }
       if (res.status == 'OK') {
-        this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+        this.sessionService.getMeOut();
       }
     } else {
       dialogRes = await this.openStudentLeaveRoomDialog();
       if (dialogRes) {
-        const res = await this.sessionService.leaveRoom().toPromise();
+        res = await this.sessionService.leaveRoom().toPromise();
         if (res.status == 'OK') {
-          this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+          this.sessionService.getMeOut();
         }
       }
     }

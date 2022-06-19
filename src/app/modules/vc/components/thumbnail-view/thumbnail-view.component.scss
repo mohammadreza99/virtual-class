@@ -65,7 +65,7 @@
               position: absolute;
               top: 0.5rem;
               left: 0.5rem;
-              z-index: 200;
+              z-index: 5;
 
               button {
                 width: 2rem;
@@ -135,7 +135,7 @@
           height: auto;
           right: 1rem;
           bottom: 1rem;
-          z-index: 500;
+          z-index: 5;
 
           .screen-wrapper {
             padding-bottom: 56.25%;

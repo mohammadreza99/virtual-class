@@ -37,8 +37,6 @@ export class KonvaService {
     layer: null,
     shapes: []
   };
-  parentHeight;
-  parentWidth;
 
   start(slides: WhiteboardSlide[] | number = 10, initSlideNumber: number = 1) {
     if (this.boardActivated) {
@@ -51,7 +49,6 @@ export class KonvaService {
       const containerEl = this._document.createElement('div');
       const id = this.getId(slide.slideNumber);
       containerEl.id = id;
-      // containerEl.style.height = '100%';
       this.boardContainerEl.appendChild(containerEl);
       this.init(id, slide.data);
     }
@@ -572,6 +569,9 @@ export class KonvaService {
   }
 
   destroyBoard() {
+    if (!this.boardActivated) {
+      return;
+    }
     for (const slide of this.slides) {
       const slideEl = this.boardContainerEl.querySelector(`#${slide.stage.container().id}`);
       slideEl.remove();

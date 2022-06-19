@@ -17,7 +17,7 @@ import {ApiService, SocketService} from '@core/http';
 import {UtilsService} from '@ng/services';
 import {map} from 'rxjs/operators';
 import {Router} from '@angular/router';
-import {TranslationService, UpdateViewService} from '@core/utils';
+import {KonvaService, TranslationService, UpdateViewService} from '@core/utils';
 import {NgMessageSeverities} from '@ng/models/overlay';
 import {GlobalConfig} from '@core/global.config';
 
@@ -44,6 +44,7 @@ export class SessionService extends ApiService {
               private router: Router,
               private translationService: TranslationService,
               private updateViewService: UpdateViewService,
+              private konvaService: KonvaService,
               private socketService: SocketService) {
     super();
   }
@@ -71,16 +72,7 @@ export class SessionService extends ApiService {
         session: data.current_session,
       };
       if (this.currentUser.open_session) {
-        const dialogRes = await this.utilsService.showConfirm({
-          message: this.translationService.instant('room.openSessionConfirm') as string,
-          header: this.translationService.instant('room.openSession') as string
-        });
-        if (dialogRes) {
-          const newSession = await this.newSession().toPromise();
-          this.currentUser.session = newSession.data.session;
-        } else {
-          await this.router.navigate(['/vc/room-info', roomId]);
-        }
+        this.showSessionExistDialog();
       }
     } catch (error) {
       console.error(error);
@@ -783,6 +775,10 @@ export class SessionService extends ApiService {
           this.updateViewService.setViewEvent({event: 'kickedUsersChange', data: this.roomUsers.filter(u => u.kicked)});
           break;
 
+        case 'sessionExist':
+          this.showSessionExistDialog();
+          break;
+
         case 'newMedia':
           if (this.currentUser.id != res.target) {
             return;
@@ -822,12 +818,7 @@ export class SessionService extends ApiService {
             detail: this.translationService.instant('room.networkIssueDetected') as string,
             severity: 'warn'
           });
-          await this.getMeOut(null, false);
-          this.router.navigate(['/vc/room-info', this.currentRoom.id]);
-          document.location.reload();
-          break;
-
-        case 'socketFail':
+          await this.getMeOut();
           break;
       }
     });
@@ -851,6 +842,16 @@ export class SessionService extends ApiService {
     }
   }
 
+  showSessionExistDialog() {
+    this.utilsService.showDialog({
+      message: this.translationService.instant('room.openSessionConfirm') as string,
+      header: this.translationService.instant('room.openSession') as string,
+      closable: false,
+      rtl: true
+    }).then(res => {
+      this.getMeOut();
+    });
+  }
 
   async getRandomUser() {
     const availableUsers = this.roomUsers.filter(u => u.role != 'Admin');
@@ -952,7 +953,7 @@ export class SessionService extends ApiService {
     });
   }
 
-  async getMeOut(message?: any, reload: boolean = true) {
+  getMeOut(message?: any, navigate: boolean = true) {
     if (this.myConnection.webcam) {
       this.stopStreamTrack(this.myConnection.webcam.stream);
     } else if (this.myConnection.screen) {
@@ -964,14 +965,17 @@ export class SessionService extends ApiService {
     if (this.updateRoomUsersTimer) {
       clearInterval(this.updateRoomUsersTimer);
     }
-    this.socketService.clearPingTimer();
-    this.socketService.stop();
+    this.socketService.close();
     this.socketSubscription?.unsubscribe();
+    this.konvaService.destroyBoard();
     if (message) {
-      await this.utilsService.showDialog({message, closable: false});
+      this.utilsService.showDialog({message, closable: false}).then(res => {
+        this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+      });
+      return;
     }
-    if (reload) {
-      document.location.reload();
+    if (navigate) {
+      this.router.navigate(['/vc/room-info', this.currentRoom.id]);
     }
   }
 

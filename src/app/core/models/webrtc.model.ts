@@ -119,5 +119,6 @@ export type RoomEventType =
   'messageMutedUser' |
   'gotNewPrivateMessage' |
   'gotNewPublicMessage' |
+  'sessionExist' |
   'privateMessagesChange';
 
