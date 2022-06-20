@@ -57,6 +57,10 @@ export class SocketService extends ApiService {
     this.subscription = this.webSocket.subscribe(
       async (res) => {
         this.socketChannel.next({event: res.method || res, ...res.data});
+        if (res == 'reconnect') {
+          this.handleSocketFailure();
+          return;
+        }
         this.connected = true;
         this.clearReconnectTimer();
       },

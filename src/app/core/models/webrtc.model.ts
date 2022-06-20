@@ -120,5 +120,6 @@ export type RoomEventType =
   'gotNewPrivateMessage' |
   'gotNewPublicMessage' |
   'sessionExist' |
+  'useHere' |
   'privateMessagesChange';
 

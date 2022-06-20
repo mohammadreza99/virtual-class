@@ -779,6 +779,10 @@ export class SessionService extends ApiService {
           this.showSessionExistDialog();
           break;
 
+        case 'useHere':
+          this.getMeOut();
+          break;
+
         case 'newMedia':
           if (this.currentUser.id != res.target) {
             return;
@@ -842,15 +846,19 @@ export class SessionService extends ApiService {
     }
   }
 
-  showSessionExistDialog() {
-    this.utilsService.showDialog({
+  async showSessionExistDialog() {
+    const dialogRes = await this.utilsService.showConfirm({
       message: this.translationService.instant('room.openSessionConfirm') as string,
       header: this.translationService.instant('room.openSession') as string,
       closable: false,
       rtl: true
-    }).then(res => {
-      this.getMeOut();
     });
+    if (dialogRes) {
+      await this.useHere().toPromise();
+      this.socketService.start(this.currentRoom.id);
+    } else {
+      this.getMeOut();
+    }
   }
 
   async getRandomUser() {
@@ -1518,6 +1526,13 @@ export class SessionService extends ApiService {
     return this._post<any>('', {
       method: 'joinPublisher',
       data: {sdp_offer_data, tag, room_id, publish_type, session: this.currentUser.session}
+    });
+  }
+
+  private useHere() {
+    return this._post<any>('', {
+      method: 'useHere',
+      data: {room_id: this.currentRoom.id, session: this.currentUser.session}
     });
   }
 
