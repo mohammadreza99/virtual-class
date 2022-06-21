@@ -49,7 +49,10 @@ export class SessionService extends ApiService {
     super();
   }
 
-  async initRoom() {
+  async initRoom(checkSession = false) {
+    if (checkSession) {
+      await this.checkSession(this.currentRoom.id);
+    }
     this.initSockets();
     this.initViewUpdates();
     await this.updateRoomUsers();
@@ -855,7 +858,9 @@ export class SessionService extends ApiService {
     });
     if (dialogRes) {
       await this.useHere().toPromise();
-      this.socketService.start(this.currentRoom.id);
+      this.resetAll();
+      this.initRoom(true);
+      // this.socketService.start(this.currentRoom.id);
     } else {
       this.getMeOut();
     }

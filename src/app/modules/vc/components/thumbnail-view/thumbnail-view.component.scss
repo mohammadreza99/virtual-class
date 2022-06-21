@@ -197,12 +197,13 @@
       }
 
       .main-area {
-        padding-right: $participantsWidth;
+        margin-right: $participantsWidth;
+        width: calc(100% - #{$participantsWidth});
       }
 
       @include media-breakpoint-down(lg) {
         .main-area {
-          padding-right: 1rem;
+          margin-right: 1rem;
         }
       }
     }
