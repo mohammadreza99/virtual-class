@@ -16,12 +16,12 @@ export class PeerConnection {
     this.updateViewService = Global.Injector.get(UpdateViewService);
     this.pc = new RTCPeerConnection();
 
-    this.subscription = this.updateViewService.getViewEvent().subscribe(res => {
+    this.subscription = this.updateViewService.getViewEvent().subscribe(async res => {
       switch (res.event) {
         // we just use this subscription in publish mode because we dont want to set any retry and etc functions to that.
         // so control it in PeerConnection own class.
         case 'remoteAnswer':
-          this.setRemoteAnswer(res.data.sdp);
+          await this.setRemoteAnswer(res.data.sdp);
           break;
       }
     });
@@ -39,7 +39,7 @@ export class PeerConnection {
     };
   }
 
-  // calls when socket recieved
+  // calls when socket received
   async setRemoteOffer(sdp) {
     await this.pc.setRemoteDescription({type: 'offer', sdp});
     const answer = await this.pc.createAnswer();
@@ -51,7 +51,7 @@ export class PeerConnection {
     }
   }
 
-  // calls when socket recieved
+  // calls when socket received
   async setRemoteAnswer(sdp) {
     await this.pc.setRemoteDescription({type: 'answer', sdp});
     await this.options.publishConfirm();
@@ -162,14 +162,14 @@ export class PeerConnection {
 
   private handleConnectionStateChange(e: Event) {
     if (this.pc.connectionState === 'failed') {
-      console.error(`-- WEB_RTC FOR USER ID ${this.userId} HAS ${this.pc.connectionState} - MY ID => ${this.sessionService.currentUser.id}`);
+      console.error(`-- WEB_RTC FOR USER ID ${this.userId} HAS ${this.pc.connectionState.toUpperCase()} - MY ID => ${this.sessionService.currentUser.id}`);
       this.options.onFailed();
     }
     if (this.pc.connectionState === 'connected') {
       this.options.onConnect();
     }
     if (this.pc.connectionState === 'disconnected') {
-      console.error(`-- WEB_RTC FOR USER ID ${this.userId} HAS ${this.pc.connectionState} - MY ID => ${this.sessionService.currentUser.id}`);
+      console.error(`-- WEB_RTC FOR USER ID ${this.userId} HAS ${this.pc.connectionState.toUpperCase()} - MY ID => ${this.sessionService.currentUser.id}`);
       this.options.onDisconnect();
     }
     if (this.pc.connectionState === 'closed') {
