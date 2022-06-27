@@ -25,6 +25,10 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
     if (this.authService.hasToken()) {
       return true;
     } else {
+      if (this.router.url == 'auth/login') {
+        return;
+      }
+      this.authService.logout();
       this.router.navigate(['/auth/login'], {queryParams: {returnUrl: state.url}});
       return false;
     }
@@ -34,6 +38,10 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
     if (this.authService.hasToken()) {
       return true;
     } else {
+      if (this.router.url == 'auth/login') {
+        return;
+      }
+      this.authService.logout();
       this.router.navigate(['/auth/login'], {queryParams: {returnUrl: state.url}});
       return false;
     }
@@ -43,6 +51,10 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
     if (this.authService.hasToken()) {
       return true;
     } else {
+      if (this.router.url == 'auth/login') {
+        return;
+      }
+      this.authService.logout();
       this.router.navigate(['/auth/login']);
       return false;
     }

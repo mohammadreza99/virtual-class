@@ -86,7 +86,7 @@ export class SessionService extends ApiService {
   private async updateRoomPublishers() {
     try {
       const result = await this.roomStatus().toPromise();
-      if (result.status == 'SESSION_ERROR') {
+      if (result.status == 'SESSION_ERROR' || result.status_det == 'INVALID_INPUT') {
         try {
           await this.checkSession(this.currentRoom.id);
         } catch (e) {
@@ -141,11 +141,11 @@ export class SessionService extends ApiService {
   }
 
   async toggleMyScreen(activate: boolean): Promise<void> {
-    if (this.isMainPositionBusy()) {
-      return;
-    }
     if (!activate) {
       await this.closeMyConnection('Screen');
+      return;
+    }
+    if (this.isMainPositionBusy()) {
       return;
     }
     const stream = await this.getUserScreen();
@@ -966,11 +966,12 @@ export class SessionService extends ApiService {
     });
   }
 
-  getMeOut(message?: any, navigate: boolean = true) {
+  async getMeOut(message?: any, navigate: boolean = true) {
     if (this.myConnection.webcam) {
-      this.stopStreamTrack(this.myConnection.webcam.stream);
+      await this.toggleShareMedia(false, 'video');
+      await this.toggleShareMedia(false, 'audio');
     } else if (this.myConnection.screen) {
-      this.stopStreamTrack(this.myConnection.screen.stream);
+      await this.toggleMyScreen(false);
     }
     if (this.updateRoomPublishersTimer) {
       clearInterval(this.updateRoomPublishersTimer);
@@ -988,7 +989,8 @@ export class SessionService extends ApiService {
       return;
     }
     if (navigate) {
-      this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+      document.location.reload();
+      // this.router.navigate(['/vc/room-info', this.currentRoom.id]);
     }
   }
 
