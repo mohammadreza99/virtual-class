@@ -54,7 +54,7 @@ export class ChatComponent extends LanguageChecker implements OnInit {
   }
 
   async togglePrivateChatActivation(chatActions: OverlayPanel) {
-    const res = await this.sessionService.changePublicChatState(!this.enablePrivateChat).toPromise();
+    const res = await this.sessionService.changePrivateChatState(!this.enablePrivateChat).toPromise();
     chatActions.hide();
     if (res.status == 'OK') {
       this.enablePrivateChat = !this.enablePrivateChat;
@@ -62,6 +62,7 @@ export class ChatComponent extends LanguageChecker implements OnInit {
   }
 
   onSaveChatClick() {
+    this.sessionService.saveChat().toPromise();
   }
 
   onClearChatClick(chatActions: OverlayPanel) {

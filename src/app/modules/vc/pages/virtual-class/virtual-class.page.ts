@@ -261,8 +261,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
       setTimeout(() => {
         this.updateViewService.setViewEvent({event: 'openPresentation', data: this.currentRoom.presentation});
       });
-    }
-    if (this.currentRoom.board) {
+    } else if (this.currentRoom.board) {
       const res = await this.sessionService.getBoard(this.currentRoom.board.id).toPromise();
       if (res.status == 'OK') {
         this.updateViewService.setViewEvent({event: 'openBoard', data: res.data.board});

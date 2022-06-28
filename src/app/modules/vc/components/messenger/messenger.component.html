@@ -6,7 +6,7 @@
       class="d-block font-medium">{{pinnedMessage.sender_first_name + ' ' + pinnedMessage.sender_last_name}}</small>
     <small class="d-block font-light">{{pinnedMessage.message}}</small>
   </div>
-  <i class="pi pi-times mx-2" role="button" (click)="closePin()"></i>
+  <i *ngPermission="'Admin'" class="pi pi-times mx-2" role="button" (click)="unpinPublicMessage()"></i>
 </div>
 <div class="messenger p-2" [class.has-pinned-message]="pinnedMessage" #chatContainer (scroll)="scrolled()">
   <ng-message-item #messageItem *ngFor="let message of messages;let last=last;trackBy:trackByFn"

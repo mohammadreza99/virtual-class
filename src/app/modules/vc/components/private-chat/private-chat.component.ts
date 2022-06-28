@@ -19,15 +19,23 @@ export class PrivateChatComponent extends LanguageChecker implements OnInit {
   contacts: RoomUser[] = [];
   peerUser: RoomUser;
   privateChats: any[] = [];
+  enableChat: boolean;
 
   ngOnInit(): void {
     this.loadData();
   }
 
   async loadData() {
-    const res = await this.sessionService.getPVList().toPromise();
-    if (res.status == 'OK') {
-      this.privateChats = res.data;
+    this.updateViewService.getViewEvent().subscribe(res => {
+      switch (res.event) {
+        case 'privateChatState':
+          this.enableChat = res.data.value;
+          break;
+      }
+    });
+    const result = await this.sessionService.getPVList().toPromise();
+    if (result.status === 'OK') {
+      this.privateChats = result.data;
     }
   }
 
@@ -37,7 +45,7 @@ export class PrivateChatComponent extends LanguageChecker implements OnInit {
 
   async onSelectContact(user: RoomUser) {
     const res = await this.sessionService.openPV(user.id).toPromise();
-    if (res.status == 'OK') {
+    if (res.status === 'OK') {
       this.peerUser = user;
       this.setState('chat');
       await this.openPrivateChat(res.data.pv_id);
@@ -52,7 +60,7 @@ export class PrivateChatComponent extends LanguageChecker implements OnInit {
 
   async openPrivateChat(pvId: number) {
     const res = await this.sessionService.getPVMessage(pvId).toPromise();
-    if (res.status == 'OK') {
+    if (res.status === 'OK') {
       res.data.items.forEach(m => {
         const founded = this.privateChats.find(item => item.id == m.private_chat_id);
         Object.assign(m, {

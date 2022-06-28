@@ -86,10 +86,6 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
 
           case 'publicChatState':
             this.enableChat = res.data.value;
-            // const message = this.enableChat ? this.instant('room.chatAccessOpened') : this.instant('room.chatAccessClosed');
-            // if (this.sessionService.imStudent) {
-            //   this.utilsService.showToast({detail: message, severity: 'warn'});
-            // }
             break;
 
           case 'clearPublicMessages':
@@ -105,6 +101,14 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
             if (this.sessionService.currentUser.id == res.data.user_id) {
               this.enableChat = res.data.state;
             }
+            break;
+
+          case 'privateChatState':
+            this.enableChat = res.data.value;
+            break;
+
+          case 'unpinnedMessage':
+            this.pinnedMessage = null;
             break;
         }
       }
@@ -222,7 +226,7 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
     this.emojiPickerVisible = !this.emojiPickerVisible;
   }
 
-  closePin() {
-    this.pinnedMessage = null;
+  unpinPublicMessage() {
+    this.sessionService.unpinPublicMessage().toPromise();
   }
 }

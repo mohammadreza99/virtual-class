@@ -153,13 +153,14 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
           this.slidesCount = Object.keys(this.presentationData.pages).length;
           const entries = Object.entries(this.presentationData.pages);
           this.konvaService.start(entries.length);
+          this.handleButtonsState();
           for (const [key, value] of entries) {
             this.konvaService.goToSlide(+key);
-            await this.konvaService.image(value);
+            this.konvaService.image(value);
           }
           this.konvaService.goToSlide(this.currentSlide);
+          console.log(this.currentSlide);
           this.presentationCurrentSlide = this.presentationData.pages[this.currentSlide];
-          this.handleButtonsState();
           break;
 
         case 'closePresentation':

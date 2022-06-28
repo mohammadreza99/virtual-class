@@ -23,7 +23,7 @@ export class UploadFileFormComponent extends LanguageChecker implements OnInit, 
 
   allowDownload: boolean = false;
   selectedFile: File;
-  validFileTypes: string = '.pdf,.doc,.docx,.pptx,.jpg,.png,.jpeg,.xlsx';
+  validFileTypes: string = '.pdf,.doc,.docx,.pptx,.jpg,.png,.jpeg,.xlsx,.mp4,.avi,.wmv,.mov,.mkv,.flv,.webm';
   minFileSize: number = 5120;
   maxFileSize: number = 524288000;
   invalidSize: boolean;

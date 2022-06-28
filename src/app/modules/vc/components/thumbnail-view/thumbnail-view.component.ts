@@ -1,6 +1,6 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, OnInit} from '@angular/core';
 import {RoomUser} from '@core/models';
-import {KonvaService} from '@core/utils';
+import {KonvaService, UpdateViewService} from '@core/utils';
 
 @Component({
   selector: 'ng-thumbnail-view',
@@ -9,7 +9,8 @@ import {KonvaService} from '@core/utils';
 })
 export class ThumbnailViewComponent implements OnInit {
 
-  constructor(private konvaService: KonvaService) {
+  constructor(private konvaService: KonvaService,
+              private updateViewService: UpdateViewService) {
   }
 
   @Input() users: RoomUser[];
@@ -18,6 +19,20 @@ export class ThumbnailViewComponent implements OnInit {
   toggleSpeaker: boolean = false;
 
   ngOnInit(): void {
+    this.updateViewService.getViewEvent().subscribe(res => {
+      switch (res.event) {
+        case 'closePresentation':
+        case 'closeBoard':
+          this.toggleSpeaker = false;
+          break;
+
+        case 'onDisconnect':
+          if (res.data.publishType == 'Screen') {
+            this.toggleSpeaker = false;
+          }
+          break;
+      }
+    });
   }
 
   toggleSpeakerClick() {

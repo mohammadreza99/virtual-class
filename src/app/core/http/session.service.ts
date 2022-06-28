@@ -1268,6 +1268,13 @@ export class SessionService extends ApiService {
     });
   }
 
+  changePrivateChatState(state: boolean): any {
+    return this._post<any>('', {
+      method: 'changePrivateChatState',
+      data: {room_id: this.currentRoom.id, state},
+    });
+  }
+
   deletePublicMessage(message_id: number) {
     return this._post<any>('', {
       method: 'deletePublicMessage',
@@ -1543,5 +1550,20 @@ export class SessionService extends ApiService {
     });
   }
 
+  unpinPublicMessage() {
+    return this._post<any>('', {
+      method: 'unpinPublicMessage',
+      data: {room_id: this.currentRoom.id, session: this.currentUser.session}
+    });
+  }
+
+  saveChat() {
+    return this._post<any>('', {
+      method: 'saveChat',
+      data: {room_id: this.currentRoom.id, session: this.currentUser.session}
+    });
+  }
+
   //endregion
+
 }

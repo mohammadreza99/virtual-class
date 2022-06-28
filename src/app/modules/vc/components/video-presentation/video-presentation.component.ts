@@ -28,6 +28,7 @@ export class VideoPresentationComponent implements AfterViewInit {
           }
           this.presentationData = res.data;
           this.activateVideo();
+
           source.setAttribute('src', res.data.pages[1]);
           videoEl.load();
           break;

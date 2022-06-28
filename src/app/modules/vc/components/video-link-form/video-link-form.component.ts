@@ -9,11 +9,11 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 })
 export class VideoLinkFormComponent implements OnInit {
 
-  constructor(private dialogRef: DynamicDialogRef,) {
+  constructor(private dialogRef: DynamicDialogRef) {
   }
 
   form = new FormGroup({
-    link: new FormControl(null, [Validators.required, Validators.pattern(/^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/)])
+    link: new FormControl(null, [Validators.required, Validators.pattern(/^https?:\/\/.*\/.*\.(mp4|avi|wmv|mov|mkv|flv|webm)\??.*$/gmi)])
   });
 
   ngOnInit(): void {
