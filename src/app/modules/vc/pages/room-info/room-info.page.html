@@ -34,7 +34,7 @@
         <div class="media-test" [hidden]="!showTestArea">
           <div class="test-item p-3 d-flex align-items-center justify-content-between">
             <div class="label d-flex align-items-center">
-              <i class="ml-2 icon-camera"></i>
+              <i class="ml-2 icon-videocam_FILL0_wght400_GRAD0_opsz48"></i>
               <span>{{'room.webcam' | translate}}</span>
             </div>
             <ng-dropdown class="mt-2 d-block" *ngIf="!webcamTestMessage" (onChange)="onChangeVideoInput($event)"
@@ -46,7 +46,7 @@
           <div class="test-item p-3">
             <div class="d-flex align-items-center justify-content-between">
               <div class="label d-flex align-items-center">
-                <i class="ml-2 icon-mic"></i>
+                <i class="ml-2 icon-mic_FILL0_wght400_GRAD0_opsz48"></i>
                 <span>{{'room.mic' | translate}}</span>
               </div>
               <meter [hidden]="micTestMessage" #meter min="0" max="200" value="0"></meter>
@@ -60,7 +60,7 @@
           <div class="test-item p-3">
             <div class="d-flex align-items-center justify-content-between">
               <div class="label d-flex align-items-center">
-                <i class="ml-2 icon-speaker"></i>
+                <i class="ml-2 icon-account_box_FILL0_wght400_GRAD0_opsz48"></i>
                 <span>{{'room.speaker' | translate}}</span>
               </div>
               <p *ngIf="speakerTestMessage">{{speakerTestMessage | translate}}</p>

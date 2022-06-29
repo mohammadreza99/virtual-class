@@ -1,9 +1,9 @@
 <div class="white-board" *ngIf="presentationData" #presentation>
   <div class="top-actions bg-white w-100 d-flex align-items-center justify-content-between p-1 border-bottom">
-    <ng-button class="btn-fullscreen" appearance="outlined" icon="icon-fullscreen"
+    <ng-button class="btn-fullscreen" appearance="outlined" icon="icon-fullscreen_FILL0_wght400_GRAD0_opsz48"
                (click)="toggleFullScreen(presentation)"></ng-button>
     <ng-container *ngIf="presentationData.is_downloadable">
-      <ng-button *ngPermission="'Viewer'" class="btn-close" icon="icon-download"
+      <ng-button *ngPermission="'Viewer'" class="btn-close" icon="icon-download_FILL0_wght400_GRAD0_opsz48"
                  color="secondary"
                  (click)="downloadFile()"></ng-button>
     </ng-container>

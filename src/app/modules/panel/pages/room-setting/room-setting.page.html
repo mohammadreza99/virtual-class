@@ -4,12 +4,12 @@
       <h4 class="main-title">{{'roomMemberManagement' | translate}}</h4>
     </div>
     <div class="col-8 col-lg-11 mb-4">
-      <ng-input-text inputSize="md" icon="icon-search" [rtl]="fa"
+      <ng-input-text inputSize="md" icon="icon-search_FILL0_wght400_GRAD0_opsz48" [rtl]="fa"
                      [placeholder]="'searchUserEmail' | translate"
                      (onKeyup)="filterRoomUsers($event)"></ng-input-text>
     </div>
     <div class="col-4 col-lg-1 mb-4">
-      <ng-button iconPos="right" icon="icon-add" [label]="'add' | translate" [full]="true"
+      <ng-button iconPos="right" icon="icon-add_FILL1_wght400_GRAD0_opsz48" [label]="'add' | translate" [full]="true"
                  (click)="showAddUserModal()"></ng-button>
     </div>
 
@@ -29,13 +29,13 @@
               </ng-dropdown>
             </td>
             <td class="d-flex">
-              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-delete"
+              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-delete_FILL0_wght400_GRAD0_opsz48"
                          (click)="removeUser(item)" appearance="text" color="danger"></ng-button>
-              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-edit"
+              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-edit_FILL0_wght400_GRAD0_opsz48"
                          (click)="editUserRole(item)" appearance="text" color="success"></ng-button>
-              <ng-button class="mx-1" *ngIf="item.editing" icon="icon-check"
+              <ng-button class="mx-1" *ngIf="item.editing" icon="icon-done_FILL0_wght400_GRAD0_opsz48"
                          (click)="submitUserEditing(item)" appearance="text" color="success"></ng-button>
-              <ng-button class="mx-1" *ngIf="item.editing" icon="icon-close"
+              <ng-button class="mx-1" *ngIf="item.editing" icon="icon-close_FILL0_wght400_GRAD0_opsz48"
                          (click)="cancelUserEditing(item,index)" appearance="text" color="danger"></ng-button>
             </td>
           </tr>
@@ -47,12 +47,12 @@
       <h4 class="main-title">{{'roomGroupManagement' | translate}}</h4>
     </div>
     <div class="col-11 mb-4">
-      <ng-input-text inputSize="md" icon="icon-search" [rtl]="fa"
+      <ng-input-text inputSize="md" icon="icon-search_FILL0_wght400_GRAD0_opsz48" [rtl]="fa"
                      [placeholder]="'searchGroupName' | translate"
                      (onKeyup)="filterRoomGroups($event)"></ng-input-text>
     </div>
     <div class="col-1 mb-4">
-      <ng-button iconPos="right" icon="icon-add" [full]="true" [label]="'add' | translate"
+      <ng-button iconPos="right" icon="icon-add_FILL1_wght400_GRAD0_opsz48" [full]="true" [label]="'add' | translate"
                  (click)="showAddGroupModal()"></ng-button>
     </div>
     <div class="col-12">
@@ -71,13 +71,13 @@
               </ng-dropdown>
             </td>
             <td class="d-flex">
-              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-delete"
+              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-delete_FILL0_wght400_GRAD0_opsz48"
                          (click)="removeGroup(item)" appearance="text" color="danger"></ng-button>
-              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-edit"
+              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-edit_FILL0_wght400_GRAD0_opsz48"
                          (click)="editGroupRole(item)" appearance="text" color="success"></ng-button>
-              <ng-button class="mx-1" *ngIf="item.editing" icon="icon-check"
+              <ng-button class="mx-1" *ngIf="item.editing" icon="icon-done_FILL0_wght400_GRAD0_opsz48"
                          (click)="submitGroupEditing(item)" appearance="text" color="success"></ng-button>
-              <ng-button class="mx-1" *ngIf="item.editing" icon="icon-close"
+              <ng-button class="mx-1" *ngIf="item.editing" icon="icon-close_FILL0_wght400_GRAD0_opsz48"
                          (click)="cancelGroupEditing(item,index)" appearance="text" color="danger"></ng-button>
             </td>
           </tr>

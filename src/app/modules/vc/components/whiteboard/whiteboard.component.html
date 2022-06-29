@@ -1,10 +1,10 @@
 <div class="controls">
   <ng-button *ngPermission="'Admin'" class="mb-3" icon="pi pi-times" color="secondary" (click)="close()"></ng-button>
-  <ng-button *ngPermission="'Viewer'" class="mb-3" icon="icon-fullscreen" appearance="outlined"
+  <ng-button *ngPermission="'Viewer'" class="mb-3" icon="icon-fullscreen_FILL0_wght400_GRAD0_opsz48" appearance="outlined"
              (click)="toggleFullScreen(whiteboard)"></ng-button>
   <ng-button class="mb-3" icon="pi pi-download" (click)="saveAsImage()"></ng-button>
   <div class="tools" *ngIf="hasPermission">
-    <ng-button icon="pi pi-sort-alpha-down" [rounded]="true" appearance="outlined"
+    <ng-button icon="icon-text_fields_FILL0_wght400_GRAD0_opsz48" [rounded]="true" appearance="outlined"
                [pTooltip]="'room.textSize' | translate"
                tooltipPosition="right"
                (click)="showOptionOverlay('textSizes',$event)"
@@ -33,13 +33,13 @@
                tooltipPosition="right" [icon]="getActiveToolIcon()">
     </ng-button>
 
-    <ng-button icon="icon-fi-rr-undo" [rounded]="true" appearance="outlined" (click)="undo()"
+    <ng-button icon="icon-undo_FILL0_wght400_GRAD0_opsz48" [rounded]="true" appearance="outlined" (click)="undo()"
                [pTooltip]="'room.undo' | translate"
                tooltipPosition="right">
     </ng-button>
 
     <ng-button [rounded]="true" appearance="outlined" (click)="clearBoard()" [pTooltip]="'room.clear' | translate"
-               tooltipPosition="right" icon="icon-fi-rr-broom">
+               tooltipPosition="right" icon="icon-backspace_FILL0_wght400_GRAD0_opsz48">
     </ng-button>
   </div>
 </div>
@@ -58,7 +58,7 @@
   </div>
   <ng-button *ngPermission="'Admin'" [pTooltip]="'room.whiteboardPermission' | translate"
              tooltipPosition="top"
-             icon="icon-fi-rr-line-width" color="secondary"
+             icon="icon-add_moderator_FILL0_wght400_GRAD0_opsz48" color="secondary"
              (click)="setPermissionForUser()"></ng-button>
 </div>
 
@@ -66,7 +66,7 @@
   <ng-template pTemplate>
     <ul class="list-unstyled p-0 m-0 d-flex" *ngIf="whiteboardOverlayMode == 'tools'">
       <li>
-        <ng-button icon="icon-fi-rr-pencil" [rounded]="true"
+        <ng-button icon="icon-brush_FILL0_wght400_GRAD0_opsz48" [rounded]="true"
                    [appearance]="selectedTool == 'brush' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'brush' ? 'primary' : 'secondary'"
                    [pTooltip]="'room.brush' | translate"
@@ -75,7 +75,7 @@
         </ng-button>
       </li>
       <li class="mr-2">
-        <ng-button icon="icon-fi-rr-rectangle-horizontal" [rounded]="true"
+        <ng-button icon="icon-crop_landscape_FILL0_wght400_GRAD0_opsz48" [rounded]="true"
                    [appearance]="selectedTool == 'rectangle' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'rectangle' ? 'primary' : 'secondary'"
                    [pTooltip]="'room.rectangle' | translate"
@@ -84,7 +84,7 @@
         </ng-button>
       </li>
       <li class="mr-2">
-        <ng-button icon="icon-fi-rr-pyramid" [rounded]="true"
+        <ng-button icon="icon-change_history_FILL0_wght400_GRAD0_opsz48" [rounded]="true"
                    [appearance]="selectedTool == 'triangle' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'triangle' ? 'primary' : 'secondary'"
                    [pTooltip]="'room.triangle' | translate"
@@ -93,7 +93,7 @@
         </ng-button>
       </li>
       <li class="mr-2">
-        <ng-button icon="icon-fi-rr-rec" [rounded]="true"
+        <ng-button icon="icon-circle_FILL0_wght400_GRAD0_opsz48" [rounded]="true"
                    [appearance]="selectedTool == 'circle' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'circle' ? 'primary' : 'secondary'"
                    [pTooltip]="'room.circle' | translate"
@@ -102,7 +102,7 @@
         </ng-button>
       </li>
       <li class="mr-2">
-        <ng-button icon="icon-fi-rr-minus" [rounded]="true"
+        <ng-button icon="icon-remove_FILL0_wght400_GRAD0_opsz48" [rounded]="true"
                    [appearance]="selectedTool == 'line' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'line' ? 'primary' : 'secondary'"
                    [pTooltip]="'room.line' | translate"
@@ -111,7 +111,7 @@
         </ng-button>
       </li>
       <li class="mr-2">
-        <ng-button icon="icon-fi-rr-text" [rounded]="true"
+        <ng-button icon="icon-title_FILL0_wght400_GRAD0_opsz48" [rounded]="true"
                    [appearance]="selectedTool == 'text' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'text' ? 'primary' : 'secondary'"
                    [pTooltip]="'room.text' | translate"
@@ -120,13 +120,13 @@
         </ng-button>
       </li>
       <li class="mr-2">
-        <ng-button icon="icon-erase" [rounded]="true" [appearance]="selectedTool == 'eraser' ? 'basic' : 'outlined'"
+        <ng-button icon="icon-backspace_FILL0_wght400_GRAD0_opsz48" [rounded]="true" [appearance]="selectedTool == 'eraser' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'eraser' ? 'primary' : 'secondary'"
                    (click)="onSelectTool('eraser')" [pTooltip]="'room.eraser' | translate" tooltipPosition="right">
         </ng-button>
       </li>
       <li class="mr-2">
-        <ng-button icon="icon-fi-rr-cursor" [rounded]="true"
+        <ng-button icon="icon-ads_click_FILL0_wght400_GRAD0_opsz48" [rounded]="true"
                    [appearance]="selectedTool == 'select' ? 'basic' : 'outlined'"
                    [color]="selectedTool == 'select' ? 'primary' : 'secondary'"
                    (click)="onSelectTool('select')" [pTooltip]="'room.select' | translate" tooltipPosition="right">
@@ -141,7 +141,7 @@
                    [color]="selectedOption.textSize == s ? 'primary' : null"
                    (click)="onSelectTextSize(s)" [pTooltip]="s.toString()" tooltipPosition="bottom">
           <ng-template ngTemplate="content">
-            <i class="pi pi-google" [ngStyle]="{fontSize:(s-5)+'px'}"></i>
+            <i class="icon-text_fields_FILL0_wght400_GRAD0_opsz48" [ngStyle]="{fontSize:(s-5)+'px'}"></i>
           </ng-template>
         </ng-button>
       </li>

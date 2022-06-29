@@ -327,14 +327,14 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
 
   getActiveToolIcon() {
     const source = {
-      brush: 'icon-fi-rr-pencil',
-      circle: 'icon-fi-rr-rec',
-      eraser: 'icon-erase',
-      line: 'icon-fi-rr-minus',
-      rectangle: 'icon-fi-rr-rectangle-horizontal',
-      select: 'icon-fi-rr-cursor',
-      text: 'icon-fi-rr-text',
-      triangle: 'icon-fi-rr-pyramid',
+      brush: 'icon-brush_FILL0_wght400_GRAD0_opsz48',
+      circle: 'icon-circle_FILL0_wght400_GRAD0_opsz48',
+      eraser: 'icon-backspace_FILL0_wght400_GRAD0_opsz48',
+      line: 'icon-remove_FILL0_wght400_GRAD0_opsz48',
+      rectangle: 'icon-crop_landscape_FILL0_wght400_GRAD0_opsz48',
+      select: 'icon-ads_click_FILL0_wght400_GRAD0_opsz48',
+      text: 'icon-title_FILL0_wght400_GRAD0_opsz48',
+      triangle: 'icon-change_history_FILL0_wght400_GRAD0_opsz48',
     };
     // if (['eraser', 'select'].indexOf(this.selectedTool) > -1) {
     //   return;

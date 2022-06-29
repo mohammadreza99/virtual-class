@@ -1,7 +1,7 @@
 <ng-content></ng-content>
 <div class="screen-wrapper" [style.backgroundColor]="hasVideo() ? '#1f1f1f' :  getColor()"
      [class.is-talking]="isTalking">
-  <ng-button appearance="outlined" class="btn-fullscreen" icon="icon-fullscreen"
+  <ng-button appearance="outlined" class="btn-fullscreen" icon="icon-fullscreen_FILL0_wght400_GRAD0_opsz48"
              (click)="toggleFullScreen()"></ng-button>
   <video preload="none" #videoElem autoplay muted playsinline [hidden]="!hasVideo()"></video>
   <ng-container *ngIf="user">
@@ -13,7 +13,7 @@
       {{user.first_name + ' ' + user.last_name}}
     </div>
     <span class="hand-raise" *ngIf="user.raise_hand">
-      <i class="icon-hand-raise shadow-sm" [class.bg-success]="activateRaiseHand"></i>
+      <i class="icon-back_hand_FILL0_wght400_GRAD0_opsz48 shadow-sm" [class.bg-success]="activateRaiseHand"></i>
     </span>
   </ng-container>
 </div>

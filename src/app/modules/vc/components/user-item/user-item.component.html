@@ -7,31 +7,31 @@
     </div>
   </div>
   <ng-container *ngPermission="'Viewer'">
-    <i class="icon-hand-raise" [class.text-success]="raiseHandConfirmed" *ngIf="user.raise_hand && raiseHand"></i>
+    <i class="icon-back_hand_FILL0_wght400_GRAD0_opsz48" [class.text-success]="raiseHandConfirmed" *ngIf="user.raise_hand && raiseHand"></i>
   </ng-container>
   <ng-container *ngPermission="'Admin'">
     <ng-container *ngIf="enableActions && user.id != currentUser.id">
       <div class="raise-hand text-center" *ngIf="raiseHand">
         <ng-container *ngIf="!raiseHandConfirmed">
-          <ng-button-async icon="icon-check" class="ml-1" (clickAsync)="confirmRaiseHand($event)"></ng-button-async>
-          <ng-button-async icon="icon-close" (clickAsync)="rejectRaiseHand($event,false)"></ng-button-async>
+          <ng-button-async icon="icon-done_FILL0_wght400_GRAD0_opsz48" class="ml-1" (clickAsync)="confirmRaiseHand($event)"></ng-button-async>
+          <ng-button-async icon="icon-close_FILL0_wght400_GRAD0_opsz48" (clickAsync)="rejectRaiseHand($event,false)"></ng-button-async>
         </ng-container>
         <ng-button-async class="ml-1" color="danger" (clickAsync)="rejectRaiseHand($event,true)"
                          [label]="'room.endAccess' | translate"
                          *ngIf="raiseHandConfirmed">
         </ng-button-async>
-        <ng-button-async icon="icon-close" *ngIf="raiseHandConfirmed" class="ml-1"
+        <ng-button-async icon="icon-close_FILL0_wght400_GRAD0_opsz48" *ngIf="raiseHandConfirmed" class="ml-1"
                          (clickAsync)="rejectRaiseHand($event,false)"></ng-button-async>
       </div>
       <div class="actions" *ngIf="!raiseHand && !user.kicked">
         <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm"
-                         [icon]="user.muted_video ? 'icon-camera-off' : 'icon-camera'"
+                         [icon]="user.muted_video ? 'icon-videocam_off_FILL0_wght400_GRAD0_opsz48' : 'icon-videocam_FILL0_wght400_GRAD0_opsz48'"
                          (clickAsync)="muteUserCamera($event)">
         </ng-button-async>
-        <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm" [icon]="user.muted ? 'icon-mic-off' : 'icon-mic'"
+        <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm" [icon]="user.muted ? 'icon-mic_off_FILL0_wght400_GRAD0_opsz48' : 'icon-mic_FILL0_wght400_GRAD0_opsz48'"
                          (clickAsync)="muteUser($event)">
         </ng-button-async>
-        <ng-button size="sm" icon="icon-more" (click)="actions.toggle($event)"></ng-button>
+        <ng-button size="sm" icon="icon-more_horiz_FILL0_wght400_GRAD0_opsz48" (click)="actions.toggle($event)"></ng-button>
 
         <p-overlayPanel baseZIndex="2000" #actions styleClass="actions {{fa ? 'rtl' : null}}">
           <ul class="list-unstyled p-0 m-0">
@@ -40,15 +40,15 @@
             <!--        <span>{{'room.upgradeRole' | translate}}</span>-->
             <!--      </li>-->
             <li (click)="changeAvatar()">
-              <i class="icon-info"></i>
+              <i class="icon-info_FILL0_wght400_GRAD0_opsz48"></i>
               <span>{{'changeAvatar' | translate}}</span>
             </li>
             <li (click)="showStatus($event,actions,userStatus,actionsButton)">
-              <i class="icon-info"></i>
+              <i class="icon-info_FILL0_wght400_GRAD0_opsz48"></i>
               <span>{{'room.userStatus' | translate}}</span>
             </li>
             <li (click)="kickUser(actions)" *ngIf="user.role != 'Admin'">
-              <i class="icon-remove-user"></i>
+              <i class="icon-delete_FILL0_wght400_GRAD0_opsz48"></i>
               <span>{{'room.kickUser' | translate}}</span>
             </li>
           </ul>

@@ -8,7 +8,7 @@
                      (onKeyup)="filterGroupUsers($event)"></ng-input-text>
     </div>
     <div class="col-4 col-lg-1 mb-4">
-      <ng-button iconPos="right" icon="icon-add" [full]="true" [label]="'add' | translate"
+      <ng-button iconPos="right" icon="icon-add_FILL1_wght400_GRAD0_opsz48" [full]="true" [label]="'add' | translate"
                  (click)="showAddUserModal()"></ng-button>
     </div>
     <div class="col-12">
@@ -19,7 +19,7 @@
             <td>{{item.email}}</td>
             <td>{{item.role.toLowerCase() | translate}}</td>
             <td>
-              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-delete"
+              <ng-button class="mx-1" *ngIf="!item.editing" icon="icon-delete_FILL0_wght400_GRAD0_opsz48"
                          (click)="removeUser(item)" appearance="text" color="danger"></ng-button>
             </td>
           </tr>

@@ -1,17 +1,17 @@
 <div class="participants">
   <div class="participants-header py-4">
     <div class="header-title">
-      <i class="icon-participant mx-2"></i>
+      <i class="icon-group_FILL0_wght400_GRAD0_opsz48 mx-2"></i>
       <div>{{'room.participantsCount' | translate:{value: allUsers.length} }}</div>
     </div>
     <div class="actions">
-      <i class="icon-close mx-2" (click)="closeSidebar.emit()"></i>
+      <i class="icon-close_FILL0_wght400_GRAD0_opsz48 mx-2" (click)="closeSidebar.emit()"></i>
     </div>
   </div>
   <div class="participants-actions py-4 px-3" *ngPermission="'Admin'">
     <div class="action-item mb-3">
       <div class="label">
-        <i class="icon-mic"></i>
+        <i class="icon-mic_FILL0_wght400_GRAD0_opsz48"></i>
         <span class="mx-2">{{'room.everyOnesVoice' | translate}}</span>
       </div>
       <div class="checkbox">
@@ -22,7 +22,7 @@
     </div>
     <div class="action-item">
       <div class="label">
-        <i class="icon-camera"></i>
+        <i class="icon-videocam_FILL0_wght400_GRAD0_opsz48"></i>
         <span class="mx-2">{{'room.everyOnesVideo' | translate}}</span>
       </div>
       <div class="checkbox">
@@ -33,7 +33,7 @@
     </div>
   </div>
   <div class="search-box px-3 p-4">
-    <ng-input-text inputSize="md" [rtl]="fa" icon="icon-search" [(ngModel)]="searchText"
+    <ng-input-text inputSize="md" [rtl]="fa" icon="icon-search_FILL0_wght400_GRAD0_opsz48" [(ngModel)]="searchText"
                    [iconPos]="fa ? 'left' : 'right'"
                    [placeholder]="'room.searchParticipants' | translate">
     </ng-input-text>

@@ -69,22 +69,22 @@ export class NavbarMenuComponent
       {
         label: this.instant('userList'),
         routerLink: '/user-list',
-        icon: 'icon-user-groups'
+        icon: 'icon-groups_FILL0_wght400_GRAD0_opsz48'
       },
       {
         label: this.instant('groupList'),
         routerLink: 'groups',
-        icon: 'icon-user-groups'
+        icon: 'icon-groups_FILL0_wght400_GRAD0_opsz48'
       },
       {
         label: this.instant('roomList'),
         routerLink: 'rooms',
-        icon: 'icon-camera'
+        icon: 'icon-videocam_FILL0_wght400_GRAD0_opsz48'
       },
       {
         label: this.instant('profile'),
         routerLink: 'profile',
-        icon: 'icon-profile'
+        icon: 'icon-person_FILL0_wght400_GRAD0_opsz48'
       }
     ];
     if (this.user.role == 'User') {
@@ -92,12 +92,12 @@ export class NavbarMenuComponent
         {
           label: this.instant('roomList'),
           routerLink: 'rooms',
-          icon: 'icon-camera'
+          icon: 'icon-videocam_FILL0_wght400_GRAD0_opsz48'
         },
         {
           label: this.instant('profile'),
           routerLink: 'profile',
-          icon: 'icon-profile'
+          icon: 'icon-person_FILL0_wght400_GRAD0_opsz48'
         }
       ];
     } else {

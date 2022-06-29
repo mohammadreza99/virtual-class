@@ -18,13 +18,13 @@
             </td>
             <td class="d-flex">
               <ng-button [pTooltip]="'editGroup' | translate" tooltipPosition="bottom" appearance="outlined" class="ml-2"
-                         icon="icon-edit" (click)="editGroup(item,index)"></ng-button>
+                         icon="icon-edit_FILL0_wght400_GRAD0_opsz48" (click)="editGroup(item,index)"></ng-button>
               <ng-button [pTooltip]="'deleteGroup' | translate" tooltipPosition="bottom" appearance="outlined"
                          class="ml-2" color="danger"
-                         (click)="deleteGroup(item)" icon="icon-delete"></ng-button>
+                         (click)="deleteGroup(item)" icon="icon-delete_FILL0_wght400_GRAD0_opsz48"></ng-button>
               <ng-button [pTooltip]="'memberManagement' | translate" tooltipPosition="bottom" appearance="outlined"
 
-                         icon="icon-user-groups" [routerLink]="['/groups/setting',item.id]"></ng-button>
+                         icon="icon-groups_FILL0_wght400_GRAD0_opsz48" [routerLink]="['/groups/setting',item.id]"></ng-button>
             </td>
           </tr>
         </ng-template>

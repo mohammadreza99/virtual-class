@@ -1,6 +1,6 @@
 <div class="pinned-container d-flex align-items-center justify-content-between py-3 rounded bg-secondary shadow"
      *ngIf="pinnedMessage">
-  <i class="icon-pin text-warning mx-2"></i>
+  <i class="icon-push_pin_FILL0_wght400_GRAD0_opsz48 text-warning mx-2"></i>
   <div class="message-info flex-grow-1">
     <small
       class="d-block font-medium">{{pinnedMessage.sender_first_name + ' ' + pinnedMessage.sender_last_name}}</small>
@@ -37,7 +37,7 @@
   <div class="chat-inputarea">
     <ng-container *ngIf="enableChat">
       <ng-button (click)="toggleEmojiPicker()"
-                 icon="icon-emoji_happy"></ng-button>
+                 icon="icon-sentiment_satisfied_FILL0_wght400_GRAD0_opsz48"></ng-button>
       <ng-input-text [rtl]="fa" (keyup.enter)="sendMessageClick(null)" inputSize="md"
                      class="mx-2 flex-grow-1"
                      [placeholder]="'room.sendAMessage' | translate"

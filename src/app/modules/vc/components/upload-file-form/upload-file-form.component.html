@@ -4,7 +4,7 @@
      (click)="!selectedFile ? uploader.click() : null">
   <p-progressSpinner [style]="{width: '50px', height: '50px'}" *ngIf="uploadProgress"></p-progressSpinner>
   <ng-container *ngIf="!uploadProgress">
-    <i class="icon-add-File"></i>
+    <i class="icon-description_FILL0_wght400_GRAD0_opsz48"></i>
     <small class="d-block" *ngIf="!selectedFile">{{'noFileSelected' | translate}}</small>
     <a class="text-primary font-bold" *ngIf="!selectedFile">{{'chooseFile' | translate}}</a>
     <small class="d-block" *ngIf="selectedFile">{{selectedFile.name | translate}}</small>
@@ -15,7 +15,7 @@
 
 <div class="alert-box d-flex align-items-center rounded p-1"
      [ngClass]="{'text-white bg-danger': invalidSize,'text-muted':!invalidSize}">
-  <i class="icon-info-Circle"></i>
+  <i class="icon-info_FILL0_wght400_GRAD0_opsz48"></i>
   <small class="mr-2">{{'fileSizeLimit' | translate:{
     min: (minFileSize | fileSize),
     max: (maxFileSize | fileSize)
@@ -23,7 +23,7 @@
 </div>
 <div class="alert-box d-flex align-items-center rounded p-1"
      [ngClass]="{'text-white bg-danger': invalidType,'text-muted':!invalidType}">
-  <i class="icon-info-Circle"></i>
+  <i class="icon-info_FILL0_wght400_GRAD0_opsz48"></i>
   <small class="mr-2">{{'fileTypeLimit' | translate:{value: validFileTypes} }}</small>
 </div>
 
@@ -44,7 +44,7 @@
         </div>
         <div class="d-flex align-items-center">
           <ng-button (click)="deletePresentation(presentation,$event)" appearance="text" color="danger" [rounded]="true"
-                     icon="icon-delete"></ng-button>
+                     icon="icon-delete_FILL0_wght400_GRAD0_opsz48"></ng-button>
           <span class="circle"></span>
         </div>
       </div>

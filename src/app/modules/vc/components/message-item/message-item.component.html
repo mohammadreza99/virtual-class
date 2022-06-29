@@ -15,29 +15,29 @@
   <div class="reply">
     <ng-avatar [user]="sender"></ng-avatar>
     <ng-button *ngIf="!showMoreOptions" appearance="text" (onClick)="onReply()" class="mt-2" [rounded]="true"
-               icon="icon-forward"></ng-button>
+               icon="icon-reply_FILL0_wght400_GRAD0_opsz48"></ng-button>
     <ng-button *ngIf="showMoreOptions" appearance="text" (onClick)="messageActions.toggle($event)" class="mt-2"
                [rounded]="true"
-               icon="icon-more"></ng-button>
+               icon="icon-more_horiz_FILL0_wght400_GRAD0_opsz48"></ng-button>
   </div>
 </div>
 
 <p-overlayPanel [baseZIndex]="2000" #messageActions styleClass="actions {{fa ? 'rtl' : null}}">
   <ul class="list-unstyled p-0 m-0">
     <li (click)="onReply(messageActions)">
-      <i class="icon-forward"></i>
+      <i class="icon-reply_FILL0_wght400_GRAD0_opsz48"></i>
       <span>{{'room.reply' | translate}}</span>
     </li>
     <li (click)="onDelete(messageActions)">
-      <i class="icon-delete"></i>
+      <i class="icon-delete_FILL0_wght400_GRAD0_opsz48"></i>
       <span>{{'room.deleteMessage' | translate}}</span>
     </li>
     <li (click)="muteUser(messageActions)" *ngIf="sender.id != currentUser.id">
-      <i class="icon-view-speaker"></i>
+      <i class="icon-account_box_FILL0_wght400_GRAD0_opsz48"></i>
       <span>{{(sender.user_message_state ? 'room.unmuteUser' : 'room.muteUser') | translate}}</span>
     </li>
     <li (click)="onPin(messageActions)">
-      <i class="icon-pin"></i>
+      <i class="icon-push_pin_FILL0_wght400_GRAD0_opsz48"></i>
       <span>{{'room.pinMessage' | translate}}</span>
     </li>
   </ul>

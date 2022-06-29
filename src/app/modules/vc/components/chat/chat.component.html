@@ -1,20 +1,20 @@
 <div class="chat">
   <div class="chat-header py-4">
     <div class="header-title">
-      <i class="icon-chat mx-2"></i>
+      <i class="icon-sms_FILL0_wght400_GRAD0_opsz48 mx-2"></i>
       <div>{{'room.messages' | translate }}</div>
     </div>
     <div class="d-flex align-items-center">
       <i class="pi pi-bars mx-2" (click)="chatActions.toggle($event)" *ngPermission="'Admin'"></i>
-      <i class="icon-close mx-2" (click)="closeSidebar.emit()"></i>
+      <i class="icon-close_FILL0_wght400_GRAD0_opsz48 mx-2" (click)="closeSidebar.emit()"></i>
     </div>
   </div>
   <p-tabView (activeIndexChange)="onChangeTab($event)"
              [ngClass]="{'unread-public': unreadPublicMessage,'unread-private':unreadPrivateMessage}">
-    <p-tabPanel [header]="'room.publicChat' | translate" leftIcon="icon-user-groups" headerStyleClass="public-header">
+    <p-tabPanel [header]="'room.publicChat' | translate" leftIcon="icon-groups_FILL0_wght400_GRAD0_opsz48" headerStyleClass="public-header">
       <ng-public-chat></ng-public-chat>
     </p-tabPanel>
-    <p-tabPanel [header]="'room.privateChat' | translate" leftIcon="icon-user-groups" headerStyleClass="private-header">
+    <p-tabPanel [header]="'room.privateChat' | translate" leftIcon="icon-groups_FILL0_wght400_GRAD0_opsz48" headerStyleClass="private-header">
       <ng-private-chat></ng-private-chat>
     </p-tabPanel>
   </p-tabView>
@@ -23,11 +23,11 @@
 <p-overlayPanel [baseZIndex]="2000" #chatActions styleClass="actions {{fa ? 'rtl' : null}}">
   <ul class="list-unstyled p-0 m-0">
     <li (click)="onClearChatClick(chatActions)">
-      <i class="icon-view-speaker"></i>
+      <i class="icon-account_box_FILL0_wght400_GRAD0_opsz48"></i>
       <span>{{'room.clearAllMessages' | translate}}</span>
     </li>
     <li (click)="onSaveChatClick()">
-      <i class="icon-view-speaker"></i>
+      <i class="icon-account_box_FILL0_wght400_GRAD0_opsz48"></i>
       <span>{{'room.saveChat' | translate}}</span>
     </li>
     <li (click)="togglePublicChatActivation(chatActions)">
