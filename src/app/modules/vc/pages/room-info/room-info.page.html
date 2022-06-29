@@ -66,7 +66,7 @@
               <p *ngIf="speakerTestMessage">{{speakerTestMessage | translate}}</p>
               <ng-button *ngIf="!speakerTestMessage" (onClick)="playAudio()" appearance="text"
                          [disabled]="!speakerTestAudioElem.paused"
-                         [icon]="!speakerTestAudioElem.paused ? 'pi pi-spinner pi-spin': 'icon-play'"></ng-button>
+                         [icon]="!speakerTestAudioElem.paused ? 'pi pi-spinner pi-spin': 'icon-play_arrow_FILL0_wght400_GRAD0_opsz48'"></ng-button>
             </div>
             <ng-dropdown *ngIf="!speakerTestMessage" class="mt-2 d-block" [disabled]="sinkIsNotSupported()"
                          (onChange)="onChangeAudioOutput($event)"

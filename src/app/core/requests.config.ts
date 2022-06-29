@@ -74,7 +74,7 @@ export const requests = [
   {method: 'uploadUserAvatar', loading: true, success: true, failure: true},
   {method: 'deleteUserAvatar', loading: true, success: true, failure: true},
   {method: 'selectRandomUser', loading: false, success: true, failure: true},
-  {method: 'getPublicMessages', loading: false, success: false, failure: true},
+  {method: 'getPublicMessages', loading: true, success: false, failure: true},
   {method: 'roomStatus', loading: false, success: false, failure: true},
   {method: 'joinSubscriber', loading: false, success: false, failure: true},
   {method: 'startSubscription', loading: false, success: false, failure: true},
