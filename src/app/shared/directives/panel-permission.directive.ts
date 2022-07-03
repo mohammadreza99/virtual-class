@@ -1,5 +1,5 @@
 import {Directive, ElementRef, Input, OnInit, TemplateRef, ViewContainerRef,} from '@angular/core';
-import {AuthService, SessionService} from '@core/http';
+import {AuthService} from '@core/http';
 
 @Directive({
   selector: '[ngPanelPermission]',

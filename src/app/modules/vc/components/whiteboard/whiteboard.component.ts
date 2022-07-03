@@ -30,7 +30,7 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
   selectedOption: KonvaOptions = {
     color: '#000000',
     thickness: 4,
-    textSize: 16
+    textSize: 32
   };
   whiteboardOverlayMode: OverlayMode;
   availableThickness = availableThicknesses;

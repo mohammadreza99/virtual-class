@@ -29,7 +29,7 @@ export class KonvaService {
   private selectedOptions: KonvaOptions = {
     thickness: 4,
     color: '#000000',
-    textSize: 16
+    textSize: 32
   };
   private slides: CanvasItem[] = [];
   private currentSlide: CanvasItem = {
@@ -271,30 +271,24 @@ export class KonvaService {
 
   private text(pos: any) {
     const text = new Text({
-      text: '',
+      text: 'Sample Text',
       x: pos.x,
       y: pos.y,
       fill: this.selectedOptions.color,
       fontSize: this.selectedOptions.textSize,
       draggable: false,
-      width: 200,
+      width: 400,
     });
 
     const tr = this.addTransformer(text, true, ['middle-left', 'middle-right']);
 
     const appendTextarea = () => {
-      const textPosition = text.absolutePosition();
-      const areaPosition = {
-        x: `calc(70px + 1rem + ${textPosition.x}px)`,
-        y: `calc(70px + 1rem + 48px + ${textPosition.y}px)`,
-        // 70px => top navbar height
-        // 1rem => container padding top
-      };
+      const textPosition = text.getPosition();
       const textarea = this._document.createElement('textarea');
       let transform = '';
       text.hide();
       tr.show();
-      this._document.body.appendChild(textarea);
+      this.boardContainerEl.appendChild(textarea);
       textarea.style.position = 'absolute';
       textarea.style.border = 'none';
       textarea.style.overflow = 'hidden';
@@ -303,8 +297,8 @@ export class KonvaService {
       textarea.style.resize = 'none';
       textarea.style.transformOrigin = 'left top';
       textarea.value = text.text();
-      textarea.style.top = areaPosition.y;
-      textarea.style.left = areaPosition.x;
+      textarea.style.top = `${textPosition.y}px`;
+      textarea.style.left = `${textPosition.x}px`;
       textarea.style.width = text.width() - text.padding() * 2 + 'px';
       textarea.style.height = text.height() - text.padding() * 2 + 5 + 'px';
       textarea.style.fontSize = text.fontSize() + 'px';

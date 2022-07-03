@@ -13,7 +13,7 @@ export class VideoLinkFormComponent implements OnInit {
   }
 
   form = new FormGroup({
-    link: new FormControl(null, [Validators.required, Validators.pattern(/^https?:\/\/.*\/.*\.(mp4|avi|wmv|mov|mkv|flv|webm)\??.*$/gmi)])
+    link: new FormControl(null, [Validators.required, Validators.pattern(/(https?:\/\/.*\.(?:png|jpg|mp4))/i)])
   });
 
   ngOnInit(): void {

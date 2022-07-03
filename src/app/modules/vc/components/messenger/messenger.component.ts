@@ -229,4 +229,19 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
   unpinPublicMessage() {
     this.sessionService.unpinPublicMessage().toPromise();
   }
+
+  onInputChange(event: any) {
+    this.messageText = event.target.value;
+    event.target.style.height = '44px';
+    event.target.style.height = (event.target.scrollHeight + 2) + 'px';
+  }
+
+  onKeydown(event: any) {
+    if (event.code == 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendMessageClick(null);
+      event.target.value = '';
+    }
+    console.log(event);
+  }
 }

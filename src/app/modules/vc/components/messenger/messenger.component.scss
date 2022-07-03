@@ -1,4 +1,4 @@
-:host {
+:host ::ng-deep {
   display: flex;
   flex-direction: column;
 
@@ -47,7 +47,10 @@
       padding: 1rem;
       background: #5F6069;
 
-      input {
+      input,
+      textarea {
+        max-height: 100px;
+        resize: none;
         background-color: transparent;
         color: #ffffff;
         border-color: #E0E0E0 !important;

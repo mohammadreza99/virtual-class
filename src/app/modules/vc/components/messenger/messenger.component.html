@@ -38,10 +38,9 @@
     <ng-container *ngIf="enableChat">
       <ng-button (click)="toggleEmojiPicker()"
                  icon="icon-sentiment_satisfied_FILL0_wght400_GRAD0_opsz48"></ng-button>
-      <ng-input-text [rtl]="fa" (keyup.enter)="sendMessageClick(null)" inputSize="md"
-                     class="mx-2 flex-grow-1"
-                     [placeholder]="'room.sendAMessage' | translate"
-                     [(ngModel)]="messageText"></ng-input-text>
+      <ng-input-textarea rows="1" [rtl]="fa" (onKeydown)="onKeydown($event)" class="mx-2 flex-grow-1"
+                         [placeholder]="'room.sendAMessage' | translate"
+                         (onInput)="onInputChange($event)"></ng-input-textarea>
       <ng-button-async appearance="outlined" color="success" newColor="success" [rounded]="true"
                        icon="pi pi-chevron-left"
                        (clickAsync)="sendMessageClick($event)"></ng-button-async>
