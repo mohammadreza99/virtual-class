@@ -126,16 +126,13 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
       }
       return;
     }
-    let result;
     if (this.type == 'public') {
-      result = await this.sessionService.sendPublicMessage(this.messageText, this.replyMessage?.message?.id).toPromise();
+      await this.sessionService.sendPublicMessage(this.messageText, this.replyMessage?.message?.id).toPromise();
     } else if (this.type == 'private') {
-      result = await this.sessionService.sendPVMessage(this.currentPVId, this.messageText, this.replyMessage?.message?.id).toPromise();
+      await this.sessionService.sendPVMessage(this.currentPVId, this.messageText, this.replyMessage?.message?.id).toPromise();
     }
-    if (result.status == 'OK') {
-      if (callback) {
-        callback();
-      }
+    if (callback) {
+      callback();
     }
     this.messageText = '';
     this.replyMessage = null;
@@ -208,7 +205,7 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
   }
 
   focusInput() {
-    this.el.nativeElement.querySelector('ng-input-text input').focus();
+    this.textareaEl.focus();
   }
 
   addEmoji(event) {
@@ -232,16 +229,19 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
 
   onInputChange(event: any) {
     this.messageText = event.target.value;
-    event.target.style.height = '44px';
-    event.target.style.height = (event.target.scrollHeight + 2) + 'px';
+    this.textareaEl.style.height = (this.textareaEl.scrollHeight + 2) + 'px';
   }
 
   onKeydown(event: any) {
-    if (event.code == 'Enter' && !event.shiftKey) {
+    if ((event.code == 'Enter' || event.code == 'NumpadEnter') && !event.shiftKey) {
       event.preventDefault();
       this.sendMessageClick(null);
-      event.target.value = '';
+      this.textareaEl.style.height = '44px';
+      this.textareaEl.value = '';
     }
-    console.log(event);
+  }
+
+  get textareaEl() {
+    return this.el.nativeElement.querySelector('ng-input-textarea textarea');
   }
 }

@@ -40,11 +40,9 @@ export class RegisterPage extends LanguageChecker {
   async onSubmit(callback: any) {
     try {
       const registerData = {...this.step1Form.value, ...this.step2Form.value, ...this.step3Form.value};
-      const {status} = await this.authService.register(registerData).toPromise();
+      const res = await this.authService.register(registerData).toPromise();
+      this.router.navigate(['/auth/login']);
       callback();
-      if (status === 'OK') {
-        this.router.navigate(['/auth/login']);
-      }
     } catch (e) {
       callback();
     }

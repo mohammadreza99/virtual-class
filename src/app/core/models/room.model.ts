@@ -14,6 +14,7 @@ export interface Room {
   online_users?: number;
   session_duration?: number;
   public_messages?: boolean;
+  private_messages?: boolean;
   active_question?: number;
   active_poll?: number;
   presentation?: any;

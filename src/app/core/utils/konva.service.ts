@@ -1,6 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
 import {Layer} from 'konva/lib/Layer';
-import {Image as KonvaImage} from 'konva/lib/shapes/Image';
 import {Line} from 'konva/lib/shapes/Line';
 import {Text} from 'konva/lib/shapes/Text';
 import {Transformer} from 'konva/lib/shapes/Transformer';
@@ -9,7 +8,7 @@ import {Rect} from 'konva/lib/shapes/Rect';
 import {Circle} from 'konva/lib/shapes/Circle';
 import {RegularPolygon} from 'konva/lib/shapes/RegularPolygon';
 import {jsPDF} from 'jspdf';
-import {KonvaOptions, KonvaTools, CanvasItem, StageEvents, WhiteboardSlide} from '@core/models';
+import {CanvasItem, KonvaOptions, KonvaTools, StageEvents, WhiteboardSlide} from '@core/models';
 import {Stage} from 'konva/lib/Stage';
 import Konva from 'konva';
 import {KonvaEventObject} from 'konva/lib/Node';
@@ -29,7 +28,7 @@ export class KonvaService {
   private selectedOptions: KonvaOptions = {
     thickness: 4,
     color: '#000000',
-    textSize: 32
+    textSize: 24
   };
   private slides: CanvasItem[] = [];
   private currentSlide: CanvasItem = {
@@ -69,6 +68,7 @@ export class KonvaService {
     let stage: Stage;
     const layer = new Layer();
     if (data) {
+      layer.destroyChildren();
       stage = Konva.Node.create(data, id);
     } else {
       stage = this.createStage(id);
@@ -149,19 +149,21 @@ export class KonvaService {
     });
 
     stage.on('mouseup touchend', () => {
-      this.stageChangeSubject.next({event: 'updateBoard', data: stage.toJSON()});
       isPaint = false;
+      this.stageChangeSubject.next({event: 'updateBoard', data: stage.toJSON()});
     });
 
-    stage.on('mouseleave', () => {
-      if (isPaint) {
-        isPaint = false;
-        this.stageChangeSubject.next({event: 'updateBoard', data: stage.toJSON()});
-      }
-    });
+    // stage.on('mouseleave', () => {
+    //   if (isPaint) {
+    //     isPaint = false;
+    //     this.stageChangeSubject.next({event: 'updateBoard', data: stage.toJSON()});
+    //   }
+    // });
 
     this.fitStageIntoParentContainer();
-
+    stage.container().getRootNode().addEventListener('mouseup', () => {
+      isPaint = false;
+    });
     window.addEventListener('resize', () => {
       this.fitStageIntoParentContainer();
     });
@@ -275,7 +277,7 @@ export class KonvaService {
       x: pos.x,
       y: pos.y,
       fill: this.selectedOptions.color,
-      fontSize: this.selectedOptions.textSize,
+      fontSize: this.selectedOptions.textSize * 3,
       draggable: false,
       width: 400,
     });
@@ -349,16 +351,18 @@ export class KonvaService {
       });
 
       const removeTextarea = () => {
-        textarea.parentNode?.removeChild(textarea);
-        this.currentSlide.stage.off('click', handleOutsideClick);
+        this.boardParentEl.querySelector('textarea').remove();
+        this.currentSlide.stage.off('click tap', null);
         text.show();
         tr.hide();
         tr.forceUpdate();
       };
 
       const handleOutsideClick = () => {
-        text.text(textarea.value);
-        removeTextarea();
+        if (this.boardParentEl.querySelector('textarea')) {
+          text.text(textarea.value);
+          removeTextarea();
+        }
       };
 
       this.currentSlide.stage.on('click tap', (e: any) => {
@@ -429,6 +433,8 @@ export class KonvaService {
       enabledAnchors: anchors,
       // ignore stroke in size calculations
       ignoreStroke: true,
+      anchorSize: 60,
+      anchorFill: 'lightblue',
       padding: 5,
       name: 'transformer'
     });
@@ -490,6 +496,8 @@ export class KonvaService {
   }
 
   clearBoard() {
+    this.boardParentEl.querySelector('textarea')?.remove();
+    this.currentSlide.stage.off('click tap');
     this.currentSlide.layer.destroyChildren();
     this.currentSlide.layer.draw();
     this.stageChangeSubject.next({event: 'updateBoard', data: this.currentSlide.stage.toJSON()});

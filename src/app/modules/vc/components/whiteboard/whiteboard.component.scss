@@ -18,9 +18,6 @@
       width: calc(100% - 140px);
       height: calc(100% - 140px);
       margin: auto;
-      //display: flex;
-      //align-items: center;
-      //justify-content: center;
 
       .konva-wrapper {
         position: relative;
@@ -28,16 +25,6 @@
         width: 3840px;
         height: 2160px;
         transform-origin: top right;
-
-        .konvajs-content {
-          //width: 100% !important
-        }
-
-        &, & > div {
-          //  width: 100%;
-          //  height: 100%;
-          //overflow: hidden;
-        }
       }
     }
 

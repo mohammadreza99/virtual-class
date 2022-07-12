@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core';
 import {UploadAvatarComponent} from '@shared/components/upload-avatar/upload-avatar.component';
 import {AuthService, SessionService} from '@core/http';
 import {DialogService} from 'primeng/dynamicdialog';
@@ -10,11 +10,12 @@ import {UpdateViewService} from '@core/utils';
   templateUrl: './avatar.component.html',
   styleUrls: ['./avatar.component.scss']
 })
-export class AvatarComponent extends LanguageChecker implements OnInit {
+export class AvatarComponent extends LanguageChecker implements OnInit, AfterViewInit {
 
   constructor(private sessionService: SessionService,
               private dialogService: DialogService,
               private updateViewService: UpdateViewService,
+              private el: ElementRef,
               private authService: AuthService) {
     super();
   }
@@ -39,6 +40,16 @@ export class AvatarComponent extends LanguageChecker implements OnInit {
           break;
       }
     });
+  }
+
+  ngAfterViewInit() {
+    const imageEl = this.el.nativeElement.querySelector('img');
+    if (imageEl) {
+      imageEl.onerror = (event) => {
+        event.target.onerror = null;
+        event.target.src = 'assets/images/placeholder.jpg';
+      };
+    }
   }
 
   getColor() {

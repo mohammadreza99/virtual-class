@@ -261,14 +261,14 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
       setTimeout(() => {
         this.updateViewService.setViewEvent({event: 'openPresentation', data: this.currentRoom.presentation});
       });
-    } else if (this.currentRoom.board) {
-      const res = await this.sessionService.getBoard(this.currentRoom.board.id).toPromise();
-      if (res.status == 'OK') {
-        this.updateViewService.setViewEvent({event: 'openBoard', data: res.data.board});
+    }
+    if (this.currentRoom.board) {
+      setTimeout(() => {
+        this.updateViewService.setViewEvent({event: 'openBoard', data: this.currentRoom.board});
         this.currentRoom.board.users.forEach(id => {
           this.updateViewService.setViewEvent({event: 'setBoardPermission', data: {user_id: id}});
         });
-      }
+      });
     }
     this.updateViewService.setViewEvent({
       event: 'messageMutedUser',
@@ -277,6 +277,10 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     this.updateViewService.setViewEvent({
       event: 'publicChatState',
       data: {value: this.currentRoom.public_messages}
+    });
+    this.updateViewService.setViewEvent({
+      event: 'privateChatState',
+      data: {value: this.currentRoom.private_messages}
     });
   }
 
@@ -507,12 +511,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   async exportSessionAttendance(overlay: OverlayPanel) {
     const result = await this.sessionService.exportSessionAttendance().toPromise();
     if (result.status == 'OK') {
-      const a = document.createElement('a');
-      a.href = result.data.url;
-      a.download = result.data.url.split('/').pop();
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      this.sessionService.downloadLink(result.data.url);
     }
     overlay.hide();
   }

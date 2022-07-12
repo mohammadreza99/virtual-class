@@ -1,4 +1,6 @@
-<p-avatar shape="circle" [size]="size"
+<p-avatar shape="circle"
+          #avatar
+          [size]="size"
           [class.editable]="editable"
           (click)="changeAvatar()"
           [icon]="loading ? 'pi pi-spinner pi-spin' : null"

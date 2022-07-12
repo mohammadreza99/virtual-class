@@ -89,6 +89,11 @@ export class VideoPresentationComponent implements AfterViewInit {
     this.sessionService.changePresentationState(this.presentationData.presentation_id, 'Close').toPromise();
   }
 
+  downloadFile() {
+    this.sessionService.downloadLink(this.presentationData.file_url);
+  }
+
+
   initVideoPlayerListeners() {
     const videoContainer = this.elementRef.nativeElement.querySelector('.wrapper');
     const video = videoContainer.querySelector('video');

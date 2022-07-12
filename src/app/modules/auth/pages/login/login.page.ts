@@ -28,13 +28,11 @@ export class LoginPage extends LanguageChecker implements OnInit {
       if (this.form.valid) {
         const companyId = this.route.snapshot.queryParamMap.get('companyId');
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-        const {data} = await this.authService.login({...this.form.value, company_id: companyId || 8}).toPromise();
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          this.router.navigateByUrl(returnUrl || '/rooms');
-        }
+        const res = await this.authService.login({...this.form.value, company_id: companyId || 8}).toPromise();
+        callback();
+        localStorage.setItem('token', res.data.token);
+        this.router.navigateByUrl(returnUrl || '/rooms');
       }
-      callback();
     } catch (e) {
       callback();
     }

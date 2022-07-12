@@ -59,7 +59,7 @@ export interface Publisher {
 }
 
 export type RoomEventType =
-  'ACK' |
+  'pong' |
   'mutePerson' |
   'muteVideo' |
   'muteVideoAll' |

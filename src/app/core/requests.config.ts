@@ -90,7 +90,7 @@ export const requests = [
   {method: 'openBoard', loading: false, success: true, failure: true},
   {method: 'closeBoard', loading: false, success: true, failure: true},
   {method: 'changeBoardSlide', loading: false, success: false, failure: true},
-  {method: 'getBoard', loading: false, success: false, failure: true},
+  {method: 'getBoard', loading: true, success: false, failure: true},
   {method: 'setBoardPermission', loading: false, success: true, failure: true},
   {method: 'removeBoardPermission', loading: false, success: true, failure: true},
   {method: 'videoAction', loading: false, success: false, failure: true},

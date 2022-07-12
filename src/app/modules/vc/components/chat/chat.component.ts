@@ -61,8 +61,12 @@ export class ChatComponent extends LanguageChecker implements OnInit {
     }
   }
 
-  onSaveChatClick() {
-    this.sessionService.saveChat().toPromise();
+  async onExportChatClick(chatActions: OverlayPanel) {
+    chatActions.hide();
+    const res = await this.sessionService.exportPublicChat().toPromise();
+    if (res.status == 'OK') {
+      this.sessionService.downloadLink(res.data.url);
+    }
   }
 
   onClearChatClick(chatActions: OverlayPanel) {

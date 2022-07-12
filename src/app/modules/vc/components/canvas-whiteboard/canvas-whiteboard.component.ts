@@ -128,13 +128,7 @@ export class CanvasWhiteboardComponent implements OnInit {
   }
 
   downloadFile() {
-    const a = document.createElement('a');
-    a.href = this.presentationData.file_url;
-    a.target = '_blank';
-    a.download = this.presentationData.file_url.split('/').pop();
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    this.sessionService.downloadLink(this.presentationData.file_url);
   }
 
 }

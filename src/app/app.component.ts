@@ -56,7 +56,7 @@ export class AppComponent extends LanguageChecker implements OnInit {
         return;
       }
       if (status == false) {
-        console.log('......NETWORK DISCONNECTED......');
+        console.log(`%cNETWORK DISCONNECTED`, `font-size:0.85rem;color: #856404;background-color: #fff3cd;border:1px solid #ffeeba; padding: 5px;border-radius: 0.25rem;`);
         this.sessionService.getMeOut(null, false);
         this.router.navigate(['/no-internet'], {queryParams: {returnUrl: this.router.url}});
       }

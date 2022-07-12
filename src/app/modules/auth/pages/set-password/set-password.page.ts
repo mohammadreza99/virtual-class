@@ -27,10 +27,9 @@ export class SetPasswordPage extends LanguageChecker implements OnInit {
     try {
       if (this.form.valid) {
         const token = this.route.snapshot.paramMap.get('token');
-        const result = await this.authService.setPassword(this.form.value.password, token).toPromise();
-        if (result.status == 'OK') {
-          this.router.navigate(['/auth/login'], {queryParams: {companyId: result.data.company_id}});
-        }
+        const res = await this.authService.setPassword(this.form.value.password, token).toPromise();
+        callback();
+        this.router.navigate(['/auth/login'], {queryParams: {companyId: res.data.company_id}});
       }
       callback();
     } catch (e) {

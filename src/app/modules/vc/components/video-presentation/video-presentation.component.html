@@ -1,5 +1,11 @@
 <div class="wrapper" (contextmenu)="onContextMenu($event)">
-  <ng-button *ngPermission="'Admin'" class="mb-3" icon="pi pi-times" color="secondary" (click)="close()"></ng-button>
+  <div class="action-buttons d-flex">
+    <ng-button *ngPermission="'Admin'" class="mr-2" icon="pi pi-times" color="secondary" (click)="close()"></ng-button>
+    <ng-button *ngIf="presentationData?.is_downloadable" class="btn-close"
+               icon="icon-download_FILL0_wght400_GRAD0_opsz48"
+               color="secondary"
+               (click)="downloadFile()"></ng-button>
+  </div>
 
   <div class="video-controls" *ngPermission="'Admin'">
     <div class="progress-bar">

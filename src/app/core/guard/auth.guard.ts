@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
     if (this.authService.hasToken()) {
       return true;
     } else {
-      if (this.router.url == 'auth/login') {
+      if (this.router.url.includes('login')) {
         return;
       }
       this.authService.logout();
@@ -38,7 +38,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
     if (this.authService.hasToken()) {
       return true;
     } else {
-      if (this.router.url == 'auth/login') {
+      if (this.router.url.includes('login')) {
         return;
       }
       this.authService.logout();

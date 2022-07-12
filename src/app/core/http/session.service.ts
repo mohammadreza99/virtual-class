@@ -281,13 +281,7 @@ export class SessionService extends ApiService {
         }
         this.updateViewService.setViewEvent({
           event: 'onTrack',
-          data: {
-            stream: event.streams[0],
-            userId: options.userId,
-            display: options.display,
-            position: options.position,
-            publishType: options.publishType,
-          }
+          data: {stream: event.streams[0], ...options}
         });
       },
       onConnect: () => {
@@ -325,16 +319,7 @@ export class SessionService extends ApiService {
           if (options.position == 'mainThumbPosition') {
             this.setMainPositionUser(options.userId);
           }
-          this.updateViewService.setViewEvent({
-            event: 'onTrack',
-            data: {
-              stream: options.stream,
-              userId: options.userId,
-              display: options.display,
-              position: options.position,
-              publishType: options.publishType,
-            }
-          });
+          this.updateViewService.setViewEvent({event: 'onTrack', data: options});
           resolve(pc);
         },
         onConnect: () => {
@@ -408,15 +393,7 @@ export class SessionService extends ApiService {
     }
     this.stopStreamTrack(myStream);
     myConnection.close();
-    this.updateViewService.setViewEvent({
-      event: 'onDisconnect',
-      data: {
-        userId: myConnection.userId,
-        display: myConnection.display,
-        position: myConnection.position,
-        publishType: myConnection.publishType,
-      }
-    });
+    this.updateViewService.setViewEvent({event: 'onDisconnect', data: myConnection});
     this.myConnection[publishType.toLowerCase()] = null;
     if (!locally) {
       const data = await this.unPublish(publishType).toPromise();
@@ -432,15 +409,7 @@ export class SessionService extends ApiService {
       const connection = this.peerConnections[index];
       connection.close();
       this.peerConnections.splice(index, 1);
-      this.updateViewService.setViewEvent({
-        event: 'onDisconnect',
-        data: {
-          userId: connection.userId,
-          publishType: connection.publishType,
-          display: connection.display,
-          position: connection.position,
-        }
-      });
+      this.updateViewService.setViewEvent({event: 'onDisconnect', data: connection});
     }
   }
 
@@ -493,13 +462,7 @@ export class SessionService extends ApiService {
     const targetPC = this.peerConnections.find(pc => pc.userId == userId);
     this.updateViewService.setViewEvent({
       event: 'onTrack',
-      data: {
-        stream: targetPC.stream,
-        userId: targetPC.userId,
-        display: targetPC.display,
-        position: 'teacherWebcam',
-        publishType: targetPC.publishType,
-      }
+      data: {position: 'teacherWebcam', ...targetPC}
     });
   }
 
@@ -524,7 +487,11 @@ export class SessionService extends ApiService {
   private initSockets() {
     this.socketService.start(this.currentRoom.id);
     this.socketSubscription = this.socketService.listen().subscribe(async res => {
-      console.log(`${res.event} => `, res);
+      if (res.event == 'pong') {
+        console.log(`%c${res.event}`, `font-size:0.85rem;color: #818182;background-color: #fefefe;border:1px solid #c6c8ca; padding: 5px;border-radius: 0.25rem;`);
+      } else {
+        console.log(`%c${res.event} - ${new Date().toLocaleTimeString('en-US', {hour12: false})}`, `font-size:0.85rem;color: #004085;background-color: #cce5ff;border:1px solid #b8daff; padding: 5px;border-radius: 0.25rem;`, res);
+      }
       let user: RoomUser;
       let raiseHandUser: RoomUser;
       let connection: PeerConnection;
@@ -860,7 +827,6 @@ export class SessionService extends ApiService {
       await this.useHere().toPromise();
       this.resetAll();
       this.initRoom(true);
-      // this.socketService.start(this.currentRoom.id);
     } else {
       this.getMeOut();
     }
@@ -988,6 +954,7 @@ export class SessionService extends ApiService {
       });
       return;
     }
+    this.resetAll();
     if (navigate) {
       document.location.reload();
       // this.router.navigate(['/vc/room-info', this.currentRoom.id]);
@@ -1103,6 +1070,16 @@ export class SessionService extends ApiService {
       }
     });
     return isPublishers.concat(isNotPublishers);
+  }
+
+  downloadLink(link: string) {
+    window.open(link, '_blank');
+    // const a = document.createElement('a');
+    // a.href = link;
+    // a.download = link.split('/').pop();
+    // document.body.appendChild(a);
+    // a.click();
+    // document.body.removeChild(a);
   }
 
   ///////////////////////////////////////////////////////////////////////////////
@@ -1557,13 +1534,12 @@ export class SessionService extends ApiService {
     });
   }
 
-  saveChat() {
+  exportPublicChat() {
     return this._post<any>('', {
-      method: 'saveChat',
+      method: 'exportPublicChat',
       data: {room_id: this.currentRoom.id, session: this.currentUser.session}
     });
   }
 
   //endregion
-
 }
