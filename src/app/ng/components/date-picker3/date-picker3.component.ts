@@ -476,7 +476,6 @@ export class DatePicker3Component implements OnInit, OnDestroy, ControlValueAcce
       };
 
     }
-    //debugger;
     //const date = this.defaultDate||new Date();
     var date;
     if (this.calendarType) {
@@ -787,7 +786,6 @@ export class DatePicker3Component implements OnInit, OnDestroy, ControlValueAcce
   }
 
   updateInputfield() {
-    //debugger;
     let formattedValue = '';
 
     if (this.value) {
@@ -916,7 +914,6 @@ export class DatePicker3Component implements OnInit, OnDestroy, ControlValueAcce
   }
 
   updateModel(value) {
-    //debugger;
     this.value = value;
 
     if (this.dataType == 'date') {
@@ -1980,7 +1977,6 @@ export class DatePicker3Component implements OnInit, OnDestroy, ControlValueAcce
 
   /////////////////////////////////////////////check///////////////////////////////////
   updateUI() {
-    // debugger;
     let val;
     if (this.calendarType) {
       val = this.value || this.defaultDate || moment().locale('fa');

@@ -20,9 +20,11 @@
   </ng-contacts>
 
   <ng-container *ngSwitchCase="'chat'">
-    <ng-button class="mb-3" icon="pi pi-chevron-right" [full]="true" iconPos="right"
-               [label]="peerUser.first_name + ' ' + peerUser.last_name"
-               (click)="setState('chatList')"></ng-button>
+    <div class="p-2">
+      <ng-button icon="pi pi-chevron-right" [full]="true" iconPos="right"
+                 [label]="peerUser.first_name + ' ' + peerUser.last_name"
+                 (click)="onBackToListClick()"></ng-button>
+    </div>
     <ng-messenger type="private"></ng-messenger>
   </ng-container>
 </div>

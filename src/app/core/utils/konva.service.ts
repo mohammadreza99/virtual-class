@@ -280,11 +280,40 @@ export class KonvaService {
       fontSize: this.selectedOptions.textSize * 3,
       draggable: false,
       width: 400,
+      align: 'left'
     });
 
     const tr = this.addTransformer(text, true, ['middle-left', 'middle-right']);
 
     const appendTextarea = () => {
+      const setTextareaWidth = (newWidth: number) => {
+        if (!newWidth) {
+          newWidth = (text as any).placeholder.length * text.fontSize();
+        }
+        if (isSafari || isFirefox) {
+          newWidth = Math.ceil(newWidth);
+        }
+        if (isEdge) {
+          newWidth += 1;
+        }
+        textarea.style.width = newWidth + 'px';
+      };
+
+      const setTextareaDirection = () => {
+        const rgx = /^[-!$%^&*()_+|~=`{}\[\]:\";'<>?,.\/]*[A-Za-z]/; // is ascii
+        const isAscii = rgx.test(textarea.value);
+
+        if (isAscii) {
+          textarea.style.direction = 'ltr';
+          textarea.style.textAlign = 'left';
+          text.align('left');
+        } else {
+          textarea.style.direction = 'rtl';
+          textarea.style.textAlign = 'right';
+          text.align('right');
+        }
+      };
+
       const textPosition = text.getPosition();
       const textarea = this._document.createElement('textarea');
       let transform = '';
@@ -308,6 +337,7 @@ export class KonvaService {
       textarea.style.fontFamily = text.fontFamily();
       textarea.style.textAlign = text.align();
       textarea.style.color = text.fill();
+      setTextareaDirection();
       if (text.rotation()) {
         transform += 'rotateZ(' + text.rotation() + 'deg)';
       }
@@ -321,24 +351,15 @@ export class KonvaService {
       textarea.style.transform = transform;
       textarea.style.height = 'auto';
       textarea.style.height = textarea.scrollHeight + 3 + 'px';
+
       setTimeout(() => {
         textarea.focus();
+        textarea.select();
       }, 0);
 
-      const setTextareaWidth = (newWidth: number) => {
-        if (!newWidth) {
-          newWidth = (text as any).placeholder.length * text.fontSize();
-        }
-        if (isSafari || isFirefox) {
-          newWidth = Math.ceil(newWidth);
-        }
-        if (isEdge) {
-          newWidth += 1;
-        }
-        textarea.style.width = newWidth + 'px';
-      };
 
       textarea.addEventListener('keydown', (e: KeyboardEvent) => {
+        setTextareaDirection();
         if (e.keyCode === 27) {
           removeTextarea();
         }

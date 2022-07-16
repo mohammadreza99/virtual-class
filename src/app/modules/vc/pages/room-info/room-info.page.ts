@@ -294,7 +294,9 @@ export class RoomInfoPage extends LanguageChecker implements OnInit, OnDestroy {
     if (result) {
       switch (result.enter_status) {
         case 'Kicked':
-          this.utilsService.showDialog({message: this.instant('room.yourKickedUntilEndSession')});
+          this.utilsService.showDialog({
+            message: this.instant('room.yourKickedUntilEndSession'),
+          });
           callback();
           return;
         case 'TemporaryKicked':

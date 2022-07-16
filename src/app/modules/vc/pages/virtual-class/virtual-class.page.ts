@@ -270,17 +270,19 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
         });
       });
     }
-    this.updateViewService.setViewEvent({
-      event: 'messageMutedUser',
-      data: {user_id: this.currentUser.id, state: this.currentUser.user_message_state}
-    });
-    this.updateViewService.setViewEvent({
-      event: 'publicChatState',
-      data: {value: this.currentRoom.public_messages}
-    });
-    this.updateViewService.setViewEvent({
-      event: 'privateChatState',
-      data: {value: this.currentRoom.private_messages}
+    setTimeout(() => {
+      this.updateViewService.setViewEvent({
+        event: 'messageMutedUser',
+        data: {user_id: this.currentUser.id, state: this.currentUser.user_message_state}
+      });
+      this.updateViewService.setViewEvent({
+        event: 'publicChatState',
+        data: {value: this.currentRoom.public_messages}
+      });
+      this.updateViewService.setViewEvent({
+        event: 'privateChatState',
+        data: {value: this.currentRoom.private_messages}
+      });
     });
   }
 

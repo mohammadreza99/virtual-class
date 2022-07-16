@@ -50,11 +50,11 @@ export class SessionService extends ApiService {
   }
 
   async initRoom(checkSession = false) {
+    this.initSockets();
+    this.initViewUpdates();
     if (checkSession) {
       await this.checkSession(this.currentRoom.id);
     }
-    this.initSockets();
-    this.initViewUpdates();
     await this.updateRoomUsers();
     await this.updateRoomPublishers();
     await this.updateRoomPublicMessages();
@@ -443,26 +443,35 @@ export class SessionService extends ApiService {
     this.updateViewService.setViewEvent({event: 'userContainersChange', data: this.getSortedUsers()});
   }
 
-  setUserDisplayToMain(userId) {
+  setMainPositionDisplay(userId) {
+    if (!this.imTeacher) {
+      return;
+    }
     if (this.mainPositionUser) {
       const mainPositionPC = this.peerConnections.find(pc => pc.userId == this.mainPositionUser.id);
       this.updateViewService.setViewEvent({
         event: 'onTrack',
         data: {
           stream: mainPositionPC.stream,
-          userId: this.mainPositionUser.id,
-          display: mainPositionPC.display,
-          position: 'teacherWebcam',
+          userId: mainPositionPC.userId,
           publishType: mainPositionPC.publishType,
+          position: 'sideThumbPosition',
+          display: 'studentWebcam',
         }
       });
       this.removeMainPositionUser();
-      this.setMainPositionUser(userId);
     }
     const targetPC = this.peerConnections.find(pc => pc.userId == userId);
+    this.setMainPositionUser(userId);
     this.updateViewService.setViewEvent({
       event: 'onTrack',
-      data: {position: 'teacherWebcam', ...targetPC}
+      data: {
+        stream: targetPC.stream,
+        userId: targetPC.userId,
+        publishType: targetPC.publishType,
+        position: 'mainPosition',
+        display: 'teacherWebcam'
+      }
     });
   }
 
@@ -936,7 +945,8 @@ export class SessionService extends ApiService {
     if (this.myConnection.webcam) {
       await this.toggleShareMedia(false, 'video');
       await this.toggleShareMedia(false, 'audio');
-    } else if (this.myConnection.screen) {
+    }
+    if (this.myConnection.screen) {
       await this.toggleMyScreen(false);
     }
     if (this.updateRoomPublishersTimer) {
@@ -949,7 +959,7 @@ export class SessionService extends ApiService {
     this.socketSubscription?.unsubscribe();
     this.konvaService.destroyBoard();
     if (message) {
-      this.utilsService.showDialog({message, closable: false}).then(res => {
+      this.utilsService.showDialog({message, closable: false, style: {width: '400px'}}).then(res => {
         this.router.navigate(['/vc/room-info', this.currentRoom.id]);
       });
       return;
@@ -1074,12 +1084,16 @@ export class SessionService extends ApiService {
 
   downloadLink(link: string) {
     window.open(link, '_blank');
-    // const a = document.createElement('a');
-    // a.href = link;
-    // a.download = link.split('/').pop();
-    // document.body.appendChild(a);
-    // a.click();
-    // document.body.removeChild(a);
+  }
+
+  toggleFullScreen(elem: any) {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
+    }
   }
 
   ///////////////////////////////////////////////////////////////////////////////

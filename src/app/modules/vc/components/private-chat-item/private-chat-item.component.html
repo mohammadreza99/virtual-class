@@ -1,5 +1,5 @@
 <div class="chat-item-wrapper px-2 py-3 mb-3">
-  <ng-avatar class="ml-2"></ng-avatar>
+  <ng-avatar [user]="pvItem.user" class="ml-2"></ng-avatar>
   <div class="chat-item-body">
     <div class="d-flex align-items-center justify-content-between">
       <h6 class="mt-0 mb-1">{{pvItem.user.first_name + ' ' + pvItem.user.last_name}}</h6>

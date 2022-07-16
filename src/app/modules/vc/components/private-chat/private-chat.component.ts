@@ -28,11 +28,19 @@ export class PrivateChatComponent extends LanguageChecker implements OnInit {
   async loadData() {
     this.updateViewService.getViewEvent().subscribe(res => {
       switch (res.event) {
+        case 'newPVMessage':
+          this.getPvList();
+          break;
+
         case 'privateChatState':
           this.enableChat = res.data.value;
           break;
       }
     });
+    this.getPvList();
+  }
+
+  async getPvList() {
     const result = await this.sessionService.getPVList().toPromise();
     if (result.status === 'OK') {
       this.privateChats = result.data;
@@ -60,11 +68,12 @@ export class PrivateChatComponent extends LanguageChecker implements OnInit {
 
   async openPrivateChat(pvId: number) {
     const res = await this.sessionService.getPVMessage(pvId).toPromise();
+    const foundedChatItem = this.privateChats.find(item => item.id == pvId);
     if (res.status === 'OK') {
       res.data.items.forEach(m => {
-        const founded = this.privateChats.find(item => item.id == m.private_chat_id);
         Object.assign(m, {
-          user: founded.user, message: {
+          user: foundedChatItem.user.id == m.user_id ? foundedChatItem.user : this.sessionService.currentUser,
+          message: {
             datetime: m.datetime,
             id: m.id,
             message: m.message,
@@ -75,5 +84,10 @@ export class PrivateChatComponent extends LanguageChecker implements OnInit {
       });
       this.updateViewService.setViewEvent({event: 'privateMessagesChange', data: {messages: res.data.items, pvId}});
     }
+  }
+
+  async onBackToListClick() {
+    await this.getPvList();
+    this.setState('chatList');
   }
 }

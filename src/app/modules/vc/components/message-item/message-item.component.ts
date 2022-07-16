@@ -32,6 +32,11 @@ export class MessageItemComponent extends LanguageChecker implements OnInit {
     this.currentUser = this.sessionService.currentUser;
   }
 
+  isAscii() {
+    const rgx = /^[-!$%^&*()_+|~=`{}\[\]:\";'<>?,.\/]*[A-Za-z]/; // is ascii
+    return rgx.test(this.message.message);
+  }
+
   onReply(messageActions?: OverlayPanel) {
     if (messageActions) {
       messageActions.hide();

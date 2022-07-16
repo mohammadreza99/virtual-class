@@ -1,7 +1,10 @@
 <ng-content></ng-content>
-<div class="screen-wrapper" [style.backgroundColor]="hasVideo() ? '#1f1f1f' :  getColor()"
+<div (click)="setMainPositionDisplay()" class="screen-wrapper"
+     [style.backgroundColor]="hasVideo() ? '#1f1f1f' :  getColor()"
      [class.is-talking]="isTalking">
-  <ng-button appearance="outlined" class="btn-fullscreen" icon="icon-fullscreen_FILL0_wght400_GRAD0_opsz48"
+  <ng-button *ngIf="position == 'mainThumbPosition' || position == 'mainPosition'" appearance="outlined"
+             class="btn-fullscreen"
+             icon="icon-fullscreen_FILL0_wght400_GRAD0_opsz48"
              (click)="toggleFullScreen()"></ng-button>
   <video preload="none" #videoElem autoplay muted playsinline [hidden]="!hasVideo()"></video>
   <ng-container *ngIf="user">

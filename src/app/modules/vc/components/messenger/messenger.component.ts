@@ -66,6 +66,10 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
             this.messages.push({message: res.data.message, user: res.data.user});
             this.updateViewService.setViewEvent({event: 'gotNewPrivateMessage', data: true});
             break;
+
+          case 'privateChatState':
+            this.enableChat = res.data.value;
+            break;
         }
       } else if (this.type == 'public') {
         switch (res.event) {
@@ -101,10 +105,6 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
             if (this.sessionService.currentUser.id == res.data.user_id) {
               this.enableChat = res.data.state;
             }
-            break;
-
-          case 'privateChatState':
-            this.enableChat = res.data.value;
             break;
 
           case 'unpinnedMessage':
@@ -233,6 +233,7 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
   }
 
   onKeydown(event: any) {
+    this.setTextareaDirection();
     if ((event.code == 'Enter' || event.code == 'NumpadEnter') && !event.shiftKey) {
       event.preventDefault();
       this.sendMessageClick(null);
@@ -244,4 +245,17 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
   get textareaEl() {
     return this.el.nativeElement.querySelector('ng-input-textarea textarea');
   }
+
+  setTextareaDirection() {
+    const rgx = /^[-!$%^&*()_+|~=`{}\[\]:\";'<>?,.\/]*[A-Za-z]/; // is ascii
+    const isAscii = rgx.test(this.textareaEl.value);
+
+    if (isAscii) {
+      this.textareaEl.style.direction = 'ltr';
+      this.textareaEl.style.textAlign = 'left';
+    } else {
+      this.textareaEl.style.direction = 'rtl';
+      this.textareaEl.style.textAlign = 'right';
+    }
+  };
 }

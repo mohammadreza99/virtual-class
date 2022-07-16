@@ -41,22 +41,6 @@ export class ApiService {
     );
   }
 
-  protected _put<T>(
-    endpoint: string,
-    data: any,
-    options: RequestOptions = null,
-    mappingKey: string = null
-  ): Observable<T> {
-    return this.http.put(`${this.baseUrl}/${endpoint}`, data, {
-      ...options,
-      params: this.getHttpParams(options?.params)
-    }).pipe(
-      map((res: any) => {
-        return !mappingKey ? res : (res[mappingKey] as T);
-      })
-    );
-  }
-
   protected getFormData(obj: any, excludes: string[] = []): FormData {
     const formData = new FormData();
     for (const key in obj) {
@@ -83,7 +67,6 @@ export class ApiService {
     }
     return formData;
   }
-
 
   private getHttpParams(params: any): HttpParams {
     let httpParams: HttpParams = new HttpParams();

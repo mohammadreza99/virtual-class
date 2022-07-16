@@ -160,7 +160,6 @@ export class ScreenComponent implements OnInit, OnDestroy {
     return ['mainThumbPosition', 'mainPosition'].indexOf(this.position) >= 0;
   }
 
-
   getColor() {
     if (this.user) {
       return this.sessionService.getProfileColor(this.user.id);
@@ -173,13 +172,10 @@ export class ScreenComponent implements OnInit, OnDestroy {
   }
 
   toggleFullScreen() {
-    const video = this.videoElem.nativeElement as any;
-    if (video.requestFullscreen) {
-      video.requestFullscreen();
-    } else if (video.webkitRequestFullscreen) {
-      video.webkitRequestFullscreen();
-    } else if (video.msRequestFullscreen) {
-      video.msRequestFullscreen();
-    }
+    this.sessionService.toggleFullScreen(this.videoElem.nativeElement);
+  }
+
+  setMainPositionDisplay() {
+    this.sessionService.setMainPositionDisplay(this.user.id);
   }
 }

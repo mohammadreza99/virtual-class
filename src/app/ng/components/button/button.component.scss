@@ -6,6 +6,10 @@
     display: block;
   }
 
+  ::ng-deep button {
+    white-space: nowrap;
+  }
+
   &.full {
     &,
     & ::ng-deep .p-button {

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {SessionService} from '@core/http';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {OverlayPanel} from 'primeng/overlaypanel';
@@ -11,7 +11,8 @@ import {UpdateViewService} from '@core/utils';
 })
 export class ChatComponent extends LanguageChecker implements OnInit {
 
-  constructor(private sessionService: SessionService, private updateViewService: UpdateViewService) {
+  constructor(private sessionService: SessionService,
+              private updateViewService: UpdateViewService) {
     super();
   }
 
@@ -41,24 +42,22 @@ export class ChatComponent extends LanguageChecker implements OnInit {
         case 'publicChatState':
           this.enablePublicChat = res.data.value;
           break;
+
+        case 'privateChatState':
+          this.enablePrivateChat = res.data.value;
+          break;
       }
     });
   }
 
   async togglePublicChatActivation(chatActions: OverlayPanel) {
-    const res = await this.sessionService.changePublicChatState(!this.enablePublicChat).toPromise();
+    await this.sessionService.changePublicChatState(!this.enablePublicChat).toPromise();
     chatActions.hide();
-    if (res.status == 'OK') {
-      this.enablePublicChat = !this.enablePublicChat;
-    }
   }
 
   async togglePrivateChatActivation(chatActions: OverlayPanel) {
-    const res = await this.sessionService.changePrivateChatState(!this.enablePrivateChat).toPromise();
+    await this.sessionService.changePrivateChatState(!this.enablePrivateChat).toPromise();
     chatActions.hide();
-    if (res.status == 'OK') {
-      this.enablePrivateChat = !this.enablePrivateChat;
-    }
   }
 
   async onExportChatClick(chatActions: OverlayPanel) {

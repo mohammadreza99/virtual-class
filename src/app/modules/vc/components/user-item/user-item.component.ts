@@ -131,7 +131,8 @@ export class UserItemComponent extends LanguageChecker implements OnInit, OnDest
         data: this.user,
         header: this.instant('room.kickUser'),
         width: '400px',
-        rtl: this.fa
+        rtl: this.fa,
+        closable: false
       }).onClose.pipe(takeUntil(this.destroy$)).subscribe(async res => {
         if (res !== false) {
           if (this.user.role == 'Admin') {

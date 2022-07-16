@@ -7,14 +7,17 @@
     </div>
   </div>
   <ng-container *ngPermission="'Viewer'">
-    <i class="icon-back_hand_FILL0_wght400_GRAD0_opsz48" [class.text-success]="raiseHandConfirmed" *ngIf="user.raise_hand && raiseHand"></i>
+    <i class="icon-back_hand_FILL0_wght400_GRAD0_opsz48" [class.text-success]="raiseHandConfirmed"
+       *ngIf="user.raise_hand && raiseHand"></i>
   </ng-container>
   <ng-container *ngPermission="'Admin'">
     <ng-container *ngIf="enableActions && user.id != currentUser.id">
-      <div class="raise-hand text-center" *ngIf="raiseHand">
+      <div class="raise-hand text-center d-flex" *ngIf="raiseHand">
         <ng-container *ngIf="!raiseHandConfirmed">
-          <ng-button-async icon="icon-done_FILL0_wght400_GRAD0_opsz48" class="ml-1" (clickAsync)="confirmRaiseHand($event)"></ng-button-async>
-          <ng-button-async icon="icon-close_FILL0_wght400_GRAD0_opsz48" (clickAsync)="rejectRaiseHand($event,false)"></ng-button-async>
+          <ng-button-async icon="icon-done_FILL0_wght400_GRAD0_opsz48" class="ml-1"
+                           (clickAsync)="confirmRaiseHand($event)"></ng-button-async>
+          <ng-button-async icon="icon-close_FILL0_wght400_GRAD0_opsz48"
+                           (clickAsync)="rejectRaiseHand($event,false)"></ng-button-async>
         </ng-container>
         <ng-button-async class="ml-1" color="danger" (clickAsync)="rejectRaiseHand($event,true)"
                          [label]="'room.endAccess' | translate"
@@ -28,10 +31,12 @@
                          [icon]="user.muted_video ? 'icon-videocam_off_FILL0_wght400_GRAD0_opsz48' : 'icon-videocam_FILL0_wght400_GRAD0_opsz48'"
                          (clickAsync)="muteUserCamera($event)">
         </ng-button-async>
-        <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm" [icon]="user.muted ? 'icon-mic_off_FILL0_wght400_GRAD0_opsz48' : 'icon-mic_FILL0_wght400_GRAD0_opsz48'"
+        <ng-button-async [class]="fa ? 'ml-1' : 'mr-1'" size="sm"
+                         [icon]="user.muted ? 'icon-mic_off_FILL0_wght400_GRAD0_opsz48' : 'icon-mic_FILL0_wght400_GRAD0_opsz48'"
                          (clickAsync)="muteUser($event)">
         </ng-button-async>
-        <ng-button size="sm" icon="icon-more_horiz_FILL0_wght400_GRAD0_opsz48" (click)="actions.toggle($event)"></ng-button>
+        <ng-button size="sm" icon="icon-more_horiz_FILL0_wght400_GRAD0_opsz48"
+                   (click)="actions.toggle($event)"></ng-button>
 
         <p-overlayPanel baseZIndex="2000" #actions styleClass="actions {{fa ? 'rtl' : null}}">
           <ul class="list-unstyled p-0 m-0">

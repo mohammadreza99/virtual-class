@@ -18,15 +18,10 @@
   }
 
   .btn-fullscreen {
-    display: none;
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
     z-index: 20;
-  }
-
-  &.teacher-screen-shared .btn-fullscreen {
-    display: block
   }
 }
 

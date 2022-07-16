@@ -8,8 +8,7 @@
       <small class="sender font-medium">{{replyMessage.user.first_name + ' ' + replyMessage.user.last_name}}</small>
       <small class="text font-light">{{replyMessage.message.message}}</small>
     </div>
-    <div class="message-text" [innerText]="message.message">
-    </div>
+    <div class="message-text" [class.ltr]="isAscii()" [innerText]="message.message"></div>
   </div>
   <div class="reply">
     <ng-avatar [user]="sender"></ng-avatar>

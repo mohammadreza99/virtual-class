@@ -28,6 +28,11 @@
       .message-text {
         overflow-wrap: break-word;
         word-break: break-word;
+
+        &.ltr {
+          direction: ltr;
+          text-align: left;
+        }
       }
 
       .reply-container {

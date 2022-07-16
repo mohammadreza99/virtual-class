@@ -272,13 +272,7 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
   }
 
   openFullscreen(elem: any) {
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) {
-      elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-      elem.msRequestFullscreen();
-    }
+    this.sessionService.toggleFullScreen(elem);
   }
 
   closeFullscreen() {
