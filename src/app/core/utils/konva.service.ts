@@ -36,6 +36,7 @@ export class KonvaService {
     layer: null,
     shapes: []
   };
+  private lastData: any;
 
   start(slides: WhiteboardSlide[] | number = 10, initSlideNumber: number = 1) {
     if (this.boardActivated) {
@@ -66,14 +67,16 @@ export class KonvaService {
 
   private init(id: string, data: any = null) {
     let stage: Stage;
-    const layer = new Layer();
+    let layer: Layer;
     if (data) {
-      layer.destroyChildren();
       stage = Konva.Node.create(data, id);
+      layer = stage.getLayers()[0];
     } else {
       stage = this.createStage(id);
+      layer = new Layer();
     }
     stage.add(layer);
+    this.lastData = stage.toJSON();
 
     const slideIdx = this.slides.findIndex(slide => slide.stage.container().id == stage.container().id);
     if (slideIdx == -1) {
@@ -122,51 +125,60 @@ export class KonvaService {
         e.evt.preventDefault();
         const newPoints = shape.points().concat([pos.x, pos.y]);
         shape.points(newPoints);
-        layer.batchDraw();
       }
       if (this.selectedTool == 'line') {
         const points = shape.points().slice();
         points[2] = pos.x;
         points[3] = pos.y;
         shape.points(points);
-        layer.batchDraw();
       }
       if (this.selectedTool == 'rectangle') {
         shape.width(pos.x - sourcePoints.x);
         shape.height(pos.y - sourcePoints.y);
-        layer.batchDraw();
       }
       if (this.selectedTool == 'circle') {
         const radius = pos.x - sourcePoints.x;
         shape.radius(Math.abs(radius));
-        layer.batchDraw();
       }
       if (this.selectedTool == 'triangle') {
-        const radius = pos.x - sourcePoints.x;
-        shape.radius(Math.abs(radius));
-        layer.batchDraw();
+        const points = shape.points().slice();
+        points[0] = sourcePoints.x + ((pos.x - sourcePoints.x) / 2);
+        points[1] = sourcePoints.y;
+        points[2] = pos.x;
+        points[3] = pos.y;
+        points[4] = sourcePoints.x;
+        points[5] = pos.y;
+        shape.points(points);
+      }
+      layer.batchDraw();
+    });
+
+    stage.on('mouseup touchend', (e) => {
+      isPaint = false;
+      const parseLastData = JSON.parse(this.lastData);
+      const parseCurrentData = JSON.parse(e.target.getStage().toJSON());
+      const lastDataChildren = parseLastData.children[0].children;
+      const currentDataChildren = parseCurrentData.children[0].children;
+      const newData = [];
+      const newItemsLength = currentDataChildren.length - lastDataChildren.length;
+      for (let i = 0; i < newItemsLength; i++) {
+        newData.push(currentDataChildren[lastDataChildren.length + i]);
+      }
+      if (this.lastData != e.target.getStage().toJSON()) {
+        this.stageChangeSubject.next({event: 'updateBoard', data: stage.toJSON(), newData});
+        this.lastData = e.target.getStage().toJSON();
       }
     });
 
-    stage.on('mouseup touchend', () => {
-      isPaint = false;
-      this.stageChangeSubject.next({event: 'updateBoard', data: stage.toJSON()});
-    });
-
-    // stage.on('mouseleave', () => {
-    //   if (isPaint) {
-    //     isPaint = false;
-    //     this.stageChangeSubject.next({event: 'updateBoard', data: stage.toJSON()});
-    //   }
-    // });
-
-    this.fitStageIntoParentContainer();
     stage.container().getRootNode().addEventListener('mouseup', () => {
       isPaint = false;
     });
+
     window.addEventListener('resize', () => {
       this.fitStageIntoParentContainer();
     });
+
+    this.fitStageIntoParentContainer();
   }
 
   fitStageIntoParentContainer = () => {
@@ -215,22 +227,22 @@ export class KonvaService {
       draggable: false,
       strokeScaleEnabled: false,
     });
-    this.addTransformer(circle);
+    // this.addTransformer(circle);
+    this.addToLayerAndShapes(circle);
     return circle;
   }
 
   private triangle(pos: any) {
-    const triangle = new RegularPolygon({
-      x: pos.x,
-      y: pos.y,
-      sides: 3,
-      radius: 0,
+    const triangle = new Line({
+      points: [pos.x, pos.y, pos.x, pos.y, pos.x, pos.y],
       stroke: this.selectedOptions.color,
       strokeWidth: this.selectedOptions.thickness * 1.9,
-      draggable: false,
       strokeScaleEnabled: false,
+      closed: true,
+      listening: false,
     });
-    this.addTransformer(triangle);
+    // this.addTransformer(triangle);
+    this.addToLayerAndShapes(triangle);
     return triangle;
   }
 
@@ -243,7 +255,8 @@ export class KonvaService {
       draggable: false,
       strokeScaleEnabled: false,
     });
-    this.addTransformer(rect);
+    // this.addTransformer(rect);
+    this.addToLayerAndShapes(rect);
     return rect;
   }
 
@@ -271,7 +284,7 @@ export class KonvaService {
     return line;
   }
 
-  private text(pos: any) {
+  private text(pos: any, editable: boolean = false) {
     const text = new Text({
       text: 'Sample Text',
       x: pos.x,
@@ -283,8 +296,7 @@ export class KonvaService {
       align: 'left'
     });
 
-    const tr = this.addTransformer(text, true, ['middle-left', 'middle-right']);
-
+    const tr = this.addTransformer(text, {resetTool: true, anchors: ['middle-left', 'middle-right']});
     const appendTextarea = () => {
       const setTextareaWidth = (newWidth: number) => {
         if (!newWidth) {
@@ -400,12 +412,14 @@ export class KonvaService {
       });
     });
 
-    text.on('dblclick dbltap', (e) => {
-      if (this.selectedTool != 'select') {
-        return;
-      }
-      appendTextarea();
-    });
+    if (editable) {
+      text.on('dblclick dbltap', (e) => {
+        if (this.selectedTool != 'select') {
+          return;
+        }
+        appendTextarea();
+      });
+    }
   }
 
   image(file: File | string | unknown) {
@@ -448,42 +462,45 @@ export class KonvaService {
     // });
   }
 
-  private addTransformer(shape: any, resetTool: boolean = false, anchors?: string[]) {
+  private addTransformer(shape: any, options: any = {resetTool: false, anchors: [], draggable: false}) {
+    const {resetTool, anchors, draggable} = options;
     const tr = new Transformer({
       node: shape as any,
-      enabledAnchors: anchors,
+      enabledAnchors: anchors || ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
       // ignore stroke in size calculations
       ignoreStroke: true,
       anchorSize: 60,
       anchorFill: 'lightblue',
       padding: 5,
-      name: 'transformer'
+      name: 'transformer',
+      borderStrokeWidth: 6
     });
 
     tr.hide();
-    shape.on('mousedown touchstart', (e) => {
-      if (this.selectedTool != 'select') {
-        shape.draggable(false);
-        return;
-      }
-      tr.show();
-      shape.opacity(0.5);
-      shape.shadowOpacity(0.5);
-      shape.shadowColor('black');
-      shape.shadowBlur(10);
-      shape.shadowOffset({x: 10, y: 10});
-      shape.draggable(true);
-    });
-    shape.on('mouseup touchend dragend', (e) => {
-      shape.opacity(1);
-      shape.shadowOpacity(0);
-      shape.shadowColor('transparent');
-      shape.shadowBlur(0);
-      shape.shadowOffset({x: 0, y: 0});
-      this.stageChangeSubject.next({event: 'updateBoard', data: this.currentSlide.stage.toJSON()});
-    });
-    this.addToLayerAndShapes(shape);
-    this.addToLayerAndShapes(tr);
+    if (draggable) {
+      shape.on('mousedown touchstart', (e) => {
+        if (this.selectedTool != 'select') {
+          shape.draggable(false);
+          return;
+        }
+        tr.show();
+        shape.opacity(0.5);
+        shape.shadowOpacity(0.5);
+        shape.shadowColor('black');
+        shape.shadowBlur(10);
+        shape.shadowOffset({x: 10, y: 10});
+        shape.draggable(true);
+      });
+      shape.on('mouseup touchend dragend', (e) => {
+        shape.opacity(1);
+        shape.shadowOpacity(0);
+        shape.shadowColor('transparent');
+        shape.shadowBlur(0);
+        shape.shadowOffset({x: 0, y: 0});
+        this.stageChangeSubject.next({event: 'updateBoard', data: this.currentSlide.stage.toJSON()});
+      });
+    }
+    this.addToLayerAndShapes([shape, tr]);
     this.currentSlide.layer.draw();
     if (resetTool) {
       tr.show();
@@ -492,9 +509,17 @@ export class KonvaService {
     return tr;
   }
 
-  private addToLayerAndShapes(item: any) {
-    this.currentSlide.shapes.push(item);
-    this.currentSlide.layer.add(item);
+  private addToLayerAndShapes(item: any | any[]) {
+    this.lastData = this.currentSlide.stage.toJSON();
+    if (Array.isArray(item)) {
+      item.forEach(x => {
+        this.currentSlide.shapes.push(x);
+        this.currentSlide.layer.add(x);
+      });
+    } else {
+      this.currentSlide.shapes.push(item);
+      this.currentSlide.layer.add(item);
+    }
   }
 
   private getId(index: number) {
@@ -519,8 +544,10 @@ export class KonvaService {
   clearBoard() {
     this.boardParentEl.querySelector('textarea')?.remove();
     this.currentSlide.stage.off('click tap');
-    this.currentSlide.layer.destroyChildren();
-    this.currentSlide.layer.draw();
+    this.currentSlide.stage.getLayers().forEach(l => {
+      l.destroyChildren();
+      l.draw();
+    });
     this.stageChangeSubject.next({event: 'updateBoard', data: this.currentSlide.stage.toJSON()});
   }
 

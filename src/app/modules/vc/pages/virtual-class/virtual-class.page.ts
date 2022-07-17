@@ -58,7 +58,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
   currentUser: RoomUser;
   currentQuestion: QuestionItem;
   currentPoll: PollItem;
-  toggleMembersSidebar: boolean = true;
+  toggleMembersSidebar: boolean = false;
   toggleChatSidebar: boolean = false;
   toggleQuestionSidebar: boolean = false;
   togglePollSidebar: boolean = false;
