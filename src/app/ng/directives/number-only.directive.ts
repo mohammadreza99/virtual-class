@@ -7,7 +7,7 @@ export class NumberOnlyDirective {
   @Input() numberOnly: boolean;
 
   @HostListener('keydown', ['$event']) onKeyDown(event) {
-    let e = <KeyboardEvent>event;
+    let e = <KeyboardEvent> event;
     if (this.numberOnly) {
       if (
         [46, 8, 9, 27, 13, 110, 190].indexOf(e.keyCode) !== -1 ||

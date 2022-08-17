@@ -3,13 +3,16 @@
     <div class="actions d-flex flex-grow-1 align-items-center justify-content-between justify-content-lg-start">
       <ng-logo width="40" class="ml-3"></ng-logo>
 
-      <ng-button appearance="text" [class.badge]="hasUnreadRaisedHands" icon="icon-groups_FILL0_wght400_GRAD0_opsz48" class="d-lg-none"
+      <ng-button appearance="text" [class.badge]="hasUnreadRaisedHands" icon="icon-groups_FILL0_wght400_GRAD0_opsz48"
+                 class="d-lg-none"
                  [class.active]="toggleMembersSidebar"
                  (click)="openSidebar('members')"></ng-button>
-      <ng-button appearance="text" [class.badge]="hasUnreadMessage" icon="icon-sms_FILL0_wght400_GRAD0_opsz48" class="d-lg-none"
+      <ng-button appearance="text" [class.badge]="hasUnreadMessage" icon="icon-sms_FILL0_wght400_GRAD0_opsz48"
+                 class="d-lg-none"
                  [class.active]="toggleChatSidebar"
                  (click)="openSidebar('chat')"></ng-button>
-      <ng-button appearance="text" class="d-lg-none" icon="icon-grid_view_FILL0_wght400_GRAD0_opsz48" (click)="viewModes.toggle($event)"></ng-button>
+      <ng-button appearance="text" class="d-lg-none" icon="icon-grid_view_FILL0_wght400_GRAD0_opsz48"
+                 (click)="viewModes.toggle($event)"></ng-button>
       <ng-button appearance="text" class="d-lg-none" icon="icon-info_FILL0_wght400_GRAD0_opsz48"
                  (click)="sessionInfo.toggle($event)"></ng-button>
       <div class="profile d-none d-lg-flex align-items-center">
@@ -22,12 +25,13 @@
     <div class="info d-none d-lg-flex align-items-center">
       <small class="mx-1">({{sessionDuration}})</small>
       <div>{{currentRoom.name}}</div>
-      <ng-button appearance="text" class="mr-lg-3" icon="icon-grid_view_FILL0_wght400_GRAD0_opsz48" (click)="viewModes.toggle($event)"></ng-button>
+      <ng-button appearance="text" class="mr-lg-3" icon="icon-grid_view_FILL0_wght400_GRAD0_opsz48"
+                 (click)="viewModes.toggle($event)"></ng-button>
     </div>
   </div>
 
   <div class="content" [class.mh-100]="presentationActivated">
-    <ng-grid-view [users]="roomUsers" [allUsers]="allUsers" [hidden]="currentViewMode != 'grid'"></ng-grid-view>
+<!--    <ng-grid-view [users]="roomUsers" [allUsers]="allUsers" [hidden]="currentViewMode != 'grid'"></ng-grid-view>-->
     <ng-thumbnail-view [users]="roomUsers" [hidden]="currentViewMode != 'thumbnail'"></ng-thumbnail-view>
   </div>
 
@@ -36,7 +40,8 @@
       <ng-button [class.badge]="hasUnreadRaisedHands" icon="icon-groups_FILL0_wght400_GRAD0_opsz48" class="ml-3"
                  [class.active]="toggleMembersSidebar"
                  (click)="openSidebar('members')"></ng-button>
-      <ng-button [class.badge]="hasUnreadMessage" icon="icon-sms_FILL0_wght400_GRAD0_opsz48" [class.active]="toggleChatSidebar"
+      <ng-button [class.badge]="hasUnreadMessage" icon="icon-sms_FILL0_wght400_GRAD0_opsz48"
+                 [class.active]="toggleChatSidebar"
                  (click)="openSidebar('chat')"></ng-button>
     </div>
     <div class="actions d-flex d-lg-block align-items-center justify-content-between">
@@ -56,14 +61,17 @@
                        [defaultState]="raiseHandActivated ? 2 : 1" icon="icon-back_hand_FILL0_wght400_GRAD0_opsz48">
       </ng-button-async>
       <ng-container *ngIf="!whiteboardActivated && !presentationActivated">
-        <ng-button-async class="d-none d-lg-inline" *ngPermission="'Admin'" icon="icon-screenshot_monitor_FILL0_wght400_GRAD0_opsz48"
+        <ng-button-async *ngPermission="'Admin'" class="d-none d-lg-inline"
+                         icon="icon-screenshot_monitor_FILL0_wght400_GRAD0_opsz48"
                          [defaultState]="screenActivated ? 2 : 1"
                          (clickAsync)="toggleScreen($event)"
                          newColor="success">
         </ng-button-async>
       </ng-container>
-      <ng-button *ngPermission="'Admin'" icon="icon-more_horiz_FILL0_wght400_GRAD0_opsz48" (click)="otherActions.toggle($event)"></ng-button>
-      <ng-button *ngPermission="'Admin'" icon="icon-add_FILL1_wght400_GRAD0_opsz48" (click)="mediaActions.toggle($event)"></ng-button>
+      <ng-button *ngPermission="'Admin'" icon="icon-more_horiz_FILL0_wght400_GRAD0_opsz48"
+                 (click)="otherActions.toggle($event)"></ng-button>
+      <ng-button *ngPermission="'Admin'" icon="icon-add_FILL1_wght400_GRAD0_opsz48"
+                 (click)="mediaActions.toggle($event)"></ng-button>
       <ng-button class="d-lg-none" (click)="leaveRoom()" color="danger"
                  icon="icon-logout_FILL0_wght400_GRAD0_opsz48"></ng-button>
     </div>

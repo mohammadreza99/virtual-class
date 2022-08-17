@@ -62,6 +62,9 @@ export class MessengerComponent extends LanguageChecker implements OnInit, After
             break;
 
           case 'newPVMessage':
+            if (this.currentPVId != res.data.pv_id) {
+              return;
+            }
             this.currentPVId = res.data.pv_id;
             this.messages.push({message: res.data.message, user: res.data.user});
             this.updateViewService.setViewEvent({event: 'gotNewPrivateMessage', data: true});

@@ -3,11 +3,13 @@ import {Global} from '@ng/global';
 import {SessionService} from '@core/http';
 import {UpdateViewService} from '@core/utils';
 import {Subscription} from 'rxjs';
+import {UtilsService} from '@ng/services';
 
 export class PeerConnection {
 
   private sessionService: SessionService;
   private updateViewService: UpdateViewService;
+  private utilsService: UtilsService;
   public pc: RTCPeerConnection;
   private subscription: Subscription;
 
@@ -169,6 +171,10 @@ export class PeerConnection {
       this.options.onConnect();
     }
     if (this.pc.connectionState === 'disconnected') {
+      this.utilsService.showToast({
+        summary: 'خطا در ارسال تصویر',
+        detail: 'مشکلی در اتصال ویدیوی شما رخ داده است لطفا مجدد تلاش کنید'
+      });
       console.error(`-- WEB_RTC FOR USER ID ${this.userId} HAS ${this.pc.connectionState.toUpperCase()} - MY ID => ${this.sessionService.currentUser.id}`);
       this.options.onDisconnect();
     }

@@ -51,13 +51,13 @@ export class AppComponent extends LanguageChecker implements OnInit {
   }
 
   checkNetworkStatus() {
-    this.utilsService.checkOnlineState().subscribe(status => {
+    this.utilsService.checkOnlineState().subscribe(async status => {
       if (this.currentUrl == 'no-internet') {
         return;
       }
       if (status == false) {
         console.log(`%cNETWORK DISCONNECTED`, `font-size:0.85rem;color: #856404;background-color: #fff3cd;border:1px solid #ffeeba; padding: 5px;border-radius: 0.25rem;`);
-        this.sessionService.getMeOut(null, false);
+        await this.sessionService.getMeOut(null, false);
         this.router.navigate(['/no-internet'], {queryParams: {returnUrl: this.router.url}});
       }
     });

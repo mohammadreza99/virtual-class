@@ -1,8 +1,7 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {SessionService} from '@core/http';
-import {Subscription} from 'rxjs';
 import {UtilsService} from '@ng/services';
 import {QuestionItem, QuestionState} from '@core/models';
 
@@ -36,7 +35,7 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
 
   form = new FormGroup({
     description: new FormControl(null, Validators.required),
-    options: new FormArray([this.createOptionControl(), this.createOptionControl()], this.questionValidator)
+    options: new FormArray([this.createOptionControl(), this.createOptionControl()], this.questionOptionsValidator)
   });
   archiveQuestions: QuestionItem[] = [];
   currentState: 'modify' | 'result' | 'archive' = 'modify';
@@ -88,9 +87,9 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
     this.goToState(this.questionStarted ? 'result' : 'modify');
   }
 
-  questionValidator(array: FormArray) {
+  questionOptionsValidator(array: FormArray) {
     const controls = Object.values(array.controls) as FormGroup[];
-    const isValid = controls.every(g => g.get('description').value) && controls.some(g => g.get('correct_answer').value == true);
+    const isValid = controls.every(g => !!g.get('description').value) && controls.filter(g => g.get('correct_answer').value == true).length == 1;
     return isValid ? null : {isInvalid: true};
   }
 

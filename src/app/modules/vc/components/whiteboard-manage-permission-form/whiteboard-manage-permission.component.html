@@ -3,7 +3,6 @@
     <div class="col-12">
       <p>{{'room.chooseWhiteboardPermissionUsers' | translate}}</p>
       <ng-auto-complete [suggestions]="filteredUsers"
-                        field="label"
                         [placeholder]="'room.searchParticipants' | translate"
                         [forceSelection]="true"
                         [rtl]="fa"
@@ -12,11 +11,16 @@
                         (completeMethod)="onSearchUsers($event)"
                         [(ngModel)]="allowedUsers"
                         (onUnselect)="onUnselectUser($event)">
+        <ng-template let-user ngTemplate="item">
+          <span>{{user.first_name + ' ' + user.last_name }}</span>
+        </ng-template>
+        <ng-template let-user ngTemplate="selectedItem">
+          <span>{{user.first_name + ' ' + user.last_name }}</span>
+        </ng-template>
       </ng-auto-complete>
     </div>
     <div class="col-12 pt-3 mt-3 text-left">
-      <ng-button (onClick)="onSubmit()" [label]="'submit' | translate"
-                 [disabled]="selectedUsers.length === 0">
+      <ng-button (onClick)="onSubmit()" [label]="'submit' | translate">
       </ng-button>
     </div>
   </div>

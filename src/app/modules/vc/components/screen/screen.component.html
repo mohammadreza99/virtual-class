@@ -1,11 +1,6 @@
-<ng-content></ng-content>
-<div (click)="setMainPositionDisplay()" class="screen-wrapper"
+<div class="screen-wrapper"
      [style.backgroundColor]="hasVideo() ? '#1f1f1f' :  getColor()"
      [class.is-talking]="isTalking">
-  <ng-button *ngIf="position == 'mainThumbPosition' || position == 'mainPosition'" appearance="outlined"
-             class="btn-fullscreen"
-             icon="icon-fullscreen_FILL0_wght400_GRAD0_opsz48"
-             (click)="toggleFullScreen()"></ng-button>
   <video preload="none" #videoElem autoplay muted playsinline [hidden]="!hasVideo()"></video>
   <ng-container *ngIf="user">
     <div class="avatar" *ngIf="!hasVideo()">
@@ -19,4 +14,26 @@
       <i class="icon-back_hand_FILL0_wght400_GRAD0_opsz48 shadow-sm" [class.bg-success]="activateRaiseHand"></i>
     </span>
   </ng-container>
+</div>
+<ng-button *ngIf="position == 'mainThumbPosition' || position == 'mainPosition'"
+           class="btn-fullscreen"
+           size="sm"
+           icon="icon-fullscreen_FILL0_wght400_GRAD0_opsz48"
+           (click)="toggleFullScreen()">
+</ng-button>
+<ng-container *ngPermission="'Admin'">
+  <ng-button *ngIf="position == 'sideThumbPosition' && streamActivated" class="btn-set-main-screen" size="sm"
+             color="secondary"
+             icon="pi pi-window-maximize"
+             (click)="setMainPositionScreen()">
+  </ng-button>
+</ng-container>
+<ng-button *ngIf="position == 'mainThumbPosition' && !toggleSpeaker" class="btn-toggler" size="sm" color="secondary"
+           icon="pi pi-times"
+           (click)="toggleSpeakerClick()">
+</ng-button>
+<div class="p-1 bg-dark text-white text-center rounded m-2" role="button"
+     *ngIf="position == 'mainThumbPosition' && toggleSpeaker"
+     (click)="toggleSpeakerClick()">
+  {{'room.showTeacherScreen' | translate}}
 </div>

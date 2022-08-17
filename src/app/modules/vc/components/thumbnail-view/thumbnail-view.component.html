@@ -1,25 +1,14 @@
 <div class="thumbnail-view" [class.participants-active]="toggleParticipants">
   <div class="d-flex h-100">
     <div class="participants" [ngClass]="{'d-flex align-items-center': users.length == 0}">
-      <ng-screen position="sideThumbPosition"
-                 *ngFor="let u of users;trackBy:trackByFn" [user]="u">
-      </ng-screen>
+      <ng-screen position="sideThumbPosition" *ngFor="let u of users;trackBy:trackByFn" [user]="u"></ng-screen>
       <ng-empty *ngIf="users.length == 0" [message]="'nothingFound' | translate"></ng-empty>
     </div>
     <div class="main-area flex-grow-1">
       <ng-video-presentation></ng-video-presentation>
-      <!--      <ng-canvas-whiteboard></ng-canvas-whiteboard>-->
       <ng-whiteboard></ng-whiteboard>
       <ng-screen position="mainPosition"></ng-screen>
-      <ng-screen position="mainThumbPosition" [class.screen-hided]="toggleSpeaker">
-        <div class="screen-toggler">
-          <ng-button *ngIf="!toggleSpeaker" color="secondary" icon="pi pi-times"
-                     (click)="toggleSpeakerClick()">
-          </ng-button>
-          <span class="p-1" *ngIf="toggleSpeaker"
-                (click)="toggleSpeakerClick()">{{'room.showTeacherScreen' | translate}}</span>
-        </div>
-      </ng-screen>
+      <ng-screen position="mainThumbPosition"></ng-screen>
       <div class="no-stream h-100">
         <ng-main-placeholder></ng-main-placeholder>
       </div>
@@ -27,5 +16,6 @@
   </div>
   <ng-button (click)="toggleParticipantsClick()" icon="pi pi-chevron-{{toggleParticipants ? 'right' : 'left'}}"
              color="warning"
+             size="sm"
              class="participants-toggler"></ng-button>
 </div>

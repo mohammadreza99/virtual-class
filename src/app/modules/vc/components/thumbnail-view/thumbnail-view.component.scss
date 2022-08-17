@@ -16,7 +16,8 @@
     height: calc(100vh - 140px);
     position: relative;
 
-    .participants, .main-area {
+    .participants,
+    .main-area {
       padding: 1rem;
       transition: all .4s;
       max-width: 100%;
@@ -35,7 +36,7 @@
       z-index: -2;
 
       ng-screen:not(:last-child) {
-        margin-bottom: 1rem
+        margin-bottom: 1rem;
       }
     }
 
@@ -48,39 +49,8 @@
       ng-screen {
         @include restoreFullAspectRatio();
 
-        &[position="mainThumbPosition"] {
-          position: relative;
-
-          &.screen-hided {
-            .screen-wrapper {
-              display: none;
-            }
-          }
-
-          .screen-toggler {
-            > ng-button, > span {
-              display: none;
-            }
-
-            > ng-button {
-              position: absolute;
-              top: 0.5rem;
-              left: 0.5rem;
-              z-index: 5;
-
-              button {
-                width: 2rem;
-                padding: 0.25rem 0;
-              }
-            }
-
-            > span {
-              text-align: center;
-              background: #40414A80;
-              border-radius: 4px;
-              cursor: pointer;
-            }
-          }
+        .btn-toggler {
+          display: none;
         }
 
         &.teacher-screen-shared + .teacher-webcam-shared {
@@ -94,28 +64,8 @@
             padding-bottom: 56.25%;
           }
 
-          &:not(.screen-hided) {
-            .screen-toggler {
-              > ng-button {
-                display: block;
-              }
-
-              > span {
-                display: none;
-              }
-            }
-          }
-
-          &.screen-hided {
-            .screen-toggler {
-              > ng-button {
-                display: none;
-              }
-
-              > span {
-                display: block;
-              }
-            }
+          .btn-toggler {
+            display: block;
           }
         }
 
@@ -141,30 +91,6 @@
           .screen-wrapper {
             padding-bottom: 56.25%;
           }
-
-          &:not(.screen-hided) {
-            .screen-toggler {
-              > ng-button {
-                display: block;
-              }
-
-              > span {
-                display: none;
-              }
-            }
-          }
-
-          &.screen-hided {
-            .screen-toggler {
-              > ng-button {
-                display: none;
-              }
-
-              > span {
-                display: block;
-              }
-            }
-          }
         }
 
         ~ .no-stream {
@@ -181,8 +107,6 @@
       transition: all .4s;
 
       button {
-        width: 2.5rem;
-        height: 2.5rem;
         border-radius: 6px 0 0 6px;
       }
     }

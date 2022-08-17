@@ -113,11 +113,11 @@ export class VideoPresentationComponent implements AfterViewInit {
       if (video.paused) {
         video.play();
         await this.sessionService.videoAction('play', video.currentTime).toPromise();
-        videoControls.classList.add('playing');
+        this.renderer.addClass(videoControls, 'playing');
       } else {
         video.pause();
         await this.sessionService.videoAction('pause', video.currentTime).toPromise();
-        videoControls.classList.remove('playing');
+        this.renderer.removeClass(videoControls, 'playing');
       }
     };
 
@@ -174,7 +174,7 @@ export class VideoPresentationComponent implements AfterViewInit {
 
     videoContainer.addEventListener('mouseleave', () => {
       if (video.paused === false) {
-        videoContainer.classList.add('playing');
+        this.renderer.addClass(videoContainer, 'playing');
       }
     });
 
@@ -188,10 +188,11 @@ export class VideoPresentationComponent implements AfterViewInit {
 
     soundButton?.addEventListener('click', (e) => {
       video.muted = !video.muted;
-      e.target.classList.toggle('sound-muted');
       if (video.muted) {
+        this.renderer.addClass(e.target, 'sound-muted');
         volumeBar.value = 0;
       } else {
+        this.renderer.removeClass(e.target, 'sound-muted');
         volumeBar.value = video.volume * 100;
       }
     });

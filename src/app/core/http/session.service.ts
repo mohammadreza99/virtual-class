@@ -438,17 +438,33 @@ export class SessionService extends ApiService {
     }
   }
 
-  private setMainPositionUser(userId: any) {
+  private setMainPositionUser(userId: number) {
     this.mainPositionUser = this.getRoomUserById(userId);
     this.updateViewService.setViewEvent({event: 'userContainersChange', data: this.getSortedUsers()});
   }
 
-  setMainPositionDisplay(userId) {
-    if (!this.imTeacher) {
+  // todo: add myConnection peerConnections array
+  // todo: remove this
+  getStream(userId: any) {
+    const con = this.peerConnections.find(pc => pc.userId === userId);
+    if (con) {
+      return con.stream;
+    }
+  }
+
+  setMainPositionScreen(userId: number) {
+    if (this.myScreen) {
+      this.openToast('لطفا از ارائه جاری خارج شوید', 'warn');
       return;
     }
+    let mainPositionPC: PeerConnection;
     if (this.mainPositionUser) {
-      const mainPositionPC = this.peerConnections.find(pc => pc.userId == this.mainPositionUser.id);
+      if (this.mainPositionUser.id == this.currentUser.id && this.imTeacher) {
+        mainPositionPC = this.myWebcam;
+      } else {
+        mainPositionPC = this.peerConnections.find(pc => pc.userId == this.mainPositionUser.id);
+      }
+      this.removeMainPositionUser();
       this.updateViewService.setViewEvent({
         event: 'onTrack',
         data: {
@@ -456,21 +472,20 @@ export class SessionService extends ApiService {
           userId: mainPositionPC.userId,
           publishType: mainPositionPC.publishType,
           position: 'sideThumbPosition',
-          display: 'studentWebcam',
+          display: 'teacherWebcam',
         }
       });
-      this.removeMainPositionUser();
     }
-    const targetPC = this.peerConnections.find(pc => pc.userId == userId);
     this.setMainPositionUser(userId);
+    const candidatePC = this.peerConnections.find(pc => pc.userId == userId);
     this.updateViewService.setViewEvent({
       event: 'onTrack',
       data: {
-        stream: targetPC.stream,
-        userId: targetPC.userId,
-        publishType: targetPC.publishType,
-        position: 'mainPosition',
-        display: 'teacherWebcam'
+        stream: candidatePC.stream,
+        userId: candidatePC.userId,
+        publishType: candidatePC.publishType,
+        position: 'mainThumbPosition',
+        display: 'studentWebcam'
       }
     });
   }

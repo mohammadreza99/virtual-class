@@ -23,6 +23,7 @@ export class ScreenComponent implements OnInit, OnDestroy {
   stream: MediaStream;
   isTalkingUpdateTimer: any;
   activateRaiseHand: boolean = false;
+  toggleSpeaker: boolean = false;
 
   constructor(
     private sessionService: SessionService,
@@ -33,6 +34,12 @@ export class ScreenComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (this.user) {
+      const stream = this.sessionService.getStream(this.user.id);
+      if (stream) {
+        this.setStream(stream);
+      }
+    }
     this.updateViewService.getViewEvent().pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
       if (['onTrack', 'onDisconnect'].findIndex(e => e == res.event) > -1) {
         if (this.position !== res.data.position) {
@@ -109,6 +116,7 @@ export class ScreenComponent implements OnInit, OnDestroy {
     video.onloadedmetadata = (e) => {
       video.play();
     };
+    console.log(this.user.first_name, this.hasVideo());
   }
 
   hasVideo() {
@@ -175,7 +183,16 @@ export class ScreenComponent implements OnInit, OnDestroy {
     this.sessionService.toggleFullScreen(this.videoElem.nativeElement);
   }
 
-  setMainPositionDisplay() {
-    this.sessionService.setMainPositionDisplay(this.user.id);
+  setMainPositionScreen() {
+    this.sessionService.setMainPositionScreen(this.user.id);
+  }
+
+  toggleSpeakerClick() {
+    this.toggleSpeaker = !this.toggleSpeaker;
+    if (this.toggleSpeaker) {
+      this.addClass('screen-hided');
+    } else {
+      this.removeClass('screen-hided');
+    }
   }
 }

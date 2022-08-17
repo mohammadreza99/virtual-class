@@ -1,4 +1,15 @@
-import {ChangeDetectorRef, Component, EventEmitter, InjectFlags, Injector, Input, OnInit, Output} from '@angular/core';
+import {
+  AfterContentInit,
+  ChangeDetectorRef,
+  Component, ContentChildren,
+  EventEmitter,
+  InjectFlags,
+  Injector,
+  Input,
+  OnInit,
+  Output, QueryList,
+  TemplateRef
+} from '@angular/core';
 import {
   AbstractControl,
   ControlContainer,
@@ -13,6 +24,7 @@ import {
 } from '@angular/forms';
 import {NgAddonConfig, NgError, NgLabelPosition} from '@ng/models/forms';
 import {NgPosition, NgSize} from '@ng/models/offset';
+import {TemplateDirective} from '@ng/directives/template.directive';
 
 @Component({
   selector: 'ng-auto-complete',
@@ -26,7 +38,7 @@ import {NgPosition, NgSize} from '@ng/models/offset';
     },
   ],
 })
-export class AutoCompleteComponent implements OnInit, ControlValueAccessor {
+export class AutoCompleteComponent implements OnInit, AfterContentInit, ControlValueAccessor {
   @Input() value: any;
   @Input() label: string;
   @Input() filled: boolean = false;
@@ -76,10 +88,13 @@ export class AutoCompleteComponent implements OnInit, ControlValueAccessor {
   @Output() onHide = new EventEmitter();
   @Output() onBeforeBtnClick = new EventEmitter();
   @Output() onAfterBtnClick = new EventEmitter();
+  @ContentChildren(TemplateDirective) templates: QueryList<TemplateDirective>;
 
   inputId: string;
   controlContainer: FormGroupDirective;
   ngControl: NgControl;
+  itemTemplate: TemplateRef<any>;
+  selectedItemTemplate: TemplateRef<any>;
 
   constructor(private cd: ChangeDetectorRef, private injector: Injector) {
   }
@@ -128,6 +143,20 @@ export class AutoCompleteComponent implements OnInit, ControlValueAccessor {
         }
       }
     }
+  }
+
+  ngAfterContentInit() {
+    this.templates.forEach((item: TemplateDirective) => {
+      switch (item.getType()) {
+        case 'item':
+          this.itemTemplate = item.templateRef;
+          break;
+
+        case 'selectedItem':
+          this.selectedItemTemplate = item.templateRef;
+          break;
+      }
+    });
   }
 
   _completeMethod(event) {

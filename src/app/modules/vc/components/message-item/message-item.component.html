@@ -12,9 +12,9 @@
   </div>
   <div class="reply">
     <ng-avatar [user]="sender"></ng-avatar>
-    <ng-button *ngIf="!showMoreOptions" appearance="text" (onClick)="onReply()" class="mt-2" [rounded]="true"
+    <ng-button *ngIf="!showMoreOptions" appearance="text" (onClick)="onReply()" class="mt-2" size="am" [rounded]="true"
                icon="icon-reply_FILL0_wght400_GRAD0_opsz48"></ng-button>
-    <ng-button *ngIf="showMoreOptions" appearance="text" (onClick)="messageActions.toggle($event)" class="mt-2"
+    <ng-button *ngIf="showMoreOptions" appearance="text" (onClick)="messageActions.toggle($event)" size="sm" class="mt-2"
                [rounded]="true"
                icon="icon-more_horiz_FILL0_wght400_GRAD0_opsz48"></ng-button>
   </div>

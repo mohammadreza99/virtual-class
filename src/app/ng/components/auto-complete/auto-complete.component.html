@@ -65,7 +65,14 @@
       (onSelect)="_onSelect($event)"
       (onShow)="emitter('onShow', $event)"
       (onUnselect)="_onUnselect($event)"
-    ></p-autoComplete>
+    >
+      <ng-template pTemplate="item" let-item let-index="index" *ngIf="itemTemplate">
+        <ng-container *ngTemplateOutlet="itemTemplate;context:{$implicit:item,index:index}"></ng-container>
+      </ng-template>
+      <ng-template pTemplate="selectedItem" let-item let-index="index" *ngIf="selectedItemTemplate">
+        <ng-container *ngTemplateOutlet="selectedItemTemplate;context:{$implicit:item,index:index}"></ng-container>
+      </ng-template>
+    </p-autoComplete>
 
     <label *ngIf="label && labelPos == 'float'" [attr.for]="inputId">{{
       label

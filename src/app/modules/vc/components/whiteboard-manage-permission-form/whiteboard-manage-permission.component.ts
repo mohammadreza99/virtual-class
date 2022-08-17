@@ -41,7 +41,17 @@ export class WhiteboardManagePermissionComponent extends LanguageChecker impleme
     if (this.selectedUsers.findIndex(u => u.id === selectedUser.id) > -1) {
       return;
     }
+    const unselectedIdx = this.unselectedUsers.findIndex(u => u.id === selectedUser.id);
+    if (unselectedIdx >= 0) {
+      this.unselectedUsers.splice(unselectedIdx, 1);
+    }
     this.selectedUsers.push(selectedUser);
+  }
+
+  onUnselectUser(event: any) {
+    const idx = this.selectedUsers.findIndex(u => u.id == event.id);
+    this.selectedUsers.splice(idx, 1);
+    this.unselectedUsers.push(event);
   }
 
   onSubmit() {
@@ -49,11 +59,5 @@ export class WhiteboardManagePermissionComponent extends LanguageChecker impleme
       selectedUsers: this.selectedUsers.map(u => u.id),
       unselectedUsers: this.unselectedUsers.map(u => u.id),
     });
-  }
-
-  onUnselectUser(event: any) {
-    const idx = this.selectedUsers.findIndex(u => u.id == event.id);
-    this.selectedUsers.splice(idx, 1);
-    this.unselectedUsers.push(event);
   }
 }

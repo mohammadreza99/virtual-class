@@ -265,9 +265,8 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     if (this.currentRoom.board) {
       setTimeout(() => {
         this.updateViewService.setViewEvent({event: 'openBoard', data: this.currentRoom.board});
-        this.currentRoom.board.users.forEach(id => {
-          this.updateViewService.setViewEvent({event: 'setBoardPermission', data: {user_id: id}});
-        });
+        this.updateViewService.setViewEvent({event: 'setBoardPermission',
+          data: {users_id: this.currentRoom.board.users}});
       });
     }
     setTimeout(() => {
@@ -488,7 +487,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   openQuestionSidebar(overlay: OverlayPanel) {
     if (this.currentRoom.active_poll) {
-      this.utilsService.showToast({detail: this.instant('room.alreadyHaveOpenQuestionnaire'), severity: 'warn'});
+      this.utilsService.showToast({detail: this.instant('room.alreadyHaveOpenQuestion'), severity: 'warn'});
       overlay.hide();
       return;
     }
@@ -497,7 +496,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
   openPollSidebar(overlay: OverlayPanel) {
     if (this.currentRoom.active_question) {
-      this.utilsService.showToast({detail: this.instant('room.alreadyHaveOpenQuestionnaire'), severity: 'warn'});
+      this.utilsService.showToast({detail: this.instant('room.alreadyHaveOpenPoll'), severity: 'warn'});
       overlay.hide();
       return;
     }

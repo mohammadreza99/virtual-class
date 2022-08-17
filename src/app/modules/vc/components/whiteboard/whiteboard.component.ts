@@ -17,7 +17,9 @@ import {Subject} from 'rxjs';
 import {SessionService} from '@core/http';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {DialogService} from 'primeng/dynamicdialog';
-import {WhiteboardManagePermissionComponent} from '@modules/vc/components/whiteboard-manage-permission-form/whiteboard-manage-permission.component';
+import {
+  WhiteboardManagePermissionComponent
+} from '@modules/vc/components/whiteboard-manage-permission-form/whiteboard-manage-permission.component';
 
 @Component({
   selector: 'ng-whiteboard',
@@ -152,13 +154,13 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
           break;
 
         case 'setBoardPermission':
-          if (res.data.user_id == this.sessionService.currentUser.id) {
+          if (res.data.users_id.some(id => id == this.sessionService.currentUser.id)) {
             this.hasPermission = true;
           }
           break;
 
         case 'removeBoardPermission':
-          if (res.data.user_id == this.sessionService.currentUser.id) {
+          if (res.data.users_id.some(id => id == this.sessionService.currentUser.id)) {
             this.hasPermission = false;
           }
           break;
@@ -328,15 +330,15 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
       header: this.instant('room.whiteboardPermission'),
       data: {users, allowedUsers},
       width: '500px'
-    }).onClose.subscribe(res => {
-      if (!res) {
+    }).onClose.subscribe(resp => {
+      if (!resp) {
         return;
       }
-      if (res.selectedUsers.length) {
-        this.sessionService.setBoardPermission(this.whiteboardData.id, res.selectedUsers).toPromise();
+      if (resp.selectedUsers.length) {
+        this.sessionService.setBoardPermission(this.whiteboardData.id, resp.selectedUsers).toPromise();
       }
-      if (res.unselectedUsers.length) {
-        this.sessionService.removeBoardPermission(this.whiteboardData.id, res.unselectedUsers).toPromise();
+      if (resp.unselectedUsers.length) {
+        this.sessionService.removeBoardPermission(this.whiteboardData.id, resp.unselectedUsers).toPromise();
       }
     });
   }

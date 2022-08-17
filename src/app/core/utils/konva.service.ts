@@ -142,6 +142,8 @@ export class KonvaService {
       }
       if (this.selectedTool == 'triangle') {
         const points = shape.points().slice();
+        console.log(shape.points());
+        console.log(shape.points().slice());
         points[0] = sourcePoints.x + ((pos.x - sourcePoints.x) / 2);
         points[1] = sourcePoints.y;
         points[2] = pos.x;
