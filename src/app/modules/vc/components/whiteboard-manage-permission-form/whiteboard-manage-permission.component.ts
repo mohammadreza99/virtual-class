@@ -25,7 +25,7 @@ export class WhiteboardManagePermissionComponent extends LanguageChecker impleme
 
   async onSearchUsers(event: any) {
     const users = this.dialogConfig.data.users;
-    const data = users.filter(u => u.first_name.includes(event.query) || u.last_name.includes(event.query));
+    const data = users.filter(u => u.first_name.toLowerCase().includes(event.query.toLowerCase()) || u.last_name.toLowerCase().includes(event.query.toLowerCase()));
     if (!data.length) {
       this.filteredUsers = [];
       return;

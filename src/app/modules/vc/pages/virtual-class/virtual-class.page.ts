@@ -209,6 +209,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
 
         case 'openPresentation':
           this.presentationActivated = true;
+          this.currentViewMode = 'thumbnail';
           break;
 
         case 'closePresentation':
@@ -218,6 +219,7 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
         case 'openBoard':
         case 'startBoard':
           this.whiteboardActivated = true;
+          this.currentViewMode = 'thumbnail';
           break;
 
         case 'closeBoard':
@@ -265,8 +267,10 @@ export class VirtualClassPage extends LanguageChecker implements OnInit, OnDestr
     if (this.currentRoom.board) {
       setTimeout(() => {
         this.updateViewService.setViewEvent({event: 'openBoard', data: this.currentRoom.board});
-        this.updateViewService.setViewEvent({event: 'setBoardPermission',
-          data: {users_id: this.currentRoom.board.users}});
+        this.updateViewService.setViewEvent({
+          event: 'setBoardPermission',
+          data: {users_id: this.currentRoom.board.users}
+        });
       });
     }
     setTimeout(() => {

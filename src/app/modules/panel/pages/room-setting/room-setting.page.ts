@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LanguageChecker} from '@shared/components/language-checker/language-checker.component';
 import {ActivatedRoute} from '@angular/router';
 
-import {Group, PagerRes, TableConfig, User} from '@core/models';
+import {Group, PagerRes, SearchParam, TableConfig, User} from '@core/models';
 import {RoomService, UserService} from '@core/http';
 import {DialogService} from 'primeng/dynamicdialog';
 import {AddRoomUserFormComponent} from '@modules/panel/components/add-room-user-form/add-room-user-form.component';
@@ -59,6 +59,7 @@ export class RoomSettingPage extends LanguageChecker implements OnInit, OnDestro
           {header: this.instant('access')},
           {header: this.instant('operations')},
         ],
+        onFetch: (data: SearchParam) => this.roomService.getRoomUsers(this.roomId, data).toPromise()
       };
       this.roomGroupsConfig = {
         total: this.roomGroups.total,
@@ -68,6 +69,7 @@ export class RoomSettingPage extends LanguageChecker implements OnInit, OnDestro
           {header: this.instant('access')},
           {header: this.instant('operations')},
         ],
+        onFetch: (data: SearchParam) => this.roomService.getRoomGroups(this.roomId, data).toPromise()
       };
     } catch (error) {
     }

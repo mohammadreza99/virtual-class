@@ -31,7 +31,7 @@
   </div>
 
   <div class="content" [class.mh-100]="presentationActivated">
-<!--    <ng-grid-view [users]="roomUsers" [allUsers]="allUsers" [hidden]="currentViewMode != 'grid'"></ng-grid-view>-->
+    <ng-grid-view [users]="roomUsers" [allUsers]="allUsers" [hidden]="currentViewMode != 'grid'"></ng-grid-view>
     <ng-thumbnail-view [users]="roomUsers" [hidden]="currentViewMode != 'thumbnail'"></ng-thumbnail-view>
   </div>
 
@@ -70,7 +70,7 @@
       </ng-container>
       <ng-button *ngPermission="'Admin'" icon="icon-more_horiz_FILL0_wght400_GRAD0_opsz48"
                  (click)="otherActions.toggle($event)"></ng-button>
-      <ng-button *ngPermission="'Admin'" icon="icon-add_FILL1_wght400_GRAD0_opsz48"
+      <ng-button class="d-none d-lg-inline-block" *ngPermission="'Admin'" icon="icon-add_FILL1_wght400_GRAD0_opsz48"
                  (click)="mediaActions.toggle($event)"></ng-button>
       <ng-button class="d-lg-none" (click)="leaveRoom()" color="danger"
                  icon="icon-logout_FILL0_wght400_GRAD0_opsz48"></ng-button>

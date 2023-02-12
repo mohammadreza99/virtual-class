@@ -3,7 +3,12 @@
   <ng-button *ngPermission="'Viewer'" class="mb-3" icon="icon-fullscreen_FILL0_wght400_GRAD0_opsz48"
              appearance="outlined"
              (click)="toggleFullScreen(whiteboard)"></ng-button>
-  <ng-button class="mb-3" icon="pi pi-download" (click)="saveAsImage()"></ng-button>
+  <ng-container *ngPermission="'Viewer'">
+    <ng-button *ngIf="(presentationData && presentationData.is_downloadable) || (whiteboardData && !presentationData)"
+               class="mb-3"
+               icon="pi pi-download"
+               (click)="downloadFile()"></ng-button>
+  </ng-container>
   <div class="tools" *ngIf="hasPermission">
     <ng-button icon="icon-text_fields_FILL0_wght400_GRAD0_opsz48" [rounded]="true" appearance="outlined"
                [pTooltip]="'room.textSize' | translate"
@@ -57,10 +62,10 @@
     <ng-button-async *ngPermission="'Admin'" (clickAsync)="prevPage($event)" icon="pi pi-chevron-left"
                      [disabled]="disablePrevBtn"></ng-button-async>
   </div>
-    <ng-button *ngPermission="'Admin'" [pTooltip]="'room.whiteboardPermission' | translate"
-               tooltipPosition="top"
-               icon="icon-add_moderator_FILL0_wght400_GRAD0_opsz48" color="secondary"
-               (click)="setPermissionForUser()"></ng-button>
+  <ng-button *ngPermission="'Admin'" [pTooltip]="'room.whiteboardPermission' | translate"
+             tooltipPosition="top"
+             icon="icon-add_moderator_FILL0_wght400_GRAD0_opsz48" color="secondary"
+             (click)="setPermissionForUser()"></ng-button>
 </div>
 
 <p-overlayPanel>

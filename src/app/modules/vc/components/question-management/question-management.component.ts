@@ -192,4 +192,9 @@ export class QuestionManagementComponent extends LanguageChecker implements OnIn
     array.push(this.createOptionControl());
     this.form.reset({options: [{correct_answer: false}, {correct_answer: false}]});
   }
+
+  showInvalidOptionMessage() {
+    const array = (this.form.get('options') as FormArray).controls;
+    return array.some(g => g.get('correct_answer').dirty || g.get('correct_answer').touched) && this.form.get('options').hasError('isInvalid');
+  }
 }

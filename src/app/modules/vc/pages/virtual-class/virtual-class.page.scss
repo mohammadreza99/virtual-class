@@ -5,7 +5,7 @@
   .virtual-class-wrapper {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
     transition: all 150ms;
     color: #f8f9fa;
 
@@ -112,7 +112,7 @@
     position: fixed;
     right: 0;
     top: 0;
-    height: 100vh;
+    height: 100%;
     width: $sidebarWidth;
     background-color: #40414A;
     z-index: 1050;

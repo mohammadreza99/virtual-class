@@ -156,6 +156,7 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
         case 'setBoardPermission':
           if (res.data.users_id.some(id => id == this.sessionService.currentUser.id)) {
             this.hasPermission = true;
+            this.konvaService.setTool('brush');
           }
           break;
 
@@ -250,8 +251,12 @@ export class WhiteboardComponent extends LanguageChecker implements OnInit, OnDe
     this.konvaService.clearBoard();
   }
 
-  saveAsImage(): void {
-    this.konvaService.saveAsImage();
+  downloadFile(): void {
+    if (this.presentationData) {
+      this.sessionService.downloadLink(this.presentationData.file_url);
+    } else {
+      this.konvaService.saveAsImage();
+    }
   }
 
   ///////////////////////////////// COMMON //////////////////////////////////

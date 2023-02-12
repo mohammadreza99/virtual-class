@@ -975,7 +975,7 @@ export class SessionService extends ApiService {
     this.konvaService.destroyBoard();
     if (message) {
       this.utilsService.showDialog({message, closable: false, style: {width: '400px'}}).then(res => {
-        this.router.navigate(['/vc/room-info', this.currentRoom.id]);
+        document.location.reload();
       });
       return;
     }

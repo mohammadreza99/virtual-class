@@ -21,13 +21,13 @@
            icon="icon-fullscreen_FILL0_wght400_GRAD0_opsz48"
            (click)="toggleFullScreen()">
 </ng-button>
-<ng-container *ngPermission="'Admin'">
-  <ng-button *ngIf="position == 'sideThumbPosition' && streamActivated" class="btn-set-main-screen" size="sm"
-             color="secondary"
-             icon="pi pi-window-maximize"
-             (click)="setMainPositionScreen()">
-  </ng-button>
-</ng-container>
+<!--<ng-container *ngPermission="'Admin'">-->
+<!--  <ng-button *ngIf="position == 'sideThumbPosition' && streamActivated" class="btn-set-main-screen" size="sm"-->
+<!--             color="secondary"-->
+<!--             icon="pi pi-window-maximize"-->
+<!--             (click)="setMainPositionScreen()">-->
+<!--  </ng-button>-->
+<!--</ng-container>-->
 <ng-button *ngIf="position == 'mainThumbPosition' && !toggleSpeaker" class="btn-toggler" size="sm" color="secondary"
            icon="pi pi-times"
            (click)="toggleSpeakerClick()">
